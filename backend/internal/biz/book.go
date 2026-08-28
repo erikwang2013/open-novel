@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 
 	"gorm.io/gorm"
@@ -17,12 +18,13 @@ import (
 )
 
 type BookUsecase struct {
-	db    *gorm.DB
-	cache *data.Cache
+	db     *gorm.DB
+	cache  *data.Cache
+	search *SearchUsecase
 }
 
-func NewBookUsecase(d *data.Data) *BookUsecase {
-	return &BookUsecase{db: d.DB, cache: d.Cache}
+func NewBookUsecase(d *data.Data, search *SearchUsecase) *BookUsecase {
+	return &BookUsecase{db: d.DB, cache: d.Cache, search: search}
 }
 
 type BookItem struct {
@@ -176,6 +178,8 @@ func (uc *BookUsecase) CreateBook(ctx context.Context, req CreateBookParams) (id
 	if err != nil {
 		return 0, pkg.ErrBookInternal
 	}
+	uc.cache.DelPattern(ctx, "recommend:*") // 新书入榜：失效热门/最新榜单缓存
+	uc.syncIndexBestEffort(ctx, b.ID)      // 建书自动入搜索索引（#23）
 	return b.ID, nil
 }
 
@@ -194,7 +198,45 @@ func (uc *BookUsecase) UpsertTranslation(ctx context.Context, id uint64, lang, t
 	}
 	// 翻译更新后立即失效缓存键，避免旧值残留
 	uc.cache.Del(ctx, fmt.Sprintf("book:%d:%s", id, lang))
+	uc.syncIndexBestEffort(ctx, id) // 翻译变更同步搜索索引（#23）
 	return nil
+}
+
+// syncIndexBestEffort 将书籍同步到搜索索引；索引失败只记日志，不阻塞建书/翻译。
+func (uc *BookUsecase) syncIndexBestEffort(ctx context.Context, bookID uint64) {
+	if err := uc.syncIndex(ctx, bookID); err != nil {
+		log.Printf("book: sync index failed id=%d: %v", bookID, err)
+	}
+}
+
+// syncIndex 从 DB 组装多语言文档并写入搜索索引。
+func (uc *BookUsecase) syncIndex(ctx context.Context, bookID uint64) error {
+	var b data.Book
+	if err := uc.db.WithContext(ctx).First(&b, bookID).Error; err != nil {
+		return err
+	}
+	var trs []data.BookTranslation
+	uc.db.WithContext(ctx).Where("book_id = ?", bookID).Find(&trs)
+	doc := data.SearchDoc{BookID: b.ID, Lang: b.Lang, Status: int(b.Status),
+		CreatedAt: b.CreatedAt.Format("2006-01-02")}
+	setLang(&doc, b.Lang, b.Title, b.Summary) // 先落基础语言，再被翻译覆盖
+	for _, tr := range trs {
+		setLang(&doc, tr.Lang, tr.Title, tr.Summary)
+	}
+	doc.AuthorZh, doc.AuthorEn, doc.AuthorJa = b.Author, b.Author, b.Author
+	return uc.search.SyncIndex(ctx, doc)
+}
+
+// setLang 按语言填入标题/简介字段（zh-CN 及未列语言归 zh 位）。
+func setLang(doc *data.SearchDoc, lang, title, summary string) {
+	switch lang {
+	case "en":
+		doc.TitleEn, doc.SummaryEn = title, summary
+	case "ja":
+		doc.TitleJa, doc.SummaryJa = title, summary
+	default:
+		doc.TitleZh, doc.SummaryZh = title, summary
+	}
 }
 
 // upsertTranslation 按 uk_book_lang(book_id, lang) 插入或更新。

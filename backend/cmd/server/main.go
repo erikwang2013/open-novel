@@ -47,7 +47,7 @@ func main() {
 	}
 
 	userSvc := service.NewUserService(biz.NewUserUsecase(d, am))
-	bookSvc := service.NewBookService(biz.NewBookUsecase(d))
+	bookSvc := service.NewBookService(biz.NewBookUsecase(d, searchUc))
 	chapterSvc := service.NewChapterService(biz.NewChapterUsecase(d))
 	commentSvc := service.NewCommentService(biz.NewCommentUsecase(d))
 	searchSvc := service.NewSearchService(searchUc)

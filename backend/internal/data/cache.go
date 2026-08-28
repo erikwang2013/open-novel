@@ -42,6 +42,18 @@ func (c *Cache) Del(ctx context.Context, keys ...string) {
 	c.rdb.Del(ctx, keys...)
 }
 
+// DelPattern SCAN 匹配后批量删除（非阻塞；超大 key 空间可改游标分批）。
+func (c *Cache) DelPattern(ctx context.Context, pattern string) {
+	var keys []string
+	iter := c.rdb.Scan(ctx, 0, pattern, 100).Iterator()
+	for iter.Next(ctx) {
+		keys = append(keys, iter.Val())
+	}
+	if len(keys) > 0 {
+		c.rdb.Del(ctx, keys...)
+	}
+}
+
 // GetOrLoad：缓存 →（SETNX 单飞）→ loader → 回填；空结果缓存 60s 防穿透。
 func (c *Cache) GetOrLoad(ctx context.Context, key string, loader func() (string, error)) (string, error) {
 	if v, ok := c.Get(ctx, key); ok {

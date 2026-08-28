@@ -14,11 +14,12 @@ import (
 )
 
 type CommentUsecase struct {
-	db *gorm.DB
+	db    *gorm.DB
+	cache *data.Cache
 }
 
 func NewCommentUsecase(d *data.Data) *CommentUsecase {
-	return &CommentUsecase{db: d.DB}
+	return &CommentUsecase{db: d.DB, cache: d.Cache}
 }
 
 type CommentItem struct {
@@ -53,6 +54,7 @@ func (uc *CommentUsecase) CreateComment(ctx context.Context, uid int64, bookID u
 	if err := uc.db.Clauses(gormdb.Write).Create(&c).Error; err != nil {
 		return nil, pkg.ErrCommentDB
 	}
+	uc.cache.DelPattern(ctx, "recommend:*") // 评论影响热门榜：失效榜单缓存
 	it := toCommentItem(c)
 	return &it, nil
 }
