@@ -53,15 +53,117 @@ class ApiClient {
   Future<LoginResult> login(String username, String password) async {
     final r = await _dio.post('/api/users/login',
         data: {'username': username, 'password': password});
-    final data = r.data as Map<String, dynamic>;
-    // 业务错误（密码错误等）返回 HTTP 200 + {code,message}，需显式抛出
-    if (data['code'] != null) {
+    return _saveSession(LoginResult.fromJson(_data(r)));
+  }
+
+  // ---------- 书籍 ----------
+
+  /// 书籍列表。status: 0 不过滤（管理员） 1 仅上架。
+  Future<(List<Book>, int)> books(
+      {int page = 1, int pageSize = 20, int status = 0}) async {
+    final r = await _dio.get('/api/books', queryParameters: {
+      'page': page,
+      'page_size': pageSize,
+      'status': status,
+    });
+    final d = _data(r);
+    return (_listOf(d, Book.fromJson), asInt(d['total']));
+  }
+
+  Future<void> updateBookStatus(String id, int status) async {
+    _data(await _dio.patch('/api/books/$id/status', data: {'status': status}));
+  }
+
+  /// 建书/编辑元数据（复用 POST /api/books，后端总是新建）。
+  Future<void> createBook(Map<String, dynamic> req) async {
+    _data(await _dio.post('/api/books', data: req));
+  }
+
+  // ---------- 章节 ----------
+
+  Future<(List<Chapter>, int)> chapters(String bookId,
+      {int page = 1, int pageSize = 20}) async {
+    final r = await _dio.get('/api/books/$bookId/chapters', queryParameters: {
+      'page': page,
+      'page_size': pageSize,
+    });
+    final d = _data(r);
+    return (_listOf(d, Chapter.fromJson), asInt(d['total']));
+  }
+
+  Future<String> chapterContent(String id) async {
+    final d = _data(await _dio.get('/api/chapters/$id/content'));
+    return asStr(d['content']);
+  }
+
+  Future<void> updateChapterStatus(String id, int status) async {
+    _data(
+        await _dio.patch('/api/chapters/$id/status', data: {'status': status}));
+  }
+
+  // ---------- 评论 ----------
+
+  /// 评论列表。status: null=全部 1 正常 2 举报待审（管理员）。
+  Future<(List<Comment>, int)> comments(
+      {String? bookId,
+      String? chapterId,
+      int? status,
+      int page = 1,
+      int pageSize = 20}) async {
+    final r = await _dio.get('/api/comments', queryParameters: {
+      if (bookId != null && bookId.isNotEmpty) 'book_id': bookId,
+      if (chapterId != null && chapterId.isNotEmpty) 'chapter_id': chapterId,
+      'status': ?status,
+      'page': page,
+      'page_size': pageSize,
+    });
+    final d = _data(r);
+    return (_listOf(d, Comment.fromJson), asInt(d['total']));
+  }
+
+  Future<void> updateCommentStatus(String id, int status) async {
+    _data(
+        await _dio.put('/api/comments/$id/status', data: {'status': status}));
+  }
+
+  // ---------- 举报 ----------
+
+  /// 待审核举报列表（status=2）。
+  Future<(List<Comment>, int)> reports(
+      {int page = 1, int pageSize = 20}) async {
+    final r = await _dio.get('/api/comments/reports', queryParameters: {
+      'page': page,
+      'page_size': pageSize,
+    });
+    final d = _data(r);
+    return (_listOf(d, Comment.fromJson), asInt(d['total']));
+  }
+
+  /// 举报处理：approved=true 下架评论，false 驳回恢复。
+  Future<void> handleReport(String id, bool approved) async {
+    _data(
+        await _dio.post('/api/comments/$id/report-handle', data: {'approved': approved}));
+  }
+
+  // ---------- 内部工具 ----------
+
+  /// 解析响应体；业务错误（HTTP 200 + code != null）显式抛出，与 login 一致。
+  Map<String, dynamic> _data(Response r) {
+    final data = r.data;
+    if (data is Map && data['code'] != null) {
       throw DioException(
           requestOptions: r.requestOptions,
           response: r,
-          message: data['message']?.toString() ?? '登录失败');
+          message: data['message']?.toString() ?? '请求失败');
     }
-    return _saveSession(LoginResult.fromJson(data));
+    return (data as Map?)?.cast<String, dynamic>() ?? <String, dynamic>{};
+  }
+
+  static List<T> _listOf<T>(
+      Map<String, dynamic> d, T Function(Map<String, dynamic>) fromJson) {
+    return (d['list'] as List<dynamic>? ?? [])
+        .map((e) => fromJson((e as Map).cast<String, dynamic>()))
+        .toList();
   }
 
   Future<bool> _refresh() async {

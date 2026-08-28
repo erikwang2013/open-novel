@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../api/api_client.dart';
+import 'books_page.dart';
+import 'comments_page.dart';
 import 'login_page.dart';
+import 'reports_page.dart';
 
-/// 主框架：左侧导航 + 内容区占位，各模块页面后续实现。
+/// 主框架：左侧导航 + 内容区，IndexedStack 保持各页状态。
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -14,12 +17,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _index = 0;
 
-  static const _titles = ['仪表盘', '书籍', '评论', '用户'];
+  static const _titles = ['仪表盘', '书籍', '评论', '举报', '用户'];
   static const _icons = [
     Icons.dashboard_outlined,
     Icons.menu_book_outlined,
     Icons.comment_outlined,
+    Icons.report_outlined,
     Icons.people_outline,
+  ];
+
+  static const _pages = [
+    _PlaceholderPage(),
+    BooksPage(),
+    CommentsPage(),
+    ReportsPage(),
+    _PlaceholderPage(),
   ];
 
   void _logout() {
@@ -61,22 +73,23 @@ class _HomePageState extends State<HomePage> {
           ),
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(_titles[_index],
-                      style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(height: 8),
-                  Text('待实现',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.outline)),
-                ],
-              ),
-            ),
+            child: IndexedStack(index: _index, children: _pages),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// 占位页（仪表盘 / 用户）。
+class _PlaceholderPage extends StatelessWidget {
+  const _PlaceholderPage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('待实现',
+          style: TextStyle(color: Theme.of(context).colorScheme.outline)),
     );
   }
 }

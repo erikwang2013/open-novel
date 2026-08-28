@@ -38,3 +38,73 @@ class LoginResult {
         refreshToken = asStr(j['refreshToken']),
         user = AdminUser.fromJson((j['user'] ?? {}) as Map<String, dynamic>);
 }
+
+/// 书籍（BookReply）。status: 1 上架 0 下架。
+class Book {
+  final String id;
+  final String lang;
+  final String title;
+  final String author;
+  final String summary;
+  final String cover;
+  final int isVip;
+  final int status;
+
+  Book.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        lang = asStr(j['lang']),
+        title = asStr(j['title']),
+        author = asStr(j['author']),
+        summary = asStr(j['summary']),
+        cover = asStr(j['cover']),
+        isVip = asInt(j['isVip']),
+        status = asInt(j['status']);
+}
+
+/// 章节（ChapterReply）。status: 1 启用 0 禁用。
+class Chapter {
+  final String id;
+  final String bookId;
+  final int chapterNo;
+  final String title;
+  final int wordCount;
+  final int isVip;
+  final int status;
+  final String createdAt;
+
+  Chapter.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        bookId = asStr(j['bookId']),
+        chapterNo = asInt(j['chapterNo']),
+        title = asStr(j['title']),
+        wordCount = asInt(j['wordCount']),
+        isVip = asInt(j['isVip']),
+        status = asInt(j['status']),
+        createdAt = asStr(j['createdAt']);
+}
+
+/// 评论（CommentReply）。status: 1 正常 0 下架 2 举报待审。
+class Comment {
+  final String id;
+  final String bookId;
+  final String chapterId;
+  final String userId;
+  final String parentId;
+  final String content;
+  final int likeCount;
+  final int reportCount;
+  final int status;
+  final String createdAt;
+
+  Comment.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        bookId = asStr(j['bookId']),
+        chapterId = asStr(j['chapterId']),
+        userId = asStr(j['userId']),
+        parentId = asStr(j['parentId']),
+        content = asStr(j['content']),
+        likeCount = asInt(j['likeCount']),
+        reportCount = asInt(j['reportCount']),
+        status = asInt(j['status']),
+        createdAt = asStr(j['createdAt']);
+}
