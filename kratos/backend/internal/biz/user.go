@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -214,6 +215,62 @@ func (uc *UserUsecase) profile(u *data.User, lang string) UserProfile {
 		Avatar: u.Avatar, Role: u.Role, Status: u.Status,
 		CreatedAt: u.CreatedAt.Format(time.RFC3339),
 	}
+}
+
+// ListUsers 用户列表（管理员）；search 模糊匹配 username/nickname/email。
+func (uc *UserUsecase) ListUsers(ctx context.Context, search string, p pkg.Page) ([]UserProfile, int64, error) {
+	q := uc.db.WithContext(ctx).Model(&data.User{})
+	if s := strings.TrimSpace(search); s != "" {
+		like := "%" + s + "%"
+		q = q.Where("username LIKE ? OR nickname LIKE ? OR email LIKE ?", like, like, like)
+	}
+	var total int64
+	q.Count(&total)
+	var list []data.User
+	q.Order("id DESC").Limit(p.PageSize).Offset(p.Offset()).Find(&list)
+	items := make([]UserProfile, 0, len(list))
+	for i := range list {
+		items = append(items, uc.profile(&list[i], ""))
+	}
+	return items, total, nil
+}
+
+// SetUserStatus 封禁/解封（管理员）；status 0 封禁 1 解封，与登录校验一致（status!=1 拒绝登录）。
+func (uc *UserUsecase) SetUserStatus(ctx context.Context, adminID int64, id uint64, status int8) error {
+	if status != 0 && status != 1 {
+		return pkg.ErrBadState
+	}
+	if id == 0 || uint64(adminID) == id {
+		return pkg.ErrBadState // 禁止操作自己
+	}
+	res := uc.db.Clauses(gormdb.Write).Model(&data.User{}).Where("id = ?", id).Update("status", status)
+	if res.Error != nil {
+		return pkg.ErrUserInternal
+	}
+	if res.RowsAffected == 0 {
+		return pkg.ErrTargetNF
+	}
+	data.WriteAudit(uc.db, ctx, adminID, "user_status", "user", strconv.FormatUint(id, 10), fmt.Sprintf("status=%d", status))
+	return nil
+}
+
+// SetUserRole 调整角色（管理员）；role 1 读者 2 作者 3 管理员。
+func (uc *UserUsecase) SetUserRole(ctx context.Context, adminID int64, id uint64, role int8) error {
+	if role < 1 || role > 3 {
+		return pkg.ErrBadState
+	}
+	if id == 0 || uint64(adminID) == id {
+		return pkg.ErrBadState // 禁止操作自己
+	}
+	res := uc.db.Clauses(gormdb.Write).Model(&data.User{}).Where("id = ?", id).Update("role", role)
+	if res.Error != nil {
+		return pkg.ErrUserInternal
+	}
+	if res.RowsAffected == 0 {
+		return pkg.ErrTargetNF
+	}
+	data.WriteAudit(uc.db, ctx, adminID, "user_role", "user", strconv.FormatUint(id, 10), fmt.Sprintf("role=%d", role))
+	return nil
 }
 
 func validUsername(s string) bool {

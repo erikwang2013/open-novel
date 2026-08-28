@@ -7,6 +7,7 @@ import (
 
 	"open-novel/backend/api/user/v1"
 	"open-novel/backend/internal/biz"
+	"open-novel/backend/internal/pkg"
 )
 
 type UserService struct {
@@ -68,6 +69,47 @@ func (s *UserService) UpdateMe(ctx context.Context, req *v1.UpdateMeReq) (*v1.Us
 		return nil, err
 	}
 	return toUserReply(p, pickLang(ctx, req.Lang)), nil
+}
+
+// ListUsers 用户列表（管理员）。
+func (s *UserService) ListUsers(ctx context.Context, req *v1.ListUsersReq) (*v1.ListUsersReply, error) {
+	if _, err := requireAdmin(ctx); err != nil {
+		return nil, err
+	}
+	p := pkg.ParsePage(req.Page, req.PageSize)
+	items, total, err := s.uc.ListUsers(ctx, req.Search, p)
+	if err != nil {
+		return nil, err
+	}
+	list := make([]*v1.UserReply, 0, len(items))
+	for _, it := range items {
+		list = append(list, toUserReply(it, ""))
+	}
+	return &v1.ListUsersReply{List: list, Total: total, Page: int32(p.Page), PageSize: int32(p.PageSize)}, nil
+}
+
+// UpdateUserStatus 封禁/解封（管理员）。
+func (s *UserService) UpdateUserStatus(ctx context.Context, req *v1.UpdateUserStatusReq) (*v1.EmptyReply, error) {
+	c, err := requireAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.uc.SetUserStatus(ctx, c.UID, u64(req.Id), int8(req.Status)); err != nil {
+		return nil, err
+	}
+	return &v1.EmptyReply{}, nil
+}
+
+// UpdateUserRole 角色调整（管理员）。
+func (s *UserService) UpdateUserRole(ctx context.Context, req *v1.UpdateUserRoleReq) (*v1.EmptyReply, error) {
+	c, err := requireAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.uc.SetUserRole(ctx, c.UID, u64(req.Id), int8(req.Role)); err != nil {
+		return nil, err
+	}
+	return &v1.EmptyReply{}, nil
 }
 
 func toLoginReply(t biz.TokenResp) *v1.LoginReply {

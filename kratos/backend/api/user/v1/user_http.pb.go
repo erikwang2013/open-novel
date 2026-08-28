@@ -20,14 +20,19 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationUserGetMe = "/user.v1.User/GetMe"
+const OperationUserListUsers = "/user.v1.User/ListUsers"
 const OperationUserLogin = "/user.v1.User/Login"
 const OperationUserRefreshToken = "/user.v1.User/RefreshToken"
 const OperationUserRegister = "/user.v1.User/Register"
 const OperationUserUpdateMe = "/user.v1.User/UpdateMe"
+const OperationUserUpdateUserRole = "/user.v1.User/UpdateUserRole"
+const OperationUserUpdateUserStatus = "/user.v1.User/UpdateUserStatus"
 
 type UserHTTPServer interface {
 	// GetMe 当前用户资料（nickname 按 lang 本地化）
 	GetMe(context.Context, *GetMeReq) (*UserReply, error)
+	// ListUsers 用户列表（管理员；分页 + search 模糊匹配 username/nickname/email）
+	ListUsers(context.Context, *ListUsersReq) (*ListUsersReply, error)
 	// Login 登录：签发 access(30min) + refresh(7d，Redis 存储，轮换制)
 	Login(context.Context, *LoginReq) (*LoginReply, error)
 	// RefreshToken 刷新：refresh token 轮换，旧 token 立即作废
@@ -36,6 +41,10 @@ type UserHTTPServer interface {
 	Register(context.Context, *RegisterReq) (*RegisterReply, error)
 	// UpdateMe 更新资料（字段可选，只更新非空项）
 	UpdateMe(context.Context, *UpdateMeReq) (*UserReply, error)
+	// UpdateUserRole 角色调整（管理员；role 1 读者 2 作者 3 管理员，禁止操作自己）
+	UpdateUserRole(context.Context, *UpdateUserRoleReq) (*EmptyReply, error)
+	// UpdateUserStatus 封禁/解封（管理员；status 0 封禁 1 解封，禁止操作自己）
+	UpdateUserStatus(context.Context, *UpdateUserStatusReq) (*EmptyReply, error)
 }
 
 func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
@@ -45,6 +54,9 @@ func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r.POST("/api/users/refresh", _User_RefreshToken0_HTTP_Handler(srv))
 	r.GET("/api/users/me", _User_GetMe0_HTTP_Handler(srv))
 	r.PUT("/api/users/me", _User_UpdateMe0_HTTP_Handler(srv))
+	r.GET("/api/users", _User_ListUsers0_HTTP_Handler(srv))
+	r.PATCH("/api/users/{id}/status", _User_UpdateUserStatus0_HTTP_Handler(srv))
+	r.PATCH("/api/users/{id}/role", _User_UpdateUserRole0_HTTP_Handler(srv))
 }
 
 func _User_Register0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
@@ -154,9 +166,80 @@ func _User_UpdateMe0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) err
 	}
 }
 
+func _User_ListUsers0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListUsersReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserListUsers)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListUsers(ctx, req.(*ListUsersReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListUsersReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _User_UpdateUserStatus0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateUserStatusReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserUpdateUserStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateUserStatus(ctx, req.(*UpdateUserStatusReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _User_UpdateUserRole0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateUserRoleReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserUpdateUserRole)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateUserRole(ctx, req.(*UpdateUserRoleReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserHTTPClient interface {
 	// GetMe 当前用户资料（nickname 按 lang 本地化）
 	GetMe(ctx context.Context, req *GetMeReq, opts ...http.CallOption) (rsp *UserReply, err error)
+	// ListUsers 用户列表（管理员；分页 + search 模糊匹配 username/nickname/email）
+	ListUsers(ctx context.Context, req *ListUsersReq, opts ...http.CallOption) (rsp *ListUsersReply, err error)
 	// Login 登录：签发 access(30min) + refresh(7d，Redis 存储，轮换制)
 	Login(ctx context.Context, req *LoginReq, opts ...http.CallOption) (rsp *LoginReply, err error)
 	// RefreshToken 刷新：refresh token 轮换，旧 token 立即作废
@@ -165,6 +248,10 @@ type UserHTTPClient interface {
 	Register(ctx context.Context, req *RegisterReq, opts ...http.CallOption) (rsp *RegisterReply, err error)
 	// UpdateMe 更新资料（字段可选，只更新非空项）
 	UpdateMe(ctx context.Context, req *UpdateMeReq, opts ...http.CallOption) (rsp *UserReply, err error)
+	// UpdateUserRole 角色调整（管理员；role 1 读者 2 作者 3 管理员，禁止操作自己）
+	UpdateUserRole(ctx context.Context, req *UpdateUserRoleReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
+	// UpdateUserStatus 封禁/解封（管理员；status 0 封禁 1 解封，禁止操作自己）
+	UpdateUserStatus(ctx context.Context, req *UpdateUserStatusReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 }
 
 type UserHTTPClientImpl struct {
@@ -181,6 +268,20 @@ func (c *UserHTTPClientImpl) GetMe(ctx context.Context, in *GetMeReq, opts ...ht
 	pattern := "/api/users/me"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetMe))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListUsers 用户列表（管理员；分页 + search 模糊匹配 username/nickname/email）
+func (c *UserHTTPClientImpl) ListUsers(ctx context.Context, in *ListUsersReq, opts ...http.CallOption) (*ListUsersReply, error) {
+	var out ListUsersReply
+	pattern := "/api/users"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationUserListUsers))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
@@ -239,6 +340,34 @@ func (c *UserHTTPClientImpl) UpdateMe(ctx context.Context, in *UpdateMeReq, opts
 	opts = append(opts, http.Operation(OperationUserUpdateMe))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateUserRole 角色调整（管理员；role 1 读者 2 作者 3 管理员，禁止操作自己）
+func (c *UserHTTPClientImpl) UpdateUserRole(ctx context.Context, in *UpdateUserRoleReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/users/{id}/role"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserUpdateUserRole))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PATCH", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateUserStatus 封禁/解封（管理员；status 0 封禁 1 解封，禁止操作自己）
+func (c *UserHTTPClientImpl) UpdateUserStatus(ctx context.Context, in *UpdateUserStatusReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/users/{id}/status"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserUpdateUserStatus))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PATCH", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

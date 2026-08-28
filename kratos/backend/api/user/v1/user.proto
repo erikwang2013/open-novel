@@ -43,6 +43,26 @@ service User {
       body: "*"
     };
   }
+  // 用户列表（管理员；分页 + search 模糊匹配 username/nickname/email）
+  rpc ListUsers(ListUsersReq) returns (ListUsersReply) {
+    option (google.api.http) = {
+      get: "/api/users"
+    };
+  }
+  // 封禁/解封（管理员；status 0 封禁 1 解封，禁止操作自己）
+  rpc UpdateUserStatus(UpdateUserStatusReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      patch: "/api/users/{id}/status"
+      body: "*"
+    };
+  }
+  // 角色调整（管理员；role 1 读者 2 作者 3 管理员，禁止操作自己）
+  rpc UpdateUserRole(UpdateUserRoleReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      patch: "/api/users/{id}/role"
+      body: "*"
+    };
+  }
 }
 
 message RegisterReq {
@@ -100,3 +120,28 @@ message UserReply {
   int32 status = 8;
   string created_at = 9; // RFC3339
 }
+
+message ListUsersReq {
+  int32 page = 1;
+  int32 page_size = 2;
+  string search = 3; // 模糊匹配 username/nickname/email，空则不过滤
+}
+
+message ListUsersReply {
+  repeated UserReply list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message UpdateUserStatusReq {
+  int64 id = 1;
+  int32 status = 2; // 0 封禁 1 解封
+}
+
+message UpdateUserRoleReq {
+  int64 id = 1;
+  int32 role = 2; // 1 读者 2 作者 3 管理员
+}
+
+message EmptyReply {}

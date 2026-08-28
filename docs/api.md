@@ -28,6 +28,11 @@
 | POST | `/api/users/login` | 登录 `{username, password}` → `{accessToken, refreshToken, user}` | 无 |
 | POST | `/api/users/refresh` | 刷新 `{refresh_token}` → 新 token 对 | 无 |
 | GET | `/api/users/me` | 当前用户信息 | Bearer |
+| GET | `/api/users` | 用户列表（`page`/`page_size`/`search` 模糊匹配 username/nickname/email） | Bearer（管理） |
+| PATCH | `/api/users/{id}/status` | 封禁/解封 `{status: 0|1}`（0 封禁 1 解封；禁止操作自己） | Bearer（管理） |
+| PATCH | `/api/users/{id}/role` | 角色调整 `{role: 1|2|3}`（读者/作者/管理员；禁止操作自己） | Bearer（管理） |
+
+用户管理错误码：`180401` 无权限 / `180402` 目标不存在 / `180403` 非法状态变更（非法 status/role 值或操作自己）。每次状态/角色变更写入审计日志。
 
 ## 书籍
 

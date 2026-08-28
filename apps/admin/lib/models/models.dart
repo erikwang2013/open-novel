@@ -83,6 +83,26 @@ class Chapter {
         createdAt = asStr(j['createdAt']);
 }
 
+/// 用户管理（UserReply）。status: 1 正常 0 封禁；role: 1 读者 2 作者 3 管理员。
+class User {
+  final String id;
+  final String username;
+  final String nickname;
+  final String email;
+  final int role;
+  final int status;
+  final String createdAt;
+
+  User.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        username = asStr(j['username']),
+        nickname = asStr(j['nickname']),
+        email = asStr(j['email']),
+        role = asInt(j['role']),
+        status = asInt(j['status']),
+        createdAt = asStr(j['createdAt']);
+}
+
 /// 评论（CommentReply）。status: 1 正常 0 下架 2 举报待审。
 class Comment {
   final String id;

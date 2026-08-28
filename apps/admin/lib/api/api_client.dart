@@ -145,6 +145,28 @@ class ApiClient {
         await _dio.post('/api/comments/$id/report-handle', data: {'approved': approved}));
   }
 
+  // ---------- 用户 ----------
+
+  /// 用户列表（管理员）。search 模糊匹配 username/nickname/email。
+  Future<(List<User>, int)> users(
+      {String search = '', int page = 1, int pageSize = 20}) async {
+    final r = await _dio.get('/api/users', queryParameters: {
+      if (search.isNotEmpty) 'search': search,
+      'page': page,
+      'page_size': pageSize,
+    });
+    final d = _data(r);
+    return (_listOf(d, User.fromJson), asInt(d['total']));
+  }
+
+  Future<void> updateUserStatus(String id, int status) async {
+    _data(await _dio.patch('/api/users/$id/status', data: {'status': status}));
+  }
+
+  Future<void> updateUserRole(String id, int role) async {
+    _data(await _dio.patch('/api/users/$id/role', data: {'role': role}));
+  }
+
   // ---------- 内部工具 ----------
 
   /// 解析响应体；业务错误（HTTP 200 + code != null）显式抛出，与 login 一致。

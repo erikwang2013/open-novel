@@ -5,6 +5,7 @@ import 'books_page.dart';
 import 'comments_page.dart';
 import 'login_page.dart';
 import 'reports_page.dart';
+import 'users_page.dart';
 
 /// 主框架：左侧导航 + 内容区，IndexedStack 保持各页状态。
 class HomePage extends StatefulWidget {
@@ -31,7 +32,7 @@ class _HomePageState extends State<HomePage> {
     BooksPage(),
     CommentsPage(),
     ReportsPage(),
-    _PlaceholderPage(),
+    UsersPage(),
   ];
 
   void _logout() {

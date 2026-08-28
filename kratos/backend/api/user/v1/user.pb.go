@@ -562,6 +562,274 @@ func (x *UserReply) GetCreatedAt() string {
 	return ""
 }
 
+type ListUsersReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Search        string                 `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"` // 模糊匹配 username/nickname/email，空则不过滤
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUsersReq) Reset() {
+	*x = ListUsersReq{}
+	mi := &file_user_v1_user_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUsersReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersReq) ProtoMessage() {}
+
+func (x *ListUsersReq) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersReq.ProtoReflect.Descriptor instead.
+func (*ListUsersReq) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListUsersReq) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListUsersReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListUsersReq) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
+}
+
+type ListUsersReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	List          []*UserReply           `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Page          int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUsersReply) Reset() {
+	*x = ListUsersReply{}
+	mi := &file_user_v1_user_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUsersReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUsersReply) ProtoMessage() {}
+
+func (x *ListUsersReply) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUsersReply.ProtoReflect.Descriptor instead.
+func (*ListUsersReply) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ListUsersReply) GetList() []*UserReply {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+func (x *ListUsersReply) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *ListUsersReply) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListUsersReply) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type UpdateUserStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` // 0 封禁 1 解封
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserStatusReq) Reset() {
+	*x = UpdateUserStatusReq{}
+	mi := &file_user_v1_user_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserStatusReq) ProtoMessage() {}
+
+func (x *UpdateUserStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserStatusReq.ProtoReflect.Descriptor instead.
+func (*UpdateUserStatusReq) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UpdateUserStatusReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateUserStatusReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type UpdateUserRoleReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Role          int32                  `protobuf:"varint,2,opt,name=role,proto3" json:"role,omitempty"` // 1 读者 2 作者 3 管理员
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateUserRoleReq) Reset() {
+	*x = UpdateUserRoleReq{}
+	mi := &file_user_v1_user_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateUserRoleReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateUserRoleReq) ProtoMessage() {}
+
+func (x *UpdateUserRoleReq) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateUserRoleReq.ProtoReflect.Descriptor instead.
+func (*UpdateUserRoleReq) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *UpdateUserRoleReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateUserRoleReq) GetRole() int32 {
+	if x != nil {
+		return x.Role
+	}
+	return 0
+}
+
+type EmptyReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmptyReply) Reset() {
+	*x = EmptyReply{}
+	mi := &file_user_v1_user_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmptyReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyReply) ProtoMessage() {}
+
+func (x *EmptyReply) ProtoReflect() protoreflect.Message {
+	mi := &file_user_v1_user_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyReply.ProtoReflect.Descriptor instead.
+func (*EmptyReply) Descriptor() ([]byte, []int) {
+	return file_user_v1_user_proto_rawDescGZIP(), []int{12}
+}
+
 var File_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_user_v1_user_proto_rawDesc = "" +
@@ -618,13 +886,34 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x1a?\n" +
 	"\x11NicknameI18nEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\xa3\x03\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"W\n" +
+	"\fListUsersReq\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x16\n" +
+	"\x06search\x18\x03 \x01(\tR\x06search\"\x7f\n" +
+	"\x0eListUsersReply\x12&\n" +
+	"\x04list\x18\x01 \x03(\v2\x12.user.v1.UserReplyR\x04list\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
+	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"=\n" +
+	"\x13UpdateUserStatusReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\x05R\x06status\"7\n" +
+	"\x11UpdateUserRoleReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04role\x18\x02 \x01(\x05R\x04role\"\f\n" +
+	"\n" +
+	"EmptyReply2\xc2\x05\n" +
 	"\x04User\x12X\n" +
 	"\bRegister\x12\x14.user.v1.RegisterReq\x1a\x16.user.v1.RegisterReply\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/users/register\x12L\n" +
 	"\x05Login\x12\x11.user.v1.LoginReq\x1a\x13.user.v1.LoginReply\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/users/login\x12\\\n" +
 	"\fRefreshToken\x12\x18.user.v1.RefreshTokenReq\x1a\x13.user.v1.LoginReply\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/users/refresh\x12E\n" +
 	"\x05GetMe\x12\x11.user.v1.GetMeReq\x1a\x12.user.v1.UserReply\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/users/me\x12N\n" +
-	"\bUpdateMe\x12\x14.user.v1.UpdateMeReq\x1a\x12.user.v1.UserReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\x1a\r/api/users/meB#Z!open-novel/backend/api/user/v1;v1b\x06proto3"
+	"\bUpdateMe\x12\x14.user.v1.UpdateMeReq\x1a\x12.user.v1.UserReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\x1a\r/api/users/me\x12O\n" +
+	"\tListUsers\x12\x15.user.v1.ListUsersReq\x1a\x17.user.v1.ListUsersReply\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
+	"/api/users\x12h\n" +
+	"\x10UpdateUserStatus\x12\x1c.user.v1.UpdateUserStatusReq\x1a\x13.user.v1.EmptyReply\"!\x82\xd3\xe4\x93\x02\x1b:\x01*2\x16/api/users/{id}/status\x12b\n" +
+	"\x0eUpdateUserRole\x12\x1a.user.v1.UpdateUserRoleReq\x1a\x13.user.v1.EmptyReply\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*2\x14/api/users/{id}/roleB#Z!open-novel/backend/api/user/v1;v1b\x06proto3"
 
 var (
 	file_user_v1_user_proto_rawDescOnce sync.Once
@@ -638,38 +927,50 @@ func file_user_v1_user_proto_rawDescGZIP() []byte {
 	return file_user_v1_user_proto_rawDescData
 }
 
-var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_user_v1_user_proto_goTypes = []any{
-	(*RegisterReq)(nil),     // 0: user.v1.RegisterReq
-	(*RegisterReply)(nil),   // 1: user.v1.RegisterReply
-	(*LoginReq)(nil),        // 2: user.v1.LoginReq
-	(*RefreshTokenReq)(nil), // 3: user.v1.RefreshTokenReq
-	(*LoginReply)(nil),      // 4: user.v1.LoginReply
-	(*GetMeReq)(nil),        // 5: user.v1.GetMeReq
-	(*UpdateMeReq)(nil),     // 6: user.v1.UpdateMeReq
-	(*UserReply)(nil),       // 7: user.v1.UserReply
-	nil,                     // 8: user.v1.UpdateMeReq.NicknameI18nEntry
-	nil,                     // 9: user.v1.UserReply.NicknameI18nEntry
+	(*RegisterReq)(nil),         // 0: user.v1.RegisterReq
+	(*RegisterReply)(nil),       // 1: user.v1.RegisterReply
+	(*LoginReq)(nil),            // 2: user.v1.LoginReq
+	(*RefreshTokenReq)(nil),     // 3: user.v1.RefreshTokenReq
+	(*LoginReply)(nil),          // 4: user.v1.LoginReply
+	(*GetMeReq)(nil),            // 5: user.v1.GetMeReq
+	(*UpdateMeReq)(nil),         // 6: user.v1.UpdateMeReq
+	(*UserReply)(nil),           // 7: user.v1.UserReply
+	(*ListUsersReq)(nil),        // 8: user.v1.ListUsersReq
+	(*ListUsersReply)(nil),      // 9: user.v1.ListUsersReply
+	(*UpdateUserStatusReq)(nil), // 10: user.v1.UpdateUserStatusReq
+	(*UpdateUserRoleReq)(nil),   // 11: user.v1.UpdateUserRoleReq
+	(*EmptyReply)(nil),          // 12: user.v1.EmptyReply
+	nil,                         // 13: user.v1.UpdateMeReq.NicknameI18nEntry
+	nil,                         // 14: user.v1.UserReply.NicknameI18nEntry
 }
 var file_user_v1_user_proto_depIdxs = []int32{
-	7, // 0: user.v1.LoginReply.user:type_name -> user.v1.UserReply
-	8, // 1: user.v1.UpdateMeReq.nickname_i18n:type_name -> user.v1.UpdateMeReq.NicknameI18nEntry
-	9, // 2: user.v1.UserReply.nickname_i18n:type_name -> user.v1.UserReply.NicknameI18nEntry
-	0, // 3: user.v1.User.Register:input_type -> user.v1.RegisterReq
-	2, // 4: user.v1.User.Login:input_type -> user.v1.LoginReq
-	3, // 5: user.v1.User.RefreshToken:input_type -> user.v1.RefreshTokenReq
-	5, // 6: user.v1.User.GetMe:input_type -> user.v1.GetMeReq
-	6, // 7: user.v1.User.UpdateMe:input_type -> user.v1.UpdateMeReq
-	1, // 8: user.v1.User.Register:output_type -> user.v1.RegisterReply
-	4, // 9: user.v1.User.Login:output_type -> user.v1.LoginReply
-	4, // 10: user.v1.User.RefreshToken:output_type -> user.v1.LoginReply
-	7, // 11: user.v1.User.GetMe:output_type -> user.v1.UserReply
-	7, // 12: user.v1.User.UpdateMe:output_type -> user.v1.UserReply
-	8, // [8:13] is the sub-list for method output_type
-	3, // [3:8] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	7,  // 0: user.v1.LoginReply.user:type_name -> user.v1.UserReply
+	13, // 1: user.v1.UpdateMeReq.nickname_i18n:type_name -> user.v1.UpdateMeReq.NicknameI18nEntry
+	14, // 2: user.v1.UserReply.nickname_i18n:type_name -> user.v1.UserReply.NicknameI18nEntry
+	7,  // 3: user.v1.ListUsersReply.list:type_name -> user.v1.UserReply
+	0,  // 4: user.v1.User.Register:input_type -> user.v1.RegisterReq
+	2,  // 5: user.v1.User.Login:input_type -> user.v1.LoginReq
+	3,  // 6: user.v1.User.RefreshToken:input_type -> user.v1.RefreshTokenReq
+	5,  // 7: user.v1.User.GetMe:input_type -> user.v1.GetMeReq
+	6,  // 8: user.v1.User.UpdateMe:input_type -> user.v1.UpdateMeReq
+	8,  // 9: user.v1.User.ListUsers:input_type -> user.v1.ListUsersReq
+	10, // 10: user.v1.User.UpdateUserStatus:input_type -> user.v1.UpdateUserStatusReq
+	11, // 11: user.v1.User.UpdateUserRole:input_type -> user.v1.UpdateUserRoleReq
+	1,  // 12: user.v1.User.Register:output_type -> user.v1.RegisterReply
+	4,  // 13: user.v1.User.Login:output_type -> user.v1.LoginReply
+	4,  // 14: user.v1.User.RefreshToken:output_type -> user.v1.LoginReply
+	7,  // 15: user.v1.User.GetMe:output_type -> user.v1.UserReply
+	7,  // 16: user.v1.User.UpdateMe:output_type -> user.v1.UserReply
+	9,  // 17: user.v1.User.ListUsers:output_type -> user.v1.ListUsersReply
+	12, // 18: user.v1.User.UpdateUserStatus:output_type -> user.v1.EmptyReply
+	12, // 19: user.v1.User.UpdateUserRole:output_type -> user.v1.EmptyReply
+	12, // [12:20] is the sub-list for method output_type
+	4,  // [4:12] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_user_v1_user_proto_init() }
@@ -684,7 +985,7 @@ func file_user_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_v1_user_proto_rawDesc), len(file_user_v1_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
