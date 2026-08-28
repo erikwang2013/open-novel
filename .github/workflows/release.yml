@@ -21,6 +21,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
           prev_tag=$(git tag --list 'v*' --sort=-v:refname | head -n1)
           if [[ -n "$prev_tag" ]] && [[ "$(git rev-list -n1 "$prev_tag")" == "$(git rev-parse HEAD)" ]]; then
             echo "HEAD 已带版本 tag $prev_tag，跳过"
