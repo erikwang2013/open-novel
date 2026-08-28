@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             v5.28.3
-// source: api/recommendation/v1/recommendation.proto
+// source: recommendation/v1/recommendation.proto
 
 package v1
 
@@ -28,7 +28,7 @@ type RecommendationHTTPServer interface {
 
 func RegisterRecommendationHTTPServer(s *http.Server, srv RecommendationHTTPServer) {
 	r := s.Route("/")
-	r.GET("/api/v1/recommend", _Recommendation_GetRecommendations0_HTTP_Handler(srv))
+	r.GET("/api/recommend", _Recommendation_GetRecommendations0_HTTP_Handler(srv))
 }
 
 func _Recommendation_GetRecommendations0_HTTP_Handler(srv RecommendationHTTPServer) func(ctx http.Context) error {
@@ -66,7 +66,7 @@ func NewRecommendationHTTPClient(client *http.Client) RecommendationHTTPClient {
 // GetRecommendations 推荐列表：strategy = hot | new（缺省 hot）；缓存 recommend:{strategy}:{page}:{page_size}
 func (c *RecommendationHTTPClientImpl) GetRecommendations(ctx context.Context, in *GetRecommendationsReq, opts ...http.CallOption) (*GetRecommendationsReply, error) {
 	var out GetRecommendationsReply
-	pattern := "/api/v1/recommend"
+	pattern := "/api/recommend"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationRecommendationGetRecommendations))
 	opts = append(opts, http.PathTemplate(pattern))

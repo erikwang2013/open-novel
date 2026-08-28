@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             v5.28.3
-// source: api/book/v1/book.proto
+// source: book/v1/book.proto
 
 package v1
 
@@ -42,12 +42,12 @@ type BookHTTPServer interface {
 
 func RegisterBookHTTPServer(s *http.Server, srv BookHTTPServer) {
 	r := s.Route("/")
-	r.GET("/api/v1/books/{id}", _Book_GetBook0_HTTP_Handler(srv))
-	r.GET("/api/v1/books", _Book_ListBooks0_HTTP_Handler(srv))
-	r.POST("/api/v1/books", _Book_CreateBook0_HTTP_Handler(srv))
-	r.PUT("/api/v1/books/{id}/translation", _Book_UpsertBookTranslation0_HTTP_Handler(srv))
-	r.GET("/api/v1/categories", _Book_ListCategories0_HTTP_Handler(srv))
-	r.GET("/api/v1/tags", _Book_ListTags0_HTTP_Handler(srv))
+	r.GET("/api/books/{id}", _Book_GetBook0_HTTP_Handler(srv))
+	r.GET("/api/books", _Book_ListBooks0_HTTP_Handler(srv))
+	r.POST("/api/books", _Book_CreateBook0_HTTP_Handler(srv))
+	r.PUT("/api/books/{id}/translation", _Book_UpsertBookTranslation0_HTTP_Handler(srv))
+	r.GET("/api/categories", _Book_ListCategories0_HTTP_Handler(srv))
+	r.GET("/api/tags", _Book_ListTags0_HTTP_Handler(srv))
 }
 
 func _Book_GetBook0_HTTP_Handler(srv BookHTTPServer) func(ctx http.Context) error {
@@ -201,7 +201,7 @@ func NewBookHTTPClient(client *http.Client) BookHTTPClient {
 // CreateBook 建书（作者角色，RBAC）
 func (c *BookHTTPClientImpl) CreateBook(ctx context.Context, in *CreateBookReq, opts ...http.CallOption) (*CreateBookReply, error) {
 	var out CreateBookReply
-	pattern := "/api/v1/books"
+	pattern := "/api/books"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBookCreateBook))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -215,7 +215,7 @@ func (c *BookHTTPClientImpl) CreateBook(ctx context.Context, in *CreateBookReq, 
 // GetBook 书籍详情：缓存 → DB → 回填；翻译缺失回落原语言
 func (c *BookHTTPClientImpl) GetBook(ctx context.Context, in *GetBookReq, opts ...http.CallOption) (*BookReply, error) {
 	var out BookReply
-	pattern := "/api/v1/books/{id}"
+	pattern := "/api/books/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationBookGetBook))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -229,7 +229,7 @@ func (c *BookHTTPClientImpl) GetBook(ctx context.Context, in *GetBookReq, opts .
 // ListBooks 分页列表：page 从 1 起，page_size 默认 20 上限 100；支持 category_id/tag_id/status 过滤
 func (c *BookHTTPClientImpl) ListBooks(ctx context.Context, in *ListBooksReq, opts ...http.CallOption) (*ListBooksReply, error) {
 	var out ListBooksReply
-	pattern := "/api/v1/books"
+	pattern := "/api/books"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationBookListBooks))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -242,7 +242,7 @@ func (c *BookHTTPClientImpl) ListBooks(ctx context.Context, in *ListBooksReq, op
 
 func (c *BookHTTPClientImpl) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...http.CallOption) (*ListCategoriesReply, error) {
 	var out ListCategoriesReply
-	pattern := "/api/v1/categories"
+	pattern := "/api/categories"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationBookListCategories))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -256,7 +256,7 @@ func (c *BookHTTPClientImpl) ListCategories(ctx context.Context, in *ListCategor
 // ListTags 标签按 lang 过滤
 func (c *BookHTTPClientImpl) ListTags(ctx context.Context, in *ListTagsReq, opts ...http.CallOption) (*ListTagsReply, error) {
 	var out ListTagsReply
-	pattern := "/api/v1/tags"
+	pattern := "/api/tags"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationBookListTags))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -270,7 +270,7 @@ func (c *BookHTTPClientImpl) ListTags(ctx context.Context, in *ListTagsReq, opts
 // UpsertBookTranslation 新增/更新翻译（作者角色；更新后失效对应缓存键）
 func (c *BookHTTPClientImpl) UpsertBookTranslation(ctx context.Context, in *UpsertBookTranslationReq, opts ...http.CallOption) (*UpsertBookTranslationReply, error) {
 	var out UpsertBookTranslationReply
-	pattern := "/api/v1/books/{id}/translation"
+	pattern := "/api/books/{id}/translation"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationBookUpsertBookTranslation))
 	opts = append(opts, http.PathTemplate(pattern))

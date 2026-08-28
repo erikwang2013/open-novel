@@ -15,6 +15,7 @@ func Biz(code int, reason, msg string) error { return kerrors.New(code, reason, 
 var (
 	// 通用（14xxxx，与 Chapter 共用）
 	ErrInvalidArgument = Biz(140400, "INVALID_ARGUMENT", "invalid argument")
+	ErrApiVersion      = Biz(140426, "API_VERSION_MISMATCH", "X-Api-Version header required (v1)")
 	ErrUnauth          = Biz(140401, "UNAUTHENTICATED", "unauthenticated")
 	ErrPermission      = Biz(140403, "PERMISSION_DENIED", "permission denied")
 	ErrNotFound        = Biz(140404, "NOT_FOUND", "not found")

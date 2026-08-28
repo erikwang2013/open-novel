@@ -12,38 +12,38 @@ service Book {
   // 书籍详情：缓存 → DB → 回填；翻译缺失回落原语言
   rpc GetBook(GetBookReq) returns (BookReply) {
     option (google.api.http) = {
-      get: "/api/v1/books/{id}"
+      get: "/api/books/{id}"
     };
   }
   // 分页列表：page 从 1 起，page_size 默认 20 上限 100；支持 category_id/tag_id/status 过滤
   rpc ListBooks(ListBooksReq) returns (ListBooksReply) {
     option (google.api.http) = {
-      get: "/api/v1/books"
+      get: "/api/books"
     };
   }
   // 建书（作者角色，RBAC）
   rpc CreateBook(CreateBookReq) returns (CreateBookReply) {
     option (google.api.http) = {
-      post: "/api/v1/books"
+      post: "/api/books"
       body: "*"
     };
   }
   // 新增/更新翻译（作者角色；更新后失效对应缓存键）
   rpc UpsertBookTranslation(UpsertBookTranslationReq) returns (UpsertBookTranslationReply) {
     option (google.api.http) = {
-      put: "/api/v1/books/{id}/translation"
+      put: "/api/books/{id}/translation"
       body: "*"
     };
   }
   rpc ListCategories(ListCategoriesReq) returns (ListCategoriesReply) {
     option (google.api.http) = {
-      get: "/api/v1/categories"
+      get: "/api/categories"
     };
   }
   // 标签按 lang 过滤
   rpc ListTags(ListTagsReq) returns (ListTagsReply) {
     option (google.api.http) = {
-      get: "/api/v1/tags"
+      get: "/api/tags"
     };
   }
 }

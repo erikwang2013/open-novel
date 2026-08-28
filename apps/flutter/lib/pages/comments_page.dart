@@ -5,7 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../models/models.dart';
 
-/// 评论区：列表 + 发布 + 点赞（GET/POST /api/v1/comments，POST /api/v1/comments/{id}/like）。
+/// 评论区：列表 + 发布 + 点赞（GET/POST /api/comments，POST /api/comments/{id}/like）。
 class CommentsPage extends StatefulWidget {
   const CommentsPage({super.key, required this.bookId, this.chapterId});
 

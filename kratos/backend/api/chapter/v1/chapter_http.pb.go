@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             v5.28.3
-// source: api/chapter/v1/chapter.proto
+// source: chapter/v1/chapter.proto
 
 package v1
 
@@ -44,14 +44,14 @@ type ChapterHTTPServer interface {
 
 func RegisterChapterHTTPServer(s *http.Server, srv ChapterHTTPServer) {
 	r := s.Route("/")
-	r.POST("/api/v1/books/{book_id}/chapters", _Chapter_CreateChapter0_HTTP_Handler(srv))
-	r.GET("/api/v1/books/{book_id}/chapters", _Chapter_ListChapters0_HTTP_Handler(srv))
-	r.GET("/api/v1/chapters/{id}/content", _Chapter_GetChapterContent0_HTTP_Handler(srv))
-	r.GET("/api/v1/progress", _Chapter_GetReadingProgress0_HTTP_Handler(srv))
-	r.PUT("/api/v1/progress", _Chapter_UpdateReadingProgress0_HTTP_Handler(srv))
-	r.POST("/api/v1/bookshelf", _Chapter_AddToBookshelf0_HTTP_Handler(srv))
-	r.DELETE("/api/v1/bookshelf/{book_id}", _Chapter_RemoveFromBookshelf0_HTTP_Handler(srv))
-	r.GET("/api/v1/bookshelf", _Chapter_ListBookshelf0_HTTP_Handler(srv))
+	r.POST("/api/books/{book_id}/chapters", _Chapter_CreateChapter0_HTTP_Handler(srv))
+	r.GET("/api/books/{book_id}/chapters", _Chapter_ListChapters0_HTTP_Handler(srv))
+	r.GET("/api/chapters/{id}/content", _Chapter_GetChapterContent0_HTTP_Handler(srv))
+	r.GET("/api/progress", _Chapter_GetReadingProgress0_HTTP_Handler(srv))
+	r.PUT("/api/progress", _Chapter_UpdateReadingProgress0_HTTP_Handler(srv))
+	r.POST("/api/bookshelf", _Chapter_AddToBookshelf0_HTTP_Handler(srv))
+	r.DELETE("/api/bookshelf/{book_id}", _Chapter_RemoveFromBookshelf0_HTTP_Handler(srv))
+	r.GET("/api/bookshelf", _Chapter_ListBookshelf0_HTTP_Handler(srv))
 }
 
 func _Chapter_CreateChapter0_HTTP_Handler(srv ChapterHTTPServer) func(ctx http.Context) error {
@@ -251,7 +251,7 @@ func NewChapterHTTPClient(client *http.Client) ChapterHTTPClient {
 
 func (c *ChapterHTTPClientImpl) AddToBookshelf(ctx context.Context, in *AddToBookshelfReq, opts ...http.CallOption) (*ShelfReply, error) {
 	var out ShelfReply
-	pattern := "/api/v1/bookshelf"
+	pattern := "/api/bookshelf"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationChapterAddToBookshelf))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -265,7 +265,7 @@ func (c *ChapterHTTPClientImpl) AddToBookshelf(ctx context.Context, in *AddToBoo
 // CreateChapter 新建章节（需登录；章节 + 正文同事务，按 rune 计数）
 func (c *ChapterHTTPClientImpl) CreateChapter(ctx context.Context, in *CreateChapterReq, opts ...http.CallOption) (*ChapterReply, error) {
 	var out ChapterReply
-	pattern := "/api/v1/books/{book_id}/chapters"
+	pattern := "/api/books/{book_id}/chapters"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationChapterCreateChapter))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -279,7 +279,7 @@ func (c *ChapterHTTPClientImpl) CreateChapter(ctx context.Context, in *CreateCha
 // GetChapterContent 正文（缓存 chapter:content:{book_id}:{chapter_id}:{lang}）
 func (c *ChapterHTTPClientImpl) GetChapterContent(ctx context.Context, in *GetChapterContentReq, opts ...http.CallOption) (*ChapterContentReply, error) {
 	var out ChapterContentReply
-	pattern := "/api/v1/chapters/{id}/content"
+	pattern := "/api/chapters/{id}/content"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationChapterGetChapterContent))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -292,7 +292,7 @@ func (c *ChapterHTTPClientImpl) GetChapterContent(ctx context.Context, in *GetCh
 
 func (c *ChapterHTTPClientImpl) GetReadingProgress(ctx context.Context, in *GetReadingProgressReq, opts ...http.CallOption) (*ProgressReply, error) {
 	var out ProgressReply
-	pattern := "/api/v1/progress"
+	pattern := "/api/progress"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationChapterGetReadingProgress))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -305,7 +305,7 @@ func (c *ChapterHTTPClientImpl) GetReadingProgress(ctx context.Context, in *GetR
 
 func (c *ChapterHTTPClientImpl) ListBookshelf(ctx context.Context, in *ListBookshelfReq, opts ...http.CallOption) (*ListBookshelfReply, error) {
 	var out ListBookshelfReply
-	pattern := "/api/v1/bookshelf"
+	pattern := "/api/bookshelf"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationChapterListBookshelf))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -319,7 +319,7 @@ func (c *ChapterHTTPClientImpl) ListBookshelf(ctx context.Context, in *ListBooks
 // ListChapters 章节列表（缓存 chapter:list:{book_id}:{page}:{page_size}）
 func (c *ChapterHTTPClientImpl) ListChapters(ctx context.Context, in *ListChaptersReq, opts ...http.CallOption) (*ListChaptersReply, error) {
 	var out ListChaptersReply
-	pattern := "/api/v1/books/{book_id}/chapters"
+	pattern := "/api/books/{book_id}/chapters"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationChapterListChapters))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -332,7 +332,7 @@ func (c *ChapterHTTPClientImpl) ListChapters(ctx context.Context, in *ListChapte
 
 func (c *ChapterHTTPClientImpl) RemoveFromBookshelf(ctx context.Context, in *RemoveFromBookshelfReq, opts ...http.CallOption) (*RemoveFromBookshelfReply, error) {
 	var out RemoveFromBookshelfReply
-	pattern := "/api/v1/bookshelf/{book_id}"
+	pattern := "/api/bookshelf/{book_id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationChapterRemoveFromBookshelf))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -345,7 +345,7 @@ func (c *ChapterHTTPClientImpl) RemoveFromBookshelf(ctx context.Context, in *Rem
 
 func (c *ChapterHTTPClientImpl) UpdateReadingProgress(ctx context.Context, in *UpdateReadingProgressReq, opts ...http.CallOption) (*ProgressReply, error) {
 	var out ProgressReply
-	pattern := "/api/v1/progress"
+	pattern := "/api/progress"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationChapterUpdateReadingProgress))
 	opts = append(opts, http.PathTemplate(pattern))

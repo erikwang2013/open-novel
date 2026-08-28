@@ -835,16 +835,16 @@ const file_comment_v1_comment_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x19.comment.v1.FavoriteReplyR\x04list\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\xdb\x06\n" +
-	"\aComment\x12d\n" +
-	"\rCreateComment\x12\x1c.comment.v1.CreateCommentReq\x1a\x18.comment.v1.CommentReply\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/v1/comments\x12d\n" +
-	"\fListComments\x12\x1b.comment.v1.ListCommentsReq\x1a\x1d.comment.v1.ListCommentsReply\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/v1/comments\x12e\n" +
-	"\vLikeComment\x12\x1a.comment.v1.LikeCommentReq\x1a\x16.comment.v1.EmptyReply\"\"\x82\xd3\xe4\x93\x02\x1c\"\x1a/api/v1/comments/{id}/like\x12i\n" +
-	"\rUnlikeComment\x12\x1c.comment.v1.UnlikeCommentReq\x1a\x16.comment.v1.EmptyReply\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/api/v1/comments/{id}/like\x12k\n" +
-	"\rReportComment\x12\x1c.comment.v1.ReportCommentReq\x1a\x16.comment.v1.EmptyReply\"$\x82\xd3\xe4\x93\x02\x1e\"\x1c/api/v1/comments/{id}/report\x12n\n" +
-	"\vAddFavorite\x12\x1a.comment.v1.AddFavoriteReq\x1a\x19.comment.v1.FavoriteReply\"(\x82\xd3\xe4\x93\x02\"\" /api/v1/books/{book_id}/favorite\x12k\n" +
-	"\vDelFavorite\x12\x1a.comment.v1.DelFavoriteReq\x1a\x16.comment.v1.EmptyReply\"(\x82\xd3\xe4\x93\x02\"* /api/v1/books/{book_id}/favorite\x12h\n" +
-	"\rListFavorites\x12\x1c.comment.v1.ListFavoritesReq\x1a\x1e.comment.v1.ListFavoritesReply\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/favoritesB&Z$open-novel/backend/api/comment/v1;v1b\x06proto3"
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\xc3\x06\n" +
+	"\aComment\x12a\n" +
+	"\rCreateComment\x12\x1c.comment.v1.CreateCommentReq\x1a\x18.comment.v1.CommentReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/comments\x12a\n" +
+	"\fListComments\x12\x1b.comment.v1.ListCommentsReq\x1a\x1d.comment.v1.ListCommentsReply\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/comments\x12b\n" +
+	"\vLikeComment\x12\x1a.comment.v1.LikeCommentReq\x1a\x16.comment.v1.EmptyReply\"\x1f\x82\xd3\xe4\x93\x02\x19\"\x17/api/comments/{id}/like\x12f\n" +
+	"\rUnlikeComment\x12\x1c.comment.v1.UnlikeCommentReq\x1a\x16.comment.v1.EmptyReply\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/api/comments/{id}/like\x12h\n" +
+	"\rReportComment\x12\x1c.comment.v1.ReportCommentReq\x1a\x16.comment.v1.EmptyReply\"!\x82\xd3\xe4\x93\x02\x1b\"\x19/api/comments/{id}/report\x12k\n" +
+	"\vAddFavorite\x12\x1a.comment.v1.AddFavoriteReq\x1a\x19.comment.v1.FavoriteReply\"%\x82\xd3\xe4\x93\x02\x1f\"\x1d/api/books/{book_id}/favorite\x12h\n" +
+	"\vDelFavorite\x12\x1a.comment.v1.DelFavoriteReq\x1a\x16.comment.v1.EmptyReply\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/api/books/{book_id}/favorite\x12e\n" +
+	"\rListFavorites\x12\x1c.comment.v1.ListFavoritesReq\x1a\x1e.comment.v1.ListFavoritesReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/favoritesB&Z$open-novel/backend/api/comment/v1;v1b\x06proto3"
 
 var (
 	file_comment_v1_comment_proto_rawDescOnce sync.Once

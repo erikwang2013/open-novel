@@ -5,7 +5,7 @@
 // source: api/user/v1/user.proto
 
 // 用户服务：注册 / 登录（JWT + RefreshToken 轮换）/ 个人资料（任务 #20）
-// 业务码段 11xxxx；REST 映射 /api/v1/users/*
+// 业务码段 11xxxx；REST 映射 /api/users/*
 
 package v1
 

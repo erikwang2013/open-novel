@@ -35,7 +35,7 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 
 <p align="center"><img src="../architecture.svg" alt="Diagrama de la arquitectura del sistema" width="860"/></p>
 
-La arquitectura general es una arquitectura de microservicios Go-Kratos: los clientes Flutter / HarmonyOS interactúan con la puerta de enlace de API a través de Nginx + CDN; la puerta de enlace enruta por dominio hacia los servicios backend de usuarios, libros, capítulos, comentarios, búsqueda y recomendaciones. La capa de datos está compuesta por MySQL maestro-esclavo (separación de lectura/escritura) + caché Redis + índice de búsqueda OpenSearch. Los servicios se comunican mediante gRPC; las interfaces HTTP externas usan uniformemente el prefijo `/api/v1`.
+La arquitectura general es una arquitectura de microservicios Go-Kratos: los clientes Flutter / HarmonyOS interactúan con la puerta de enlace de API a través de Nginx + CDN; la puerta de enlace enruta por dominio hacia los servicios backend de usuarios, libros, capítulos, comentarios, búsqueda y recomendaciones. La capa de datos está compuesta por MySQL maestro-esclavo (separación de lectura/escritura) + caché Redis + índice de búsqueda OpenSearch. Los servicios se comunican mediante gRPC; las interfaces HTTP externas usan uniformemente el prefijo `/api`.
 
 Otros diagramas: panorama del proyecto [../project.svg](../project.svg) · ciclo de solicitudes [../request-cycle.svg](../request-cycle.svg) · arquitectura de seguridad [../security.svg](../security.svg) · estructura del proyecto [../structure.svg](../structure.svg).
 
@@ -83,16 +83,16 @@ Script de creación de tablas: `kratos/backend/sql/init.sql` (se ejecuta automá
 
 ## Prefijo de API
 
-Las interfaces HTTP del backend comienzan uniformemente con `/api/v1` y se agrupan por dominio:
+Las interfaces HTTP del backend comienzan uniformemente con `/api` y se agrupan por dominio:
 
 | Dominio | Rutas de ejemplo | Definición proto |
 | :--- | :--- | :--- |
-| Usuarios | `/api/v1/users` etc. | `kratos/backend/api/user/v1` |
-| Libros | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| Capítulos | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| Comentarios | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| Búsqueda | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| Recomendaciones | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| Usuarios | `/api/users` etc. | `kratos/backend/api/user/v1` |
+| Libros | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| Capítulos | `/api/...` | `kratos/backend/api/chapter/v1` |
+| Comentarios | `/api/...` | `kratos/backend/api/comment/v1` |
+| Búsqueda | `/api/...` | `kratos/backend/api/search/v1` |
+| Recomendaciones | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 Las rutas detalladas se encuentran en las declaraciones `option (google.api.http)` de cada archivo proto.
 

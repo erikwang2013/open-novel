@@ -35,7 +35,7 @@ Open Novel منصة عالمية للروايات متعددة اللغات بم
 
 <p align="center"><img src="images/ar/architecture.svg" alt="مخطط معمارية النظام" width="860"/></p>
 
-النظام بأكمله مبني على معمارية الخدمات المصغرة Go-Kratos: تتفاعل تطبيقات Flutter / HarmonyOS مع بوابة API عبر Nginx + CDN؛ وتقوم البوابة بتوجيه الطلبات حسب المجالات إلى الخدمات الخلفية مثل المستخدمين والكتب والفصول والتعليقات والبحث والتوصيات؛ وطبقة البيانات هي MySQL رئيسي/تابع (فصل القراءة والكتابة) + ذاكرة Redis المؤقتة + فهرس بحث OpenSearch. التواصل بين الخدمات يتم عبر gRPC، وجميع واجهات HTTP الخارجية لها البادئة الموحدة `/api/v1`.
+النظام بأكمله مبني على معمارية الخدمات المصغرة Go-Kratos: تتفاعل تطبيقات Flutter / HarmonyOS مع بوابة API عبر Nginx + CDN؛ وتقوم البوابة بتوجيه الطلبات حسب المجالات إلى الخدمات الخلفية مثل المستخدمين والكتب والفصول والتعليقات والبحث والتوصيات؛ وطبقة البيانات هي MySQL رئيسي/تابع (فصل القراءة والكتابة) + ذاكرة Redis المؤقتة + فهرس بحث OpenSearch. التواصل بين الخدمات يتم عبر gRPC، وجميع واجهات HTTP الخارجية لها البادئة الموحدة `/api`.
 
 مخططات التصميم الأخرى: نظرة عامة على المشروع [../project.svg](../project.svg) · دورة الطلب [../request-cycle.svg](../request-cycle.svg) · المعمارية الأمنية [../security.svg](../security.svg) · هيكل المشروع [../structure.svg](../structure.svg).
 
@@ -83,16 +83,16 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## بادئة API
 
-جميع واجهات HTTP الخلفية تبدأ بـ `/api/v1`، وتُقسم حسب المجالات:
+جميع واجهات HTTP الخلفية تبدأ بـ `/api`، وتُقسم حسب المجالات:
 
 | المجال | أمثلة على المسارات | تعريف proto |
 | :--- | :--- | :--- |
-| المستخدمون | `/api/v1/users` وغيرها | `kratos/backend/api/user/v1` |
-| الكتب | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| الفصول | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| التعليقات | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| البحث | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| التوصيات | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| المستخدمون | `/api/users` وغيرها | `kratos/backend/api/user/v1` |
+| الكتب | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| الفصول | `/api/...` | `kratos/backend/api/chapter/v1` |
+| التعليقات | `/api/...` | `kratos/backend/api/comment/v1` |
+| البحث | `/api/...` | `kratos/backend/api/search/v1` |
+| التوصيات | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 تفاصيل المسارات موجودة في إعلانات `option (google.api.http)` داخل كل ملف proto.
 

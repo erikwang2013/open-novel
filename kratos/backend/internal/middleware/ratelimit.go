@@ -2,6 +2,7 @@ package middleware
 
 // 按路径限流中间件（§六）：固定窗口按 IP 计数。
 // 路由表来自 svc1：login 10/分钟，comment 发布 10/分钟、举报 5/分钟，search 10/分钟。
+// 注意：路径不含版本（/api/...），版本经 X-Api-Version 头协商。
 
 import (
 	"context"
@@ -60,7 +61,7 @@ func (l *rateLimiter) sweep(now time.Time) {
 	}
 }
 
-// RateLimit 按路径限流；limits 形如 {"/api/v1/users/login": 10}，未列出的路径放行。
+// RateLimit 按路径限流；limits 形如 {"/api/users/login": 10}，未列出的路径放行。
 func RateLimit(limits map[string]int) middleware.Middleware {
 	lms := make(map[string]*rateLimiter, len(limits))
 	for path, n := range limits {
@@ -72,7 +73,7 @@ func RateLimit(limits map[string]int) middleware.Middleware {
 			if !ok {
 				return next(ctx, req)
 			}
-			// HTTP 用路由模板（"/api/v1/users/login"）匹配；gRPC 用 operation，未列出的放行。
+			// HTTP 用路由模板（"/api/users/login"）匹配；gRPC 用 operation，未列出的放行。
 			key := tr.Operation()
 			if ht, isHTTP := tr.(*khttp.Transport); isHTTP {
 				key = ht.PathTemplate()

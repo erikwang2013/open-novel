@@ -36,7 +36,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 
 <p align="center"><img src="images/en/architecture.svg" alt="System architecture diagram" width="860"/></p>
 
-Overall Go-Kratos microservice architecture: Flutter / HarmonyOS clients interact with the API gateway via Nginx + CDN; the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api/v1` prefix.
+Overall Go-Kratos microservice architecture: Flutter / HarmonyOS clients interact with the API gateway via Nginx + CDN; the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api` prefix.
 
 Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · request cycle [docs/request-cycle.svg](../../docs/request-cycle.svg) · security architecture [docs/security.svg](../../docs/security.svg) · project structure [docs/structure.svg](../../docs/structure.svg).
 
@@ -98,16 +98,16 @@ Table creation script: `kratos/backend/sql/init.sql` (automatically executed on 
 
 ## API Prefix
 
-Backend HTTP APIs uniformly start with `/api/v1`, grouped by domain:
+Backend HTTP APIs uniformly start with `/api`, grouped by domain:
 
 | Domain | Example routes | proto definition |
 | :--- | :--- | :--- |
-| User | `/api/v1/users`, etc. | `kratos/backend/api/user/v1` |
-| Book | `/api/v1/books`, `/api/v1/books/{id}`, `/api/v1/categories`, `/api/v1/tags` | `kratos/backend/api/book/v1` |
-| Chapter | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| Comment | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| Search | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| Recommendation | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| User | `/api/users`, etc. | `kratos/backend/api/user/v1` |
+| Book | `/api/books`, `/api/books/{id}`, `/api/categories`, `/api/tags` | `kratos/backend/api/book/v1` |
+| Chapter | `/api/...` | `kratos/backend/api/chapter/v1` |
+| Comment | `/api/...` | `kratos/backend/api/comment/v1` |
+| Search | `/api/...` | `kratos/backend/api/search/v1` |
+| Recommendation | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 For detailed routes, see the `option (google.api.http)` declarations in each proto file.
 

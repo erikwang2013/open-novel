@@ -6,7 +6,7 @@ import '../main.dart';
 import '../models/models.dart';
 import 'comments_page.dart';
 
-/// 阅读器：章节正文 + 上一章 / 下一章（GET /api/v1/chapters/{id}/content）。
+/// 阅读器：章节正文 + 上一章 / 下一章（GET /api/chapters/{id}/content）。
 class ReaderPage extends StatefulWidget {
   const ReaderPage({
     super.key,

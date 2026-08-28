@@ -5,7 +5,7 @@
 // source: user/v1/user.proto
 
 // 用户服务：注册 / 登录（JWT + RefreshToken 轮换）/ 个人资料（任务 #20）
-// 业务码段 11xxxx；REST 映射 /api/v1/users/*
+// 业务码段 11xxxx；REST 映射 /api/users/*
 
 package v1
 
@@ -618,13 +618,13 @@ const file_user_v1_user_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\x1a?\n" +
 	"\x11NicknameI18nEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\xb2\x03\n" +
-	"\x04User\x12[\n" +
-	"\bRegister\x12\x14.user.v1.RegisterReq\x1a\x16.user.v1.RegisterReply\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/api/v1/users/register\x12O\n" +
-	"\x05Login\x12\x11.user.v1.LoginReq\x1a\x13.user.v1.LoginReply\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/v1/users/login\x12_\n" +
-	"\fRefreshToken\x12\x18.user.v1.RefreshTokenReq\x1a\x13.user.v1.LoginReply\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/api/v1/users/refresh\x12H\n" +
-	"\x05GetMe\x12\x11.user.v1.GetMeReq\x1a\x12.user.v1.UserReply\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/v1/users/me\x12Q\n" +
-	"\bUpdateMe\x12\x14.user.v1.UpdateMeReq\x1a\x12.user.v1.UserReply\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\x1a\x10/api/v1/users/meB#Z!open-novel/backend/api/user/v1;v1b\x06proto3"
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x012\xa3\x03\n" +
+	"\x04User\x12X\n" +
+	"\bRegister\x12\x14.user.v1.RegisterReq\x1a\x16.user.v1.RegisterReply\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/users/register\x12L\n" +
+	"\x05Login\x12\x11.user.v1.LoginReq\x1a\x13.user.v1.LoginReply\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/api/users/login\x12\\\n" +
+	"\fRefreshToken\x12\x18.user.v1.RefreshTokenReq\x1a\x13.user.v1.LoginReply\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/api/users/refresh\x12E\n" +
+	"\x05GetMe\x12\x11.user.v1.GetMeReq\x1a\x12.user.v1.UserReply\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/users/me\x12N\n" +
+	"\bUpdateMe\x12\x14.user.v1.UpdateMeReq\x1a\x12.user.v1.UserReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\x1a\r/api/users/meB#Z!open-novel/backend/api/user/v1;v1b\x06proto3"
 
 var (
 	file_user_v1_user_proto_rawDescOnce sync.Once

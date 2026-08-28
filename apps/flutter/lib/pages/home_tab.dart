@@ -6,7 +6,7 @@ import '../main.dart';
 import '../models/models.dart';
 import '../widgets/book_card.dart';
 
-/// 首页 tab：推荐列表（GET /api/v1/recommend?strategy=hot）。
+/// 首页 tab：推荐列表（GET /api/recommend?strategy=hot）。
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
 

@@ -35,7 +35,7 @@ Open Novel adalah platform novel multibahasa global dengan arsitektur mikroservi
 
 <p align="center"><img src="images/id/architecture.svg" alt="Diagram arsitektur sistem" width="860"/></p>
 
-Seluruh sistem dibangun di atas arsitektur mikroservis Go-Kratos: klien Flutter / HarmonyOS berinteraksi dengan API gateway melalui Nginx + CDN; gateway merutekan per domain ke layanan backend seperti pengguna, buku, bab, komentar, pencarian, dan rekomendasi; lapisan data adalah MySQL master-slave (pemisahan baca/tulis) + cache Redis + indeks pencarian OpenSearch. Komunikasi antar layanan menggunakan gRPC, dan seluruh antarmuka HTTP eksternal memiliki prefiks terpadu `/api/v1`.
+Seluruh sistem dibangun di atas arsitektur mikroservis Go-Kratos: klien Flutter / HarmonyOS berinteraksi dengan API gateway melalui Nginx + CDN; gateway merutekan per domain ke layanan backend seperti pengguna, buku, bab, komentar, pencarian, dan rekomendasi; lapisan data adalah MySQL master-slave (pemisahan baca/tulis) + cache Redis + indeks pencarian OpenSearch. Komunikasi antar layanan menggunakan gRPC, dan seluruh antarmuka HTTP eksternal memiliki prefiks terpadu `/api`.
 
 Diagram desain lainnya: gambaran umum proyek [../project.svg](../project.svg) · siklus permintaan [../request-cycle.svg](../request-cycle.svg) · arsitektur keamanan [../security.svg](../security.svg) · struktur proyek [../structure.svg](../structure.svg).
 
@@ -83,16 +83,16 @@ Skrip pembuatan tabel: `kratos/backend/sql/init.sql` (dijalankan otomatis saat D
 
 ## Prefiks API
 
-Seluruh antarmuka HTTP backend dimulai dengan `/api/v1`, dikelompokkan per domain:
+Seluruh antarmuka HTTP backend dimulai dengan `/api`, dikelompokkan per domain:
 
 | Domain | Contoh rute | Definisi proto |
 | :--- | :--- | :--- |
-| Pengguna | `/api/v1/users`, dll. | `kratos/backend/api/user/v1` |
-| Buku | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| Bab | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| Komentar | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| Pencarian | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| Rekomendasi | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| Pengguna | `/api/users`, dll. | `kratos/backend/api/user/v1` |
+| Buku | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| Bab | `/api/...` | `kratos/backend/api/chapter/v1` |
+| Komentar | `/api/...` | `kratos/backend/api/comment/v1` |
+| Pencarian | `/api/...` | `kratos/backend/api/search/v1` |
+| Rekomendasi | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 Lihat deklarasi `option (google.api.http)` di setiap file proto untuk rute terperinci.
 

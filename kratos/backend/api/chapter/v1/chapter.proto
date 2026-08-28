@@ -12,47 +12,47 @@ service Chapter {
   // 新建章节（需登录；章节 + 正文同事务，按 rune 计数）
   rpc CreateChapter(CreateChapterReq) returns (ChapterReply) {
     option (google.api.http) = {
-      post: "/api/v1/books/{book_id}/chapters"
+      post: "/api/books/{book_id}/chapters"
       body: "*"
     };
   }
   // 章节列表（缓存 chapter:list:{book_id}:{page}:{page_size}）
   rpc ListChapters(ListChaptersReq) returns (ListChaptersReply) {
     option (google.api.http) = {
-      get: "/api/v1/books/{book_id}/chapters"
+      get: "/api/books/{book_id}/chapters"
     };
   }
   // 正文（缓存 chapter:content:{book_id}:{chapter_id}:{lang}）
   rpc GetChapterContent(GetChapterContentReq) returns (ChapterContentReply) {
     option (google.api.http) = {
-      get: "/api/v1/chapters/{id}/content"
+      get: "/api/chapters/{id}/content"
     };
   }
   rpc GetReadingProgress(GetReadingProgressReq) returns (ProgressReply) {
     option (google.api.http) = {
-      get: "/api/v1/progress"
+      get: "/api/progress"
     };
   }
   rpc UpdateReadingProgress(UpdateReadingProgressReq) returns (ProgressReply) {
     option (google.api.http) = {
-      put: "/api/v1/progress"
+      put: "/api/progress"
       body: "*"
     };
   }
   rpc AddToBookshelf(AddToBookshelfReq) returns (ShelfReply) {
     option (google.api.http) = {
-      post: "/api/v1/bookshelf"
+      post: "/api/bookshelf"
       body: "*"
     };
   }
   rpc RemoveFromBookshelf(RemoveFromBookshelfReq) returns (RemoveFromBookshelfReply) {
     option (google.api.http) = {
-      delete: "/api/v1/bookshelf/{book_id}"
+      delete: "/api/bookshelf/{book_id}"
     };
   }
   rpc ListBookshelf(ListBookshelfReq) returns (ListBookshelfReply) {
     option (google.api.http) = {
-      get: "/api/v1/bookshelf"
+      get: "/api/bookshelf"
     };
   }
 }

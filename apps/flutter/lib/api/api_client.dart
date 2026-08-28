@@ -14,6 +14,7 @@ class ApiClient {
     ));
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (o, h) {
+        o.headers['X-Api-Version'] = 'v1';
         if (_accessToken != null) {
           o.headers['Authorization'] = 'Bearer $_accessToken';
         }
@@ -50,14 +51,14 @@ class ApiClient {
   bool get loggedIn => _accessToken != null;
 
   Future<LoginResult> login(String username, String password) async {
-    final r = await _dio.post('/api/v1/users/login',
+    final r = await _dio.post('/api/users/login',
         data: {'username': username, 'password': password});
     return _saveSession(LoginResult.fromJson(r.data as Map<String, dynamic>));
   }
 
   Future<LoginResult> register(
       String username, String password, String email, String nickname) async {
-    final r = await _dio.post('/api/v1/users/register', data: {
+    final r = await _dio.post('/api/users/register', data: {
       'username': username,
       'password': password,
       'email': email,
@@ -67,7 +68,7 @@ class ApiClient {
   }
 
   Future<bool> _refresh() async {
-    final r = await _dio.post('/api/v1/users/refresh',
+    final r = await _dio.post('/api/users/refresh',
         data: {'refresh_token': _refreshToken});
     _saveSession(LoginResult.fromJson(r.data as Map<String, dynamic>));
     return true;
@@ -103,20 +104,20 @@ class ApiClient {
 
   Future<List<Book>> listBooks(
       {int page = 1, int pageSize = 20, String lang = 'zh'}) async {
-    final r = await _dio.get('/api/v1/books',
+    final r = await _dio.get('/api/books',
         queryParameters: {'page': page, 'page_size': pageSize, 'lang': lang});
     return _parseList<Book>(r.data, Book.fromJson);
   }
 
   Future<Book> getBook(String id, {String lang = 'zh'}) async {
     final r =
-        await _dio.get('/api/v1/books/$id', queryParameters: {'lang': lang});
+        await _dio.get('/api/books/$id', queryParameters: {'lang': lang});
     return Book.fromJson(r.data as Map<String, dynamic>);
   }
 
   Future<List<RecommendItem>> recommend(
       {String strategy = 'hot', int pageSize = 10, String lang = 'zh'}) async {
-    final r = await _dio.get('/api/v1/recommend', queryParameters: {
+    final r = await _dio.get('/api/recommend', queryParameters: {
       'strategy': strategy,
       'page_size': pageSize,
       'lang': lang,
@@ -126,7 +127,7 @@ class ApiClient {
 
   Future<List<SearchDoc>> search(String q,
       {int page = 1, int pageSize = 20, String lang = 'zh'}) async {
-    final r = await _dio.get('/api/v1/search', queryParameters: {
+    final r = await _dio.get('/api/search', queryParameters: {
       'q': q,
       'page': page,
       'page_size': pageSize,
@@ -137,14 +138,14 @@ class ApiClient {
 
   Future<List<Chapter>> listChapters(String bookId,
       {int page = 1, int pageSize = 100, String lang = 'zh'}) async {
-    final r = await _dio.get('/api/v1/books/$bookId/chapters',
+    final r = await _dio.get('/api/books/$bookId/chapters',
         queryParameters: {'page': page, 'page_size': pageSize, 'lang': lang});
     return _parseList<Chapter>(r.data, Chapter.fromJson);
   }
 
   Future<ChapterContent> getChapterContent(String chapterId,
       {String lang = 'zh'}) async {
-    final r = await _dio.get('/api/v1/chapters/$chapterId/content',
+    final r = await _dio.get('/api/chapters/$chapterId/content',
         queryParameters: {'lang': lang});
     return ChapterContent.fromJson(r.data as Map<String, dynamic>);
   }
@@ -157,13 +158,13 @@ class ApiClient {
       'page_size': pageSize,
       'chapter_id': ?chapterId,
     };
-    final r = await _dio.get('/api/v1/comments', queryParameters: q);
+    final r = await _dio.get('/api/comments', queryParameters: q);
     return _parseList<Comment>(r.data, Comment.fromJson);
   }
 
   Future<void> postComment(String bookId, String content,
       {String? chapterId}) async {
-    await _dio.post('/api/v1/comments', data: {
+    await _dio.post('/api/comments', data: {
       'book_id': bookId,
       'chapter_id': ?chapterId,
       'content': content,
@@ -171,16 +172,16 @@ class ApiClient {
   }
 
   Future<void> likeComment(String id) =>
-      _dio.post('/api/v1/comments/$id/like');
+      _dio.post('/api/comments/$id/like');
 
   Future<void> unlikeComment(String id) =>
-      _dio.delete('/api/v1/comments/$id/like');
+      _dio.delete('/api/comments/$id/like');
 
   Future<void> favoriteBook(String bookId) =>
-      _dio.post('/api/v1/books/$bookId/favorite');
+      _dio.post('/api/books/$bookId/favorite');
 
   Future<void> unfavoriteBook(String bookId) =>
-      _dio.delete('/api/v1/books/$bookId/favorite');
+      _dio.delete('/api/books/$bookId/favorite');
 
   List<T> _parseList<T>(
       dynamic data, T Function(Map<String, dynamic>) fromJson) {

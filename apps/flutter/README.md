@@ -1,6 +1,6 @@
 # Open Novel Flutter 客户端
 
-Open Novel 的多端前端之一：Flutter 全平台应用（Web / Desktop / Mobile），多语言支持，共用后端 Go-Kratos API（前缀 `/api/v1`，默认 `http://localhost:8000`）。
+Open Novel 的多端前端之一：Flutter 全平台应用（Web / Desktop / Mobile），多语言支持，共用后端 Go-Kratos API（前缀 `/api`，默认 `http://localhost:8000`）。
 
 ## 环境要求
 

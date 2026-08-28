@@ -12,45 +12,45 @@ service Comment {
   // 发表评论（内容 ≤2000 字符；chapter_id 缺省 = 书籍级评论）
   rpc CreateComment(CreateCommentReq) returns (CommentReply) {
     option (google.api.http) = {
-      post: "/api/v1/comments"
+      post: "/api/comments"
       body: "*"
     };
   }
   // 评论列表：chapter_id 缺省 = 全部；0 = 仅书籍级
   rpc ListComments(ListCommentsReq) returns (ListCommentsReply) {
     option (google.api.http) = {
-      get: "/api/v1/comments"
+      get: "/api/comments"
     };
   }
   rpc LikeComment(LikeCommentReq) returns (EmptyReply) {
     option (google.api.http) = {
-      post: "/api/v1/comments/{id}/like"
+      post: "/api/comments/{id}/like"
     };
   }
   rpc UnlikeComment(UnlikeCommentReq) returns (EmptyReply) {
     option (google.api.http) = {
-      delete: "/api/v1/comments/{id}/like"
+      delete: "/api/comments/{id}/like"
     };
   }
   // 举报：置 status=2 待审核
   rpc ReportComment(ReportCommentReq) returns (EmptyReply) {
     option (google.api.http) = {
-      post: "/api/v1/comments/{id}/report"
+      post: "/api/comments/{id}/report"
     };
   }
   rpc AddFavorite(AddFavoriteReq) returns (FavoriteReply) {
     option (google.api.http) = {
-      post: "/api/v1/books/{book_id}/favorite"
+      post: "/api/books/{book_id}/favorite"
     };
   }
   rpc DelFavorite(DelFavoriteReq) returns (EmptyReply) {
     option (google.api.http) = {
-      delete: "/api/v1/books/{book_id}/favorite"
+      delete: "/api/books/{book_id}/favorite"
     };
   }
   rpc ListFavorites(ListFavoritesReq) returns (ListFavoritesReply) {
     option (google.api.http) = {
-      get: "/api/v1/favorites"
+      get: "/api/favorites"
     };
   }
 }

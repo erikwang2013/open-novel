@@ -751,12 +751,12 @@ const file_search_v1_search_proto_rawDesc = "" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\")\n" +
 	"\x0eDeleteIndexReq\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\"\x12\n" +
-	"\x10DeleteIndexReply2\xa5\x03\n" +
-	"\x06Search\x12]\n" +
-	"\vSearchBooks\x12\x19.search.v1.SearchBooksReq\x1a\x1b.search.v1.SearchBooksReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/v1/search\x12a\n" +
-	"\vHotSearches\x12\x19.search.v1.HotSearchesReq\x1a\x1b.search.v1.HotSearchesReply\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/api/v1/search/hot\x12j\n" +
-	"\tSyncIndex\x12\x17.search.v1.SyncIndexReq\x1a\x19.search.v1.SyncIndexReply\")\x82\xd3\xe4\x93\x02#:\x01*\"\x1e/api/v1/search/index/{book_id}\x12m\n" +
-	"\vDeleteIndex\x12\x19.search.v1.DeleteIndexReq\x1a\x1b.search.v1.DeleteIndexReply\"&\x82\xd3\xe4\x93\x02 *\x1e/api/v1/search/index/{book_id}B%Z#open-novel/backend/api/search/v1;v1b\x06proto3"
+	"\x10DeleteIndexReply2\x99\x03\n" +
+	"\x06Search\x12Z\n" +
+	"\vSearchBooks\x12\x19.search.v1.SearchBooksReq\x1a\x1b.search.v1.SearchBooksReply\"\x13\x82\xd3\xe4\x93\x02\r\x12\v/api/search\x12^\n" +
+	"\vHotSearches\x12\x19.search.v1.HotSearchesReq\x1a\x1b.search.v1.HotSearchesReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/search/hot\x12g\n" +
+	"\tSyncIndex\x12\x17.search.v1.SyncIndexReq\x1a\x19.search.v1.SyncIndexReply\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/api/search/index/{book_id}\x12j\n" +
+	"\vDeleteIndex\x12\x19.search.v1.DeleteIndexReq\x1a\x1b.search.v1.DeleteIndexReply\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/api/search/index/{book_id}B%Z#open-novel/backend/api/search/v1;v1b\x06proto3"
 
 var (
 	file_search_v1_search_proto_rawDescOnce sync.Once

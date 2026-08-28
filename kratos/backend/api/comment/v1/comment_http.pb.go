@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             v5.28.3
-// source: api/comment/v1/comment.proto
+// source: comment/v1/comment.proto
 
 package v1
 
@@ -44,14 +44,14 @@ type CommentHTTPServer interface {
 
 func RegisterCommentHTTPServer(s *http.Server, srv CommentHTTPServer) {
 	r := s.Route("/")
-	r.POST("/api/v1/comments", _Comment_CreateComment0_HTTP_Handler(srv))
-	r.GET("/api/v1/comments", _Comment_ListComments0_HTTP_Handler(srv))
-	r.POST("/api/v1/comments/{id}/like", _Comment_LikeComment0_HTTP_Handler(srv))
-	r.DELETE("/api/v1/comments/{id}/like", _Comment_UnlikeComment0_HTTP_Handler(srv))
-	r.POST("/api/v1/comments/{id}/report", _Comment_ReportComment0_HTTP_Handler(srv))
-	r.POST("/api/v1/books/{book_id}/favorite", _Comment_AddFavorite0_HTTP_Handler(srv))
-	r.DELETE("/api/v1/books/{book_id}/favorite", _Comment_DelFavorite0_HTTP_Handler(srv))
-	r.GET("/api/v1/favorites", _Comment_ListFavorites0_HTTP_Handler(srv))
+	r.POST("/api/comments", _Comment_CreateComment0_HTTP_Handler(srv))
+	r.GET("/api/comments", _Comment_ListComments0_HTTP_Handler(srv))
+	r.POST("/api/comments/{id}/like", _Comment_LikeComment0_HTTP_Handler(srv))
+	r.DELETE("/api/comments/{id}/like", _Comment_UnlikeComment0_HTTP_Handler(srv))
+	r.POST("/api/comments/{id}/report", _Comment_ReportComment0_HTTP_Handler(srv))
+	r.POST("/api/books/{book_id}/favorite", _Comment_AddFavorite0_HTTP_Handler(srv))
+	r.DELETE("/api/books/{book_id}/favorite", _Comment_DelFavorite0_HTTP_Handler(srv))
+	r.GET("/api/favorites", _Comment_ListFavorites0_HTTP_Handler(srv))
 }
 
 func _Comment_CreateComment0_HTTP_Handler(srv CommentHTTPServer) func(ctx http.Context) error {
@@ -248,7 +248,7 @@ func NewCommentHTTPClient(client *http.Client) CommentHTTPClient {
 
 func (c *CommentHTTPClientImpl) AddFavorite(ctx context.Context, in *AddFavoriteReq, opts ...http.CallOption) (*FavoriteReply, error) {
 	var out FavoriteReply
-	pattern := "/api/v1/books/{book_id}/favorite"
+	pattern := "/api/books/{book_id}/favorite"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentAddFavorite))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -262,7 +262,7 @@ func (c *CommentHTTPClientImpl) AddFavorite(ctx context.Context, in *AddFavorite
 // CreateComment 发表评论（内容 ≤2000 字符；chapter_id 缺省 = 书籍级评论）
 func (c *CommentHTTPClientImpl) CreateComment(ctx context.Context, in *CreateCommentReq, opts ...http.CallOption) (*CommentReply, error) {
 	var out CommentReply
-	pattern := "/api/v1/comments"
+	pattern := "/api/comments"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationCommentCreateComment))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -275,7 +275,7 @@ func (c *CommentHTTPClientImpl) CreateComment(ctx context.Context, in *CreateCom
 
 func (c *CommentHTTPClientImpl) DelFavorite(ctx context.Context, in *DelFavoriteReq, opts ...http.CallOption) (*EmptyReply, error) {
 	var out EmptyReply
-	pattern := "/api/v1/books/{book_id}/favorite"
+	pattern := "/api/books/{book_id}/favorite"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentDelFavorite))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -288,7 +288,7 @@ func (c *CommentHTTPClientImpl) DelFavorite(ctx context.Context, in *DelFavorite
 
 func (c *CommentHTTPClientImpl) LikeComment(ctx context.Context, in *LikeCommentReq, opts ...http.CallOption) (*EmptyReply, error) {
 	var out EmptyReply
-	pattern := "/api/v1/comments/{id}/like"
+	pattern := "/api/comments/{id}/like"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentLikeComment))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -302,7 +302,7 @@ func (c *CommentHTTPClientImpl) LikeComment(ctx context.Context, in *LikeComment
 // ListComments 评论列表：chapter_id 缺省 = 全部；0 = 仅书籍级
 func (c *CommentHTTPClientImpl) ListComments(ctx context.Context, in *ListCommentsReq, opts ...http.CallOption) (*ListCommentsReply, error) {
 	var out ListCommentsReply
-	pattern := "/api/v1/comments"
+	pattern := "/api/comments"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentListComments))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -315,7 +315,7 @@ func (c *CommentHTTPClientImpl) ListComments(ctx context.Context, in *ListCommen
 
 func (c *CommentHTTPClientImpl) ListFavorites(ctx context.Context, in *ListFavoritesReq, opts ...http.CallOption) (*ListFavoritesReply, error) {
 	var out ListFavoritesReply
-	pattern := "/api/v1/favorites"
+	pattern := "/api/favorites"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentListFavorites))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -329,7 +329,7 @@ func (c *CommentHTTPClientImpl) ListFavorites(ctx context.Context, in *ListFavor
 // ReportComment 举报：置 status=2 待审核
 func (c *CommentHTTPClientImpl) ReportComment(ctx context.Context, in *ReportCommentReq, opts ...http.CallOption) (*EmptyReply, error) {
 	var out EmptyReply
-	pattern := "/api/v1/comments/{id}/report"
+	pattern := "/api/comments/{id}/report"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentReportComment))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -342,7 +342,7 @@ func (c *CommentHTTPClientImpl) ReportComment(ctx context.Context, in *ReportCom
 
 func (c *CommentHTTPClientImpl) UnlikeComment(ctx context.Context, in *UnlikeCommentReq, opts ...http.CallOption) (*EmptyReply, error) {
 	var out EmptyReply
-	pattern := "/api/v1/comments/{id}/like"
+	pattern := "/api/comments/{id}/like"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentUnlikeComment))
 	opts = append(opts, http.PathTemplate(pattern))

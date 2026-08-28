@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 // 用户服务：注册 / 登录（JWT + RefreshToken 轮换）/ 个人资料（任务 #20）
-// 业务码段 11xxxx；REST 映射 /api/v1/users/*
+// 业务码段 11xxxx；REST 映射 /api/users/*
 package user.v1;
 
 import "google/api/annotations.proto";
@@ -12,34 +12,34 @@ service User {
   // 注册（bcrypt 密码；用户名 3-32 位字母数字下划线）
   rpc Register(RegisterReq) returns (RegisterReply) {
     option (google.api.http) = {
-      post: "/api/v1/users/register"
+      post: "/api/users/register"
       body: "*"
     };
   }
   // 登录：签发 access(30min) + refresh(7d，Redis 存储，轮换制)
   rpc Login(LoginReq) returns (LoginReply) {
     option (google.api.http) = {
-      post: "/api/v1/users/login"
+      post: "/api/users/login"
       body: "*"
     };
   }
   // 刷新：refresh token 轮换，旧 token 立即作废
   rpc RefreshToken(RefreshTokenReq) returns (LoginReply) {
     option (google.api.http) = {
-      post: "/api/v1/users/refresh"
+      post: "/api/users/refresh"
       body: "*"
     };
   }
   // 当前用户资料（nickname 按 lang 本地化）
   rpc GetMe(GetMeReq) returns (UserReply) {
     option (google.api.http) = {
-      get: "/api/v1/users/me"
+      get: "/api/users/me"
     };
   }
   // 更新资料（字段可选，只更新非空项）
   rpc UpdateMe(UpdateMeReq) returns (UserReply) {
     option (google.api.http) = {
-      put: "/api/v1/users/me"
+      put: "/api/users/me"
       body: "*"
     };
   }

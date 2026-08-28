@@ -1027,16 +1027,16 @@ const file_chapter_v1_chapter_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x16.chapter.v1.ShelfReplyR\x04list\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\xb1\a\n" +
-	"\aChapter\x12t\n" +
-	"\rCreateChapter\x12\x1c.chapter.v1.CreateChapterReq\x1a\x18.chapter.v1.ChapterReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /api/v1/books/{book_id}/chapters\x12t\n" +
-	"\fListChapters\x12\x1b.chapter.v1.ListChaptersReq\x1a\x1d.chapter.v1.ListChaptersReply\"(\x82\xd3\xe4\x93\x02\"\x12 /api/v1/books/{book_id}/chapters\x12}\n" +
-	"\x11GetChapterContent\x12 .chapter.v1.GetChapterContentReq\x1a\x1f.chapter.v1.ChapterContentReply\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/api/v1/chapters/{id}/content\x12l\n" +
-	"\x12GetReadingProgress\x12!.chapter.v1.GetReadingProgressReq\x1a\x19.chapter.v1.ProgressReply\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/api/v1/progress\x12u\n" +
-	"\x15UpdateReadingProgress\x12$.chapter.v1.UpdateReadingProgressReq\x1a\x19.chapter.v1.ProgressReply\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\x1a\x10/api/v1/progress\x12e\n" +
-	"\x0eAddToBookshelf\x12\x1d.chapter.v1.AddToBookshelfReq\x1a\x16.chapter.v1.ShelfReply\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/v1/bookshelf\x12\x84\x01\n" +
-	"\x13RemoveFromBookshelf\x12\".chapter.v1.RemoveFromBookshelfReq\x1a$.chapter.v1.RemoveFromBookshelfReply\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/api/v1/bookshelf/{book_id}\x12h\n" +
-	"\rListBookshelf\x12\x1c.chapter.v1.ListBookshelfReq\x1a\x1e.chapter.v1.ListBookshelfReply\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/bookshelfB&Z$open-novel/backend/api/chapter/v1;v1b\x06proto3"
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\x99\a\n" +
+	"\aChapter\x12q\n" +
+	"\rCreateChapter\x12\x1c.chapter.v1.CreateChapterReq\x1a\x18.chapter.v1.ChapterReply\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/api/books/{book_id}/chapters\x12q\n" +
+	"\fListChapters\x12\x1b.chapter.v1.ListChaptersReq\x1a\x1d.chapter.v1.ListChaptersReply\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/api/books/{book_id}/chapters\x12z\n" +
+	"\x11GetChapterContent\x12 .chapter.v1.GetChapterContentReq\x1a\x1f.chapter.v1.ChapterContentReply\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/chapters/{id}/content\x12i\n" +
+	"\x12GetReadingProgress\x12!.chapter.v1.GetReadingProgressReq\x1a\x19.chapter.v1.ProgressReply\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/progress\x12r\n" +
+	"\x15UpdateReadingProgress\x12$.chapter.v1.UpdateReadingProgressReq\x1a\x19.chapter.v1.ProgressReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\x1a\r/api/progress\x12b\n" +
+	"\x0eAddToBookshelf\x12\x1d.chapter.v1.AddToBookshelfReq\x1a\x16.chapter.v1.ShelfReply\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/api/bookshelf\x12\x81\x01\n" +
+	"\x13RemoveFromBookshelf\x12\".chapter.v1.RemoveFromBookshelfReq\x1a$.chapter.v1.RemoveFromBookshelfReply\" \x82\xd3\xe4\x93\x02\x1a*\x18/api/bookshelf/{book_id}\x12e\n" +
+	"\rListBookshelf\x12\x1c.chapter.v1.ListBookshelfReq\x1a\x1e.chapter.v1.ListBookshelfReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/bookshelfB&Z$open-novel/backend/api/chapter/v1;v1b\x06proto3"
 
 var (
 	file_chapter_v1_chapter_proto_rawDescOnce sync.Once

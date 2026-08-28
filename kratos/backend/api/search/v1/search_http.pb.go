@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             v5.28.3
-// source: api/search/v1/search.proto
+// source: search/v1/search.proto
 
 package v1
 
@@ -36,10 +36,10 @@ type SearchHTTPServer interface {
 
 func RegisterSearchHTTPServer(s *http.Server, srv SearchHTTPServer) {
 	r := s.Route("/")
-	r.GET("/api/v1/search", _Search_SearchBooks0_HTTP_Handler(srv))
-	r.GET("/api/v1/search/hot", _Search_HotSearches0_HTTP_Handler(srv))
-	r.POST("/api/v1/search/index/{book_id}", _Search_SyncIndex0_HTTP_Handler(srv))
-	r.DELETE("/api/v1/search/index/{book_id}", _Search_DeleteIndex0_HTTP_Handler(srv))
+	r.GET("/api/search", _Search_SearchBooks0_HTTP_Handler(srv))
+	r.GET("/api/search/hot", _Search_HotSearches0_HTTP_Handler(srv))
+	r.POST("/api/search/index/{book_id}", _Search_SyncIndex0_HTTP_Handler(srv))
+	r.DELETE("/api/search/index/{book_id}", _Search_DeleteIndex0_HTTP_Handler(srv))
 }
 
 func _Search_SearchBooks0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) error {
@@ -147,7 +147,7 @@ func NewSearchHTTPClient(client *http.Client) SearchHTTPClient {
 
 func (c *SearchHTTPClientImpl) DeleteIndex(ctx context.Context, in *DeleteIndexReq, opts ...http.CallOption) (*DeleteIndexReply, error) {
 	var out DeleteIndexReply
-	pattern := "/api/v1/search/index/{book_id}"
+	pattern := "/api/search/index/{book_id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationSearchDeleteIndex))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -161,7 +161,7 @@ func (c *SearchHTTPClientImpl) DeleteIndex(ctx context.Context, in *DeleteIndexR
 // HotSearches 热门榜单（缓存 search:hot）
 func (c *SearchHTTPClientImpl) HotSearches(ctx context.Context, in *HotSearchesReq, opts ...http.CallOption) (*HotSearchesReply, error) {
 	var out HotSearchesReply
-	pattern := "/api/v1/search/hot"
+	pattern := "/api/search/hot"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationSearchHotSearches))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -175,7 +175,7 @@ func (c *SearchHTTPClientImpl) HotSearches(ctx context.Context, in *HotSearchesR
 // SearchBooks 搜索（lang 缺省 zh-CN；记录搜索日志，best-effort 不阻塞搜索）
 func (c *SearchHTTPClientImpl) SearchBooks(ctx context.Context, in *SearchBooksReq, opts ...http.CallOption) (*SearchBooksReply, error) {
 	var out SearchBooksReply
-	pattern := "/api/v1/search"
+	pattern := "/api/search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationSearchSearchBooks))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -189,7 +189,7 @@ func (c *SearchHTTPClientImpl) SearchBooks(ctx context.Context, in *SearchBooksR
 // SyncIndex 索引同步（书籍服务在新建/更新书籍或翻译时调用）
 func (c *SearchHTTPClientImpl) SyncIndex(ctx context.Context, in *SyncIndexReq, opts ...http.CallOption) (*SyncIndexReply, error) {
 	var out SyncIndexReply
-	pattern := "/api/v1/search/index/{book_id}"
+	pattern := "/api/search/index/{book_id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationSearchSyncIndex))
 	opts = append(opts, http.PathTemplate(pattern))

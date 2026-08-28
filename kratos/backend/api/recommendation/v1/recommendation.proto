@@ -12,7 +12,7 @@ service Recommendation {
   // 推荐列表：strategy = hot | new（缺省 hot）；缓存 recommend:{strategy}:{page}:{page_size}
   rpc GetRecommendations(GetRecommendationsReq) returns (GetRecommendationsReply) {
     option (google.api.http) = {
-      get: "/api/v1/recommend"
+      get: "/api/recommend"
     };
   }
 }

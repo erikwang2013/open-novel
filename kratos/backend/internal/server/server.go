@@ -28,10 +28,10 @@ import (
 
 // 限流路由表（按路径模板，§六）：登录/评论发布/举报/搜索。
 var rateLimits = map[string]int{
-	"/api/v1/users/login":         10,
-	"/api/v1/comments":            10,
-	"/api/v1/comments/{id}/report": 5,
-	"/api/v1/search":              10,
+	"/api/users/login":         10,
+	"/api/comments":            10,
+	"/api/comments/{id}/report": 5,
+	"/api/search":              10,
 }
 
 func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
@@ -42,6 +42,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 		khttp.Middleware(
 			recovery.Recovery(),
 			logging.Server(logger),
+			middleware.ApiVersion(),
 			middleware.RateLimit(rateLimits),
 			middleware.OptionalAuth(am),
 		),

@@ -35,7 +35,7 @@ Open Novel ist eine globale mehrsprachige Roman-Plattform mit cloudnativer Mikro
 
 <p align="center"><img src="../architecture.svg" alt="Diagramm der Systemarchitektur" width="860"/></p>
 
-Die Gesamtarchitektur ist eine Go-Kratos-Mikroservice-Architektur: Die Flutter- / HarmonyOS-Clients interagieren über Nginx + CDN mit dem API-Gateway; das Gateway routet domänenbasiert zu Backend-Diensten wie Benutzer, Bücher, Kapitel, Kommentare, Suche und Empfehlungen. Die Datenschicht besteht aus MySQL-Master-Replica (Lese-/Schreibtrennung) + Redis-Cache + OpenSearch-Suchindex. Die Dienste kommunizieren über gRPC; die externen HTTP-Schnittstellen verwenden einheitlich das Präfix `/api/v1`.
+Die Gesamtarchitektur ist eine Go-Kratos-Mikroservice-Architektur: Die Flutter- / HarmonyOS-Clients interagieren über Nginx + CDN mit dem API-Gateway; das Gateway routet domänenbasiert zu Backend-Diensten wie Benutzer, Bücher, Kapitel, Kommentare, Suche und Empfehlungen. Die Datenschicht besteht aus MySQL-Master-Replica (Lese-/Schreibtrennung) + Redis-Cache + OpenSearch-Suchindex. Die Dienste kommunizieren über gRPC; die externen HTTP-Schnittstellen verwenden einheitlich das Präfix `/api`.
 
 Weitere Diagramme: Projektübersicht [../project.svg](../project.svg) · Anfragezyklus [../request-cycle.svg](../request-cycle.svg) · Sicherheitsarchitektur [../security.svg](../security.svg) · Projektstruktur [../structure.svg](../structure.svg).
 
@@ -83,16 +83,16 @@ Tabellen-Skript: `kratos/backend/sql/init.sql` (wird beim ersten Start von Docke
 
 ## API-Präfix
 
-Die HTTP-Schnittstellen des Backends beginnen einheitlich mit `/api/v1` und sind nach Domänen gruppiert:
+Die HTTP-Schnittstellen des Backends beginnen einheitlich mit `/api` und sind nach Domänen gruppiert:
 
 | Domäne | Beispielrouten | proto-Definition |
 | :--- | :--- | :--- |
-| Benutzer | `/api/v1/users` usw. | `kratos/backend/api/user/v1` |
-| Bücher | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| Kapitel | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| Kommentare | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| Suche | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| Empfehlungen | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| Benutzer | `/api/users` usw. | `kratos/backend/api/user/v1` |
+| Bücher | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| Kapitel | `/api/...` | `kratos/backend/api/chapter/v1` |
+| Kommentare | `/api/...` | `kratos/backend/api/comment/v1` |
+| Suche | `/api/...` | `kratos/backend/api/search/v1` |
+| Empfehlungen | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 Detaillierte Routen finden Sie in den Deklarationen `option (google.api.http)` der jeweiligen proto-Dateien.
 

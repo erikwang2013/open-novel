@@ -36,7 +36,7 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 
 <p align="center"><img src="images/ja/architecture.svg" alt="システムアーキテクチャ図" width="860"/></p>
 
-全体は Go-Kratos マイクロサービスアーキテクチャです。Flutter / HarmonyOS クライアントは Nginx + CDN を経由して API ゲートウェイとやり取りし、ゲートウェイはドメインごとにユーザー、書籍、チャプター、コメント、検索、レコメンドなどのバックエンドサービスへルーティングします。データ層は MySQL マスタースレーブ（読み書き分離）+ Redis キャッシュ + OpenSearch 検索インデックスです。サービス間は gRPC で通信し、外部向け HTTP インターフェースは統一プレフィックス `/api/v1` を使用します。
+全体は Go-Kratos マイクロサービスアーキテクチャです。Flutter / HarmonyOS クライアントは Nginx + CDN を経由して API ゲートウェイとやり取りし、ゲートウェイはドメインごとにユーザー、書籍、チャプター、コメント、検索、レコメンドなどのバックエンドサービスへルーティングします。データ層は MySQL マスタースレーブ（読み書き分離）+ Redis キャッシュ + OpenSearch 検索インデックスです。サービス間は gRPC で通信し、外部向け HTTP インターフェースは統一プレフィックス `/api` を使用します。
 
 その他の設計図：プロジェクト全景 [docs/project.svg](../../docs/project.svg) · リクエストサイクル [docs/request-cycle.svg](../../docs/request-cycle.svg) · セキュリティアーキテクチャ [docs/security.svg](../../docs/security.svg) · プロジェクト構成 [docs/structure.svg](../../docs/structure.svg)。
 
@@ -98,16 +98,16 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API プレフィックス
 
-バックエンドの HTTP インターフェースはすべて `/api/v1` で始まり、ドメインごとにグループ化されています：
+バックエンドの HTTP インターフェースはすべて `/api` で始まり、ドメインごとにグループ化されています：
 
 | ドメイン | サンプルルート | proto 定義 |
 | :--- | :--- | :--- |
-| ユーザー | `/api/v1/users` など | `kratos/backend/api/user/v1` |
-| 書籍 | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| チャプター | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| コメント | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| 検索 | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| レコメンド | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| ユーザー | `/api/users` など | `kratos/backend/api/user/v1` |
+| 書籍 | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| チャプター | `/api/...` | `kratos/backend/api/chapter/v1` |
+| コメント | `/api/...` | `kratos/backend/api/comment/v1` |
+| 検索 | `/api/...` | `kratos/backend/api/search/v1` |
+| レコメンド | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 詳細なルートについては、各 proto ファイルの `option (google.api.http)` 宣言を参照してください。
 

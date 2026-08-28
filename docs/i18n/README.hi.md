@@ -35,7 +35,7 @@ Open Novel एक क्लाउड-नेटिव माइक्रोसर
 
 <p align="center"><img src="images/hi/architecture.svg" alt="सिस्टम आर्किटेक्चर आरेख" width="860"/></p>
 
-पूरा सिस्टम Go-Kratos माइक्रोसर्विस आर्किटेक्चर पर आधारित है: Flutter / HarmonyOS क्लाइंट Nginx + CDN के माध्यम से API गेटवे के साथ इंटरैक्ट करते हैं; गेटवे डोमेन के अनुसार उपयोगकर्ता, पुस्तकें, अध्याय, टिप्पणियाँ, खोज, अनुशंसा आदि बैकएंड सेवाओं तक रूट करता है; डेटा परत MySQL मास्टर-स्लेव (रीड-राइट सेपरेशन) + Redis कैश + OpenSearch सर्च इंडेक्स है। सेवाओं के बीच gRPC संचार होता है, बाहरी HTTP इंटरफेस का एकीकृत उपसर्ग `/api/v1` है।
+पूरा सिस्टम Go-Kratos माइक्रोसर्विस आर्किटेक्चर पर आधारित है: Flutter / HarmonyOS क्लाइंट Nginx + CDN के माध्यम से API गेटवे के साथ इंटरैक्ट करते हैं; गेटवे डोमेन के अनुसार उपयोगकर्ता, पुस्तकें, अध्याय, टिप्पणियाँ, खोज, अनुशंसा आदि बैकएंड सेवाओं तक रूट करता है; डेटा परत MySQL मास्टर-स्लेव (रीड-राइट सेपरेशन) + Redis कैश + OpenSearch सर्च इंडेक्स है। सेवाओं के बीच gRPC संचार होता है, बाहरी HTTP इंटरफेस का एकीकृत उपसर्ग `/api` है।
 
 अन्य डिज़ाइन आरेख: परियोजना अवलोकन [../project.svg](../project.svg) · अनुरोध चक्र [../request-cycle.svg](../request-cycle.svg) · सुरक्षा आर्किटेक्चर [../security.svg](../security.svg) · परियोजना संरचना [../structure.svg](../structure.svg)।
 
@@ -83,16 +83,16 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API उपसर्ग
 
-बैकएंड HTTP इंटरफेस सभी `/api/v1` से शुरू होते हैं, डोमेन के अनुसार समूहीकृत:
+बैकएंड HTTP इंटरफेस सभी `/api` से शुरू होते हैं, डोमेन के अनुसार समूहीकृत:
 
 | डोमेन | उदाहरण रूट | proto परिभाषा |
 | :--- | :--- | :--- |
-| उपयोगकर्ता | `/api/v1/users` आदि | `kratos/backend/api/user/v1` |
-| पुस्तकें | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| अध्याय | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| टिप्पणियाँ | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| खोज | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| अनुशंसा | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| उपयोगकर्ता | `/api/users` आदि | `kratos/backend/api/user/v1` |
+| पुस्तकें | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| अध्याय | `/api/...` | `kratos/backend/api/chapter/v1` |
+| टिप्पणियाँ | `/api/...` | `kratos/backend/api/comment/v1` |
+| खोज | `/api/...` | `kratos/backend/api/search/v1` |
+| अनुशंसा | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 विस्तृत रूट्स के लिए प्रत्येक proto फ़ाइल में `option (google.api.http)` घोषणाएँ देखें।
 

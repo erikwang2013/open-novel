@@ -266,9 +266,9 @@ const file_recommendation_v1_recommendation_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2%.recommendation.v1.RecommendItemReplyR\x04list\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\x98\x01\n" +
-	"\x0eRecommendation\x12\x85\x01\n" +
-	"\x12GetRecommendations\x12(.recommendation.v1.GetRecommendationsReq\x1a*.recommendation.v1.GetRecommendationsReply\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/api/v1/recommendB-Z+open-novel/backend/api/recommendation/v1;v1b\x06proto3"
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\x95\x01\n" +
+	"\x0eRecommendation\x12\x82\x01\n" +
+	"\x12GetRecommendations\x12(.recommendation.v1.GetRecommendationsReq\x1a*.recommendation.v1.GetRecommendationsReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/recommendB-Z+open-novel/backend/api/recommendation/v1;v1b\x06proto3"
 
 var (
 	file_recommendation_v1_recommendation_proto_rawDescOnce sync.Once

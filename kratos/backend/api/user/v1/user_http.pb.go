@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-http v2.9.2
 // - protoc             v5.28.3
-// source: api/user/v1/user.proto
+// source: user/v1/user.proto
 
 package v1
 
@@ -40,11 +40,11 @@ type UserHTTPServer interface {
 
 func RegisterUserHTTPServer(s *http.Server, srv UserHTTPServer) {
 	r := s.Route("/")
-	r.POST("/api/v1/users/register", _User_Register0_HTTP_Handler(srv))
-	r.POST("/api/v1/users/login", _User_Login0_HTTP_Handler(srv))
-	r.POST("/api/v1/users/refresh", _User_RefreshToken0_HTTP_Handler(srv))
-	r.GET("/api/v1/users/me", _User_GetMe0_HTTP_Handler(srv))
-	r.PUT("/api/v1/users/me", _User_UpdateMe0_HTTP_Handler(srv))
+	r.POST("/api/users/register", _User_Register0_HTTP_Handler(srv))
+	r.POST("/api/users/login", _User_Login0_HTTP_Handler(srv))
+	r.POST("/api/users/refresh", _User_RefreshToken0_HTTP_Handler(srv))
+	r.GET("/api/users/me", _User_GetMe0_HTTP_Handler(srv))
+	r.PUT("/api/users/me", _User_UpdateMe0_HTTP_Handler(srv))
 }
 
 func _User_Register0_HTTP_Handler(srv UserHTTPServer) func(ctx http.Context) error {
@@ -178,7 +178,7 @@ func NewUserHTTPClient(client *http.Client) UserHTTPClient {
 // GetMe 当前用户资料（nickname 按 lang 本地化）
 func (c *UserHTTPClientImpl) GetMe(ctx context.Context, in *GetMeReq, opts ...http.CallOption) (*UserReply, error) {
 	var out UserReply
-	pattern := "/api/v1/users/me"
+	pattern := "/api/users/me"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationUserGetMe))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -192,7 +192,7 @@ func (c *UserHTTPClientImpl) GetMe(ctx context.Context, in *GetMeReq, opts ...ht
 // Login 登录：签发 access(30min) + refresh(7d，Redis 存储，轮换制)
 func (c *UserHTTPClientImpl) Login(ctx context.Context, in *LoginReq, opts ...http.CallOption) (*LoginReply, error) {
 	var out LoginReply
-	pattern := "/api/v1/users/login"
+	pattern := "/api/users/login"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserLogin))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -206,7 +206,7 @@ func (c *UserHTTPClientImpl) Login(ctx context.Context, in *LoginReq, opts ...ht
 // RefreshToken 刷新：refresh token 轮换，旧 token 立即作废
 func (c *UserHTTPClientImpl) RefreshToken(ctx context.Context, in *RefreshTokenReq, opts ...http.CallOption) (*LoginReply, error) {
 	var out LoginReply
-	pattern := "/api/v1/users/refresh"
+	pattern := "/api/users/refresh"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRefreshToken))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -220,7 +220,7 @@ func (c *UserHTTPClientImpl) RefreshToken(ctx context.Context, in *RefreshTokenR
 // Register 注册（bcrypt 密码；用户名 3-32 位字母数字下划线）
 func (c *UserHTTPClientImpl) Register(ctx context.Context, in *RegisterReq, opts ...http.CallOption) (*RegisterReply, error) {
 	var out RegisterReply
-	pattern := "/api/v1/users/register"
+	pattern := "/api/users/register"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserRegister))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -234,7 +234,7 @@ func (c *UserHTTPClientImpl) Register(ctx context.Context, in *RegisterReq, opts
 // UpdateMe 更新资料（字段可选，只更新非空项）
 func (c *UserHTTPClientImpl) UpdateMe(ctx context.Context, in *UpdateMeReq, opts ...http.CallOption) (*UserReply, error) {
 	var out UserReply
-	pattern := "/api/v1/users/me"
+	pattern := "/api/users/me"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationUserUpdateMe))
 	opts = append(opts, http.PathTemplate(pattern))

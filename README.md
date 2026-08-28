@@ -35,7 +35,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 <p align="center"><img src="docs/architecture.svg" alt="系统架构图" width="860"/></p>
 
-整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + CDN 与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存 + OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api/v1`。
+整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + CDN 与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存 + OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
 
 其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg)。
 
@@ -81,18 +81,18 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 建表脚本：`kratos/backend/sql/init.sql`（Docker Compose 首次启动自动执行）。详细表设计与读写分离策略见 [docs/novel-project-planning.md](docs/novel-project-planning.md)。
 
-## API 前缀
+## API 文档
 
-后端 HTTP 接口统一以 `/api/v1` 开头，按领域分组：
+接口统一前缀 `/api`，版本经请求头 `X-Api-Version: v1` 协商（不写在 URL 中）。完整端点、参数、错误码与限流说明见 **[docs/api.md](docs/api.md)**。按领域分组：
 
 | 领域 | 示例路由 | proto 定义 |
 | :--- | :--- | :--- |
-| 用户 | `/api/v1/users` 等 | `kratos/backend/api/user/v1` |
-| 书籍 | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| 章节 | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| 评论 | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| 搜索 | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| 推荐 | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| 用户 | `/api/users` 等 | `kratos/backend/api/user/v1` |
+| 书籍 | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| 章节 | `/api/...` | `kratos/backend/api/chapter/v1` |
+| 评论 | `/api/...` | `kratos/backend/api/comment/v1` |
+| 搜索 | `/api/...` | `kratos/backend/api/search/v1` |
+| 推荐 | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 详细路由见各 proto 文件 `option (google.api.http)` 声明。
 

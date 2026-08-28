@@ -35,7 +35,7 @@ Open Novel একটি ক্লাউড-নেটিভ মাইক্রো
 
 <p align="center"><img src="images/bn/architecture.svg" alt="সিস্টেম আর্কিটেকচার ডায়াগ্রাম" width="860"/></p>
 
-পুরো সিস্টেমটি Go-Kratos মাইক্রোসার্ভিস আর্কিটেকচারের উপর ভিত্তি করে তৈরি: Flutter / HarmonyOS ক্লায়েন্ট Nginx + CDN এর মাধ্যমে API গেটওয়ের সাথে ইন্টারঅ্যাক্ট করে; গেটওয়ে ডোমেইন অনুযায়ী ব্যবহারকারী, বই, অধ্যায়, মন্তব্য, সার্চ, রিকমেন্ডেশন ইত্যাদি ব্যাকএন্ড সার্ভিসে রাউট করে; ডেটা লেয়ার হলো MySQL মাস্টার-স্লেভ (রিড-রাইট সেপারেশন) + Redis ক্যাশ + OpenSearch সার্চ ইনডেক্স। সার্ভিসগুলোর মধ্যে gRPC কমিউনিকেশন হয়, বাহ্যিক HTTP ইন্টারফেসের ইউনিফাইড প্রিফিক্স `/api/v1`।
+পুরো সিস্টেমটি Go-Kratos মাইক্রোসার্ভিস আর্কিটেকচারের উপর ভিত্তি করে তৈরি: Flutter / HarmonyOS ক্লায়েন্ট Nginx + CDN এর মাধ্যমে API গেটওয়ের সাথে ইন্টারঅ্যাক্ট করে; গেটওয়ে ডোমেইন অনুযায়ী ব্যবহারকারী, বই, অধ্যায়, মন্তব্য, সার্চ, রিকমেন্ডেশন ইত্যাদি ব্যাকএন্ড সার্ভিসে রাউট করে; ডেটা লেয়ার হলো MySQL মাস্টার-স্লেভ (রিড-রাইট সেপারেশন) + Redis ক্যাশ + OpenSearch সার্চ ইনডেক্স। সার্ভিসগুলোর মধ্যে gRPC কমিউনিকেশন হয়, বাহ্যিক HTTP ইন্টারফেসের ইউনিফাইড প্রিফিক্স `/api`।
 
 অন্যান্য ডিজাইন ডায়াগ্রাম: প্রকল্পের সার্বিক চিত্র [../project.svg](../project.svg) · রিকোয়েস্ট সাইকেল [../request-cycle.svg](../request-cycle.svg) · নিরাপত্তা আর্কিটেকচার [../security.svg](../security.svg) · প্রকল্প কাঠামো [../structure.svg](../structure.svg)।
 
@@ -83,16 +83,16 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API প্রিফিক্স
 
-ব্যাকএন্ডের সব HTTP ইন্টারফেস `/api/v1` দিয়ে শুরু হয়, ডোমেইন অনুযায়ী গ্রুপ করা:
+ব্যাকএন্ডের সব HTTP ইন্টারফেস `/api` দিয়ে শুরু হয়, ডোমেইন অনুযায়ী গ্রুপ করা:
 
 | ডোমেইন | উদাহরণ রুট | proto ডেফিনিশন |
 | :--- | :--- | :--- |
-| ব্যবহারকারী | `/api/v1/users` ইত্যাদি | `kratos/backend/api/user/v1` |
-| বই | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
-| অধ্যায় | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| মন্তব্য | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| সার্চ | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| রিকমেন্ডেশন | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| ব্যবহারকারী | `/api/users` ইত্যাদি | `kratos/backend/api/user/v1` |
+| বই | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
+| অধ্যায় | `/api/...` | `kratos/backend/api/chapter/v1` |
+| মন্তব্য | `/api/...` | `kratos/backend/api/comment/v1` |
+| সার্চ | `/api/...` | `kratos/backend/api/search/v1` |
+| রিকমেন্ডেশন | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 বিস্তারিত রুটের জন্য প্রতিটি proto ফাইলের `option (google.api.http)` ঘোষণা দেখুন।
 

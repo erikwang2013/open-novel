@@ -35,7 +35,7 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 
 <p align="center"><img src="images/ko/architecture.svg" alt="시스템 아키텍처 다이어그램" width="860"/></p>
 
-전체는 Go-Kratos 마이크로서비스 아키텍처입니다. Flutter / HarmonyOS 클라이언트는 Nginx + CDN을 거쳐 API 게이트웨이와 상호작용하며, 게이트웨이는 도메인별로 사용자, 도서, 챕터, 댓글, 검색, 추천 등의 백엔드 서비스로 라우팅합니다. 데이터 계층은 MySQL 마스터-슬레이브(읽기/쓰기 분리) + Redis 캐시 + OpenSearch 검색 인덱스입니다. 서비스 간 gRPC 통신, 외부 HTTP 인터페이스는 통일 접두사 `/api/v1`을 사용합니다.
+전체는 Go-Kratos 마이크로서비스 아키텍처입니다. Flutter / HarmonyOS 클라이언트는 Nginx + CDN을 거쳐 API 게이트웨이와 상호작용하며, 게이트웨이는 도메인별로 사용자, 도서, 챕터, 댓글, 검색, 추천 등의 백엔드 서비스로 라우팅합니다. 데이터 계층은 MySQL 마스터-슬레이브(읽기/쓰기 분리) + Redis 캐시 + OpenSearch 검색 인덱스입니다. 서비스 간 gRPC 통신, 외부 HTTP 인터페이스는 통일 접두사 `/api`을 사용합니다.
 
 기타 설계도: 프로젝트 전체 구조 [docs/project.svg](../../docs/project.svg) · 요청 주기 [docs/request-cycle.svg](../../docs/request-cycle.svg) · 보안 아키텍처 [docs/security.svg](../../docs/security.svg) · 프로젝트 구조 [docs/structure.svg](../../docs/structure.svg).
 
@@ -97,16 +97,16 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API 접두사
 
-백엔드 HTTP 인터페이스는 모두 `/api/v1`로 시작하며 도메인별로 그룹화됩니다:
+백엔드 HTTP 인터페이스는 모두 `/api`로 시작하며 도메인별로 그룹화됩니다:
 
 | 도메인 | 예시 라우트 | proto 정의 |
 | :--- | :--- | :--- |
-| 사용자 | `/api/v1/users` 등 | `kratos/backend/api/user/v1` |
-| 도서 | `/api/v1/books`, `/api/v1/books/{id}`, `/api/v1/categories`, `/api/v1/tags` | `kratos/backend/api/book/v1` |
-| 챕터 | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| 댓글 | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| 검색 | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| 추천 | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| 사용자 | `/api/users` 등 | `kratos/backend/api/user/v1` |
+| 도서 | `/api/books`, `/api/books/{id}`, `/api/categories`, `/api/tags` | `kratos/backend/api/book/v1` |
+| 챕터 | `/api/...` | `kratos/backend/api/chapter/v1` |
+| 댓글 | `/api/...` | `kratos/backend/api/comment/v1` |
+| 검색 | `/api/...` | `kratos/backend/api/search/v1` |
+| 추천 | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 자세한 라우트는 각 proto 파일의 `option (google.api.http)` 선언을 참조하세요.
 

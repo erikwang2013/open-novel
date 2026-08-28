@@ -35,7 +35,7 @@ Open Novel — это глобальная мультиязычная платф
 
 <p align="center"><img src="images/ru/architecture.svg" alt="Схема системной архитектуры" width="860"/></p>
 
-В целом это микросервисная архитектура Go-Kratos: клиенты Flutter / HarmonyOS взаимодействуют с API-шлюзом через Nginx + CDN; шлюз маршрутизирует по доменам к бэкенд-сервисам — пользователи, книги, главы, комментарии, поиск, рекомендации и т. д.; уровень данных — MySQL мастер-реплика (разделение чтения и записи) + кэш Redis + поисковый индекс OpenSearch. Сервисы общаются по gRPC, внешние HTTP-интерфейсы используют единый префикс `/api/v1`.
+В целом это микросервисная архитектура Go-Kratos: клиенты Flutter / HarmonyOS взаимодействуют с API-шлюзом через Nginx + CDN; шлюз маршрутизирует по доменам к бэкенд-сервисам — пользователи, книги, главы, комментарии, поиск, рекомендации и т. д.; уровень данных — MySQL мастер-реплика (разделение чтения и записи) + кэш Redis + поисковый индекс OpenSearch. Сервисы общаются по gRPC, внешние HTTP-интерфейсы используют единый префикс `/api`.
 
 Остальные схемы: общая схема проекта [docs/project.svg](../../docs/project.svg) · цикл запросов [docs/request-cycle.svg](../../docs/request-cycle.svg) · архитектура безопасности [docs/security.svg](../../docs/security.svg) · структура проекта [docs/structure.svg](../../docs/structure.svg).
 
@@ -97,16 +97,16 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## Префикс API
 
-Все HTTP-интерфейсы бэкенда начинаются с `/api/v1` и сгруппированы по доменам:
+Все HTTP-интерфейсы бэкенда начинаются с `/api` и сгруппированы по доменам:
 
 | Домен | Примеры маршрутов | Определение proto |
 | :--- | :--- | :--- |
-| Пользователи | `/api/v1/users` и т. д. | `kratos/backend/api/user/v1` |
-| Книги | `/api/v1/books`, `/api/v1/books/{id}`, `/api/v1/categories`, `/api/v1/tags` | `kratos/backend/api/book/v1` |
-| Главы | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
-| Комментарии | `/api/v1/...` | `kratos/backend/api/comment/v1` |
-| Поиск | `/api/v1/...` | `kratos/backend/api/search/v1` |
-| Рекомендации | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+| Пользователи | `/api/users` и т. д. | `kratos/backend/api/user/v1` |
+| Книги | `/api/books`, `/api/books/{id}`, `/api/categories`, `/api/tags` | `kratos/backend/api/book/v1` |
+| Главы | `/api/...` | `kratos/backend/api/chapter/v1` |
+| Комментарии | `/api/...` | `kratos/backend/api/comment/v1` |
+| Поиск | `/api/...` | `kratos/backend/api/search/v1` |
+| Рекомендации | `/api/...` | `kratos/backend/api/recommendation/v1` |
 
 Подробные маршруты — в объявлениях `option (google.api.http)` в каждом proto-файле.
 

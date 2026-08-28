@@ -12,25 +12,25 @@ service Search {
   // 搜索（lang 缺省 zh-CN；记录搜索日志，best-effort 不阻塞搜索）
   rpc SearchBooks(SearchBooksReq) returns (SearchBooksReply) {
     option (google.api.http) = {
-      get: "/api/v1/search"
+      get: "/api/search"
     };
   }
   // 热门榜单（缓存 search:hot）
   rpc HotSearches(HotSearchesReq) returns (HotSearchesReply) {
     option (google.api.http) = {
-      get: "/api/v1/search/hot"
+      get: "/api/search/hot"
     };
   }
   // 索引同步（书籍服务在新建/更新书籍或翻译时调用）
   rpc SyncIndex(SyncIndexReq) returns (SyncIndexReply) {
     option (google.api.http) = {
-      post: "/api/v1/search/index/{book_id}"
+      post: "/api/search/index/{book_id}"
       body: "*"
     };
   }
   rpc DeleteIndex(DeleteIndexReq) returns (DeleteIndexReply) {
     option (google.api.http) = {
-      delete: "/api/v1/search/index/{book_id}"
+      delete: "/api/search/index/{book_id}"
     };
   }
 }

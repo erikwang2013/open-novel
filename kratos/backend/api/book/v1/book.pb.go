@@ -1054,15 +1054,17 @@ const file_book_v1_book_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04lang\x18\x03 \x01(\tR\x04lang\"6\n" +
 	"\rListTagsReply\x12%\n" +
-	"\x04list\x18\x01 \x03(\v2\x11.book.v1.TagReplyR\x04list2\xc9\x04\n" +
-	"\x04Book\x12N\n" +
-	"\aGetBook\x12\x13.book.v1.GetBookReq\x1a\x12.book.v1.BookReply\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/api/v1/books/{id}\x12R\n" +
-	"\tListBooks\x12\x15.book.v1.ListBooksReq\x1a\x17.book.v1.ListBooksReply\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/v1/books\x12X\n" +
+	"\x04list\x18\x01 \x03(\v2\x11.book.v1.TagReplyR\x04list2\xb7\x04\n" +
+	"\x04Book\x12K\n" +
+	"\aGetBook\x12\x13.book.v1.GetBookReq\x1a\x12.book.v1.BookReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/books/{id}\x12O\n" +
+	"\tListBooks\x12\x15.book.v1.ListBooksReq\x1a\x17.book.v1.ListBooksReply\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
+	"/api/books\x12U\n" +
 	"\n" +
-	"CreateBook\x12\x16.book.v1.CreateBookReq\x1a\x18.book.v1.CreateBookReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/books\x12\x8a\x01\n" +
-	"\x15UpsertBookTranslation\x12!.book.v1.UpsertBookTranslationReq\x1a#.book.v1.UpsertBookTranslationReply\")\x82\xd3\xe4\x93\x02#:\x01*\x1a\x1e/api/v1/books/{id}/translation\x12f\n" +
-	"\x0eListCategories\x12\x1a.book.v1.ListCategoriesReq\x1a\x1c.book.v1.ListCategoriesReply\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/api/v1/categories\x12N\n" +
-	"\bListTags\x12\x14.book.v1.ListTagsReq\x1a\x16.book.v1.ListTagsReply\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/api/v1/tagsB#Z!open-novel/backend/api/book/v1;v1b\x06proto3"
+	"CreateBook\x12\x16.book.v1.CreateBookReq\x1a\x18.book.v1.CreateBookReply\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\"\n" +
+	"/api/books\x12\x87\x01\n" +
+	"\x15UpsertBookTranslation\x12!.book.v1.UpsertBookTranslationReq\x1a#.book.v1.UpsertBookTranslationReply\"&\x82\xd3\xe4\x93\x02 :\x01*\x1a\x1b/api/books/{id}/translation\x12c\n" +
+	"\x0eListCategories\x12\x1a.book.v1.ListCategoriesReq\x1a\x1c.book.v1.ListCategoriesReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/categories\x12K\n" +
+	"\bListTags\x12\x14.book.v1.ListTagsReq\x1a\x16.book.v1.ListTagsReply\"\x11\x82\xd3\xe4\x93\x02\v\x12\t/api/tagsB#Z!open-novel/backend/api/book/v1;v1b\x06proto3"
 
 var (
 	file_book_v1_book_proto_rawDescOnce sync.Once

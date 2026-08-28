@@ -6,7 +6,7 @@ import '../main.dart';
 import '../models/models.dart';
 import '../widgets/book_card.dart';
 
-/// 全部书籍 tab：搜索框 + 书籍列表（GET /api/v1/books、GET /api/v1/search）。
+/// 全部书籍 tab：搜索框 + 书籍列表（GET /api/books、GET /api/search）。
 class BooksTab extends StatefulWidget {
   const BooksTab({super.key});
 

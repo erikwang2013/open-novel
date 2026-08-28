@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../api/api_client.dart';
 import '../l10n/app_localizations.dart';
 
-/// 登录 / 注册页（POST /api/v1/users/login、/api/v1/users/register）。
+/// 登录 / 注册页（POST /api/users/login、/api/users/register）。
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

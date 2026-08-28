@@ -166,7 +166,7 @@ class BookDetailScreen extends StatelessWidget {
 
 ## 四、API 设计规范
 
-- **双协议**：内部服务间 gRPC；对外 REST over HTTP 网关，统一前缀 `/api/v1/`。
+- **双协议**：内部服务间 gRPC；对外 REST over HTTP 网关，统一前缀 `/api/`。
 - **proto 风格**：服务/方法命名采用 PascalCase：
 
 ```proto
@@ -180,7 +180,7 @@ message GetBookRequest {
 }
 ```
 
-- **REST 映射**：`GET /api/v1/books/{id}?lang=zh-CN` → `BookService.GetBook`。
+- **REST 映射**：`GET /api/books/{id}?lang=zh-CN` → `BookService.GetBook`。
 - **错误码规范**：业务错误使用 Kratos 错误码语义（`InvalidArgument` / `NotFound` / `Unauthenticated`），对外输出 `code + message + detail` 结构；HTTP 状态与业务码分离（`200 + code=140404`）。
 - **分页约定**：所有列表接口统一 `page`（从 1 开始）+ `page_size`（默认 20，上限 100），响应携带 `total / page / page_size` 字段。
 
