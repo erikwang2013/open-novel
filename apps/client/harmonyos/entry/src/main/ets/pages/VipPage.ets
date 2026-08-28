@@ -70,7 +70,12 @@ struct VipPage {
   build() {
     Column() {
       if (this.loading) {
-        LoadingProgress().width(50).height(50)
+        Column() {
+          LoadingProgress().width(50).height(50)
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.errorMsg !== '') {
         Column({ space: 12 }) {
           Text(this.errorMsg === 'network'
@@ -82,6 +87,9 @@ struct VipPage {
             this.load();
           })
         }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else {
         List() {
           ForEach(this.plans, (p: Plan) => {

@@ -101,6 +101,10 @@
       "value": "Tidak ada data"
     },
     {
+      "name": "emptyComment",
+      "value": "Belum ada komentar. Jadilah yang pertama!"
+    },
+    {
       "name": "errorNetwork",
       "value": "Kesalahan jaringan, periksa koneksi"
     },

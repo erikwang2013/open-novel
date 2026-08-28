@@ -101,6 +101,10 @@
       "value": "No data"
     },
     {
+      "name": "emptyComment",
+      "value": "No comments yet. Be the first!"
+    },
+    {
       "name": "errorNetwork",
       "value": "Network error, check your connection"
     },

@@ -54,6 +54,9 @@ export struct HomeTab {
           this.load();
         })
     }
+    .layoutWeight(1)
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
   }
 
   @Builder
@@ -92,13 +95,23 @@ export struct HomeTab {
         .margin({ top: 12, bottom: 4 })
 
       if (this.loading) {
-        LoadingProgress().width(50).height(50)
+        Column() {
+          LoadingProgress().width(50).height(50)
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.errorMsg !== '') {
         this.errorView()
       } else if (this.items.length === 0) {
-        Text($r('app.string.empty'))
-          .fontSize(14)
-          .fontColor('#999999')
+        Column() {
+          Text($r('app.string.empty'))
+            .fontSize(14)
+            .fontColor('#999999')
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else {
         List({ space: 8 }) {
           ForEach(this.items, (item: RecommendItem) => {

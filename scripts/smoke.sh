@@ -12,6 +12,8 @@ token=$(cd /tmp/novel-smoke && JWT_SECRET="$JWT_SECRET" go run token.go 2>/dev/n
   (cd /tmp/novel-smoke && go mod init smoke >/dev/null 2>&1; GOPROXY=https://goproxy.cn,direct GOFLAGS=-mod=mod go mod tidy >/dev/null 2>&1 && JWT_SECRET="$JWT_SECRET" go run token.go))
 # role-1 (reader) token: must be rejected by the author guard
 reader_token=$(cd /tmp/novel-smoke && ROLE=1 JWT_SECRET="$JWT_SECRET" go run token.go 2>/dev/null)
+# role-3 (admin) token: required by admin stats endpoint
+admin_token=$(cd /tmp/novel-smoke && ROLE=3 JWT_SECRET="$JWT_SECRET" go run token.go 2>/dev/null)
 
 pass=0; fail=0
 # check <desc> <want> <json>: success body has no "code" key (0); error body code == want.
@@ -56,6 +58,15 @@ check "report" 0 "$(curl -s -X POST "$BASE/comments/$cid/report" "${hdr[@]}")"
 check "favorite" 0 "$(curl -s -X POST "$BASE/books/$BOOK/favorite" "${hdr[@]}")"
 check "favorites list" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/favorites" "${hdr[@]}")"
 check "no token rejected" 140401 "$(curl -s -X POST "$BASE/comments" -H 'Content-Type: application/json' -H 'X-Api-Version: v1' -d "{\"book_id\":$BOOK,\"content\":\"x\"}")"
+
+# --- T-C-23: 新端点回归（分类/标签、admin 统计、支付公开端点、VIP 状态）---
+# 评论举报 POST /api/comments/{id}/report 已由上方 "report" 用例覆盖（登录态、真实评论数据）
+check "list categories" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/categories")"
+check "list tags" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/tags")"
+check "payments plans" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/payments/plans")"
+check "vip status" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/payments/vip-status" "${hdr[@]}")"
+check "admin stats" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/stats/overview" -H "Authorization: Bearer $admin_token")"
+check "admin stats forbidden for reader" 180401 "$(curl -s -H 'X-Api-Version: v1' "$BASE/stats/overview" -H "Authorization: Bearer $reader_token")"
 
 echo "---"
 echo "passed=$pass failed=$fail"

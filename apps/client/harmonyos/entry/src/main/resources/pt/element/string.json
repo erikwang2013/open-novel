@@ -101,6 +101,10 @@
       "value": "Sem dados"
     },
     {
+      "name": "emptyComment",
+      "value": "Ainda sem comentários. Seja o primeiro!"
+    },
+    {
       "name": "errorNetwork",
       "value": "Erro de rede, verifique a conexão"
     },

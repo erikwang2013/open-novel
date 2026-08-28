@@ -101,6 +101,10 @@
       "value": "데이터가 없습니다"
     },
     {
+      "name": "emptyComment",
+      "value": "아직 댓글이 없습니다. 첫 댓글을 남겨보세요"
+    },
+    {
       "name": "errorNetwork",
       "value": "네트워크 오류가 발생했습니다. 연결을 확인해 주세요"
     },

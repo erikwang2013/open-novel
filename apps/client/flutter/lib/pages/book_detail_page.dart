@@ -154,7 +154,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(_error == 'network' ? l10n.errorNetwork : l10n.errorServer(_error!)),
-            TextButton(onPressed: _load, child: Text(l10n.retry)),
+            OutlinedButton(onPressed: _load, child: Text(l10n.retry)),
           ],
         ),
       );

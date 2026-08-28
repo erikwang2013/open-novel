@@ -188,7 +188,12 @@ export struct BooksTab {
       }
 
       if (this.searching) {
-        LoadingProgress().width(50).height(50)
+        Column() {
+          LoadingProgress().width(50).height(50)
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.errorMsg !== '') {
         Column({ space: 12 }) {
           Text(this.errorMsg === 'network'
@@ -205,6 +210,9 @@ export struct BooksTab {
               }
             })
         }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.results.length > 0) {
         List({ space: 8 }) {
           ForEach(this.results, (d: SearchDoc) => {
@@ -220,15 +228,30 @@ export struct BooksTab {
         .layoutWeight(1)
         .padding({ left: 12, right: 12, top: 8, bottom: 8 })
       } else if (this.keyword !== '') {
-        Text($r('app.string.empty'))
-          .fontSize(14)
-          .fontColor('#999999')
+        Column() {
+          Text($r('app.string.empty'))
+            .fontSize(14)
+            .fontColor('#999999')
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.loading) {
-        LoadingProgress().width(50).height(50)
+        Column() {
+          LoadingProgress().width(50).height(50)
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.books.length === 0) {
-        Text($r('app.string.empty'))
-          .fontSize(14)
-          .fontColor('#999999')
+        Column() {
+          Text($r('app.string.empty'))
+            .fontSize(14)
+            .fontColor('#999999')
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else {
         Column() {
           if (this.hot.length > 0) {

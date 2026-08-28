@@ -101,6 +101,10 @@
       "value": "暂无数据"
     },
     {
+      "name": "emptyComment",
+      "value": "还没有评论，来抢沙发"
+    },
+    {
       "name": "errorNetwork",
       "value": "网络异常，请检查网络连接"
     },

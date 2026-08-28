@@ -160,7 +160,7 @@ struct CommentsPage {
         .justifyContent(FlexAlign.Center)
       } else if (this.comments.length === 0) {
         Column() {
-          Text($r('app.string.empty'))
+          Text($r('app.string.emptyComment'))
             .fontSize(14)
             .fontColor('#999999')
         }

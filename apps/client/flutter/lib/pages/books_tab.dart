@@ -121,7 +121,7 @@ class _BooksTabState extends State<BooksTab> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(_error == 'network' ? l10n.errorNetwork : l10n.errorServer(_error!)),
-            TextButton(
+            OutlinedButton(
                 onPressed: () => _searchCtrl.text.isEmpty
                     ? _loadBooks()
                     : _search(_searchCtrl.text.trim()),

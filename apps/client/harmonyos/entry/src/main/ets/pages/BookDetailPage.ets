@@ -98,7 +98,12 @@ struct BookDetailPage {
         .padding({ left: 16, right: 16, top: 12, bottom: 4 })
 
       if (this.loading) {
-        LoadingProgress().width(50).height(50)
+        Column() {
+          LoadingProgress().width(50).height(50)
+        }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.errorMsg !== '') {
         Column({ space: 12 }) {
           Text(this.errorMsg === 'network'
@@ -111,6 +116,9 @@ struct BookDetailPage {
               this.load();
             })
         }
+        .layoutWeight(1)
+        .width('100%')
+        .justifyContent(FlexAlign.Center)
       } else if (this.book !== null) {
         Column() {
           Row() {
@@ -155,38 +163,49 @@ struct BookDetailPage {
         .width('100%')
         .padding(16)
 
-        List() {
-          ForEach(this.chapters, (c: Chapter, idx: number) => {
-            ListItem() {
-              Row() {
-                Text(`${c.chapterNo}`)
-                  .fontSize(14)
-                  .fontColor('#999999')
-                  .width(40)
-                Text(c.title)
-                  .fontSize(15)
-                  .maxLines(1)
-                  .textOverflow({ overflow: TextOverflow.Ellipsis })
-                  .layoutWeight(1)
-                if (c.isVip === 1) {
-                  Text($r('app.string.vip'))
-                    .fontSize(12)
-                    .fontColor('#E84026')
-                } else {
-                  Text($r('app.string.free'))
-                    .fontSize(12)
+        if (this.chapters.length === 0) {
+          Column() {
+            Text($r('app.string.empty'))
+              .fontSize(14)
+              .fontColor('#999999')
+          }
+          .layoutWeight(1)
+          .width('100%')
+          .justifyContent(FlexAlign.Center)
+        } else {
+          List() {
+            ForEach(this.chapters, (c: Chapter, idx: number) => {
+              ListItem() {
+                Row() {
+                  Text(`${c.chapterNo}`)
+                    .fontSize(14)
                     .fontColor('#999999')
+                    .width(40)
+                  Text(c.title)
+                    .fontSize(15)
+                    .maxLines(1)
+                    .textOverflow({ overflow: TextOverflow.Ellipsis })
+                    .layoutWeight(1)
+                  if (c.isVip === 1) {
+                    Text($r('app.string.vip'))
+                      .fontSize(12)
+                      .fontColor('#E84026')
+                  } else {
+                    Text($r('app.string.free'))
+                      .fontSize(12)
+                      .fontColor('#999999')
+                  }
                 }
+                .width('100%')
+                .padding({ left: 16, right: 16, top: 12, bottom: 12 })
               }
-              .width('100%')
-              .padding({ left: 16, right: 16, top: 12, bottom: 12 })
-            }
-            .onClick(() => {
-              this.openReader(idx);
-            })
-          }, (c: Chapter) => c.id)
+              .onClick(() => {
+                this.openReader(idx);
+              })
+            }, (c: Chapter) => c.id)
+          }
+          .layoutWeight(1)
         }
-        .layoutWeight(1)
       }
     }
     .width('100%')
