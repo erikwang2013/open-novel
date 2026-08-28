@@ -32,6 +32,7 @@ class _ReaderPageState extends State<ReaderPage> {
   void initState() {
     super.initState();
     _load();
+    _checkProgress();
   }
 
   Future<void> _load() async {
@@ -44,9 +45,37 @@ class _ReaderPageState extends State<ReaderPage> {
       final c =
           await ApiClient.instance.getChapterContent(_chapter.id, lang: lang);
       setState(() => _content = c);
+      _saveProgress();
     } catch (e) {
       setState(() => _error = ApiClient.instance.errorMessage(e));
     }
+  }
+
+  /// best-effort 保存进度（已登录才调，失败静默不打扰阅读）。
+  /// ponytail: 只存章节粒度（position=0），不做滚动位置跟踪。
+  Future<void> _saveProgress() async {
+    final api = ApiClient.instance;
+    if (!api.loggedIn || widget.bookId.isEmpty) return;
+    try {
+      await api.updateProgress(widget.bookId, _chapter.id);
+    } catch (_) {
+      // 保存失败静默
+    }
+  }
+
+  /// 进入阅读器后有已存进度则提示可跳转。
+  Future<void> _checkProgress() async {
+    final api = ApiClient.instance;
+    if (!api.loggedIn || widget.bookId.isEmpty) return;
+    final p = await api.getProgress(widget.bookId);
+    if (p == null || p.chapterId.isEmpty || p.chapterId == _chapter.id) return;
+    final idx = widget.chapters.indexWhere((c) => c.id == p.chapterId);
+    if (idx < 0 || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('上次读到《${widget.chapters[idx].title}》，是否继续？'),
+      duration: const Duration(seconds: 6),
+      action: SnackBarAction(label: '继续', onPressed: () => _goto(idx)),
+    ));
   }
 
   void _goto(int index) {

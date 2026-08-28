@@ -9,9 +9,12 @@ import { common } from '@kit.AbilityKit';
 import { Config } from '../Config';
 import {
   Book,
+  BookshelfItem,
   Chapter,
   ChapterContent,
+  FavoriteItem,
   LoginResult,
+  Progress,
   RecommendItem,
   SearchDoc,
   User,
@@ -95,13 +98,51 @@ export class ApiClient {
 
   async listChapters(bookId: string): Promise<Chapter[]> {
     const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(
-      `/api/books/${bookId}/chapters?page=1&page_size=100&lang=${ApiClient.LANG}`);
+      `/api/books/${bookId}/chapters?page=1&page_size=5000&lang=${ApiClient.LANG}`); // ponytail: 单书章节超 5000 需分页加载
     return this.parseList(obj, Chapter.fromJson);
   }
 
   async getChapterContent(chapterId: string): Promise<ChapterContent> {
     const obj = await this.get<Record<string, Object>>(`/api/chapters/${chapterId}/content?lang=${ApiClient.LANG}`);
     return ChapterContent.fromJson(obj);
+  }
+
+  async listBookshelf(page: number = 1, pageSize: number = 20): Promise<BookshelfItem[]> {
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(
+      `/api/bookshelf?page=${page}&page_size=${pageSize}`);
+    return this.parseList(obj, BookshelfItem.fromJson);
+  }
+
+  async addBookshelf(bookId: string): Promise<void> {
+    await this.post<Record<string, Object>>('/api/bookshelf', { 'book_id': bookId });
+  }
+
+  async removeBookshelf(bookId: string): Promise<void> {
+    await this.delete<Record<string, Object>>(`/api/bookshelf/${bookId}`);
+  }
+
+  async listFavorites(page: number = 1, pageSize: number = 20): Promise<FavoriteItem[]> {
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(
+      `/api/favorites?page=${page}&page_size=${pageSize}`);
+    return this.parseList(obj, FavoriteItem.fromJson);
+  }
+
+  async addFavorite(bookId: string): Promise<void> {
+    await this.post<Record<string, Object>>(`/api/books/${bookId}/favorite`, {});
+  }
+
+  async removeFavorite(bookId: string): Promise<void> {
+    await this.delete<Record<string, Object>>(`/api/books/${bookId}/favorite`);
+  }
+
+  async getProgress(bookId: string): Promise<Progress> {
+    const obj = await this.get<Record<string, Object>>(`/api/progress?book_id=${bookId}`);
+    return Progress.fromJson(obj);
+  }
+
+  async updateProgress(bookId: string, chapterId: string, position: number): Promise<void> {
+    const body: Record<string, Object> = { 'book_id': bookId, 'chapter_id': chapterId, 'position': position };
+    await this.put<Record<string, Object>>('/api/progress', body);
   }
 
   async logout(): Promise<void> {
@@ -123,6 +164,14 @@ export class ApiClient {
 
   private async post<T>(path: string, body: Record<string, Object>): Promise<T> {
     return this.request<T>(http.RequestMethod.POST, path, JSON.stringify(body), 1);
+  }
+
+  private async put<T>(path: string, body: Record<string, Object>): Promise<T> {
+    return this.request<T>(http.RequestMethod.PUT, path, JSON.stringify(body), 1);
+  }
+
+  private async delete<T>(path: string): Promise<T> {
+    return this.request<T>(http.RequestMethod.DELETE, path, '', 1);
   }
 
   /** 发起请求；401 且有 refresh token 时刷新一次并重放（retried 控制只重试一次）。 */

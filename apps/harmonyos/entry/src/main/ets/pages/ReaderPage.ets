@@ -42,7 +42,7 @@ struct ReaderPage {
         }
         this.chapters = list;
         if (this.index >= this.chapters.length) {
-          this.index = 0;
+          this.index = this.chapters.length - 1; // 越界钳制到末章，避免跳回第 1 章
         }
       }
       const c = await ApiClient.instance.getChapterContent(this.chapters[this.index].id);
@@ -50,6 +50,7 @@ struct ReaderPage {
         return;
       }
       this.content = c.content;
+      this.saveProgress();
     } catch (e) {
       if (seq !== this.loadSeq) {
         return;
@@ -57,6 +58,20 @@ struct ReaderPage {
       this.errorMsg = (e as Error).message;
     }
     this.loading = false;
+  }
+
+  /// best-effort 保存阅读进度：已登录才调，失败静默，不影响阅读与 loadSeq 逻辑。
+  private saveProgress(): void {
+    if (ApiClient.instance.accessToken === '') {
+      return;
+    }
+    const c = this.chapters[this.index];
+    if (c === undefined || c.id === '') {
+      return;
+    }
+    ApiClient.instance.updateProgress(this.bookId, c.id, c.chapterNo).catch(() => {
+      // 忽略
+    });
   }
 
   private goto(delta: number): void {

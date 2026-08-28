@@ -30,11 +30,70 @@ class _BookDetailPageState extends State<BookDetailPage> {
   Book? _book;
   List<Chapter>? _chapters;
   String? _error;
+  bool _fav = false; // 是否已收藏
+  bool _onShelf = false; // 是否已在书架
 
   @override
   void initState() {
     super.initState();
     _load();
+    _loadUserState();
+  }
+
+  /// 查询收藏 / 书架状态（未登录跳过；失败静默按未收藏处理）。
+  /// ponytail: 只查首页 100 条，收藏/书架超 100 本时初始态可能不准，点按切换后即正确。
+  Future<void> _loadUserState() async {
+    final api = ApiClient.instance;
+    if (!api.loggedIn) return;
+    try {
+      final favs = await api.listFavorites(pageSize: 100);
+      final shelf = await api.listBookshelf(pageSize: 100);
+      if (!mounted) return;
+      setState(() {
+        _fav = favs.any((f) => f.bookId == widget.bookId);
+        _onShelf = shelf.any((s) => s.bookId == widget.bookId);
+      });
+    } catch (_) {
+      // 失败静默，按钮默认未收藏
+    }
+  }
+
+  Future<void> _toggleFav() async {
+    final api = ApiClient.instance;
+    if (!api.loggedIn && !await ensureLogin(context)) return;
+    try {
+      if (_fav) {
+        await api.unfavoriteBook(widget.bookId);
+      } else {
+        await api.favoriteBook(widget.bookId);
+      }
+      if (mounted) setState(() => _fav = !_fav);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(api.errorMessage(e))));
+      }
+    }
+  }
+
+  Future<void> _toggleShelf() async {
+    final api = ApiClient.instance;
+    if (!api.loggedIn && !await ensureLogin(context)) return;
+    try {
+      if (_onShelf) {
+        await api.removeBookshelf(widget.bookId);
+      } else {
+        await api.addBookshelf(widget.bookId);
+      }
+      if (mounted) setState(() => _onShelf = !_onShelf);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(api.errorMessage(e))));
+      }
+    }
   }
 
   Future<void> _load() async {
@@ -65,6 +124,16 @@ class _BookDetailPageState extends State<BookDetailPage> {
         title: Text(book?.title ?? widget.title,
             overflow: TextOverflow.ellipsis),
         actions: [
+          IconButton(
+            icon: Icon(_fav ? Icons.favorite : Icons.favorite_border),
+            tooltip: _fav ? '取消收藏' : '收藏',
+            onPressed: _toggleFav,
+          ),
+          IconButton(
+            icon: Icon(_onShelf ? Icons.bookmark : Icons.bookmark_border),
+            tooltip: _onShelf ? '移出书架' : '加入书架',
+            onPressed: _toggleShelf,
+          ),
           IconButton(
             icon: const Icon(Icons.chat_bubble_outline),
             tooltip: l10n.comments,

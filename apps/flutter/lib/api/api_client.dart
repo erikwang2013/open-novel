@@ -183,6 +183,46 @@ class ApiClient {
   Future<void> unfavoriteBook(String bookId) =>
       _dio.delete('/api/books/$bookId/favorite');
 
+  Future<List<ShelfItem>> listBookshelf({int page = 1, int pageSize = 20}) async {
+    final r = await _dio.get('/api/bookshelf',
+        queryParameters: {'page': page, 'page_size': pageSize});
+    return _parseList<ShelfItem>(r.data, ShelfItem.fromJson);
+  }
+
+  Future<void> addBookshelf(String bookId) =>
+      _dio.post('/api/bookshelf', data: {'book_id': bookId});
+
+  Future<void> removeBookshelf(String bookId) =>
+      _dio.delete('/api/bookshelf/$bookId');
+
+  Future<List<FavoriteItem>> listFavorites(
+      {int page = 1, int pageSize = 20}) async {
+    final r = await _dio.get('/api/favorites',
+        queryParameters: {'page': page, 'page_size': pageSize});
+    return _parseList<FavoriteItem>(r.data, FavoriteItem.fromJson);
+  }
+
+  /// 查询阅读进度；无进度 / 请求失败返回 null（调用方 best-effort 使用）。
+  Future<ReadingProgress?> getProgress(String bookId) async {
+    try {
+      final r = await _dio
+          .get('/api/progress', queryParameters: {'book_id': bookId});
+      final data = r.data;
+      if (data is! Map || data.isEmpty) return null;
+      return ReadingProgress.fromJson(data as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> updateProgress(String bookId, String chapterId,
+          {int position = 0}) =>
+      _dio.put('/api/progress', data: {
+        'book_id': bookId,
+        'chapter_id': chapterId,
+        'position': position,
+      });
+
   List<T> _parseList<T>(
       dynamic data, T Function(Map<String, dynamic>) fromJson) {
     final raw = data is Map ? (data['list'] ?? []) : const [];

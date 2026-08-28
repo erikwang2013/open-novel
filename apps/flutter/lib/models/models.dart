@@ -81,6 +81,50 @@ class Comment {
         createdAt = asStr(j['createdAt']);
 }
 
+/// 书架条目（GET/POST/DELETE /api/bookshelf）。
+class ShelfItem {
+  final String id;
+  final String userId;
+  final String bookId;
+  final int sortOrder;
+
+  ShelfItem.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        userId = asStr(j['userId']),
+        bookId = asStr(j['bookId']),
+        sortOrder = asInt(j['sortOrder']);
+}
+
+/// 收藏条目（GET /api/favorites）。
+class FavoriteItem {
+  final String id;
+  final String userId;
+  final String bookId;
+
+  FavoriteItem.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        userId = asStr(j['userId']),
+        bookId = asStr(j['bookId']);
+}
+
+/// 阅读进度（GET/PUT /api/progress）。position 为章节内位置（uint32）。
+class ReadingProgress {
+  final String id;
+  final String userId;
+  final String bookId;
+  final String chapterId;
+  final int position;
+  final String updatedAt;
+
+  ReadingProgress.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        userId = asStr(j['userId']),
+        bookId = asStr(j['bookId']),
+        chapterId = asStr(j['chapterId']),
+        position = asInt(j['position']),
+        updatedAt = asStr(j['updatedAt']);
+}
+
 class User {
   final String id;
   final String username;

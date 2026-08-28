@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../api/api_client.dart';
 import '../l10n/app_localizations.dart';
+import '../main.dart';
+import '../models/models.dart';
 import 'login_page.dart';
+import 'reader_page.dart';
 
-/// 我的 tab：登录态展示 / 登录入口 / 退出。
+/// 我的 tab：未登录显示登录入口；已登录显示书架、收藏与最近阅读进度。
 class MineTab extends StatefulWidget {
   const MineTab({super.key});
 
@@ -13,51 +16,257 @@ class MineTab extends StatefulWidget {
 }
 
 class _MineTabState extends State<MineTab> {
+  List<ShelfItem>? _shelf;
+  List<FavoriteItem>? _favorites;
+  final Map<String, String> _titles = {}; // bookId -> 书名
+  final Map<String, List<Chapter>> _chapters = {}; // bookId -> 章节列表
+  final Map<String, Chapter?> _progressChapter = {}; // bookId -> 进度章节
+  final Map<String, String> _progressAt = {}; // bookId -> 进度更新时间
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final api = ApiClient.instance;
+    setState(() {
+      _error = null;
+      _shelf = null;
+      _favorites = null;
+    });
+    if (!api.loggedIn) return;
+    try {
+      final shelf = await api.listBookshelf(pageSize: 20);
+      final favorites = await api.listFavorites(pageSize: 20);
+      await _fillTitles({
+        ...shelf.map((e) => e.bookId),
+        ...favorites.map((e) => e.bookId),
+      });
+      await _fillProgress(shelf);
+      if (!mounted) return;
+      setState(() {
+        _shelf = shelf;
+        _favorites = favorites;
+      });
+    } catch (e) {
+      setState(() => _error = api.errorMessage(e));
+    }
+  }
+
+  /// 批量补齐书名（书架 + 收藏去重），失败留空不阻塞。
+  Future<void> _fillTitles(Set<String> ids) async {
+    final api = ApiClient.instance;
+    for (final id in ids.where((id) => !_titles.containsKey(id))) {
+      try {
+        _titles[id] = (await api.getBook(id)).title;
+      } catch (_) {
+        // 单本失败静默，重试时会再取
+      }
+    }
+  }
+
+  /// 每本书架书拉取章节 + 进度，用于显示 chapterNo 与「阅读」跳转。
+  Future<void> _fillProgress(List<ShelfItem> shelf) async {
+    final api = ApiClient.instance;
+    for (final s in shelf) {
+      try {
+        final chapters = await _fetchAllChapters(s.bookId);
+        _chapters[s.bookId] = chapters;
+        final p = await api.getProgress(s.bookId);
+        if (p != null && p.chapterId.isNotEmpty) {
+          final idx = chapters.indexWhere((c) => c.id == p.chapterId);
+          _progressChapter[s.bookId] = idx >= 0 ? chapters[idx] : null;
+          _progressAt[s.bookId] = p.updatedAt;
+        }
+      } catch (_) {
+        // 进度 / 章节失败静默
+      }
+    }
+  }
+
+  /// 分页拉取全部章节（后端 page_size 上限 100）。
+  /// ponytail: 最多 5 页（500 章），超出则「阅读」跳转会缺章节；需要时按 total 循环。
+  Future<List<Chapter>> _fetchAllChapters(String bookId) async {
+    final api = ApiClient.instance;
+    final all = <Chapter>[];
+    for (var page = 1; page <= 5; page++) {
+      final part = await api.listChapters(bookId, page: page, pageSize: 100);
+      all.addAll(part);
+      if (part.length < 100) break;
+    }
+    return all;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final user = ApiClient.instance.currentUser;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mine)),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 40,
-              child: Icon(Icons.person,
-                  size: 44, color: Theme.of(context).colorScheme.primary),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              user != null
-                  ? l10n.welcome(
-                      user.nickname.isNotEmpty ? user.nickname : user.username)
-                  : l10n.notLoggedIn,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(user?.username ?? '',
-                style: Theme.of(context).textTheme.bodySmall),
-            const SizedBox(height: 24),
-            if (user == null)
-              FilledButton(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                ),
-                child: Text(l10n.login),
-              )
-            else
-              OutlinedButton(
-                onPressed: () {
-                  ApiClient.instance.logout();
-                  setState(() {});
-                },
-                child: Text(l10n.logout),
-              ),
-          ],
-        ),
+      body: user == null ? _loginView(context, l10n) : _loggedInView(context),
+    );
+  }
+
+  Widget _loginView(BuildContext context, AppLocalizations l10n) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 40,
+            child: Icon(Icons.person,
+                size: 44, color: Theme.of(context).colorScheme.primary),
+          ),
+          const SizedBox(height: 16),
+          Text(l10n.notLoggedIn,
+              style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const LoginPage()),
+              );
+              if (mounted) _load();
+            },
+            child: Text(l10n.login),
+          ),
+        ],
       ),
     );
   }
+
+  Widget _loggedInView(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(_error == 'network'
+                ? l10n.errorNetwork
+                : l10n.errorServer(_error!)),
+            TextButton(onPressed: _load, child: Text(l10n.retry)),
+          ],
+        ),
+      );
+    }
+    final shelf = _shelf;
+    final favorites = _favorites;
+    if (shelf == null || favorites == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return RefreshIndicator(
+      onRefresh: _load,
+      child: ListView(
+        padding: const EdgeInsets.all(8),
+        children: [
+          _profileHeader(context, l10n),
+          _sectionTitle(context, '我的书架'),
+          if (shelf.isEmpty)
+            ListTile(title: Text(l10n.empty))
+          else
+            ...shelf.map((s) => _shelfTile(context, s)),
+          _sectionTitle(context, '我的收藏'),
+          if (favorites.isEmpty)
+            ListTile(title: Text(l10n.empty))
+          else
+            ...favorites.map((f) => ListTile(
+                  leading: const Icon(Icons.menu_book),
+                  title: Text(_titles[f.bookId] ?? ''),
+                  onTap: () => openBook(context,
+                      id: f.bookId, title: _titles[f.bookId] ?? ''),
+                )),
+        ],
+      ),
+    );
+  }
+
+  Widget _profileHeader(BuildContext context, AppLocalizations l10n) {
+    final user = ApiClient.instance.currentUser;
+    return ListTile(
+      leading: CircleAvatar(
+        child: Icon(Icons.person,
+            size: 32, color: Theme.of(context).colorScheme.primary),
+      ),
+      title: Text(l10n.welcome(
+          user!.nickname.isNotEmpty ? user.nickname : user.username)),
+      subtitle: Text(user.username),
+      trailing: OutlinedButton(
+        onPressed: () {
+          ApiClient.instance.logout();
+          _load();
+        },
+        child: Text(l10n.logout),
+      ),
+    );
+  }
+
+  Widget _sectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      child: Text(title,
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _shelfTile(BuildContext context, ShelfItem s) {
+    final api = ApiClient.instance;
+    final chapter = _progressChapter[s.bookId];
+    final chapters = _chapters[s.bookId];
+    final title = _titles[s.bookId] ?? '';
+    final progressText = chapter != null
+        ? '第 ${chapter.chapterNo} 章 · ${_shortDate(_progressAt[s.bookId] ?? '')}'
+        : '未开始阅读';
+    return ListTile(
+      leading: const Icon(Icons.bookmark),
+      title: Text(title),
+      subtitle: Text(progressText),
+      onTap: () => openBook(context, id: s.bookId, title: title),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.play_circle_outline),
+            tooltip: '阅读',
+            onPressed: chapters == null || chapters.isEmpty
+                ? null
+                : () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => ReaderPage(
+                        chapter: chapter ?? chapters.first,
+                        chapters: chapters,
+                        bookId: s.bookId,
+                      ),
+                    )),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip: '移出书架',
+            onPressed: () async {
+              try {
+                await api.removeBookshelf(s.bookId);
+                if (!mounted) return;
+                setState(() {
+                  _shelf?.removeWhere((x) => x.bookId == s.bookId);
+                });
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(SnackBar(content: Text(api.errorMessage(e))));
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 截取日期部分（后端时间串含时分秒时只留 yyyy-MM-dd）。
+  String _shortDate(String s) => s.length >= 10 ? s.substring(0, 10) : s;
 }

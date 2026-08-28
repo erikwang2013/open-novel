@@ -133,6 +133,56 @@ export class RecommendItem {
   }
 }
 
+export class BookshelfItem {
+  id: string = '';
+  userId: string = '';
+  bookId: string = '';
+  sortOrder: number = 0;
+
+  static fromJson(j: Record<string, Object>): BookshelfItem {
+    const b = new BookshelfItem();
+    b.id = asStr(j['id']);
+    b.userId = asStr(j['userId']);
+    b.bookId = asStr(j['bookId']);
+    b.sortOrder = asInt(j['sortOrder']);
+    return b;
+  }
+}
+
+export class FavoriteItem {
+  id: string = '';
+  userId: string = '';
+  bookId: string = '';
+
+  static fromJson(j: Record<string, Object>): FavoriteItem {
+    const f = new FavoriteItem();
+    f.id = asStr(j['id']);
+    f.userId = asStr(j['userId']);
+    f.bookId = asStr(j['bookId']);
+    return f;
+  }
+}
+
+export class Progress {
+  id: string = '';
+  userId: string = '';
+  bookId: string = '';
+  chapterId: string = '';
+  position: number = 0;
+  updatedAt: string = '';
+
+  static fromJson(j: Record<string, Object>): Progress {
+    const p = new Progress();
+    p.id = asStr(j['id']);
+    p.userId = asStr(j['userId']);
+    p.bookId = asStr(j['bookId']);
+    p.chapterId = asStr(j['chapterId']);
+    p.position = asInt(j['position']);
+    p.updatedAt = asStr(j['updatedAt']);
+    return p;
+  }
+}
+
 /// OpenSearch 搜索结果文档：按 lang 取对应语言字段（同 Flutter 实现）。
 export class SearchDoc {
   bookId: string = '';

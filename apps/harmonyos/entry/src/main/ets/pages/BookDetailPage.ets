@@ -14,6 +14,7 @@ struct BookDetailPage {
   @State title: string = '';
   @State author: string = '';
   @State summary: string = '';
+  @State isFavorite: boolean = false;
   private bookId: string = '';
 
   aboutToAppear(): void {
@@ -31,10 +32,36 @@ struct BookDetailPage {
     try {
       this.book = await ApiClient.instance.getBook(this.bookId);
       this.chapters = await ApiClient.instance.listChapters(this.bookId);
+      if (ApiClient.instance.accessToken !== '') {
+        try {
+          const favs = await ApiClient.instance.listFavorites();
+          this.isFavorite = favs.some((f) => f.bookId === this.bookId);
+        } catch (e) {
+          // 收藏态获取失败静默
+        }
+      }
     } catch (e) {
       this.errorMsg = (e as Error).message;
     }
     this.loading = false;
+  }
+
+  private async toggleFavorite(): Promise<void> {
+    if (ApiClient.instance.accessToken === '') {
+      router.pushUrl({ url: 'pages/LoginPage' });
+      return;
+    }
+    try {
+      if (this.isFavorite) {
+        await ApiClient.instance.removeFavorite(this.bookId);
+        this.isFavorite = false;
+      } else {
+        await ApiClient.instance.addFavorite(this.bookId);
+        this.isFavorite = true;
+      }
+    } catch (e) {
+      // 失败静默，按钮态保持原样
+    }
   }
 
   private openReader(index: number): void {
@@ -76,9 +103,21 @@ struct BookDetailPage {
         }
       } else if (this.book !== null) {
         Column() {
-          Text(this.book.title)
-            .fontSize(20)
-            .fontWeight(FontWeight.Bold)
+          Row() {
+            Text(this.book.title)
+              .fontSize(20)
+              .fontWeight(FontWeight.Bold)
+              .layoutWeight(1)
+            Button(this.isFavorite ? '取消收藏' : '收藏')
+              .fontSize(13)
+              .height(32)
+              .backgroundColor(this.isFavorite ? '#F0F0F0' : '#E84026')
+              .fontColor(this.isFavorite ? '#333333' : '#FFFFFF')
+              .onClick(() => {
+                this.toggleFavorite();
+              })
+          }
+          .width('100%')
           Text(this.book.author)
             .fontSize(14)
             .fontColor('#888888')
