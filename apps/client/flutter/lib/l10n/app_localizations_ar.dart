@@ -120,7 +120,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get retry => 'إعادة المحاولة';
 
   @override
-  String bookCount(Object count) {
+  String bookCount(num count) {
     return '$count كتب';
   }
 }

@@ -334,7 +334,7 @@ abstract class AppLocalizations {
   ///
   /// In zh, this message translates to:
   /// **'共 {count} 本'**
-  String bookCount(Object count);
+  String bookCount(num count);
 }
 
 class _AppLocalizationsDelegate

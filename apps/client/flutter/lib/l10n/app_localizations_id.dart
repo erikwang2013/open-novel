@@ -120,7 +120,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get retry => 'Coba lagi';
 
   @override
-  String bookCount(Object count) {
+  String bookCount(num count) {
     return '$count buku';
   }
 }

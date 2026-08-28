@@ -121,7 +121,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retry => 'Réessayer';
 
   @override
-  String bookCount(Object count) {
+  String bookCount(num count) {
     return '$count livres';
   }
 }

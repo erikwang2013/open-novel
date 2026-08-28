@@ -35,5 +35,5 @@
   "welcome": "Добро пожаловать, {name}",
   "notLoggedIn": "Вы не вошли",
   "retry": "Повторить",
-  "bookCount": "{count} книг"
+  "bookCount": "{count, plural, =1{1 книга} few{{count} книги} other{{count} книг}}"
 }

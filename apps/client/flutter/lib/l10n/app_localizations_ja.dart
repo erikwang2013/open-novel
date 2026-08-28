@@ -120,7 +120,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get retry => '再試行';
 
   @override
-  String bookCount(Object count) {
+  String bookCount(num count) {
     return '全$count冊';
   }
 }

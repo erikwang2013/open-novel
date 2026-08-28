@@ -120,7 +120,14 @@ class AppLocalizationsRu extends AppLocalizations {
   String get retry => 'Повторить';
 
   @override
-  String bookCount(Object count) {
-    return '$count книг';
+  String bookCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count книг',
+      few: '$count книги',
+      one: '1 книга',
+    );
+    return '$_temp0';
   }
 }

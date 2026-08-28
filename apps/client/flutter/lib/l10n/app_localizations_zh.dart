@@ -120,7 +120,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get retry => '重试';
 
   @override
-  String bookCount(Object count) {
+  String bookCount(num count) {
     return '共 $count 本';
   }
 }
