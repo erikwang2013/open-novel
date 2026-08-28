@@ -15,6 +15,7 @@ type User struct {
 	Status       int8       `gorm:"column:status"`
 	Role         int8       `gorm:"column:role"`
 	LastLoginAt  *time.Time `gorm:"column:last_login_at"`
+	VipExpiresAt *time.Time `gorm:"column:vip_expires_at"`
 	CreatedAt    time.Time  `gorm:"column:created_at"`
 	UpdatedAt    time.Time  `gorm:"column:updated_at"`
 }
@@ -209,3 +210,52 @@ type RecommendLog struct {
 }
 
 func (RecommendLog) TableName() string { return "novel_recommend_log" }
+
+// 支付相关模型（T-P-01/08）。
+
+type PaymentProvider struct {
+	ID        uint64    `gorm:"primaryKey;column:id"`
+	Code      string    `gorm:"column:code"`
+	Lang      string    `gorm:"column:lang"`
+	Region    string    `gorm:"column:region"`
+	Enabled   int8      `gorm:"column:enabled"`
+	Sort      int       `gorm:"column:sort"`
+	Config    string    `gorm:"column:config"` // AES-GCM 加密 JSON
+	CreatedAt time.Time `gorm:"column:created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at"`
+}
+
+func (PaymentProvider) TableName() string { return "novel_payment_provider" }
+
+type PaymentOrder struct {
+	ID        uint64     `gorm:"primaryKey;column:id"`
+	OrderNo   string     `gorm:"column:order_no"`
+	UserID    uint64     `gorm:"column:user_id"`
+	Amount    float64    `gorm:"column:amount"` // DECIMAL(10,2)；比较一律转整数分
+	Currency  string     `gorm:"column:currency"`
+	Provider  string     `gorm:"column:provider"`
+	Status    int8       `gorm:"column:status"` // 0待支付 1已支付 2失败 3已关闭
+	TxID      string     `gorm:"column:tx_id"`
+	PaidAt    *time.Time `gorm:"column:paid_at"`
+	CreatedAt time.Time  `gorm:"column:created_at"`
+	UpdatedAt time.Time  `gorm:"column:updated_at"`
+}
+
+func (PaymentOrder) TableName() string { return "novel_payment_order" }
+
+type VipOrder struct {
+	ID        uint64     `gorm:"primaryKey;column:id"`
+	OrderNo   string     `gorm:"column:order_no"`
+	UserID    uint64     `gorm:"column:user_id"`
+	Plan      string     `gorm:"column:plan"`
+	Amount    float64    `gorm:"column:amount"`
+	Currency  string     `gorm:"column:currency"`
+	Status    int8       `gorm:"column:status"`
+	StartAt   *time.Time `gorm:"column:start_at"`
+	EndAt     *time.Time `gorm:"column:end_at"`
+	PaidAt    *time.Time `gorm:"column:paid_at"`
+	CreatedAt time.Time  `gorm:"column:created_at"`
+	UpdatedAt time.Time  `gorm:"column:updated_at"`
+}
+
+func (VipOrder) TableName() string { return "novel_vip_order" }

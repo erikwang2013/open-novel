@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+// 支付服务：VIP 下单 / 查单 / 支付方式列表 / 渠道 webhook（任务 T-P-03~08）
+// 业务码段 19xxxx；CreateOrder/GetOrder 需登录，ListMethods/Webhook 公开。
+
+package payment.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/payment/v1;v1";
+
+service Payment {
+  // 创建 VIP 订单：plan=monthly|quarterly|yearly；返回支付跳转 URL（登录态）
+  rpc CreateOrder(CreateOrderReq) returns (CreateOrderReply) {
+    option (google.api.http) = {
+      post: "/api/payments/order"
+      body: "*"
+    };
+  }
+  // 查询订单状态（登录态，只允许查自己的）
+  rpc GetOrder(GetOrderReq) returns (GetOrderReply) {
+    option (google.api.http) = {
+      get: "/api/payments/order/{order_no}"
+    };
+  }
+  // 支付方式列表：enabled 且 lang/region 匹配，sort 升序（公开）
+  rpc ListMethods(ListMethodsReq) returns (ListMethodsReply) {
+    option (google.api.http) = {
+      get: "/api/payments/methods"
+    };
+  }
+  // 渠道回调（stripe/nowpayments，无鉴权，验签在内部）
+  rpc Webhook(WebhookReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      post: "/api/payments/webhook/{provider}"
+      body: "*"
+    };
+  }
+}
+
+message CreateOrderReq {
+  string plan = 1;  // monthly|quarterly|yearly
+  string lang = 2;  // 语言，如 "en"；决定默认支付方式
+}
+
+message CreateOrderReply {
+  string order_no = 1;
+  int64 amount = 2;        // 金额，单位分
+  string currency = 3;     // USD
+  string checkout_url = 4; // 支付跳转 URL
+  string provider = 5;     // 渠道码
+}
+
+message GetOrderReq {
+  string order_no = 1;
+}
+
+message GetOrderReply {
+  string order_no = 1;
+  int32 status = 2;   // 0待支付 1已支付 2失败 3已关闭
+  int64 amount = 3;   // 分
+  string currency = 4;
+  string provider = 5;
+  string tx_id = 6;
+  string paid_at = 7;
+}
+
+message ListMethodsReq {
+  string lang = 1;
+}
+
+message ListMethodsReply {
+  repeated MethodItem list = 1;
+}
+
+message MethodItem {
+  string code = 1;   // 渠道码：stripe/np_usdt
+  string lang = 2;   // 'en' 或 '*'
+  string region = 3; // 'US' 或 '*'
+  int32 sort = 4;
+}
+
+message WebhookReq {
+  string provider = 1; // 渠道码：stripe/nowpayments
+  bytes raw_body = 2;  // 原始 body（透传验签）
+}
+
+message EmptyReply {}

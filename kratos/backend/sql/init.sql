@@ -21,12 +21,16 @@ CREATE TABLE IF NOT EXISTS novel_user (
   status        TINYINT      NOT NULL DEFAULT 1 COMMENT '0禁用 1正常',
   role          TINYINT      NOT NULL DEFAULT 1 COMMENT '1普通用户 2作者 3管理员 4运营',
   last_login_at DATETIME     NULL COMMENT '最近登录时间',
+  vip_expires_at DATETIME    NULL COMMENT 'VIP 到期时间（NULL=非会员；支付成功后激活）',
   created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uk_username (username),
   UNIQUE KEY uk_email (email),
   KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
+
+-- 存量开发库升级（新库已含 vip_expires_at 列，旧库手动执行）：
+-- ALTER TABLE novel_user ADD COLUMN vip_expires_at DATETIME NULL COMMENT 'VIP 到期时间' AFTER last_login_at;
 
 -- ------------------------------------------------------------
 -- 书籍表：书名、作者、简介、封面、状态
@@ -283,6 +287,44 @@ CREATE TABLE IF NOT EXISTS novel_vip_order (
   KEY idx_user (user_id),
   KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会员订单表';
+
+-- ------------------------------------------------------------
+-- 支付方式表：可用支付渠道（stripe/np_usdt...），按语言/地区路由
+-- config 为 AES-GCM 加密的 JSON（密钥见 config.yaml payment.encrypt_key）
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS novel_payment_provider (
+  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code       VARCHAR(32)    NOT NULL COMMENT '渠道码：stripe/np_usdt',
+  lang       VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用语言：'en' 或 '*' 全局',
+  region     VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用地区：US/CN 或 '*' 全局',
+  enabled    TINYINT        NOT NULL DEFAULT 1 COMMENT '0禁用 1启用',
+  sort       INT            NOT NULL DEFAULT 0 COMMENT '排序（升序）',
+  config     TEXT           NULL COMMENT '加密 JSON 配置（API key/webhook secret/币种等）',
+  created_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_code (code),
+  KEY idx_enabled_sort (enabled, sort)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='支付方式表';
+
+-- ------------------------------------------------------------
+-- 支付订单表：一次支付对应一行（VIP 套餐无 plan 列，plan 由金额反查）
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS novel_payment_order (
+  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_no   VARCHAR(64)    NOT NULL COMMENT '业务订单号',
+  user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
+  amount     DECIMAL(10,2)  NOT NULL COMMENT '金额（分转元存储）',
+  currency   CHAR(3)        NOT NULL DEFAULT 'USD' COMMENT '币种',
+  provider   VARCHAR(32)    NOT NULL DEFAULT '' COMMENT '渠道码：stripe/np_usdt',
+  status     TINYINT        NOT NULL DEFAULT 0 COMMENT '0待支付 1已支付 2失败 3已关闭',
+  tx_id      VARCHAR(128)   NOT NULL DEFAULT '' COMMENT '支付渠道交易号',
+  paid_at    DATETIME       NULL COMMENT '支付时间',
+  created_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_order_no (order_no),
+  KEY idx_user (user_id),
+  KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='支付订单表';
 
 -- ------------------------------------------------------------
 -- 审计日志表：登录 / 管理操作 / 支付审计

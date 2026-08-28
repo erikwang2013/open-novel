@@ -11,3 +11,9 @@ auth:
   jwt_secret: "dev-secret-change-me" # env JWT_SECRET，生产必须注入
   jwt_access_ttl: 1800
   jwt_refresh_ttl: 604800
+payment:
+  encrypt_key: "dev-encrypt-key-change-me" # env PAYMENT_ENCRYPT_KEY；provider.config 加密密钥，生产必须注入
+  stripe_secret_key: ""      # env STRIPE_SECRET_KEY（沙箱占位，未配置时下单返回 190401）
+  stripe_webhook_secret: ""  # env STRIPE_WEBHOOK_SECRET
+  np_api_key: ""             # env NP_API_KEY
+  np_ipn_secret: ""          # env NP_IPN_SECRET

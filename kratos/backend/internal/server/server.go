@@ -15,6 +15,7 @@ import (
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 
 	commentv1 "open-novel/backend/api/comment/v1"
+	paymentv1 "open-novel/backend/api/payment/v1"
 	chapterv1 "open-novel/backend/api/chapter/v1"
 	bookv1 "open-novel/backend/api/book/v1"
 	recommendationv1 "open-novel/backend/api/recommendation/v1"
@@ -26,17 +27,19 @@ import (
 	"open-novel/backend/internal/service"
 )
 
-// 限流路由表（按路径模板，§六）：登录/评论发布/举报/搜索。
+// 限流路由表（按路径模板，§六）：登录/评论发布/举报/搜索/支付回调。
 var rateLimits = map[string]int{
-	"/api/users/login":         10,
-	"/api/comments":            10,
-	"/api/comments/{id}/report": 5,
-	"/api/search":              10,
+	"/api/users/login":                10,
+	"/api/comments":                   10,
+	"/api/comments/{id}/report":        5,
+	"/api/search":                     10,
+	"/api/payments/webhook/{provider}": 30,
 }
 
 func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
+	pay *service.PaymentService,
 ) *khttp.Server {
 	opts := []khttp.ServerOption{
 		khttp.Middleware(
@@ -44,6 +47,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 			logging.Server(logger),
 			middleware.ApiVersion(),
 			middleware.RateLimit(rateLimits),
+			middleware.RawBody(),
 			middleware.OptionalAuth(am),
 		),
 		khttp.ErrorEncoder(errEncoder),
@@ -58,12 +62,14 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	commentv1.RegisterCommentHTTPServer(srv, comment)
 	searchv1.RegisterSearchHTTPServer(srv, search)
 	recommendationv1.RegisterRecommendationHTTPServer(srv, rec)
+	paymentv1.RegisterPaymentHTTPServer(srv, pay)
 	return srv
 }
 
 func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
+	pay *service.PaymentService,
 ) *grpc.Server {
 	opts := []grpc.ServerOption{
 		grpc.Middleware(
@@ -82,6 +88,7 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	commentv1.RegisterCommentServer(srv, comment)
 	searchv1.RegisterSearchServer(srv, search)
 	recommendationv1.RegisterRecommendationServer(srv, rec)
+	paymentv1.RegisterPaymentServer(srv, pay)
 	return srv
 }
 

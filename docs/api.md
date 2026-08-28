@@ -91,6 +91,21 @@
 | POST | `/api/search/index/{book_id}` | 重建单本书搜索索引 | Bearer（管理） |
 | GET | `/api/recommend` | 推荐 `strategy=hot|new` + `page_size` + `lang` | 无 |
 
+## 支付（T-P-03~08）
+
+业务码段 19xxxx；金额一律整数分（`amount`）。
+
+| 方法 | 路径 | 说明 | 鉴权 |
+| :--- | :--- | :--- | :--- |
+| POST | `/api/payments/order` | 创建 VIP 订单 `{plan: monthly\|quarterly\|yearly, lang}` → `{order_no, amount, currency, checkout_url, provider}`；同 user+套餐未支付订单幂等复用 | Bearer |
+| GET | `/api/payments/order/{order_no}` | 查订单状态（仅本人；未支付超 15 分钟自动关闭为 3） | Bearer |
+| GET | `/api/payments/methods?lang=` | 支付方式列表（enabled 且 lang/region 匹配，sort 升序） | 无 |
+| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe/nowpayments，验签在内部） | 无 |
+
+订单状态：`0 待支付 1 已支付 2 失败 3 已关闭`。
+
+错误码：`190401 PAYMENT_CREATE_FAILED`、`190402 ORDER_NOT_FOUND`、`190403 AMOUNT_MISMATCH`、`190404 PAYMENT_PENDING`、`190405 PROVIDER_DISABLED`。
+
 ## 限流
 
 按 IP 固定窗口（`X-Forwarded-For`）：

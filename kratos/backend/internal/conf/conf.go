@@ -34,6 +34,21 @@ func Load(path string) (*Bootstrap, error) {
 	if v := os.Getenv("JWT_SECRET"); v != "" {
 		bc.Auth.JwtSecret = v
 	}
+	if v := os.Getenv("PAYMENT_ENCRYPT_KEY"); v != "" {
+		bc.Payment.EncryptKey = v
+	}
+	if v := os.Getenv("STRIPE_SECRET_KEY"); v != "" {
+		bc.Payment.StripeSecretKey = v
+	}
+	if v := os.Getenv("STRIPE_WEBHOOK_SECRET"); v != "" {
+		bc.Payment.StripeWebhookSecret = v
+	}
+	if v := os.Getenv("NP_API_KEY"); v != "" {
+		bc.Payment.NpApiKey = v
+	}
+	if v := os.Getenv("NP_IPN_SECRET"); v != "" {
+		bc.Payment.NpIpnSecret = v
+	}
 	if v := os.Getenv("PORT"); v != "" {
 		bc.Server.HttpAddr = ":" + v
 	}

@@ -10,6 +10,7 @@ message Bootstrap {
   Server server = 1;
   Data data = 2;
   Auth auth = 3;
+  Payment payment = 4;
 }
 
 message Server {
@@ -28,4 +29,12 @@ message Auth {
   string jwt_secret = 1;     // env JWT_SECRET
   int64 jwt_access_ttl = 2;  // access token 秒数，缺省 1800
   int64 jwt_refresh_ttl = 3; // refresh token 秒数，缺省 604800
+}
+
+message Payment {
+  string encrypt_key = 1;        // env PAYMENT_ENCRYPT_KEY；provider.config 加密密钥
+  string stripe_secret_key = 2;  // env STRIPE_SECRET_KEY（沙箱占位）
+  string stripe_webhook_secret = 3; // env STRIPE_WEBHOOK_SECRET
+  string np_api_key = 4;         // env NP_API_KEY（NOWPayments）
+  string np_ipn_secret = 5;      // env NP_IPN_SECRET（IPN 验签）
 }

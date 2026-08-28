@@ -29,6 +29,7 @@ type Bootstrap struct {
 	Server        *Server                `protobuf:"bytes,1,opt,name=server,proto3" json:"server,omitempty"`
 	Data          *Data                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth,omitempty"`
+	Payment       *Payment               `protobuf:"bytes,4,opt,name=payment,proto3" json:"payment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -80,6 +81,13 @@ func (x *Bootstrap) GetData() *Data {
 func (x *Bootstrap) GetAuth() *Auth {
 	if x != nil {
 		return x.Auth
+	}
+	return nil
+}
+
+func (x *Bootstrap) GetPayment() *Payment {
+	if x != nil {
+		return x.Payment
 	}
 	return nil
 }
@@ -264,17 +272,94 @@ func (x *Auth) GetJwtRefreshTtl() int64 {
 	return 0
 }
 
+type Payment struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	EncryptKey          string                 `protobuf:"bytes,1,opt,name=encrypt_key,json=encryptKey,proto3" json:"encrypt_key,omitempty"`                              // env PAYMENT_ENCRYPT_KEY；provider.config 加密密钥
+	StripeSecretKey     string                 `protobuf:"bytes,2,opt,name=stripe_secret_key,json=stripeSecretKey,proto3" json:"stripe_secret_key,omitempty"`             // env STRIPE_SECRET_KEY（沙箱占位）
+	StripeWebhookSecret string                 `protobuf:"bytes,3,opt,name=stripe_webhook_secret,json=stripeWebhookSecret,proto3" json:"stripe_webhook_secret,omitempty"` // env STRIPE_WEBHOOK_SECRET
+	NpApiKey            string                 `protobuf:"bytes,4,opt,name=np_api_key,json=npApiKey,proto3" json:"np_api_key,omitempty"`                                  // env NP_API_KEY（NOWPayments）
+	NpIpnSecret         string                 `protobuf:"bytes,5,opt,name=np_ipn_secret,json=npIpnSecret,proto3" json:"np_ipn_secret,omitempty"`                         // env NP_IPN_SECRET（IPN 验签）
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *Payment) Reset() {
+	*x = Payment{}
+	mi := &file_internal_conf_conf_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Payment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Payment) ProtoMessage() {}
+
+func (x *Payment) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_conf_conf_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Payment.ProtoReflect.Descriptor instead.
+func (*Payment) Descriptor() ([]byte, []int) {
+	return file_internal_conf_conf_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Payment) GetEncryptKey() string {
+	if x != nil {
+		return x.EncryptKey
+	}
+	return ""
+}
+
+func (x *Payment) GetStripeSecretKey() string {
+	if x != nil {
+		return x.StripeSecretKey
+	}
+	return ""
+}
+
+func (x *Payment) GetStripeWebhookSecret() string {
+	if x != nil {
+		return x.StripeWebhookSecret
+	}
+	return ""
+}
+
+func (x *Payment) GetNpApiKey() string {
+	if x != nil {
+		return x.NpApiKey
+	}
+	return ""
+}
+
+func (x *Payment) GetNpIpnSecret() string {
+	if x != nil {
+		return x.NpIpnSecret
+	}
+	return ""
+}
+
 var File_internal_conf_conf_proto protoreflect.FileDescriptor
 
 const file_internal_conf_conf_proto_rawDesc = "" +
 	"\n" +
-	"\x18internal/conf/conf.proto\x12\x04conf\"q\n" +
+	"\x18internal/conf/conf.proto\x12\x04conf\"\x9a\x01\n" +
 	"\tBootstrap\x12$\n" +
 	"\x06server\x18\x01 \x01(\v2\f.conf.ServerR\x06server\x12\x1e\n" +
 	"\x04data\x18\x02 \x01(\v2\n" +
 	".conf.DataR\x04data\x12\x1e\n" +
 	"\x04auth\x18\x03 \x01(\v2\n" +
-	".conf.AuthR\x04auth\"B\n" +
+	".conf.AuthR\x04auth\x12'\n" +
+	"\apayment\x18\x04 \x01(\v2\r.conf.PaymentR\apayment\"B\n" +
 	"\x06Server\x12\x1b\n" +
 	"\thttp_addr\x18\x01 \x01(\tR\bhttpAddr\x12\x1b\n" +
 	"\tgrpc_addr\x18\x02 \x01(\tR\bgrpcAddr\"\x8b\x01\n" +
@@ -288,7 +373,15 @@ const file_internal_conf_conf_proto_rawDesc = "" +
 	"\n" +
 	"jwt_secret\x18\x01 \x01(\tR\tjwtSecret\x12$\n" +
 	"\x0ejwt_access_ttl\x18\x02 \x01(\x03R\fjwtAccessTtl\x12&\n" +
-	"\x0fjwt_refresh_ttl\x18\x03 \x01(\x03R\rjwtRefreshTtlB'Z%open-novel/backend/internal/conf;confb\x06proto3"
+	"\x0fjwt_refresh_ttl\x18\x03 \x01(\x03R\rjwtRefreshTtl\"\xcc\x01\n" +
+	"\aPayment\x12\x1f\n" +
+	"\vencrypt_key\x18\x01 \x01(\tR\n" +
+	"encryptKey\x12*\n" +
+	"\x11stripe_secret_key\x18\x02 \x01(\tR\x0fstripeSecretKey\x122\n" +
+	"\x15stripe_webhook_secret\x18\x03 \x01(\tR\x13stripeWebhookSecret\x12\x1c\n" +
+	"\n" +
+	"np_api_key\x18\x04 \x01(\tR\bnpApiKey\x12\"\n" +
+	"\rnp_ipn_secret\x18\x05 \x01(\tR\vnpIpnSecretB'Z%open-novel/backend/internal/conf;confb\x06proto3"
 
 var (
 	file_internal_conf_conf_proto_rawDescOnce sync.Once
@@ -302,22 +395,24 @@ func file_internal_conf_conf_proto_rawDescGZIP() []byte {
 	return file_internal_conf_conf_proto_rawDescData
 }
 
-var file_internal_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_internal_conf_conf_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_internal_conf_conf_proto_goTypes = []any{
 	(*Bootstrap)(nil), // 0: conf.Bootstrap
 	(*Server)(nil),    // 1: conf.Server
 	(*Data)(nil),      // 2: conf.Data
 	(*Auth)(nil),      // 3: conf.Auth
+	(*Payment)(nil),   // 4: conf.Payment
 }
 var file_internal_conf_conf_proto_depIdxs = []int32{
 	1, // 0: conf.Bootstrap.server:type_name -> conf.Server
 	2, // 1: conf.Bootstrap.data:type_name -> conf.Data
 	3, // 2: conf.Bootstrap.auth:type_name -> conf.Auth
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	4, // 3: conf.Bootstrap.payment:type_name -> conf.Payment
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_internal_conf_conf_proto_init() }
@@ -331,7 +426,7 @@ func file_internal_conf_conf_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_internal_conf_conf_proto_rawDesc), len(file_internal_conf_conf_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

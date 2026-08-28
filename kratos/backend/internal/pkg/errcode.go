@@ -61,4 +61,11 @@ var (
 	ErrAdmin    = Biz(180401, "NO_PERMISSION", "admin permission required")
 	ErrTargetNF = Biz(180402, "TARGET_NOT_FOUND", "target not found")
 	ErrBadState = Biz(180403, "INVALID_STATE", "invalid state transition")
+
+	// Payment（19xxxx）
+	ErrPayCreate  = Biz(190401, "PAYMENT_CREATE_FAILED", "payment creation failed")
+	ErrOrderNF    = Biz(190402, "ORDER_NOT_FOUND", "order not found")
+	ErrAmountMism = Biz(190403, "AMOUNT_MISMATCH", "amount mismatch")
+	ErrPayPending = Biz(190404, "PAYMENT_PENDING", "payment not completed")
+	ErrProviderOn = Biz(190405, "PROVIDER_DISABLED", "payment provider not enabled")
 )
