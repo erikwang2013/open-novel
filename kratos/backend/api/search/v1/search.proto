@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 // 搜索服务：OpenSearch 多语言检索 / 热门 / 索引同步（任务 #21）
-// 业务码段 16xxxx；索引文档按书籍维度，每书一文档，含 zh/en/ja 三语字段
+// 业务码段 16xxxx；索引文档按书籍维度，每书一文档，含 zh/en/ja/ko 四语字段
 package search.v1;
 
 import "google/api/annotations.proto";
@@ -45,12 +45,15 @@ message BookDoc {
   string title_zh = 6;
   string title_en = 7;
   string title_ja = 8;
+  string title_ko = 15;
   string summary_zh = 9;
   string summary_en = 10;
   string summary_ja = 11;
+  string summary_ko = 16;
   string author_zh = 12;
   string author_en = 13;
   string author_ja = 14;
+  string author_ko = 17;
 }
 
 message SearchBooksReq {
@@ -85,12 +88,15 @@ message SyncIndexReq {
   string title_zh = 6;
   string title_en = 7;
   string title_ja = 8;
+  string title_ko = 15;
   string summary_zh = 9;
   string summary_en = 10;
   string summary_ja = 11;
+  string summary_ko = 16;
   string author_zh = 12;
   string author_en = 13;
   string author_ja = 14;
+  string author_ko = 17;
 }
 
 message SyncIndexReply {

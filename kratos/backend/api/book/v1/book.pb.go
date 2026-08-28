@@ -184,7 +184,7 @@ type ListBooksReq struct {
 	Lang          string                 `protobuf:"bytes,3,opt,name=lang,proto3" json:"lang,omitempty"`
 	CategoryId    int64                  `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3" json:"category_id,omitempty"`
 	TagId         int64                  `protobuf:"varint,5,opt,name=tag_id,json=tagId,proto3" json:"tag_id,omitempty"`
-	Status        int32                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"` // 0 = 不过滤
+	Status        int32                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"` // 0 = 不过滤（仅管理员；非管理员强制按 1 上架过滤）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

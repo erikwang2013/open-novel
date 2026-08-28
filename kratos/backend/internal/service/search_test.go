@@ -59,22 +59,36 @@ func TestSearchFlow(t *testing.T) {
 	}
 	t.Cleanup(func() { s.DeleteIndex(authorCtx, &searchv1.DeleteIndexReq{BookId: bid}) })
 
-	// ja search (kuromoji)
+	// ja search (kuromoji); 索引可能含真实书籍，断言 fixture 命中而非总数
 	ja, err := s.SearchBooks(ctx, &searchv1.SearchBooksReq{Q: "仮想世界", Lang: "ja"})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if ja.Total != 1 || ja.List[0].BookId != bid {
-		t.Fatalf("ja search: want 1 hit for %d, got total=%d", bid, ja.Total)
+	found := false
+	for _, b := range ja.List {
+		if b.BookId == bid {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("ja search: want %d in hits, got total=%d", bid, ja.Total)
 	}
 
-	// zh search (standard tokenizer char matching)
+	// zh search (standard tokenizer char matching); 索引可能含真实书籍，断言 fixture 命中而非总数
 	zh, err := s.SearchBooks(ctx, &searchv1.SearchBooksReq{Q: "星海旅人"})
 	if err != nil {
 		t.Fatal(err)
 	}
-	if zh.Total != 1 || zh.List[0].BookId != bid {
-		t.Fatalf("zh search: want 1 hit for %d, got total=%d", bid, zh.Total)
+	found = false
+	for _, b := range zh.List {
+		if b.BookId == bid {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("zh search: want %d in hits, got total=%d", bid, zh.Total)
 	}
 
 	// hot list (uncached, high hot score)
@@ -83,7 +97,7 @@ func TestSearchFlow(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	found := false
+	found = false
 	for _, b := range hot.List {
 		if b.BookId == bid {
 			found = true

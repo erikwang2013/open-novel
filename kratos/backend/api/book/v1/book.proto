@@ -77,7 +77,7 @@ message ListBooksReq {
   string lang = 3;
   int64 category_id = 4;
   int64 tag_id = 5;
-  int32 status = 6; // 0 = 不过滤
+  int32 status = 6; // 0 = 不过滤（仅管理员；非管理员强制按 1 上架过滤）
 }
 
 message ListBooksReply {

@@ -5,7 +5,7 @@
 // source: search/v1/search.proto
 
 // 搜索服务：OpenSearch 多语言检索 / 热门 / 索引同步（任务 #21）
-// 业务码段 16xxxx；索引文档按书籍维度，每书一文档，含 zh/en/ja 三语字段
+// 业务码段 16xxxx；索引文档按书籍维度，每书一文档，含 zh/en/ja/ko 四语字段
 
 package v1
 
@@ -36,12 +36,15 @@ type BookDoc struct {
 	TitleZh       string                 `protobuf:"bytes,6,opt,name=title_zh,json=titleZh,proto3" json:"title_zh,omitempty"`
 	TitleEn       string                 `protobuf:"bytes,7,opt,name=title_en,json=titleEn,proto3" json:"title_en,omitempty"`
 	TitleJa       string                 `protobuf:"bytes,8,opt,name=title_ja,json=titleJa,proto3" json:"title_ja,omitempty"`
+	TitleKo       string                 `protobuf:"bytes,15,opt,name=title_ko,json=titleKo,proto3" json:"title_ko,omitempty"`
 	SummaryZh     string                 `protobuf:"bytes,9,opt,name=summary_zh,json=summaryZh,proto3" json:"summary_zh,omitempty"`
 	SummaryEn     string                 `protobuf:"bytes,10,opt,name=summary_en,json=summaryEn,proto3" json:"summary_en,omitempty"`
 	SummaryJa     string                 `protobuf:"bytes,11,opt,name=summary_ja,json=summaryJa,proto3" json:"summary_ja,omitempty"`
+	SummaryKo     string                 `protobuf:"bytes,16,opt,name=summary_ko,json=summaryKo,proto3" json:"summary_ko,omitempty"`
 	AuthorZh      string                 `protobuf:"bytes,12,opt,name=author_zh,json=authorZh,proto3" json:"author_zh,omitempty"`
 	AuthorEn      string                 `protobuf:"bytes,13,opt,name=author_en,json=authorEn,proto3" json:"author_en,omitempty"`
 	AuthorJa      string                 `protobuf:"bytes,14,opt,name=author_ja,json=authorJa,proto3" json:"author_ja,omitempty"`
+	AuthorKo      string                 `protobuf:"bytes,17,opt,name=author_ko,json=authorKo,proto3" json:"author_ko,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -132,6 +135,13 @@ func (x *BookDoc) GetTitleJa() string {
 	return ""
 }
 
+func (x *BookDoc) GetTitleKo() string {
+	if x != nil {
+		return x.TitleKo
+	}
+	return ""
+}
+
 func (x *BookDoc) GetSummaryZh() string {
 	if x != nil {
 		return x.SummaryZh
@@ -153,6 +163,13 @@ func (x *BookDoc) GetSummaryJa() string {
 	return ""
 }
 
+func (x *BookDoc) GetSummaryKo() string {
+	if x != nil {
+		return x.SummaryKo
+	}
+	return ""
+}
+
 func (x *BookDoc) GetAuthorZh() string {
 	if x != nil {
 		return x.AuthorZh
@@ -170,6 +187,13 @@ func (x *BookDoc) GetAuthorEn() string {
 func (x *BookDoc) GetAuthorJa() string {
 	if x != nil {
 		return x.AuthorJa
+	}
+	return ""
+}
+
+func (x *BookDoc) GetAuthorKo() string {
+	if x != nil {
+		return x.AuthorKo
 	}
 	return ""
 }
@@ -424,12 +448,15 @@ type SyncIndexReq struct {
 	TitleZh       string                 `protobuf:"bytes,6,opt,name=title_zh,json=titleZh,proto3" json:"title_zh,omitempty"`
 	TitleEn       string                 `protobuf:"bytes,7,opt,name=title_en,json=titleEn,proto3" json:"title_en,omitempty"`
 	TitleJa       string                 `protobuf:"bytes,8,opt,name=title_ja,json=titleJa,proto3" json:"title_ja,omitempty"`
+	TitleKo       string                 `protobuf:"bytes,15,opt,name=title_ko,json=titleKo,proto3" json:"title_ko,omitempty"`
 	SummaryZh     string                 `protobuf:"bytes,9,opt,name=summary_zh,json=summaryZh,proto3" json:"summary_zh,omitempty"`
 	SummaryEn     string                 `protobuf:"bytes,10,opt,name=summary_en,json=summaryEn,proto3" json:"summary_en,omitempty"`
 	SummaryJa     string                 `protobuf:"bytes,11,opt,name=summary_ja,json=summaryJa,proto3" json:"summary_ja,omitempty"`
+	SummaryKo     string                 `protobuf:"bytes,16,opt,name=summary_ko,json=summaryKo,proto3" json:"summary_ko,omitempty"`
 	AuthorZh      string                 `protobuf:"bytes,12,opt,name=author_zh,json=authorZh,proto3" json:"author_zh,omitempty"`
 	AuthorEn      string                 `protobuf:"bytes,13,opt,name=author_en,json=authorEn,proto3" json:"author_en,omitempty"`
 	AuthorJa      string                 `protobuf:"bytes,14,opt,name=author_ja,json=authorJa,proto3" json:"author_ja,omitempty"`
+	AuthorKo      string                 `protobuf:"bytes,17,opt,name=author_ko,json=authorKo,proto3" json:"author_ko,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -520,6 +547,13 @@ func (x *SyncIndexReq) GetTitleJa() string {
 	return ""
 }
 
+func (x *SyncIndexReq) GetTitleKo() string {
+	if x != nil {
+		return x.TitleKo
+	}
+	return ""
+}
+
 func (x *SyncIndexReq) GetSummaryZh() string {
 	if x != nil {
 		return x.SummaryZh
@@ -541,6 +575,13 @@ func (x *SyncIndexReq) GetSummaryJa() string {
 	return ""
 }
 
+func (x *SyncIndexReq) GetSummaryKo() string {
+	if x != nil {
+		return x.SummaryKo
+	}
+	return ""
+}
+
 func (x *SyncIndexReq) GetAuthorZh() string {
 	if x != nil {
 		return x.AuthorZh
@@ -558,6 +599,13 @@ func (x *SyncIndexReq) GetAuthorEn() string {
 func (x *SyncIndexReq) GetAuthorJa() string {
 	if x != nil {
 		return x.AuthorJa
+	}
+	return ""
+}
+
+func (x *SyncIndexReq) GetAuthorKo() string {
+	if x != nil {
+		return x.AuthorKo
 	}
 	return ""
 }
@@ -690,7 +738,7 @@ var File_search_v1_search_proto protoreflect.FileDescriptor
 
 const file_search_v1_search_proto_rawDesc = "" +
 	"\n" +
-	"\x16search/v1/search.proto\x12\tsearch.v1\x1a\x1cgoogle/api/annotations.proto\"\x84\x03\n" +
+	"\x16search/v1/search.proto\x12\tsearch.v1\x1a\x1cgoogle/api/annotations.proto\"\xdb\x03\n" +
 	"\aBookDoc\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
 	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x16\n" +
@@ -700,17 +748,21 @@ const file_search_v1_search_proto_rawDesc = "" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x19\n" +
 	"\btitle_zh\x18\x06 \x01(\tR\atitleZh\x12\x19\n" +
 	"\btitle_en\x18\a \x01(\tR\atitleEn\x12\x19\n" +
-	"\btitle_ja\x18\b \x01(\tR\atitleJa\x12\x1d\n" +
+	"\btitle_ja\x18\b \x01(\tR\atitleJa\x12\x19\n" +
+	"\btitle_ko\x18\x0f \x01(\tR\atitleKo\x12\x1d\n" +
 	"\n" +
 	"summary_zh\x18\t \x01(\tR\tsummaryZh\x12\x1d\n" +
 	"\n" +
 	"summary_en\x18\n" +
 	" \x01(\tR\tsummaryEn\x12\x1d\n" +
 	"\n" +
-	"summary_ja\x18\v \x01(\tR\tsummaryJa\x12\x1b\n" +
+	"summary_ja\x18\v \x01(\tR\tsummaryJa\x12\x1d\n" +
+	"\n" +
+	"summary_ko\x18\x10 \x01(\tR\tsummaryKo\x12\x1b\n" +
 	"\tauthor_zh\x18\f \x01(\tR\bauthorZh\x12\x1b\n" +
 	"\tauthor_en\x18\r \x01(\tR\bauthorEn\x12\x1b\n" +
-	"\tauthor_ja\x18\x0e \x01(\tR\bauthorJa\"c\n" +
+	"\tauthor_ja\x18\x0e \x01(\tR\bauthorJa\x12\x1b\n" +
+	"\tauthor_ko\x18\x11 \x01(\tR\bauthorKo\"c\n" +
 	"\x0eSearchBooksReq\x12\f\n" +
 	"\x01q\x18\x01 \x01(\tR\x01q\x12\x12\n" +
 	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x12\n" +
@@ -726,7 +778,7 @@ const file_search_v1_search_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x12.search.v1.BookDocR\x04list\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"\x89\x03\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"\xe0\x03\n" +
 	"\fSyncIndexReq\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
 	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x16\n" +
@@ -736,17 +788,21 @@ const file_search_v1_search_proto_rawDesc = "" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x19\n" +
 	"\btitle_zh\x18\x06 \x01(\tR\atitleZh\x12\x19\n" +
 	"\btitle_en\x18\a \x01(\tR\atitleEn\x12\x19\n" +
-	"\btitle_ja\x18\b \x01(\tR\atitleJa\x12\x1d\n" +
+	"\btitle_ja\x18\b \x01(\tR\atitleJa\x12\x19\n" +
+	"\btitle_ko\x18\x0f \x01(\tR\atitleKo\x12\x1d\n" +
 	"\n" +
 	"summary_zh\x18\t \x01(\tR\tsummaryZh\x12\x1d\n" +
 	"\n" +
 	"summary_en\x18\n" +
 	" \x01(\tR\tsummaryEn\x12\x1d\n" +
 	"\n" +
-	"summary_ja\x18\v \x01(\tR\tsummaryJa\x12\x1b\n" +
+	"summary_ja\x18\v \x01(\tR\tsummaryJa\x12\x1d\n" +
+	"\n" +
+	"summary_ko\x18\x10 \x01(\tR\tsummaryKo\x12\x1b\n" +
 	"\tauthor_zh\x18\f \x01(\tR\bauthorZh\x12\x1b\n" +
 	"\tauthor_en\x18\r \x01(\tR\bauthorEn\x12\x1b\n" +
-	"\tauthor_ja\x18\x0e \x01(\tR\bauthorJa\")\n" +
+	"\tauthor_ja\x18\x0e \x01(\tR\bauthorJa\x12\x1b\n" +
+	"\tauthor_ko\x18\x11 \x01(\tR\bauthorKo\")\n" +
 	"\x0eSyncIndexReply\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\")\n" +
 	"\x0eDeleteIndexReq\x12\x17\n" +

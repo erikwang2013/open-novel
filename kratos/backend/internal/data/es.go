@@ -35,7 +35,7 @@ const indexSettings = `{
         },
         "ko_analyzer": {
           "tokenizer": "nori_tokenizer",
-          "filter": ["lowercase", "icu_normalizer", "nori_stemmer"]
+          "filter": ["lowercase", "icu_normalizer"]
         }
       }
     }
@@ -63,7 +63,7 @@ const indexSettings = `{
   }
 }`
 
-// SearchDoc 是搜索文档，每书一文档（book_id 为文档 id），三语字段由书籍服务同步。
+// SearchDoc 是搜索文档，每书一文档（book_id 为文档 id），四语字段由书籍服务同步。
 type SearchDoc struct {
 	BookID    uint64 `json:"book_id"`
 	Lang      string `json:"lang"`

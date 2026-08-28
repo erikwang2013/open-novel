@@ -5,7 +5,7 @@ set -euo pipefail
 
 BASE="${BASE:-http://127.0.0.1:18080/api}"
 JWT_SECRET="${JWT_SECRET:-smoke-test-secret}"
-BOOK="${BOOK:-2}" # use a fresh book id to stay idempotent
+BOOK="${BOOK:-$((700000 + RANDOM))}" # random book id: repeat runs stay idempotent
 
 # mint an author token (role=2) for user 1001
 token=$(cd /tmp/novel-smoke && JWT_SECRET="$JWT_SECRET" go run token.go 2>/dev/null || \

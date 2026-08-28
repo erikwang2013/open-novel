@@ -63,6 +63,20 @@
 | POST | `/api/comments/{id}/report` | 举报 | Bearer |
 | GET | `/api/favorites` | 收藏列表 | Bearer |
 
+## 管理审核
+
+仅管理员（role=3）可用；越权返回 `180401`。
+
+| 方法 | 路径 | 说明 | 鉴权 |
+| :--- | :--- | :--- | :--- |
+| PATCH | `/api/books/{id}/status` | 书籍上下架 `{status: 0|1}` | Bearer（管理） |
+| PATCH | `/api/chapters/{id}/status` | 章节启用/禁用 `{status: 0|1}`（禁用章节正文不可读） | Bearer（管理） |
+| PUT | `/api/comments/{id}/status` | 评论状态 `{status: 0|1}` | Bearer（管理） |
+| GET | `/api/comments/reports` | 举报列表（status=2 待审核，分页） | Bearer（管理） |
+| POST | `/api/comments/{id}/report-handle` | 举报处理 `{approved: bool}`（true 下架评论，false 驳回恢复） | Bearer（管理） |
+
+管理错误码：`180401` 无权限 / `180402` 目标不存在 / `180403` 非法状态变更 / `140403` 章节已禁用。
+
 ## 搜索与推荐
 
 | 方法 | 路径 | 说明 | 鉴权 |

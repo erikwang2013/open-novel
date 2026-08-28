@@ -67,9 +67,9 @@ func (s *SearchService) DeleteIndex(ctx context.Context, req *v1.DeleteIndexReq)
 func docFromReq(req *v1.SyncIndexReq) data.SearchDoc {
 	return data.SearchDoc{
 		BookID: u64(req.BookId), Lang: req.Lang, Status: int(req.Status), Hot: req.Hot, CreatedAt: req.CreatedAt,
-		TitleZh: req.TitleZh, TitleEn: req.TitleEn, TitleJa: req.TitleJa,
-		SummaryZh: req.SummaryZh, SummaryEn: req.SummaryEn, SummaryJa: req.SummaryJa,
-		AuthorZh: req.AuthorZh, AuthorEn: req.AuthorEn, AuthorJa: req.AuthorJa,
+		TitleZh: req.TitleZh, TitleEn: req.TitleEn, TitleJa: req.TitleJa, TitleKo: req.TitleKo,
+		SummaryZh: req.SummaryZh, SummaryEn: req.SummaryEn, SummaryJa: req.SummaryJa, SummaryKo: req.SummaryKo,
+		AuthorZh: req.AuthorZh, AuthorEn: req.AuthorEn, AuthorJa: req.AuthorJa, AuthorKo: req.AuthorKo,
 	}
 }
 
@@ -78,9 +78,9 @@ func toDocList(docs []data.SearchDoc) []*v1.BookDoc {
 	for _, d := range docs {
 		list = append(list, &v1.BookDoc{
 			BookId: i64(d.BookID), Lang: d.Lang, Status: int32(d.Status), Hot: d.Hot, CreatedAt: d.CreatedAt,
-			TitleZh: d.TitleZh, TitleEn: d.TitleEn, TitleJa: d.TitleJa,
-			SummaryZh: d.SummaryZh, SummaryEn: d.SummaryEn, SummaryJa: d.SummaryJa,
-			AuthorZh: d.AuthorZh, AuthorEn: d.AuthorEn, AuthorJa: d.AuthorJa,
+			TitleZh: d.TitleZh, TitleEn: d.TitleEn, TitleJa: d.TitleJa, TitleKo: d.TitleKo,
+			SummaryZh: d.SummaryZh, SummaryEn: d.SummaryEn, SummaryJa: d.SummaryJa, SummaryKo: d.SummaryKo,
+			AuthorZh: d.AuthorZh, AuthorEn: d.AuthorEn, AuthorJa: d.AuthorJa, AuthorKo: d.AuthorKo,
 		})
 	}
 	return list
