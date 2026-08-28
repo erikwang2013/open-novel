@@ -35,6 +35,18 @@ func (s *SearchService) HotSearches(ctx context.Context, req *v1.HotSearchesReq)
 	return &v1.HotSearchesReply{List: toDocList(docs), Total: total, Page: 1, PageSize: int32(len(docs))}, nil
 }
 
+func (s *SearchService) HotKeywords(ctx context.Context, req *v1.HotKeywordsReq) (*v1.HotKeywordsReply, error) {
+	words, err := s.uc.HotKeywords(ctx)
+	if err != nil {
+		return nil, err
+	}
+	list := make([]*v1.HotKeyword, 0, len(words))
+	for _, w := range words {
+		list = append(list, &v1.HotKeyword{Keyword: w.Keyword, Count: w.Count})
+	}
+	return &v1.HotKeywordsReply{List: list}, nil
+}
+
 // 写接口需认证 + 作者角色（匿名可投毒/删除索引，审查 P1）。
 func (s *SearchService) SyncIndex(ctx context.Context, req *v1.SyncIndexReq) (*v1.SyncIndexReply, error) {
 	c, err := auth(ctx)

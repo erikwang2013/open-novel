@@ -438,6 +438,138 @@ func (x *HotSearchesReply) GetPageSize() int32 {
 	return 0
 }
 
+type HotKeywordsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HotKeywordsReq) Reset() {
+	*x = HotKeywordsReq{}
+	mi := &file_search_v1_search_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HotKeywordsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HotKeywordsReq) ProtoMessage() {}
+
+func (x *HotKeywordsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_search_v1_search_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HotKeywordsReq.ProtoReflect.Descriptor instead.
+func (*HotKeywordsReq) Descriptor() ([]byte, []int) {
+	return file_search_v1_search_proto_rawDescGZIP(), []int{5}
+}
+
+type HotKeywordsReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	List          []*HotKeyword          `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HotKeywordsReply) Reset() {
+	*x = HotKeywordsReply{}
+	mi := &file_search_v1_search_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HotKeywordsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HotKeywordsReply) ProtoMessage() {}
+
+func (x *HotKeywordsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_search_v1_search_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HotKeywordsReply.ProtoReflect.Descriptor instead.
+func (*HotKeywordsReply) Descriptor() ([]byte, []int) {
+	return file_search_v1_search_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *HotKeywordsReply) GetList() []*HotKeyword {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+type HotKeyword struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keyword       string                 `protobuf:"bytes,1,opt,name=keyword,proto3" json:"keyword,omitempty"`
+	Count         int64                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HotKeyword) Reset() {
+	*x = HotKeyword{}
+	mi := &file_search_v1_search_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HotKeyword) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HotKeyword) ProtoMessage() {}
+
+func (x *HotKeyword) ProtoReflect() protoreflect.Message {
+	mi := &file_search_v1_search_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HotKeyword.ProtoReflect.Descriptor instead.
+func (*HotKeyword) Descriptor() ([]byte, []int) {
+	return file_search_v1_search_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *HotKeyword) GetKeyword() string {
+	if x != nil {
+		return x.Keyword
+	}
+	return ""
+}
+
+func (x *HotKeyword) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
 type SyncIndexReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"` // 路径传入，覆盖 body
@@ -463,7 +595,7 @@ type SyncIndexReq struct {
 
 func (x *SyncIndexReq) Reset() {
 	*x = SyncIndexReq{}
-	mi := &file_search_v1_search_proto_msgTypes[5]
+	mi := &file_search_v1_search_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -475,7 +607,7 @@ func (x *SyncIndexReq) String() string {
 func (*SyncIndexReq) ProtoMessage() {}
 
 func (x *SyncIndexReq) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[5]
+	mi := &file_search_v1_search_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -488,7 +620,7 @@ func (x *SyncIndexReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncIndexReq.ProtoReflect.Descriptor instead.
 func (*SyncIndexReq) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{5}
+	return file_search_v1_search_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SyncIndexReq) GetBookId() int64 {
@@ -619,7 +751,7 @@ type SyncIndexReply struct {
 
 func (x *SyncIndexReply) Reset() {
 	*x = SyncIndexReply{}
-	mi := &file_search_v1_search_proto_msgTypes[6]
+	mi := &file_search_v1_search_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -631,7 +763,7 @@ func (x *SyncIndexReply) String() string {
 func (*SyncIndexReply) ProtoMessage() {}
 
 func (x *SyncIndexReply) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[6]
+	mi := &file_search_v1_search_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -644,7 +776,7 @@ func (x *SyncIndexReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncIndexReply.ProtoReflect.Descriptor instead.
 func (*SyncIndexReply) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{6}
+	return file_search_v1_search_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *SyncIndexReply) GetBookId() int64 {
@@ -663,7 +795,7 @@ type DeleteIndexReq struct {
 
 func (x *DeleteIndexReq) Reset() {
 	*x = DeleteIndexReq{}
-	mi := &file_search_v1_search_proto_msgTypes[7]
+	mi := &file_search_v1_search_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -675,7 +807,7 @@ func (x *DeleteIndexReq) String() string {
 func (*DeleteIndexReq) ProtoMessage() {}
 
 func (x *DeleteIndexReq) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[7]
+	mi := &file_search_v1_search_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -688,7 +820,7 @@ func (x *DeleteIndexReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteIndexReq.ProtoReflect.Descriptor instead.
 func (*DeleteIndexReq) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{7}
+	return file_search_v1_search_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteIndexReq) GetBookId() int64 {
@@ -706,7 +838,7 @@ type DeleteIndexReply struct {
 
 func (x *DeleteIndexReply) Reset() {
 	*x = DeleteIndexReply{}
-	mi := &file_search_v1_search_proto_msgTypes[8]
+	mi := &file_search_v1_search_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -718,7 +850,7 @@ func (x *DeleteIndexReply) String() string {
 func (*DeleteIndexReply) ProtoMessage() {}
 
 func (x *DeleteIndexReply) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[8]
+	mi := &file_search_v1_search_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -731,7 +863,7 @@ func (x *DeleteIndexReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteIndexReply.ProtoReflect.Descriptor instead.
 func (*DeleteIndexReply) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{8}
+	return file_search_v1_search_proto_rawDescGZIP(), []int{11}
 }
 
 var File_search_v1_search_proto protoreflect.FileDescriptor
@@ -778,7 +910,14 @@ const file_search_v1_search_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x12.search.v1.BookDocR\x04list\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"\xe0\x03\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"\x10\n" +
+	"\x0eHotKeywordsReq\"=\n" +
+	"\x10HotKeywordsReply\x12)\n" +
+	"\x04list\x18\x01 \x03(\v2\x15.search.v1.HotKeywordR\x04list\"<\n" +
+	"\n" +
+	"HotKeyword\x12\x18\n" +
+	"\akeyword\x18\x01 \x01(\tR\akeyword\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x03R\x05count\"\xe0\x03\n" +
 	"\fSyncIndexReq\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
 	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x16\n" +
@@ -807,10 +946,11 @@ const file_search_v1_search_proto_rawDesc = "" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\")\n" +
 	"\x0eDeleteIndexReq\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\"\x12\n" +
-	"\x10DeleteIndexReply2\x99\x03\n" +
+	"\x10DeleteIndexReply2\x82\x04\n" +
 	"\x06Search\x12Z\n" +
 	"\vSearchBooks\x12\x19.search.v1.SearchBooksReq\x1a\x1b.search.v1.SearchBooksReply\"\x13\x82\xd3\xe4\x93\x02\r\x12\v/api/search\x12^\n" +
 	"\vHotSearches\x12\x19.search.v1.HotSearchesReq\x1a\x1b.search.v1.HotSearchesReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/search/hot\x12g\n" +
+	"\vHotKeywords\x12\x19.search.v1.HotKeywordsReq\x1a\x1b.search.v1.HotKeywordsReply\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/search/hot-keywords\x12g\n" +
 	"\tSyncIndex\x12\x17.search.v1.SyncIndexReq\x1a\x19.search.v1.SyncIndexReply\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/api/search/index/{book_id}\x12j\n" +
 	"\vDeleteIndex\x12\x19.search.v1.DeleteIndexReq\x1a\x1b.search.v1.DeleteIndexReply\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/api/search/index/{book_id}B%Z#open-novel/backend/api/search/v1;v1b\x06proto3"
 
@@ -826,34 +966,40 @@ func file_search_v1_search_proto_rawDescGZIP() []byte {
 	return file_search_v1_search_proto_rawDescData
 }
 
-var file_search_v1_search_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_search_v1_search_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_search_v1_search_proto_goTypes = []any{
 	(*BookDoc)(nil),          // 0: search.v1.BookDoc
 	(*SearchBooksReq)(nil),   // 1: search.v1.SearchBooksReq
 	(*SearchBooksReply)(nil), // 2: search.v1.SearchBooksReply
 	(*HotSearchesReq)(nil),   // 3: search.v1.HotSearchesReq
 	(*HotSearchesReply)(nil), // 4: search.v1.HotSearchesReply
-	(*SyncIndexReq)(nil),     // 5: search.v1.SyncIndexReq
-	(*SyncIndexReply)(nil),   // 6: search.v1.SyncIndexReply
-	(*DeleteIndexReq)(nil),   // 7: search.v1.DeleteIndexReq
-	(*DeleteIndexReply)(nil), // 8: search.v1.DeleteIndexReply
+	(*HotKeywordsReq)(nil),   // 5: search.v1.HotKeywordsReq
+	(*HotKeywordsReply)(nil), // 6: search.v1.HotKeywordsReply
+	(*HotKeyword)(nil),       // 7: search.v1.HotKeyword
+	(*SyncIndexReq)(nil),     // 8: search.v1.SyncIndexReq
+	(*SyncIndexReply)(nil),   // 9: search.v1.SyncIndexReply
+	(*DeleteIndexReq)(nil),   // 10: search.v1.DeleteIndexReq
+	(*DeleteIndexReply)(nil), // 11: search.v1.DeleteIndexReply
 }
 var file_search_v1_search_proto_depIdxs = []int32{
-	0, // 0: search.v1.SearchBooksReply.list:type_name -> search.v1.BookDoc
-	0, // 1: search.v1.HotSearchesReply.list:type_name -> search.v1.BookDoc
-	1, // 2: search.v1.Search.SearchBooks:input_type -> search.v1.SearchBooksReq
-	3, // 3: search.v1.Search.HotSearches:input_type -> search.v1.HotSearchesReq
-	5, // 4: search.v1.Search.SyncIndex:input_type -> search.v1.SyncIndexReq
-	7, // 5: search.v1.Search.DeleteIndex:input_type -> search.v1.DeleteIndexReq
-	2, // 6: search.v1.Search.SearchBooks:output_type -> search.v1.SearchBooksReply
-	4, // 7: search.v1.Search.HotSearches:output_type -> search.v1.HotSearchesReply
-	6, // 8: search.v1.Search.SyncIndex:output_type -> search.v1.SyncIndexReply
-	8, // 9: search.v1.Search.DeleteIndex:output_type -> search.v1.DeleteIndexReply
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0,  // 0: search.v1.SearchBooksReply.list:type_name -> search.v1.BookDoc
+	0,  // 1: search.v1.HotSearchesReply.list:type_name -> search.v1.BookDoc
+	7,  // 2: search.v1.HotKeywordsReply.list:type_name -> search.v1.HotKeyword
+	1,  // 3: search.v1.Search.SearchBooks:input_type -> search.v1.SearchBooksReq
+	3,  // 4: search.v1.Search.HotSearches:input_type -> search.v1.HotSearchesReq
+	5,  // 5: search.v1.Search.HotKeywords:input_type -> search.v1.HotKeywordsReq
+	8,  // 6: search.v1.Search.SyncIndex:input_type -> search.v1.SyncIndexReq
+	10, // 7: search.v1.Search.DeleteIndex:input_type -> search.v1.DeleteIndexReq
+	2,  // 8: search.v1.Search.SearchBooks:output_type -> search.v1.SearchBooksReply
+	4,  // 9: search.v1.Search.HotSearches:output_type -> search.v1.HotSearchesReply
+	6,  // 10: search.v1.Search.HotKeywords:output_type -> search.v1.HotKeywordsReply
+	9,  // 11: search.v1.Search.SyncIndex:output_type -> search.v1.SyncIndexReply
+	11, // 12: search.v1.Search.DeleteIndex:output_type -> search.v1.DeleteIndexReply
+	8,  // [8:13] is the sub-list for method output_type
+	3,  // [3:8] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_search_v1_search_proto_init() }
@@ -867,7 +1013,7 @@ func file_search_v1_search_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_search_v1_search_proto_rawDesc), len(file_search_v1_search_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

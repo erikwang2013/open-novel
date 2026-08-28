@@ -67,6 +67,11 @@ check "payments plans" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/payments/plans
 check "vip status" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/payments/vip-status" "${hdr[@]}")"
 check "admin stats" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/stats/overview" -H "Authorization: Bearer $admin_token")"
 check "admin stats forbidden for reader" 180401 "$(curl -s -H 'X-Api-Version: v1' "$BASE/stats/overview" -H "Authorization: Bearer $reader_token")"
+check "hot keywords" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/search/hot-keywords")"
+check "admin categories" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/admin/categories" -H "Authorization: Bearer $admin_token")"
+check "admin categories forbidden for reader" 180401 "$(curl -s -H 'X-Api-Version: v1' "$BASE/admin/categories" -H "Authorization: Bearer $reader_token")"
+check "admin tags" 0 "$(curl -s -H 'X-Api-Version: v1' "$BASE/admin/tags" -H "Authorization: Bearer $admin_token")"
+check "admin tags forbidden for reader" 180401 "$(curl -s -H 'X-Api-Version: v1' "$BASE/admin/tags" -H "Authorization: Bearer $reader_token")"
 
 echo "---"
 echo "passed=$pass failed=$fail"

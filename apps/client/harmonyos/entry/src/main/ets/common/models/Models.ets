@@ -303,6 +303,19 @@ export class VipStatus {
   }
 }
 
+/// 热搜词（GET /api/search/hot-keywords，同 Flutter 实现）。
+export class HotKeyword {
+  keyword: string = '';
+  count: number = 0;
+
+  static fromJson(j: Record<string, Object>): HotKeyword {
+    const d = new HotKeyword();
+    d.keyword = asStr(j['keyword']);
+    d.count = asInt(j['count']);
+    return d;
+  }
+}
+
 /// OpenSearch 搜索结果文档：按 lang 取对应语言字段（同 Flutter 实现）。
 export class SearchDoc {
   bookId: string = '';

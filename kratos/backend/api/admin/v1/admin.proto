@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 // 管理端服务：仪表盘统计 / 分类 / 标签（T-A-14/16）
-// 业务码段 18xxxx；REST 映射 /api/stats/overview、/api/categories、/api/tags
+// 业务码段 18xxxx；REST 映射 /api/stats/overview、/api/admin/categories、/api/admin/tags
 package admin.v1;
 
 import "google/api/annotations.proto";
@@ -16,9 +16,10 @@ service Admin {
     };
   }
   // 分类列表（requireAdmin，全量返回，量小）
+  // 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
   rpc ListCategories(ListCategoriesReq) returns (ListCategoriesReply) {
     option (google.api.http) = {
-      get: "/api/categories"
+      get: "/api/admin/categories"
     };
   }
   rpc CreateCategory(CreateCategoryReq) returns (CategoryReply) {
@@ -42,7 +43,7 @@ service Admin {
   // 标签列表（requireAdmin）
   rpc ListTags(ListTagsReq) returns (ListTagsReply) {
     option (google.api.http) = {
-      get: "/api/tags"
+      get: "/api/admin/tags"
     };
   }
   rpc CreateTag(CreateTagReq) returns (TagReply) {

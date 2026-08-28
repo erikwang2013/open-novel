@@ -20,12 +20,15 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationSearchDeleteIndex = "/search.v1.Search/DeleteIndex"
+const OperationSearchHotKeywords = "/search.v1.Search/HotKeywords"
 const OperationSearchHotSearches = "/search.v1.Search/HotSearches"
 const OperationSearchSearchBooks = "/search.v1.Search/SearchBooks"
 const OperationSearchSyncIndex = "/search.v1.Search/SyncIndex"
 
 type SearchHTTPServer interface {
 	DeleteIndex(context.Context, *DeleteIndexReq) (*DeleteIndexReply, error)
+	// HotKeywords 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
+	HotKeywords(context.Context, *HotKeywordsReq) (*HotKeywordsReply, error)
 	// HotSearches 热门榜单（缓存 search:hot）
 	HotSearches(context.Context, *HotSearchesReq) (*HotSearchesReply, error)
 	// SearchBooks 搜索（lang 缺省 zh-CN；记录搜索日志，best-effort 不阻塞搜索）
@@ -38,6 +41,7 @@ func RegisterSearchHTTPServer(s *http.Server, srv SearchHTTPServer) {
 	r := s.Route("/")
 	r.GET("/api/search", _Search_SearchBooks0_HTTP_Handler(srv))
 	r.GET("/api/search/hot", _Search_HotSearches0_HTTP_Handler(srv))
+	r.GET("/api/search/hot-keywords", _Search_HotKeywords0_HTTP_Handler(srv))
 	r.POST("/api/search/index/{book_id}", _Search_SyncIndex0_HTTP_Handler(srv))
 	r.DELETE("/api/search/index/{book_id}", _Search_DeleteIndex0_HTTP_Handler(srv))
 }
@@ -76,6 +80,25 @@ func _Search_HotSearches0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Conte
 			return err
 		}
 		reply := out.(*HotSearchesReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Search_HotKeywords0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in HotKeywordsReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSearchHotKeywords)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.HotKeywords(ctx, req.(*HotKeywordsReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*HotKeywordsReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -129,6 +152,8 @@ func _Search_DeleteIndex0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Conte
 
 type SearchHTTPClient interface {
 	DeleteIndex(ctx context.Context, req *DeleteIndexReq, opts ...http.CallOption) (rsp *DeleteIndexReply, err error)
+	// HotKeywords 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
+	HotKeywords(ctx context.Context, req *HotKeywordsReq, opts ...http.CallOption) (rsp *HotKeywordsReply, err error)
 	// HotSearches 热门榜单（缓存 search:hot）
 	HotSearches(ctx context.Context, req *HotSearchesReq, opts ...http.CallOption) (rsp *HotSearchesReply, err error)
 	// SearchBooks 搜索（lang 缺省 zh-CN；记录搜索日志，best-effort 不阻塞搜索）
@@ -152,6 +177,20 @@ func (c *SearchHTTPClientImpl) DeleteIndex(ctx context.Context, in *DeleteIndexR
 	opts = append(opts, http.Operation(OperationSearchDeleteIndex))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// HotKeywords 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
+func (c *SearchHTTPClientImpl) HotKeywords(ctx context.Context, in *HotKeywordsReq, opts ...http.CallOption) (*HotKeywordsReply, error) {
+	var out HotKeywordsReply
+	pattern := "/api/search/hot-keywords"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationSearchHotKeywords))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

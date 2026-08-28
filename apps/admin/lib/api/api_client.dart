@@ -187,7 +187,7 @@ class ApiClient {
   // ---------- 分类 / 标签 ----------
 
   Future<(List<Category>, int)> categories() async {
-    final d = _data(await _dio.get('/api/categories'));
+    final d = _data(await _dio.get('/api/admin/categories'));
     return (_listOf(d, Category.fromJson), asInt(d['total']));
   }
 
@@ -208,7 +208,7 @@ class ApiClient {
   }
 
   Future<(List<Tag>, int)> tags() async {
-    final d = _data(await _dio.get('/api/tags'));
+    final d = _data(await _dio.get('/api/admin/tags'));
     return (_listOf(d, Tag.fromJson), asInt(d['total']));
   }
 

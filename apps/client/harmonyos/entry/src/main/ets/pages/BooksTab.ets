@@ -1,15 +1,15 @@
 import { router } from '@kit.ArkUI';
 import { common } from '@kit.AbilityKit';
 import { ApiClient } from '../common/api/ApiClient';
-import { Book, Category, SearchDoc } from '../common/models/Models';
+import { Book, Category, HotKeyword, SearchDoc } from '../common/models/Models';
 
-/// 全部书籍 tab：搜索框 + 分类筛选 + 热门搜索 + 书籍列表（GET /api/books、GET /api/categories、GET /api/search/hot）。
+/// 全部书籍 tab：搜索框 + 分类筛选 + 热搜词 + 书籍列表（GET /api/books、GET /api/categories、GET /api/search/hot-keywords）。
 @Component
 export struct BooksTab {
   @State books: Book[] = [];
   @State results: SearchDoc[] = [];
   @State categories: Category[] = [];
-  @State hot: SearchDoc[] = [];
+  @State hot: HotKeyword[] = [];
   @State categoryId: string = '';
   @State searching: boolean = false;
   @State loading: boolean = true;
@@ -262,12 +262,12 @@ export struct BooksTab {
                 .fontColor('#666666')
                 .width('100%')
               Flex({ wrap: FlexWrap.Wrap }) {
-                ForEach(this.hot, (d: SearchDoc) => {
-                  this.catChip(d.title(ApiClient.LANG), false, () => {
-                    this.keyword = d.title(ApiClient.LANG);
+                ForEach(this.hot, (w: HotKeyword) => {
+                  this.catChip(w.keyword, false, () => {
+                    this.keyword = w.keyword;
                     this.doSearch(this.keyword);
                   })
-                }, (d: SearchDoc) => d.bookId)
+                }, (w: HotKeyword) => w.keyword)
               }
               .width('100%')
             }

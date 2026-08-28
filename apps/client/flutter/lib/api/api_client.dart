@@ -269,10 +269,10 @@ class ApiClient {
     return _parseList<Category>(r.data, Category.fromJson);
   }
 
-  /// 热门搜索（GET /api/search/hot）：后端返回热门书籍 BookDoc，字段与 SearchDoc 一致。
-  Future<List<SearchDoc>> hotSearches() async {
-    final r = await _dio.get('/api/search/hot');
-    return _parseList<SearchDoc>(r.data, SearchDoc.fromJson);
+  /// 热搜词（GET /api/search/hot-keywords）：{list:[{keyword,count}]}，TOP 10。
+  Future<List<HotKeyword>> hotSearches() async {
+    final r = await _dio.get('/api/search/hot-keywords');
+    return _parseList<HotKeyword>(r.data, HotKeyword.fromJson);
   }
 
   Future<void> favoriteBook(String bookId) =>

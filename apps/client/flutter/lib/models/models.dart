@@ -260,6 +260,16 @@ class Category {
         parentId = asInt(j['parentId']);
 }
 
+/// 热搜词（GET /api/search/hot-keywords）。
+class HotKeyword {
+  final String keyword;
+  final int count;
+
+  HotKeyword.fromJson(Map<String, dynamic> j)
+      : keyword = asStr(j['keyword']),
+        count = asInt(j['count']);
+}
+
 /// OpenSearch 搜索结果文档：按 lang 取对应语言字段。
 class SearchDoc {
   final String bookId;

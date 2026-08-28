@@ -21,6 +21,12 @@ service Search {
       get: "/api/search/hot"
     };
   }
+  // 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
+  rpc HotKeywords(HotKeywordsReq) returns (HotKeywordsReply) {
+    option (google.api.http) = {
+      get: "/api/search/hot-keywords"
+    };
+  }
   // 索引同步（书籍服务在新建/更新书籍或翻译时调用）
   rpc SyncIndex(SyncIndexReq) returns (SyncIndexReply) {
     option (google.api.http) = {
@@ -77,6 +83,17 @@ message HotSearchesReply {
   int64 total = 2;
   int32 page = 3;
   int32 page_size = 4;
+}
+
+message HotKeywordsReq {}
+
+message HotKeywordsReply {
+  repeated HotKeyword list = 1;
+}
+
+message HotKeyword {
+  string keyword = 1;
+  int64 count = 2;
 }
 
 message SyncIndexReq {

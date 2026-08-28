@@ -16,6 +16,7 @@ import {
   Comment,
   CreateOrderResult,
   FavoriteItem,
+  HotKeyword,
   LoginResult,
   OrderStatus,
   PaymentMethod,
@@ -246,10 +247,10 @@ export class ApiClient {
     return this.parseList(obj, Category.fromJson);
   }
 
-  /// 热门搜索（GET /api/search/hot）：后端返回热门书籍 BookDoc，字段与 SearchDoc 一致。
-  async hotSearches(): Promise<SearchDoc[]> {
-    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>('/api/search/hot');
-    return this.parseList(obj, SearchDoc.fromJson);
+  /// 热搜词（GET /api/search/hot-keywords）：{list:[{keyword,count}]}，TOP 10。
+  async hotSearches(): Promise<HotKeyword[]> {
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>('/api/search/hot-keywords');
+    return this.parseList(obj, HotKeyword.fromJson);
   }
 
   async logout(): Promise<void> {

@@ -2,10 +2,10 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v5.28.3
-// source: api/search/v1/search.proto
+// source: search/v1/search.proto
 
 // 搜索服务：OpenSearch 多语言检索 / 热门 / 索引同步（任务 #21）
-// 业务码段 16xxxx；索引文档按书籍维度，每书一文档，含 zh/en/ja 三语字段
+// 业务码段 16xxxx；索引文档按书籍维度，每书一文档，含 zh/en/ja/ko 四语字段
 
 package v1
 
@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Search_SearchBooks_FullMethodName = "/search.v1.Search/SearchBooks"
 	Search_HotSearches_FullMethodName = "/search.v1.Search/HotSearches"
+	Search_HotKeywords_FullMethodName = "/search.v1.Search/HotKeywords"
 	Search_SyncIndex_FullMethodName   = "/search.v1.Search/SyncIndex"
 	Search_DeleteIndex_FullMethodName = "/search.v1.Search/DeleteIndex"
 )
@@ -36,6 +37,8 @@ type SearchClient interface {
 	SearchBooks(ctx context.Context, in *SearchBooksReq, opts ...grpc.CallOption) (*SearchBooksReply, error)
 	// 热门榜单（缓存 search:hot）
 	HotSearches(ctx context.Context, in *HotSearchesReq, opts ...grpc.CallOption) (*HotSearchesReply, error)
+	// 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
+	HotKeywords(ctx context.Context, in *HotKeywordsReq, opts ...grpc.CallOption) (*HotKeywordsReply, error)
 	// 索引同步（书籍服务在新建/更新书籍或翻译时调用）
 	SyncIndex(ctx context.Context, in *SyncIndexReq, opts ...grpc.CallOption) (*SyncIndexReply, error)
 	DeleteIndex(ctx context.Context, in *DeleteIndexReq, opts ...grpc.CallOption) (*DeleteIndexReply, error)
@@ -63,6 +66,16 @@ func (c *searchClient) HotSearches(ctx context.Context, in *HotSearchesReq, opts
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(HotSearchesReply)
 	err := c.cc.Invoke(ctx, Search_HotSearches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *searchClient) HotKeywords(ctx context.Context, in *HotKeywordsReq, opts ...grpc.CallOption) (*HotKeywordsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HotKeywordsReply)
+	err := c.cc.Invoke(ctx, Search_HotKeywords_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +110,8 @@ type SearchServer interface {
 	SearchBooks(context.Context, *SearchBooksReq) (*SearchBooksReply, error)
 	// 热门榜单（缓存 search:hot）
 	HotSearches(context.Context, *HotSearchesReq) (*HotSearchesReply, error)
+	// 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
+	HotKeywords(context.Context, *HotKeywordsReq) (*HotKeywordsReply, error)
 	// 索引同步（书籍服务在新建/更新书籍或翻译时调用）
 	SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error)
 	DeleteIndex(context.Context, *DeleteIndexReq) (*DeleteIndexReply, error)
@@ -115,6 +130,9 @@ func (UnimplementedSearchServer) SearchBooks(context.Context, *SearchBooksReq) (
 }
 func (UnimplementedSearchServer) HotSearches(context.Context, *HotSearchesReq) (*HotSearchesReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method HotSearches not implemented")
+}
+func (UnimplementedSearchServer) HotKeywords(context.Context, *HotKeywordsReq) (*HotKeywordsReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method HotKeywords not implemented")
 }
 func (UnimplementedSearchServer) SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncIndex not implemented")
@@ -179,6 +197,24 @@ func _Search_HotSearches_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Search_HotKeywords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HotKeywordsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SearchServer).HotKeywords(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Search_HotKeywords_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SearchServer).HotKeywords(ctx, req.(*HotKeywordsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Search_SyncIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncIndexReq)
 	if err := dec(in); err != nil {
@@ -231,6 +267,10 @@ var Search_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Search_HotSearches_Handler,
 		},
 		{
+			MethodName: "HotKeywords",
+			Handler:    _Search_HotKeywords_Handler,
+		},
+		{
 			MethodName: "SyncIndex",
 			Handler:    _Search_SyncIndex_Handler,
 		},
@@ -240,5 +280,5 @@ var Search_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/search/v1/search.proto",
+	Metadata: "search/v1/search.proto",
 }

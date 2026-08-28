@@ -37,6 +37,7 @@ type AdminHTTPServer interface {
 	// GetStats 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(context.Context, *GetStatsReq) (*GetStatsReply, error)
 	// ListCategories 分类列表（requireAdmin，全量返回，量小）
+	// 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesReply, error)
 	// ListTags 标签列表（requireAdmin）
 	ListTags(context.Context, *ListTagsReq) (*ListTagsReply, error)
@@ -48,11 +49,11 @@ type AdminHTTPServer interface {
 func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r := s.Route("/")
 	r.GET("/api/stats/overview", _Admin_GetStats0_HTTP_Handler(srv))
-	r.GET("/api/categories", _Admin_ListCategories0_HTTP_Handler(srv))
+	r.GET("/api/admin/categories", _Admin_ListCategories0_HTTP_Handler(srv))
 	r.POST("/api/categories", _Admin_CreateCategory0_HTTP_Handler(srv))
 	r.PUT("/api/categories/{id}", _Admin_UpdateCategory0_HTTP_Handler(srv))
 	r.DELETE("/api/categories/{id}", _Admin_DeleteCategory0_HTTP_Handler(srv))
-	r.GET("/api/tags", _Admin_ListTags0_HTTP_Handler(srv))
+	r.GET("/api/admin/tags", _Admin_ListTags0_HTTP_Handler(srv))
 	r.POST("/api/tags", _Admin_CreateTag0_HTTP_Handler(srv))
 	r.PUT("/api/tags/{id}", _Admin_UpdateTag0_HTTP_Handler(srv))
 	r.DELETE("/api/tags/{id}", _Admin_DeleteTag0_HTTP_Handler(srv))
@@ -261,6 +262,7 @@ type AdminHTTPClient interface {
 	// GetStats 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(ctx context.Context, req *GetStatsReq, opts ...http.CallOption) (rsp *GetStatsReply, err error)
 	// ListCategories 分类列表（requireAdmin，全量返回，量小）
+	// 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
 	ListCategories(ctx context.Context, req *ListCategoriesReq, opts ...http.CallOption) (rsp *ListCategoriesReply, err error)
 	// ListTags 标签列表（requireAdmin）
 	ListTags(ctx context.Context, req *ListTagsReq, opts ...http.CallOption) (rsp *ListTagsReply, err error)
@@ -344,9 +346,10 @@ func (c *AdminHTTPClientImpl) GetStats(ctx context.Context, in *GetStatsReq, opt
 }
 
 // ListCategories 分类列表（requireAdmin，全量返回，量小）
+// 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
 func (c *AdminHTTPClientImpl) ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...http.CallOption) (*ListCategoriesReply, error) {
 	var out ListCategoriesReply
-	pattern := "/api/categories"
+	pattern := "/api/admin/categories"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAdminListCategories))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -360,7 +363,7 @@ func (c *AdminHTTPClientImpl) ListCategories(ctx context.Context, in *ListCatego
 // ListTags 标签列表（requireAdmin）
 func (c *AdminHTTPClientImpl) ListTags(ctx context.Context, in *ListTagsReq, opts ...http.CallOption) (*ListTagsReply, error) {
 	var out ListTagsReply
-	pattern := "/api/tags"
+	pattern := "/api/admin/tags"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAdminListTags))
 	opts = append(opts, http.PathTemplate(pattern))

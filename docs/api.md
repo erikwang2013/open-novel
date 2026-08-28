@@ -44,10 +44,10 @@
 | PUT | `/api/books/{id}/translation` | 创建/更新书籍翻译（多语言标题/简介） | Bearer（管理） |
 | POST | `/api/books/{book_id}/favorite` | 收藏书籍 | Bearer |
 | DELETE | `/api/books/{book_id}/favorite` | 取消收藏 | Bearer |
-| GET | `/api/categories` | 分类列表 | 无 |
+| GET | `/api/categories` | 分类列表（一级分类，客户端浏览用） | 无 |
 | GET | `/api/tags` | 标签列表（`lang` 过滤） | 无 |
 
-> 分类/标签写操作（POST / PUT / DELETE）见下方「管理端统计与配置」；GET 列表当前由 book 服务公开路由生效（admin 服务存在同名 GET 路由但被先注册的 book 路由遮蔽，见文末疑点说明）。
+> 分类/标签写操作（POST / PUT / DELETE）见下方「管理端统计与配置」；管理端列表接口为 `GET /api/admin/categories`、`GET /api/admin/tags`（全量含 status/sort_order，见下方表格）。
 
 ## 章节
 
@@ -89,11 +89,13 @@
 
 ### 管理端统计与配置（T-A-14~16）
 
-仅管理员（role=3）可用；越权返回 `180401`。分类/标签**写操作**（POST / PUT / DELETE）由 admin 服务处理（requireAdmin）；**GET 列表**当前由 book 服务公开路由生效（admin 服务同名 GET 被先注册路由遮蔽，见文末疑点说明）。
+仅管理员（role=3）可用；越权返回 `180401`。分类/标签**写操作**（POST / PUT / DELETE）与**列表**（GET `/api/admin/categories`、`GET /api/admin/tags`）均由 admin 服务 requireAdmin 处理；公开 GET `/api/categories`、`/api/tags`（book 服务，客户端浏览用）无需鉴权且不返回 status/sort_order。
 
 | 方法 | 路径 | 说明 | 鉴权 |
 | :--- | :--- | :--- | :--- |
 | GET | `/api/stats/overview` | 仪表盘统计：书籍/用户/评论数、DAU 近似（当日登录 ∪ 当日搜索的去重用户）、热门书籍（复用 `/api/search/hot`）、热门搜索词（搜索日志聚合） | Bearer（管理） |
+| GET | `/api/admin/categories` | 分类列表（全量，含 status/sort_order） | Bearer（管理） |
+| GET | `/api/admin/tags` | 标签列表（全量，含 status） | Bearer（管理） |
 | POST | `/api/categories` | 创建分类 `{name, parent_id?, sort_order?}` | Bearer（管理） |
 | PUT | `/api/categories/{id}` | 更新分类（可选字段，仅更新非空项；`status` 0 禁用 1 启用） | Bearer（管理） |
 | DELETE | `/api/categories/{id}` | 删除分类 | Bearer（管理） |
@@ -106,7 +108,8 @@
 | 方法 | 路径 | 说明 | 鉴权 |
 | :--- | :--- | :--- | :--- |
 | GET | `/api/search` | 搜索 `q` + 分页 + `lang` | 无 |
-| GET | `/api/search/hot` | 热门搜索词 | 无 |
+| GET | `/api/search/hot` | 热门书籍榜（BookDoc 列表） | 无 |
+| GET | `/api/search/hot-keywords` | 热搜词榜 `{list:[{keyword,count}]}`，搜索日志聚合 TOP 10 | 无 |
 | POST | `/api/search/index/{book_id}` | 重建单本书搜索索引 | Bearer（管理） |
 | DELETE | `/api/search/index/{book_id}` | 删除单本书搜索索引 | Bearer（管理） |
 | GET | `/api/recommend` | 推荐 `strategy=hot|new` + `page_size` + `lang` | 无 |
@@ -163,7 +166,3 @@ curl -H "X-Api-Version: v1" http://localhost:8000/api/books?page=1&page_size=20
 curl -X POST -H "X-Api-Version: v1" -H "Content-Type: application/json" \
   -d '{"username":"demo","password":"demo123"}' http://localhost:8000/api/users/login
 ```
-
-## 已知路由疑点（2026-08-29 核对）
-
-- **GET `/api/categories` 与 GET `/api/tags` 路由重叠**：`book.proto`（公开）与 `admin.proto`（`ListCategories`/`ListTags`，注释标 requireAdmin）注册了相同路径。服务注册顺序为 book 在前（`server.go` 第 61 行）→ admin 在后（第 67 行），Kratos v2.9.2 底层为 gorilla/mux，**先注册路由优先匹配**，故 GET 列表实际由 book 服务公开处理（无需登录）；admin 服务的同名 GET 被遮蔽，其 requireAdmin 不生效。分类/标签的 POST / PUT / DELETE 无冲突，均由 admin 服务 requireAdmin 处理。如需 GET 也走管理鉴权，需删除 book.proto 中的同名 GET 路由或调整注册顺序。

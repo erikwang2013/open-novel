@@ -94,6 +94,17 @@ func (uc *SearchUsecase) Hot(ctx context.Context) ([]data.SearchDoc, int64, erro
 	return out.List, out.Total, nil
 }
 
+// HotKeywords 热搜词榜（搜索日志按词聚合，TOP 10，口径同 AdminUsecase.Stats）。
+func (uc *SearchUsecase) HotKeywords(ctx context.Context) ([]HotKeyword, error) {
+	var out []HotKeyword
+	if err := uc.db.WithContext(ctx).Model(&data.SearchLog{}).
+		Select("keyword, COUNT(*) AS count").
+		Group("keyword").Order("count DESC").Limit(10).Scan(&out).Error; err != nil {
+		return nil, pkg.ErrSearch
+	}
+	return out, nil
+}
+
 // SyncIndex 同步书籍文档（书籍服务在新建/更新书籍或翻译时调用）。
 func (uc *SearchUsecase) SyncIndex(ctx context.Context, doc data.SearchDoc) error {
 	if doc.BookID == 0 {

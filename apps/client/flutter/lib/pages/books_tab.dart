@@ -19,7 +19,7 @@ class _BooksTabState extends State<BooksTab> {
   List<Book>? _books;
   List<SearchDoc>? _searchResults;
   List<Category> _categories = [];
-  List<SearchDoc> _hot = [];
+  List<HotKeyword> _hot = [];
   String? _categoryId;
   String? _error;
   bool _searching = false;
@@ -174,10 +174,10 @@ class _BooksTabState extends State<BooksTab> {
           spacing: 8,
           runSpacing: 4,
           children: [
-            for (final d in _hot)
+            for (final w in _hot)
               ActionChip(
-                label: Text(d.title(langCode(localeNotifier.value))),
-                onPressed: () => _search(d.title(langCode(localeNotifier.value))),
+                label: Text(w.keyword),
+                onPressed: () => _search(w.keyword),
               ),
           ],
         ),

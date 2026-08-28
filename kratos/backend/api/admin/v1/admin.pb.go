@@ -5,7 +5,7 @@
 // source: admin/v1/admin.proto
 
 // 管理端服务：仪表盘统计 / 分类 / 标签（T-A-14/16）
-// 业务码段 18xxxx；REST 映射 /api/stats/overview、/api/categories、/api/tags
+// 业务码段 18xxxx；REST 映射 /api/stats/overview、/api/admin/categories、/api/admin/tags
 
 package v1
 
@@ -1053,14 +1053,14 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\fDeleteTagReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\f\n" +
 	"\n" +
-	"EmptyReply2\xbc\x06\n" +
+	"EmptyReply2\xc8\x06\n" +
 	"\x05Admin\x12W\n" +
-	"\bGetStats\x12\x15.admin.v1.GetStatsReq\x1a\x17.admin.v1.GetStatsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/stats/overview\x12e\n" +
-	"\x0eListCategories\x12\x1b.admin.v1.ListCategoriesReq\x1a\x1d.admin.v1.ListCategoriesReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/categories\x12b\n" +
+	"\bGetStats\x12\x15.admin.v1.GetStatsReq\x1a\x17.admin.v1.GetStatsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/stats/overview\x12k\n" +
+	"\x0eListCategories\x12\x1b.admin.v1.ListCategoriesReq\x1a\x1d.admin.v1.ListCategoriesReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/categories\x12b\n" +
 	"\x0eCreateCategory\x12\x1b.admin.v1.CreateCategoryReq\x1a\x17.admin.v1.CategoryReply\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/api/categories\x12g\n" +
 	"\x0eUpdateCategory\x12\x1b.admin.v1.UpdateCategoryReq\x1a\x17.admin.v1.CategoryReply\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\x1a\x14/api/categories/{id}\x12a\n" +
-	"\x0eDeleteCategory\x12\x1b.admin.v1.DeleteCategoryReq\x1a\x14.admin.v1.EmptyReply\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/api/categories/{id}\x12M\n" +
-	"\bListTags\x12\x15.admin.v1.ListTagsReq\x1a\x17.admin.v1.ListTagsReply\"\x11\x82\xd3\xe4\x93\x02\v\x12\t/api/tags\x12M\n" +
+	"\x0eDeleteCategory\x12\x1b.admin.v1.DeleteCategoryReq\x1a\x14.admin.v1.EmptyReply\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/api/categories/{id}\x12S\n" +
+	"\bListTags\x12\x15.admin.v1.ListTagsReq\x1a\x17.admin.v1.ListTagsReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/admin/tags\x12M\n" +
 	"\tCreateTag\x12\x16.admin.v1.CreateTagReq\x1a\x12.admin.v1.TagReply\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/api/tags\x12R\n" +
 	"\tUpdateTag\x12\x16.admin.v1.UpdateTagReq\x1a\x12.admin.v1.TagReply\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\x1a\x0e/api/tags/{id}\x12Q\n" +
 	"\tDeleteTag\x12\x16.admin.v1.DeleteTagReq\x1a\x14.admin.v1.EmptyReply\"\x16\x82\xd3\xe4\x93\x02\x10*\x0e/api/tags/{id}B$Z\"open-novel/backend/api/admin/v1;v1b\x06proto3"
