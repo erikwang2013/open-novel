@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+// 服务配置：http/grpc 端口、DB/Redis/OpenSearch 连接、JWT 密钥与有效期
+// 全部支持环境变量覆盖（见 conf.go Load）
+package conf;
+
+option go_package = "open-novel/backend/internal/conf;conf";
+
+message Bootstrap {
+  Server server = 1;
+  Data data = 2;
+  Auth auth = 3;
+}
+
+message Server {
+  string http_addr = 1; // 缺省 :8000
+  string grpc_addr = 2; // 缺省 :9000
+}
+
+message Data {
+  string db_dsn = 1;         // 主库 DSN（env DB_DSN）
+  string db_dsn_replica = 2; // 只读副本 DSN（env DB_DSN_REPLICA，可选）
+  string redis_addr = 3;     // env REDIS_ADDR
+  string opensearch_addr = 4; // env OPENSEARCH_ADDR，可选
+}
+
+message Auth {
+  string jwt_secret = 1;     // env JWT_SECRET
+  int64 jwt_access_ttl = 2;  // access token 秒数，缺省 1800
+  int64 jwt_refresh_ttl = 3; // refresh token 秒数，缺省 604800
+}

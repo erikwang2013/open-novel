@@ -1,0 +1,13 @@
+# 服务配置（字段对应 internal/conf/conf.proto；环境变量覆盖见 conf.go）
+server:
+  http_addr: ":8000"   # env PORT
+  grpc_addr: ":9000"   # env GRPC_PORT
+data:
+  db_dsn: "root:novel_dev_2026@tcp(127.0.0.1:3307)/novel?charset=utf8mb4&parseTime=True&loc=Local"  # env DB_DSN
+  db_dsn_replica: ""   # env DB_DSN_REPLICA；空 = 同主库
+  redis_addr: "127.0.0.1:6380"       # env REDIS_ADDR
+  opensearch_addr: "http://127.0.0.1:9200"  # env OPENSEARCH_ADDR
+auth:
+  jwt_secret: "dev-secret-change-me" # env JWT_SECRET，生产必须注入
+  jwt_access_ttl: 1800
+  jwt_refresh_ttl: 604800

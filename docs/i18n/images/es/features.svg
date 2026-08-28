@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — Diagrama de funcionalidades</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Feature Modules</text>
+
+  <!-- Lineas del centro a los grupos funcionales -->
+  <g stroke="#90a4ae" stroke-width="1.5">
+    <line x1="390" y1="345" x2="294" y2="166"/>
+    <line x1="390" y1="345" x2="294" y2="342"/>
+    <line x1="390" y1="345" x2="294" y2="518"/>
+    <line x1="610" y1="345" x2="706" y2="166"/>
+    <line x1="610" y1="345" x2="706" y2="342"/>
+    <line x1="610" y1="345" x2="706" y2="518"/>
+  </g>
+
+  <!-- Tarjeta central -->
+  <g>
+    <rect x="390" y="295" width="220" height="100" rx="14" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <text x="500" y="326" font-size="15" font-weight="700" fill="#263238" text-anchor="middle">Plataforma de novelas Open Novel</text>
+    <text x="500" y="347" font-size="10" fill="#78909c" text-anchor="middle">Global Multilingual Novel Platform</text>
+    <text x="500" y="367" font-size="11" fill="#00897b" text-anchor="middle">12+ idiomas · Multi-dispositivo · Cloud-native</text>
+  </g>
+
+  <!-- Centro de usuarios -->
+  <g>
+    <rect x="44" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <rect x="149" y="114" width="40" height="4" rx="2" fill="#1e88e5"/>
+    <text x="169" y="128" font-size="13" font-weight="700" fill="#1e88e5" text-anchor="middle">Centro de usuarios</text>
+    <text x="169" y="150" font-size="11" fill="#546e7a" text-anchor="middle">Registro / Login (JWT)</text>
+    <text x="169" y="167" font-size="11" fill="#546e7a" text-anchor="middle">Estantería personal</text>
+    <text x="169" y="184" font-size="11" fill="#546e7a" text-anchor="middle">Sincronización de progreso</text>
+    <text x="169" y="201" font-size="11" fill="#546e7a" text-anchor="middle">Perfiles multilingües (12+ idiomas)</text>
+  </g>
+
+  <!-- Experiencia de lectura -->
+  <g>
+    <rect x="706" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+    <rect x="811" y="114" width="40" height="4" rx="2" fill="#5e35b1"/>
+    <text x="831" y="128" font-size="13" font-weight="700" fill="#5e35b1" text-anchor="middle">Experiencia de lectura</text>
+    <text x="831" y="150" font-size="11" fill="#546e7a" text-anchor="middle">Lectura por capítulos</text>
+    <text x="831" y="167" font-size="11" fill="#546e7a" text-anchor="middle">Cambio de fuente y tamaño</text>
+    <text x="831" y="184" font-size="11" fill="#546e7a" text-anchor="middle">Temas claro/oscuro</text>
+    <text x="831" y="201" font-size="11" fill="#546e7a" text-anchor="middle">Caché sin conexión</text>
+    <text x="831" y="218" font-size="11" fill="#546e7a" text-anchor="middle">Animación de página</text>
+  </g>
+
+  <!-- Contenido de libros -->
+  <g>
+    <rect x="44" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <rect x="149" y="290" width="40" height="4" rx="2" fill="#00897b"/>
+    <text x="169" y="304" font-size="13" font-weight="700" fill="#00897b" text-anchor="middle">Contenido de libros</text>
+    <text x="169" y="326" font-size="11" fill="#546e7a" text-anchor="middle">Metadatos de libros</text>
+    <text x="169" y="343" font-size="11" fill="#546e7a" text-anchor="middle">Gestión de capítulos</text>
+    <text x="169" y="360" font-size="11" fill="#546e7a" text-anchor="middle">Etiquetas de categorías</text>
+    <text x="169" y="377" font-size="11" fill="#546e7a" text-anchor="middle">Actualizaciones serializadas</text>
+    <text x="169" y="394" font-size="11" fill="#546e7a" text-anchor="middle">Traducción multilingüe</text>
+  </g>
+
+  <!-- Comunidad interactiva -->
+  <g>
+    <rect x="706" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+    <rect x="811" y="290" width="40" height="4" rx="2" fill="#fb8c00"/>
+    <text x="831" y="304" font-size="13" font-weight="700" fill="#fb8c00" text-anchor="middle">Comunidad interactiva</text>
+    <text x="831" y="326" font-size="11" fill="#546e7a" text-anchor="middle">Comentarios y reseñas</text>
+    <text x="831" y="343" font-size="11" fill="#546e7a" text-anchor="middle">Me gusta</text>
+    <text x="831" y="360" font-size="11" fill="#546e7a" text-anchor="middle">Favoritos</text>
+    <text x="831" y="377" font-size="11" fill="#546e7a" text-anchor="middle">Denuncia y moderación</text>
+  </g>
+
+  <!-- Búsqueda y descubrimiento -->
+  <g>
+    <rect x="44" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+    <rect x="149" y="466" width="40" height="4" rx="2" fill="#d81b60"/>
+    <text x="169" y="480" font-size="13" font-weight="700" fill="#d81b60" text-anchor="middle">Búsqueda y descubrimiento</text>
+    <text x="169" y="502" font-size="11" fill="#546e7a" text-anchor="middle">Búsqueda multilingüe</text>
+    <text x="169" y="519" font-size="11" fill="#546e7a" text-anchor="middle">Rankings populares</text>
+    <text x="169" y="536" font-size="11" fill="#546e7a" text-anchor="middle">Recomendación IA</text>
+    <text x="169" y="553" font-size="11" fill="#546e7a" text-anchor="middle">Navegación por categorías</text>
+  </g>
+
+  <!-- Panel de administración -->
+  <g>
+    <rect x="706" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#546e7a" stroke-width="2"/>
+    <rect x="811" y="466" width="40" height="4" rx="2" fill="#546e7a"/>
+    <text x="831" y="480" font-size="13" font-weight="700" fill="#546e7a" text-anchor="middle">Panel de administración</text>
+    <text x="831" y="502" font-size="11" fill="#546e7a" text-anchor="middle">Moderación de contenido</text>
+    <text x="831" y="519" font-size="11" fill="#546e7a" text-anchor="middle">Gestión de usuarios</text>
+    <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">Estadísticas de datos</text>
+    <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">Gestión de configuración</text>
+  </g>
+
+  <text x="500" y="700" font-size="12" fill="#78909c" text-anchor="middle">Flujo de lectura: Descubrir → Leer → Interactuar → Sincronizar · i18n en toda la cadena</text>
+  <text x="988" y="708" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

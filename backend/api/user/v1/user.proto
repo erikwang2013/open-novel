@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+// 用户服务：注册 / 登录（JWT + RefreshToken 轮换）/ 个人资料（任务 #20）
+// 业务码段 11xxxx；REST 映射 /api/v1/users/*
+package user.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/user/v1;v1";
+
+service User {
+  // 注册（bcrypt 密码；用户名 3-32 位字母数字下划线）
+  rpc Register(RegisterReq) returns (RegisterReply) {
+    option (google.api.http) = {
+      post: "/api/v1/users/register"
+      body: "*"
+    };
+  }
+  // 登录：签发 access(30min) + refresh(7d，Redis 存储，轮换制)
+  rpc Login(LoginReq) returns (LoginReply) {
+    option (google.api.http) = {
+      post: "/api/v1/users/login"
+      body: "*"
+    };
+  }
+  // 刷新：refresh token 轮换，旧 token 立即作废
+  rpc RefreshToken(RefreshTokenReq) returns (LoginReply) {
+    option (google.api.http) = {
+      post: "/api/v1/users/refresh"
+      body: "*"
+    };
+  }
+  // 当前用户资料（nickname 按 lang 本地化）
+  rpc GetMe(GetMeReq) returns (UserReply) {
+    option (google.api.http) = {
+      get: "/api/v1/users/me"
+    };
+  }
+  // 更新资料（字段可选，只更新非空项）
+  rpc UpdateMe(UpdateMeReq) returns (UserReply) {
+    option (google.api.http) = {
+      put: "/api/v1/users/me"
+      body: "*"
+    };
+  }
+}
+
+message RegisterReq {
+  string username = 1;
+  string password = 2; // 8-72 位
+  string email = 3;
+  string nickname = 4; // 缺省回落 username
+}
+
+message RegisterReply {
+  int64 id = 1;
+  string username = 2;
+  string nickname = 3;
+  int32 role = 4;
+}
+
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message RefreshTokenReq {
+  string refresh_token = 1;
+}
+
+// 登录/刷新共用响应
+message LoginReply {
+  string access_token = 1;
+  string refresh_token = 2;
+  string token_type = 3; // Bearer
+  int64 expires_in = 4;  // 秒
+  UserReply user = 5;
+}
+
+message GetMeReq {
+  string lang = 1; // 空则按 Accept-Language，再回落 zh-CN
+}
+
+message UpdateMeReq {
+  string lang = 1;
+  optional string nickname = 2;
+  map<string, string> nickname_i18n = 3;
+  optional string email = 4;
+  optional string avatar = 5;
+}
+
+message UserReply {
+  int64 id = 1;
+  string username = 2;
+  string email = 3;
+  string nickname = 4; // 已按 lang 本地化
+  map<string, string> nickname_i18n = 5;
+  string avatar = 6;
+  int32 role = 7;
+  int32 status = 8;
+  string created_at = 9; // RFC3339
+}

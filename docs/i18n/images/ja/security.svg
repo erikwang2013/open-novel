@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
+    </marker>
+  </defs>
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — セキュリティアーキテクチャ図</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Security Architecture</text>
+
+  <!-- 通信セキュリティ -->
+  <g>
+    <rect x="44" y="80" width="912" height="112" rx="12" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/>
+    <rect x="60" y="92" width="86" height="24" rx="6" fill="#1e88e5"/>
+    <text x="103" y="108" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">通信セキュリティ</text>
+    <text x="154" y="108" font-size="11" fill="#1565c0">TRANSPORT</text>
+
+    <g>
+      <rect x="60" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="164" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">HTTPS / TLS 1.3</text>
+      <text x="164" y="163" font-size="10" fill="#78909c" text-anchor="middle">全リンク暗号化通信</text>
+    </g>
+    <g>
+      <rect x="288" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="392" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">HSTS</text>
+      <text x="392" y="163" font-size="10" fill="#78909c" text-anchor="middle">HTTPS 強制リダイレクト</text>
+    </g>
+    <g>
+      <rect x="516" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="620" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CDN WAF</text>
+      <text x="620" y="163" font-size="10" fill="#78909c" text-anchor="middle">Web アプリケーションファイアウォール</text>
+    </g>
+    <g>
+      <rect x="744" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="848" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">DDoS 対策</text>
+      <text x="848" y="163" font-size="10" fill="#78909c" text-anchor="middle">トラフィックスクラビング · 高防御</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="196" x2="500" y2="208" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- アクセスセキュリティ -->
+  <g>
+    <rect x="44" y="212" width="912" height="112" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+    <rect x="60" y="224" width="86" height="24" rx="6" fill="#5e35b1"/>
+    <text x="103" y="240" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">アクセスセキュリティ</text>
+    <text x="154" y="240" font-size="11" fill="#4527a0">ACCESS</text>
+
+    <g>
+      <rect x="60" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="164" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">JWT 認証 + RefreshToken</text>
+      <text x="164" y="295" font-size="10" fill="#78909c" text-anchor="middle">デュアルトークン方式</text>
+    </g>
+    <g>
+      <rect x="288" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="392" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">OAuth2 サードパーティログイン</text>
+      <text x="392" y="295" font-size="10" fill="#78909c" text-anchor="middle">WeChat / Google など</text>
+    </g>
+    <g>
+      <rect x="516" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="620" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">API レート制限（トークンバケット）</text>
+      <text x="620" y="295" font-size="10" fill="#78909c" text-anchor="middle">不正アクセス防止・バースト対策</text>
+    </g>
+    <g>
+      <rect x="744" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="848" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">パラメータ検証（protovalidate）</text>
+      <text x="848" y="295" font-size="10" fill="#78909c" text-anchor="middle">プロトコルレベル検証</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="328" x2="500" y2="340" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ビジネスセキュリティ -->
+  <g>
+    <rect x="44" y="344" width="912" height="112" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
+    <rect x="60" y="356" width="86" height="24" rx="6" fill="#fb8c00"/>
+    <text x="103" y="372" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">ビジネスセキュリティ</text>
+    <text x="154" y="372" font-size="11" fill="#e65100">BUSINESS</text>
+
+    <g>
+      <rect x="60" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="144" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">RBAC 権限</text>
+      <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">ロールベースアクセス制御</text>
+    </g>
+    <g>
+      <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">不適切語審査</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">コメント / コンテンツフィルタリング</text>
+    </g>
+    <g>
+      <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CSRF 対策</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">ダブルサブミット検証</text>
+    </g>
+    <g>
+      <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="684" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">XSS フィルタリング</text>
+      <text x="684" y="427" font-size="10" fill="#78909c" text-anchor="middle">出力エスケープ</text>
+    </g>
+    <g>
+      <rect x="780" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="864" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">SQL インジェクション対策</text>
+      <text x="864" y="427" font-size="10" fill="#78909c" text-anchor="middle">パラメータ化クエリ</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="460" x2="500" y2="472" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- データセキュリティ -->
+  <g>
+    <rect x="44" y="476" width="912" height="112" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
+    <rect x="60" y="488" width="86" height="24" rx="6" fill="#d81b60"/>
+    <text x="103" y="504" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">データセキュリティ</text>
+    <text x="154" y="504" font-size="11" fill="#880e4f">DATA</text>
+
+    <g>
+      <rect x="60" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="144" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">機密フィールド暗号化 AES</text>
+      <text x="144" y="559" font-size="10" fill="#78909c" text-anchor="middle">保存時暗号化</text>
+    </g>
+    <g>
+      <rect x="240" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="324" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">パスワードハッシュ化</text>
+      <text x="324" y="559" font-size="10" fill="#78909c" text-anchor="middle">bcrypt / argon2</text>
+    </g>
+    <g>
+      <rect x="420" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="504" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">鍵管理</text>
+      <text x="504" y="559" font-size="10" fill="#78909c" text-anchor="middle">KMS / Vault</text>
+    </g>
+    <g>
+      <rect x="600" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="684" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">DB マスタースレーブ暗号化</text>
+      <text x="684" y="559" font-size="10" fill="#78909c" text-anchor="middle">レプリケーションリンク暗号化</text>
+    </g>
+    <g>
+      <rect x="780" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="864" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">ログマスキング</text>
+      <text x="864" y="559" font-size="10" fill="#78909c" text-anchor="middle">機密情報の非表示</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="592" x2="500" y2="604" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 運用セキュリティ -->
+  <g>
+    <rect x="44" y="608" width="912" height="76" rx="12" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>
+    <rect x="60" y="620" width="86" height="24" rx="6" fill="#37474f"/>
+    <text x="103" y="636" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">運用セキュリティ</text>
+    <text x="154" y="636" font-size="11" fill="#455a64">OPS</text>
+
+    <g>
+      <rect x="258" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="358" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">監査ログ</text>
+    </g>
+    <g>
+      <rect x="482" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="582" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">カナリアリリース</text>
+    </g>
+    <g>
+      <rect x="706" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="806" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">脆弱性スキャン</text>
+    </g>
+    <text x="806" y="664" font-size="10" fill="#78909c" text-anchor="middle">golangci-lint / govulncheck</text>
+  </g>
+
+  <text x="500" y="688" font-size="12" fill="#78909c" text-anchor="middle">多層防御：通信 → アクセス → ビジネス → データ → 運用 · 全リンク多層防衛</text>
+  <text x="988" y="688" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

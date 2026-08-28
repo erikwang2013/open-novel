@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+// 推荐服务：热门/最新榜单（任务 #15）
+// 业务码段 17xxxx；Phase 1 为 MySQL 榜单 stub，Phase 5 接入 AI 推荐（同一契约）
+package recommendation.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/recommendation/v1;v1";
+
+service Recommendation {
+  // 推荐列表：strategy = hot | new（缺省 hot）；缓存 recommend:{strategy}:{page}:{page_size}
+  rpc GetRecommendations(GetRecommendationsReq) returns (GetRecommendationsReply) {
+    option (google.api.http) = {
+      get: "/api/v1/recommend"
+    };
+  }
+}
+
+message GetRecommendationsReq {
+  string strategy = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message RecommendItemReply {
+  int64 book_id = 1;
+  string title = 2;
+  string author = 3;
+  string summary = 4;
+  string cover = 5;
+  string lang = 6;
+  string strategy = 7;
+}
+
+message GetRecommendationsReply {
+  repeated RecommendItemReply list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}

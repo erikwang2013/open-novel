@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — फ़ीचर आर्किटेक्चर</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Feature Modules</text>
+
+  <!-- 中心到各功能组的连接线 -->
+  <g stroke="#90a4ae" stroke-width="1.5">
+    <line x1="390" y1="345" x2="294" y2="166"/>
+    <line x1="390" y1="345" x2="294" y2="342"/>
+    <line x1="390" y1="345" x2="294" y2="518"/>
+    <line x1="610" y1="345" x2="706" y2="166"/>
+    <line x1="610" y1="345" x2="706" y2="342"/>
+    <line x1="610" y1="345" x2="706" y2="518"/>
+  </g>
+
+  <!-- 中心核心卡片 -->
+  <g>
+    <rect x="390" y="295" width="220" height="100" rx="14" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <text x="500" y="326" font-size="15" font-weight="700" fill="#263238" text-anchor="middle">Open Novel उपन्यास प्लेटफ़ॉर्म</text>
+    <text x="500" y="347" font-size="10" fill="#78909c" text-anchor="middle">Global Multilingual Novel Platform</text>
+    <text x="500" y="367" font-size="11" fill="#00897b" text-anchor="middle">12+ भाषाएँ · मल्टी-डिवाइस रीडिंग · क्लाउड-नेटिव</text>
+  </g>
+
+  <!-- यूज़र सेंटर -->
+  <g>
+    <rect x="44" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <rect x="149" y="114" width="40" height="4" rx="2" fill="#1e88e5"/>
+    <text x="169" y="128" font-size="13" font-weight="700" fill="#1e88e5" text-anchor="middle">यूज़र सेंटर</text>
+    <text x="169" y="150" font-size="11" fill="#546e7a" text-anchor="middle">रजिस्ट्रेशन/लॉगिन (JWT)</text>
+    <text x="169" y="167" font-size="11" fill="#546e7a" text-anchor="middle">व्यक्तिगत बुकशेल्फ़</text>
+    <text x="169" y="184" font-size="11" fill="#546e7a" text-anchor="middle">पठन प्रगति सिंक</text>
+    <text x="169" y="201" font-size="11" fill="#546e7a" text-anchor="middle">बहुभाषी प्रोफ़ाइल (12+ भाषाएँ)</text>
+  </g>
+
+  <!-- पठन अनुभव -->
+  <g>
+    <rect x="706" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+    <rect x="811" y="114" width="40" height="4" rx="2" fill="#5e35b1"/>
+    <text x="831" y="128" font-size="13" font-weight="700" fill="#5e35b1" text-anchor="middle">पठन अनुभव</text>
+    <text x="831" y="150" font-size="11" fill="#546e7a" text-anchor="middle">अध्याय-दर-अध्याय पठन</text>
+    <text x="831" y="167" font-size="11" fill="#546e7a" text-anchor="middle">फ़ॉन्ट/आकार बदलें</text>
+    <text x="831" y="184" font-size="11" fill="#546e7a" text-anchor="middle">हल्की/गहरी थीम</text>
+    <text x="831" y="201" font-size="11" fill="#546e7a" text-anchor="middle">ऑफ़लाइन कैश</text>
+    <text x="831" y="218" font-size="11" fill="#546e7a" text-anchor="middle">पेज-फ्लिप एनिमेशन</text>
+  </g>
+
+  <!-- पुस्तक सामग्री -->
+  <g>
+    <rect x="44" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <rect x="149" y="290" width="40" height="4" rx="2" fill="#00897b"/>
+    <text x="169" y="304" font-size="13" font-weight="700" fill="#00897b" text-anchor="middle">पुस्तक सामग्री</text>
+    <text x="169" y="326" font-size="11" fill="#546e7a" text-anchor="middle">पुस्तक मेटाडेटा</text>
+    <text x="169" y="343" font-size="11" fill="#546e7a" text-anchor="middle">अध्याय प्रबंधन</text>
+    <text x="169" y="360" font-size="11" fill="#546e7a" text-anchor="middle">श्रेणी टैग</text>
+    <text x="169" y="377" font-size="11" fill="#546e7a" text-anchor="middle">सीरियल अपडेट</text>
+    <text x="169" y="394" font-size="11" fill="#546e7a" text-anchor="middle">बहुभाषी अनुवाद</text>
+  </g>
+
+  <!-- इंटरैक्टिव समुदाय -->
+  <g>
+    <rect x="706" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+    <rect x="811" y="290" width="40" height="4" rx="2" fill="#fb8c00"/>
+    <text x="831" y="304" font-size="13" font-weight="700" fill="#fb8c00" text-anchor="middle">इंटरैक्टिव समुदाय</text>
+    <text x="831" y="326" font-size="11" fill="#546e7a" text-anchor="middle">टिप्पणियाँ और समीक्षाएँ</text>
+    <text x="831" y="343" font-size="11" fill="#546e7a" text-anchor="middle">लाइक</text>
+    <text x="831" y="360" font-size="11" fill="#546e7a" text-anchor="middle">बुकमार्क</text>
+    <text x="831" y="377" font-size="11" fill="#546e7a" text-anchor="middle">रिपोर्ट/मॉडरेशन</text>
+  </g>
+
+  <!-- खोज और डिस्कवरी -->
+  <g>
+    <rect x="44" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+    <rect x="149" y="466" width="40" height="4" rx="2" fill="#d81b60"/>
+    <text x="169" y="480" font-size="13" font-weight="700" fill="#d81b60" text-anchor="middle">खोज और डिस्कवरी</text>
+    <text x="169" y="502" font-size="11" fill="#546e7a" text-anchor="middle">बहुभाषी टोकनाइज़ेशन खोज</text>
+    <text x="169" y="519" font-size="11" fill="#546e7a" text-anchor="middle">लोकप्रिय रैंकिंग</text>
+    <text x="169" y="536" font-size="11" fill="#546e7a" text-anchor="middle">AI अनुशंसा</text>
+    <text x="169" y="553" font-size="11" fill="#546e7a" text-anchor="middle">श्रेणी ब्राउज़िंग</text>
+  </g>
+
+  <!-- एडमिन पैनल -->
+  <g>
+    <rect x="706" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#546e7a" stroke-width="2"/>
+    <rect x="811" y="466" width="40" height="4" rx="2" fill="#546e7a"/>
+    <text x="831" y="480" font-size="13" font-weight="700" fill="#546e7a" text-anchor="middle">एडमिन पैनल</text>
+    <text x="831" y="502" font-size="11" fill="#546e7a" text-anchor="middle">सामग्री मॉडरेशन</text>
+    <text x="831" y="519" font-size="11" fill="#546e7a" text-anchor="middle">उपयोगकर्ता प्रबंधन</text>
+    <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">डेटा आँकड़े</text>
+    <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">कॉन्फ़िगरेशन प्रबंधन</text>
+  </g>
+
+  <text x="500" y="700" font-size="12" fill="#78909c" text-anchor="middle">मुख्य पठन चक्र: खोज → पठन → इंटरैक्शन → प्रगति सिंक · पूर्ण पाइपलाइन बहुभाषी i18n</text>
+  <text x="988" y="708" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

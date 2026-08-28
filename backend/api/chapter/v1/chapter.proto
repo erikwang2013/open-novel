@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+// 章节服务：章节 / 正文 / 阅读进度 / 书架（任务 #16）
+// 业务码段与通用共用 140xxx 标准码
+package chapter.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/chapter/v1;v1";
+
+service Chapter {
+  // 新建章节（需登录；章节 + 正文同事务，按 rune 计数）
+  rpc CreateChapter(CreateChapterReq) returns (ChapterReply) {
+    option (google.api.http) = {
+      post: "/api/v1/books/{book_id}/chapters"
+      body: "*"
+    };
+  }
+  // 章节列表（缓存 chapter:list:{book_id}:{page}:{page_size}）
+  rpc ListChapters(ListChaptersReq) returns (ListChaptersReply) {
+    option (google.api.http) = {
+      get: "/api/v1/books/{book_id}/chapters"
+    };
+  }
+  // 正文（缓存 chapter:content:{book_id}:{chapter_id}:{lang}）
+  rpc GetChapterContent(GetChapterContentReq) returns (ChapterContentReply) {
+    option (google.api.http) = {
+      get: "/api/v1/chapters/{id}/content"
+    };
+  }
+  rpc GetReadingProgress(GetReadingProgressReq) returns (ProgressReply) {
+    option (google.api.http) = {
+      get: "/api/v1/progress"
+    };
+  }
+  rpc UpdateReadingProgress(UpdateReadingProgressReq) returns (ProgressReply) {
+    option (google.api.http) = {
+      put: "/api/v1/progress"
+      body: "*"
+    };
+  }
+  rpc AddToBookshelf(AddToBookshelfReq) returns (ShelfReply) {
+    option (google.api.http) = {
+      post: "/api/v1/bookshelf"
+      body: "*"
+    };
+  }
+  rpc RemoveFromBookshelf(RemoveFromBookshelfReq) returns (RemoveFromBookshelfReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/bookshelf/{book_id}"
+    };
+  }
+  rpc ListBookshelf(ListBookshelfReq) returns (ListBookshelfReply) {
+    option (google.api.http) = {
+      get: "/api/v1/bookshelf"
+    };
+  }
+}
+
+message CreateChapterReq {
+  int64 book_id = 1;
+  uint32 chapter_no = 2;
+  string title = 3;
+  string content = 4;
+  string lang = 5; // 缺省 zh-CN
+}
+
+message ChapterReply {
+  int64 id = 1;
+  int64 book_id = 2;
+  uint32 chapter_no = 3;
+  string title = 4;
+  uint32 word_count = 5;
+  int32 is_vip = 6;
+  int32 status = 7;
+  string created_at = 8;
+}
+
+message ListChaptersReq {
+  int64 book_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message ListChaptersReply {
+  repeated ChapterReply list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message GetChapterContentReq {
+  int64 id = 1;
+  string lang = 2; // 缺省 zh-CN
+}
+
+message ChapterContentReply {
+  int64 id = 1;
+  int64 chapter_id = 2;
+  string lang = 3;
+  string content = 4;
+}
+
+message GetReadingProgressReq {
+  int64 book_id = 1;
+}
+
+message UpdateReadingProgressReq {
+  int64 book_id = 1;
+  int64 chapter_id = 2;
+  uint32 position = 3;
+}
+
+message ProgressReply {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 book_id = 3;
+  int64 chapter_id = 4;
+  uint32 position = 5;
+  string updated_at = 6;
+}
+
+message AddToBookshelfReq {
+  int64 book_id = 1;
+}
+
+message ShelfReply {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 book_id = 3;
+  int32 sort_order = 4;
+}
+
+message RemoveFromBookshelfReq {
+  int64 book_id = 1;
+}
+
+message RemoveFromBookshelfReply {}
+
+message ListBookshelfReq {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListBookshelfReply {
+  repeated ShelfReply list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — هيكل المشروع</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Project Structure</text>
+
+  <!-- 树形连接线 -->
+  <g stroke="#b0bec5" stroke-width="1.5">
+    <line x1="44" y1="100" x2="120" y2="100"/>
+    <line x1="80" y1="100" x2="80" y2="540"/>
+    <line x1="80" y1="144" x2="120" y2="144"/>
+    <line x1="80" y1="188" x2="120" y2="188"/>
+    <line x1="80" y1="232" x2="120" y2="232"/>
+    <line x1="80" y1="276" x2="120" y2="276"/>
+    <line x1="80" y1="320" x2="120" y2="320"/>
+    <line x1="80" y1="364" x2="120" y2="364"/>
+    <line x1="80" y1="408" x2="120" y2="408"/>
+    <line x1="80" y1="452" x2="120" y2="452"/>
+    <line x1="80" y1="496" x2="120" y2="496"/>
+    <line x1="80" y1="540" x2="120" y2="540"/>
+    <line x1="100" y1="144" x2="100" y2="232"/>
+    <line x1="100" y1="188" x2="140" y2="188"/>
+    <line x1="100" y1="232" x2="140" y2="232"/>
+  </g>
+
+  <!-- 根目录 -->
+  <rect x="120" y="86" width="110" height="28" rx="6" fill="#263238"/>
+  <text x="175" y="105" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">open-novel/</text>
+
+  <!-- 层级 1 -->
+  <g>
+    <rect x="120" y="130" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="168" y="149" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">apps/</text>
+    <text x="248" y="149" font-size="12" fill="#78909c"># مجلد الواجهات متعددة المنصات</text>
+  </g>
+  <g>
+    <rect x="120" y="262" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="168" y="281" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">kratos/</text>
+    <text x="248" y="281" font-size="12" fill="#78909c"># كود مصدر Go-Kratos الخلفي</text>
+  </g>
+  <g>
+    <rect x="120" y="306" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="168" y="325" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">docs/</text>
+    <text x="248" y="325" font-size="12" fill="#78909c"># الوثائق (التخطيط، الرسومات، أكواد التبرع)</text>
+  </g>
+  <g>
+    <rect x="120" y="350" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="168" y="369" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">config/</text>
+    <text x="248" y="369" font-size="12" fill="#78909c"># إعدادات البيئة (تطوير / اختبار / إنتاج)</text>
+  </g>
+  <g>
+    <rect x="120" y="394" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="168" y="413" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">scripts/</text>
+    <text x="248" y="413" font-size="12" fill="#78909c"># نصوص البناء والنشر</text>
+  </g>
+  <g>
+    <rect x="120" y="438" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="168" y="457" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">.claude-flow/</text>
+    <text x="248" y="457" font-size="12" fill="#78909c"># إعدادات التعاون والذاكرة للفريق</text>
+  </g>
+
+  <!-- 层级 2 -->
+  <g>
+    <rect x="140" y="174" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="188" y="193" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">flutter/</text>
+    <text x="268" y="193" font-size="12" fill="#78909c"># Flutter لجميع المنصات (Web / Desktop / Mobile)</text>
+  </g>
+  <g>
+    <rect x="140" y="218" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="188" y="237" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">harmonyos/</text>
+    <text x="268" y="237" font-size="12" fill="#78909c"># HarmonyOS NEXT (ArkTS / ArkUI)</text>
+  </g>
+
+  <!-- 文件 -->
+  <g>
+    <rect x="120" y="482" width="96" height="28" rx="6" fill="#607d8b"/>
+    <text x="168" y="501" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">CLAUDE.md</text>
+    <text x="248" y="501" font-size="12" fill="#78909c"># قواعد التعاون في المشروع</text>
+  </g>
+  <g>
+    <rect x="120" y="526" width="96" height="28" rx="6" fill="#607d8b"/>
+    <text x="168" y="545" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">README.md</text>
+    <text x="248" y="545" font-size="12" fill="#78909c"># وثيقة شرح المشروع</text>
+  </g>
+
+  <text x="500" y="610" font-size="12" fill="#78909c" text-anchor="middle">apps/ واجهات متعددة المنصات · kratos/ خلفية Go-Kratos · docs/ الوثائق والتصميم · هيكل مشروع كامل</text>
+  <text x="988" y="688" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

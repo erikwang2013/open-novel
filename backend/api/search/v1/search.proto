@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+// 搜索服务：OpenSearch 多语言检索 / 热门 / 索引同步（任务 #21）
+// 业务码段 16xxxx；索引文档按书籍维度，每书一文档，含 zh/en/ja 三语字段
+package search.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/search/v1;v1";
+
+service Search {
+  // 搜索（lang 缺省 zh-CN；记录搜索日志，best-effort 不阻塞搜索）
+  rpc SearchBooks(SearchBooksReq) returns (SearchBooksReply) {
+    option (google.api.http) = {
+      get: "/api/v1/search"
+    };
+  }
+  // 热门榜单（缓存 search:hot）
+  rpc HotSearches(HotSearchesReq) returns (HotSearchesReply) {
+    option (google.api.http) = {
+      get: "/api/v1/search/hot"
+    };
+  }
+  // 索引同步（书籍服务在新建/更新书籍或翻译时调用）
+  rpc SyncIndex(SyncIndexReq) returns (SyncIndexReply) {
+    option (google.api.http) = {
+      post: "/api/v1/search/index/{book_id}"
+      body: "*"
+    };
+  }
+  rpc DeleteIndex(DeleteIndexReq) returns (DeleteIndexReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/search/index/{book_id}"
+    };
+  }
+}
+
+// 搜索索引文档（每书一文档，book_id 为文档 id）
+message BookDoc {
+  int64 book_id = 1;
+  string lang = 2;
+  int32 status = 3;
+  int64 hot = 4;
+  string created_at = 5; // yyyy-MM-dd
+  string title_zh = 6;
+  string title_en = 7;
+  string title_ja = 8;
+  string summary_zh = 9;
+  string summary_en = 10;
+  string summary_ja = 11;
+  string author_zh = 12;
+  string author_en = 13;
+  string author_ja = 14;
+}
+
+message SearchBooksReq {
+  string q = 1;
+  string lang = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message SearchBooksReply {
+  repeated BookDoc list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message HotSearchesReq {}
+
+message HotSearchesReply {
+  repeated BookDoc list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message SyncIndexReq {
+  int64 book_id = 1; // 路径传入，覆盖 body
+  string lang = 2;
+  int32 status = 3;
+  int64 hot = 4;
+  string created_at = 5;
+  string title_zh = 6;
+  string title_en = 7;
+  string title_ja = 8;
+  string summary_zh = 9;
+  string summary_en = 10;
+  string summary_ja = 11;
+  string author_zh = 12;
+  string author_en = 13;
+  string author_ja = 14;
+}
+
+message SyncIndexReply {
+  int64 book_id = 1;
+}
+
+message DeleteIndexReq {
+  int64 book_id = 1;
+}
+
+message DeleteIndexReply {}

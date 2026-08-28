@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — 기능 아키텍처</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Feature Modules</text>
+
+  <!-- 中心到各功能组的连接线 -->
+  <g stroke="#90a4ae" stroke-width="1.5">
+    <line x1="390" y1="345" x2="294" y2="166"/>
+    <line x1="390" y1="345" x2="294" y2="342"/>
+    <line x1="390" y1="345" x2="294" y2="518"/>
+    <line x1="610" y1="345" x2="706" y2="166"/>
+    <line x1="610" y1="345" x2="706" y2="342"/>
+    <line x1="610" y1="345" x2="706" y2="518"/>
+  </g>
+
+  <!-- 中心核心卡片 -->
+  <g>
+    <rect x="390" y="295" width="220" height="100" rx="14" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <text x="500" y="326" font-size="15" font-weight="700" fill="#263238" text-anchor="middle">Open Novel 소설 플랫폼</text>
+    <text x="500" y="347" font-size="10" fill="#78909c" text-anchor="middle">Global Multilingual Novel Platform</text>
+    <text x="500" y="367" font-size="11" fill="#00897b" text-anchor="middle">12+ 언어 · 멀티 디바이스 · 클라우드 네이티브</text>
+  </g>
+
+  <!-- 用户中心 -->
+  <g>
+    <rect x="44" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <rect x="149" y="114" width="40" height="4" rx="2" fill="#1e88e5"/>
+    <text x="169" y="128" font-size="13" font-weight="700" fill="#1e88e5" text-anchor="middle">사용자 센터</text>
+    <text x="169" y="150" font-size="11" fill="#546e7a" text-anchor="middle">회원가입·로그인 (JWT)</text>
+    <text x="169" y="167" font-size="11" fill="#546e7a" text-anchor="middle">개인 서재</text>
+    <text x="169" y="184" font-size="11" fill="#546e7a" text-anchor="middle">독서 진행률 동기화</text>
+    <text x="169" y="201" font-size="11" fill="#546e7a" text-anchor="middle">다국어 프로필 (12+ 언어)</text>
+  </g>
+
+  <!-- 阅读体验 -->
+  <g>
+    <rect x="706" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+    <rect x="811" y="114" width="40" height="4" rx="2" fill="#5e35b1"/>
+    <text x="831" y="128" font-size="13" font-weight="700" fill="#5e35b1" text-anchor="middle">독서 경험</text>
+    <text x="831" y="150" font-size="11" fill="#546e7a" text-anchor="middle">분장 독서</text>
+    <text x="831" y="167" font-size="11" fill="#546e7a" text-anchor="middle">글꼴·크기 전환</text>
+    <text x="831" y="184" font-size="11" fill="#546e7a" text-anchor="middle">라이트/다크 테마</text>
+    <text x="831" y="201" font-size="11" fill="#546e7a" text-anchor="middle">오프라인 캐시</text>
+    <text x="831" y="218" font-size="11" fill="#546e7a" text-anchor="middle">페이지 넘김 애니메이션</text>
+  </g>
+
+  <!-- 书籍内容 -->
+  <g>
+    <rect x="44" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <rect x="149" y="290" width="40" height="4" rx="2" fill="#00897b"/>
+    <text x="169" y="304" font-size="13" font-weight="700" fill="#00897b" text-anchor="middle">도서 콘텐츠</text>
+    <text x="169" y="326" font-size="11" fill="#546e7a" text-anchor="middle">도서 메타데이터</text>
+    <text x="169" y="343" font-size="11" fill="#546e7a" text-anchor="middle">챕터 관리</text>
+    <text x="169" y="360" font-size="11" fill="#546e7a" text-anchor="middle">카테고리 태그</text>
+    <text x="169" y="377" font-size="11" fill="#546e7a" text-anchor="middle">연재 업데이트</text>
+    <text x="169" y="394" font-size="11" fill="#546e7a" text-anchor="middle">다국어 번역</text>
+  </g>
+
+  <!-- 互动社区 -->
+  <g>
+    <rect x="706" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+    <rect x="811" y="290" width="40" height="4" rx="2" fill="#fb8c00"/>
+    <text x="831" y="304" font-size="13" font-weight="700" fill="#fb8c00" text-anchor="middle">소통 커뮤니티</text>
+    <text x="831" y="326" font-size="11" fill="#546e7a" text-anchor="middle">댓글·서평</text>
+    <text x="831" y="343" font-size="11" fill="#546e7a" text-anchor="middle">좋아요</text>
+    <text x="831" y="360" font-size="11" fill="#546e7a" text-anchor="middle">즐겨찾기</text>
+    <text x="831" y="377" font-size="11" fill="#546e7a" text-anchor="middle">신고 검수</text>
+  </g>
+
+  <!-- 搜索发现 -->
+  <g>
+    <rect x="44" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+    <rect x="149" y="466" width="40" height="4" rx="2" fill="#d81b60"/>
+    <text x="169" y="480" font-size="13" font-weight="700" fill="#d81b60" text-anchor="middle">검색 및 발견</text>
+    <text x="169" y="502" font-size="11" fill="#546e7a" text-anchor="middle">다국어 형태소 분석 검색</text>
+    <text x="169" y="519" font-size="11" fill="#546e7a" text-anchor="middle">인기 랭킹</text>
+    <text x="169" y="536" font-size="11" fill="#546e7a" text-anchor="middle">AI 추천</text>
+    <text x="169" y="553" font-size="11" fill="#546e7a" text-anchor="middle">카테고리 탐색</text>
+  </g>
+
+  <!-- 管理后台 -->
+  <g>
+    <rect x="706" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#546e7a" stroke-width="2"/>
+    <rect x="811" y="466" width="40" height="4" rx="2" fill="#546e7a"/>
+    <text x="831" y="480" font-size="13" font-weight="700" fill="#546e7a" text-anchor="middle">관리 백엔드</text>
+    <text x="831" y="502" font-size="11" fill="#546e7a" text-anchor="middle">콘텐츠 검수</text>
+    <text x="831" y="519" font-size="11" fill="#546e7a" text-anchor="middle">사용자 관리</text>
+    <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">데이터 통계</text>
+    <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">설정 관리</text>
+  </g>
+
+  <text x="500" y="700" font-size="12" fill="#78909c" text-anchor="middle">핵심 독서 링크: 발견 → 독서 → 상호작용 → 진행률 동기화 · 전체 링크 다국어 i18n</text>
+  <text x="988" y="708" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

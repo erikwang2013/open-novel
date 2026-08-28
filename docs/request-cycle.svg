@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="660" viewBox="0 0 1000 660" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
+    </marker>
+  </defs>
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — 请求周期图</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Request Lifecycle</text>
+
+  <!-- ① 客户端发起请求 -->
+  <g>
+    <rect x="220" y="84" width="560" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="500" y="103" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">客户端发起请求</text>
+    <text x="500" y="119" font-size="10" fill="#78909c" text-anchor="middle">Flutter / HarmonyOS 端</text>
+  </g>
+  <text x="800" y="112" font-size="13" font-weight="600" fill="#90a4ae">①</text>
+  <line x1="500" y1="128" x2="500" y2="156" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ② Nginx + CDN -->
+  <g>
+    <rect x="220" y="156" width="560" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="500" y="175" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Nginx + CDN</text>
+    <text x="500" y="191" font-size="10" fill="#78909c" text-anchor="middle">静态资源 · HTTPS 终止</text>
+  </g>
+  <text x="800" y="184" font-size="13" font-weight="600" fill="#90a4ae">②</text>
+  <line x1="500" y1="200" x2="500" y2="228" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ③ Go-Kratos API 网关 -->
+  <g>
+    <rect x="220" y="228" width="560" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="500" y="247" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Go-Kratos API 网关</text>
+    <text x="500" y="263" font-size="10" fill="#78909c" text-anchor="middle">JWT 认证 → 限流 → 参数校验</text>
+  </g>
+  <text x="800" y="256" font-size="13" font-weight="600" fill="#90a4ae">③</text>
+  <line x1="500" y1="272" x2="500" y2="300" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ④ 服务层处理 -->
+  <g>
+    <rect x="220" y="300" width="560" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="500" y="319" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">服务层处理</text>
+    <text x="500" y="335" font-size="10" fill="#78909c" text-anchor="middle">用户 / 书籍 / 章节 / 搜索 等微服务</text>
+  </g>
+  <text x="800" y="328" font-size="13" font-weight="600" fill="#90a4ae">④</text>
+  <line x1="500" y1="344" x2="500" y2="372" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ⑤ 缓存判断（菱形） -->
+  <text x="388" y="360" font-size="13" font-weight="600" fill="#90a4ae">⑤</text>
+  <polygon points="500,372 600,400 500,428 400,400" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+  <text x="500" y="405" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Redis 缓存命中？</text>
+
+  <!-- 命中分支 -->
+  <line x1="600" y1="400" x2="640" y2="400" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="618" y="392" font-size="11" fill="#00897b" text-anchor="middle">命中</text>
+  <g>
+    <rect x="650" y="372" width="230" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+    <text x="765" y="391" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">直接返回缓存数据</text>
+    <text x="765" y="407" font-size="10" fill="#78909c" text-anchor="middle">无需查询数据库</text>
+  </g>
+  <line x1="765" y1="416" x2="765" y2="600" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 未命中分支 -->
+  <text x="512" y="442" font-size="11" fill="#fb8c00" text-anchor="middle">未命中</text>
+  <line x1="500" y1="428" x2="500" y2="460" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="220" y="460" width="560" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+    <text x="500" y="479" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">查询 MySQL（novel_* 表）</text>
+    <text x="500" y="495" font-size="10" fill="#78909c" text-anchor="middle">主库读取 · 单次查询</text>
+  </g>
+  <line x1="500" y1="504" x2="500" y2="532" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="220" y="532" width="560" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+    <text x="500" y="551" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">回写 Redis 缓存</text>
+    <text x="500" y="567" font-size="10" fill="#78909c" text-anchor="middle">TTL 5 分钟 · 下次直接命中</text>
+  </g>
+  <line x1="500" y1="576" x2="500" y2="600" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ⑥ 返回响应 -->
+  <g>
+    <rect x="220" y="600" width="560" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="500" y="619" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">返回响应 · 链路追踪与日志记录</text>
+    <text x="500" y="635" font-size="10" fill="#78909c" text-anchor="middle">Prometheus 指标 / ELK 日志</text>
+  </g>
+  <text x="800" y="628" font-size="13" font-weight="600" fill="#90a4ae">⑥</text>
+  <text x="988" y="648" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

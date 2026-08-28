@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
+    </marker>
+  </defs>
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — Arquitectura de seguridad</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Security Architecture</text>
+
+  <!-- Transporte -->
+  <g>
+    <rect x="44" y="80" width="912" height="112" rx="12" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/>
+    <rect x="60" y="92" width="86" height="24" rx="6" fill="#1e88e5"/>
+    <text x="103" y="108" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Transporte</text>
+    <text x="154" y="108" font-size="11" fill="#1565c0">TRANSPORT</text>
+
+    <g>
+      <rect x="60" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="164" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">HTTPS / TLS 1.3</text>
+      <text x="164" y="163" font-size="10" fill="#78909c" text-anchor="middle">Cifrado de extremo a extremo</text>
+    </g>
+    <g>
+      <rect x="288" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="392" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">HSTS</text>
+      <text x="392" y="163" font-size="10" fill="#78909c" text-anchor="middle">Redirección HTTPS forzada</text>
+    </g>
+    <g>
+      <rect x="516" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="620" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CDN WAF</text>
+      <text x="620" y="163" font-size="10" fill="#78909c" text-anchor="middle">Firewall de aplicaciones web</text>
+    </g>
+    <g>
+      <rect x="744" y="128" width="208" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="848" y="147" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Protección anti-DDoS</text>
+      <text x="848" y="163" font-size="10" fill="#78909c" text-anchor="middle">Limpieza de tráfico · Alta protección</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="196" x2="500" y2="208" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Acceso -->
+  <g>
+    <rect x="44" y="212" width="912" height="112" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+    <rect x="60" y="224" width="86" height="24" rx="6" fill="#5e35b1"/>
+    <text x="103" y="240" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Acceso</text>
+    <text x="154" y="240" font-size="11" fill="#4527a0">ACCESS</text>
+
+    <g>
+      <rect x="60" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="164" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Auth JWT + RefreshToken</text>
+      <text x="164" y="295" font-size="10" fill="#78909c" text-anchor="middle">Mecanismo de doble token</text>
+    </g>
+    <g>
+      <rect x="288" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="392" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Login OAuth2 de terceros</text>
+      <text x="392" y="295" font-size="10" fill="#78909c" text-anchor="middle">WeChat / Google, etc.</text>
+    </g>
+    <g>
+      <rect x="516" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="620" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Límite de tasa (token bucket)</text>
+      <text x="620" y="295" font-size="10" fill="#78909c" text-anchor="middle">Anti-abuso / Anti-sobrecarga</text>
+    </g>
+    <g>
+      <rect x="744" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="848" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Validación (protovalidate)</text>
+      <text x="848" y="295" font-size="10" fill="#78909c" text-anchor="middle">Validación a nivel de protocolo</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="328" x2="500" y2="340" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Negocio -->
+  <g>
+    <rect x="44" y="344" width="912" height="112" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
+    <rect x="60" y="356" width="86" height="24" rx="6" fill="#fb8c00"/>
+    <text x="103" y="372" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Negocio</text>
+    <text x="154" y="372" font-size="11" fill="#e65100">BUSINESS</text>
+
+    <g>
+      <rect x="60" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="144" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Permisos RBAC</text>
+      <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">Control de acceso por roles</text>
+    </g>
+    <g>
+      <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Moderación de palabras sensibles</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">Filtro de comentarios / contenido</text>
+    </g>
+    <g>
+      <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Protección CSRF</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">Validación de doble envío</text>
+    </g>
+    <g>
+      <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="684" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Filtro XSS</text>
+      <text x="684" y="427" font-size="10" fill="#78909c" text-anchor="middle">Escape de salida</text>
+    </g>
+    <g>
+      <rect x="780" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="864" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Protección contra inyección SQL</text>
+      <text x="864" y="427" font-size="10" fill="#78909c" text-anchor="middle">Consultas parametrizadas</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="460" x2="500" y2="472" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Datos -->
+  <g>
+    <rect x="44" y="476" width="912" height="112" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
+    <rect x="60" y="488" width="86" height="24" rx="6" fill="#d81b60"/>
+    <text x="103" y="504" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Datos</text>
+    <text x="154" y="504" font-size="11" fill="#880e4f">DATA</text>
+
+    <g>
+      <rect x="60" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="144" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Cifrado AES de campos sensibles</text>
+      <text x="144" y="559" font-size="10" fill="#78909c" text-anchor="middle">Cifrado en almacenamiento</text>
+    </g>
+    <g>
+      <rect x="240" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="324" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Hash de contraseñas</text>
+      <text x="324" y="559" font-size="10" fill="#78909c" text-anchor="middle">bcrypt / argon2</text>
+    </g>
+    <g>
+      <rect x="420" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="504" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Gestión de claves</text>
+      <text x="504" y="559" font-size="10" fill="#78909c" text-anchor="middle">KMS / Vault</text>
+    </g>
+    <g>
+      <rect x="600" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="684" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Cifrado maestro-esclavo BD</text>
+      <text x="684" y="559" font-size="10" fill="#78909c" text-anchor="middle">Cifrado del canal de réplica</text>
+    </g>
+    <g>
+      <rect x="780" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="864" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Enmascaramiento de logs</text>
+      <text x="864" y="559" font-size="10" fill="#78909c" text-anchor="middle">Ocultar información sensible</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="592" x2="500" y2="604" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Operaciones -->
+  <g>
+    <rect x="44" y="608" width="912" height="76" rx="12" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>
+    <rect x="60" y="620" width="86" height="24" rx="6" fill="#37474f"/>
+    <text x="103" y="636" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Operaciones</text>
+    <text x="154" y="636" font-size="11" fill="#455a64">OPS</text>
+
+    <g>
+      <rect x="258" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="358" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Logs de auditoría</text>
+    </g>
+    <g>
+      <rect x="482" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="582" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Lanzamiento canario</text>
+    </g>
+    <g>
+      <rect x="706" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="806" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Escaneo de vulnerabilidades</text>
+    </g>
+    <text x="806" y="664" font-size="10" fill="#78909c" text-anchor="middle">golangci-lint / govulncheck</text>
+  </g>
+
+  <text x="500" y="688" font-size="12" fill="#78909c" text-anchor="middle">Defensa en profundidad: Transporte → Acceso → Negocio → Datos → Operaciones · Defensa por capas</text>
+  <text x="988" y="688" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

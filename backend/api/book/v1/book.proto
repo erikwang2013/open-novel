@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+// 书籍服务：元数据 / 分页列表 / 分类标签 / 多语言翻译（任务 #18）
+// 业务码段 12xxxx；GetBook 走缓存链 book:{id}:{lang}（§三.2 / §五）
+package book.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/book/v1;v1";
+
+service Book {
+  // 书籍详情：缓存 → DB → 回填；翻译缺失回落原语言
+  rpc GetBook(GetBookReq) returns (BookReply) {
+    option (google.api.http) = {
+      get: "/api/v1/books/{id}"
+    };
+  }
+  // 分页列表：page 从 1 起，page_size 默认 20 上限 100；支持 category_id/tag_id/status 过滤
+  rpc ListBooks(ListBooksReq) returns (ListBooksReply) {
+    option (google.api.http) = {
+      get: "/api/v1/books"
+    };
+  }
+  // 建书（作者角色，RBAC）
+  rpc CreateBook(CreateBookReq) returns (CreateBookReply) {
+    option (google.api.http) = {
+      post: "/api/v1/books"
+      body: "*"
+    };
+  }
+  // 新增/更新翻译（作者角色；更新后失效对应缓存键）
+  rpc UpsertBookTranslation(UpsertBookTranslationReq) returns (UpsertBookTranslationReply) {
+    option (google.api.http) = {
+      put: "/api/v1/books/{id}/translation"
+      body: "*"
+    };
+  }
+  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesReply) {
+    option (google.api.http) = {
+      get: "/api/v1/categories"
+    };
+  }
+  // 标签按 lang 过滤
+  rpc ListTags(ListTagsReq) returns (ListTagsReply) {
+    option (google.api.http) = {
+      get: "/api/v1/tags"
+    };
+  }
+}
+
+message GetBookReq {
+  int64 id = 1;
+  string lang = 2; // 空 = 原语言
+}
+
+message BookReply {
+  int64 id = 1;
+  string lang = 2;
+  string title = 3;
+  string author = 4;
+  string summary = 5;
+  string cover = 6;
+  int32 is_vip = 7;
+  int32 status = 8;
+}
+
+message ListBooksReq {
+  int32 page = 1;
+  int32 page_size = 2;
+  string lang = 3;
+  int64 category_id = 4;
+  int64 tag_id = 5;
+  int32 status = 6; // 0 = 不过滤
+}
+
+message ListBooksReply {
+  repeated BookReply list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message CreateBookReq {
+  string title = 1;
+  string author = 2;
+  string summary = 3;
+  string cover = 4;
+  string lang = 5; // 缺省 zh-CN
+  int32 is_vip = 6;
+  repeated int64 category_ids = 7;
+  repeated int64 tag_ids = 8;
+  repeated TranslationReq translations = 9;
+}
+
+message TranslationReq {
+  string lang = 1;
+  string title = 2;
+  string summary = 3;
+  string cover = 4;
+}
+
+message CreateBookReply {
+  int64 id = 1;
+  string author = 2;
+  int32 role = 3;
+}
+
+message UpsertBookTranslationReq {
+  int64 id = 1;
+  string lang = 2;
+  string title = 3;
+  string summary = 4;
+  string cover = 5;
+}
+
+message UpsertBookTranslationReply {
+  int64 book_id = 1;
+  string lang = 2;
+}
+
+message ListCategoriesReq {}
+
+message CategoryReply {
+  int64 id = 1;
+  string name = 2;
+  int64 parent_id = 3;
+}
+
+message ListCategoriesReply {
+  repeated CategoryReply list = 1;
+}
+
+message ListTagsReq {
+  string lang = 1;
+}
+
+message TagReply {
+  int64 id = 1;
+  string name = 2;
+  string lang = 3;
+}
+
+message ListTagsReply {
+  repeated TagReply list = 1;
+}

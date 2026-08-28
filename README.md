@@ -1,0 +1,159 @@
+# Open Novel — 全球多语言小说平台
+
+<div align="center">
+
+**中文** · [English](docs/i18n/README.en.md) · [日本語](docs/i18n/README.ja.md) · [한국어](docs/i18n/README.ko.md) · [Русский](docs/i18n/README.ru.md) · [Deutsch](docs/i18n/README.de.md) · [Français](docs/i18n/README.fr.md) · [Español](docs/i18n/README.es.md) · [Português](docs/i18n/README.pt.md) · [हिन्दी](docs/i18n/README.hi.md) · [العربية](docs/i18n/README.ar.md) · [বাংলা](docs/i18n/README.bn.md) · [Bahasa Indonesia](docs/i18n/README.id.md)
+
+</div>
+
+> 基于 **Go-Kratos** 微服务架构 + **Flutter / HarmonyOS** 多端前端的全球多语言小说阅读平台，支持 **12+ 种主要语种**，面向全球用户提供阅读、互动、搜索与个性化推荐能力。
+
+---
+
+## 项目简介
+
+Open Novel 是一个云原生微服务架构的全球多语言小说平台：
+
+- **后端**：Go-Kratos v2（gRPC / HTTP 双协议），微服务按领域拆分（用户、书籍、章节、评论、搜索、推荐）
+- **前端**：Flutter 全平台（Web / Desktop / Mobile）+ HarmonyOS NEXT 原生应用，共用同一套后端 API
+- **多语言**：i18n 资源动态加载，支持 12+ 语种（中文、英文、日文、韩文、法文、德文、西班牙文、俄文、阿拉伯文等）
+- **存储**：MySQL 8（主从读写分离）+ Redis（热点缓存 / 会话）+ OpenSearch（多语言搜索）
+- **运维**：Docker Compose 一键部署，Prometheus + Grafana 监控，GitHub Actions 持续集成
+
+## 功能特性
+
+<p align="center"><img src="docs/features.svg" alt="功能架构图" width="860"/></p>
+
+- **用户中心**：注册登录（JWT）、个人书架、阅读进度跨端同步、多语言个人资料
+- **阅读体验**：分章阅读、字体字号切换、深浅主题、离线缓存、翻页动画
+- **书籍内容**：书籍元数据、章节管理、分类标签、连载更新、多语言翻译
+- **互动社区**：评论书评、点赞、收藏、举报审核
+- **搜索发现**：多语言分词搜索、热门榜单、AI 推荐、分类浏览
+- **管理后台**：内容审核、用户管理、数据统计、配置管理
+
+## 系统架构
+
+<p align="center"><img src="docs/architecture.svg" alt="系统架构图" width="860"/></p>
+
+## 项目全景
+
+<p align="center"><img src="docs/project.svg" alt="项目全景图" width="860"/></p>
+
+## 请求周期
+
+<p align="center"><img src="docs/request-cycle.svg" alt="请求周期图" width="860"/></p>
+
+## 安全架构
+
+<p align="center"><img src="docs/security.svg" alt="安全架构图" width="860"/></p>
+
+## 项目结构
+
+<p align="center"><img src="docs/structure.svg" alt="项目结构图" width="860"/></p>
+
+---
+
+## 技术栈
+
+| 层次 | 技术选型 |
+| :--- | :--- |
+| 客户端 | Flutter（Web / Desktop / Mobile）、HarmonyOS NEXT（ArkTS / ArkUI） |
+| 网关 | Nginx + CDN、Go-Kratos API 网关（gRPC / HTTP 双协议） |
+| 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC |
+| 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、OpenSearch 2.x |
+| 可观测 | Prometheus、Grafana、ELK、OpenTelemetry 链路追踪 |
+| 运维 | Docker Compose、GitHub Actions CI/CD |
+
+## 数据库
+
+- 数据库名：`novel`
+- 表前缀：`novel_`（如 `novel_user`、`novel_book`、`novel_chapter`、`novel_comment` 等）
+
+```sql
+CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+详细表设计与读写分离策略见 [docs/novel-project-planning.md](docs/novel-project-planning.md)。
+
+## 多端目录
+
+```
+apps/
+├─ flutter/     # Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
+└─ harmonyos/   # HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
+```
+
+详见 [apps/README.md](apps/README.md)。
+
+## 路线图
+
+| 阶段 | 周期 | 任务重点 |
+| :--- | :--- | :--- |
+| Phase 1 | 2-3 周 | Kratos 后端基础服务 + MySQL / Redis / OpenSearch 集成 |
+| Phase 2 | 3-4 周 | Flutter / HarmonyOS 多端前端 + 多语言 ARB 编写 |
+| Phase 3 | 2 周 | 安全加固（JWT / RBAC / 限流）+ 压力测试 |
+| Phase 4 | 1-2 周 | 全链路联调 + CDN 加速配置 |
+| Phase 5 | 持续 | AI 推荐算法接入、用户行为分析埋点 |
+
+## 本地开发
+
+```bash
+# 1. 启动依赖栈（MySQL / Redis / OpenSearch，首次启动自动执行 backend/sql/init.sql 建 19 表）
+docker compose up -d
+
+# 2. 启动后端服务（Kratos 工作区，gRPC/HTTP 双协议，HTTP :8000 / gRPC :9000）
+cd backend && go mod tidy && go run ./cmd/server
+
+# Flutter 端
+cd apps/flutter && flutter pub get && flutter run
+
+# HarmonyOS 端
+cd apps/harmonyos && hvigorw assembleHap
+```
+
+---
+
+## 支持与打赏
+
+如果这个项目对你有帮助，欢迎 **Star**、**Fork** 支持；也欢迎扫码打赏，你的每一份支持都是我持续维护与更新的动力，感谢你的鼓励！
+
+<div align="center">
+
+**微信赞赏** ｜ **支付宝赞赏**
+
+<img src="docs/weixinpay.png" width="130" height="130" alt="微信赞赏码" />　<img src="docs/alipay.png" width="130" height="130" alt="支付宝赞赏码" />
+
+</div>
+
+### 全球转账打赏（跨境汇款）
+
+【收款人信息】
+
+- 收款人姓名：WANG KEXUN
+- 收款账户号码：881015918251
+
+【收款银行】
+
+- ZA Bank SWIFT Code：AABLHKHHXXX
+- 银行名称：ZA Bank Limited
+- 银行编号：387
+- 银行地址：Core F, Cyberport 3, 100 Cyberport Road, Hong Kong
+
+【跨境汇款代理银行（如需）】
+
+> 请留意，此为跨境汇款代理银行（中转银行）信息，非收款银行信息。请向汇款银行查询是否需要提供跨境汇款代理银行信息。
+
+**汇入港元、人民币及美元的代理银行为 Citibank**
+
+- 银行名称：Citibank N.A. Hong Kong
+- SWIFT Code：CITIHKHXXXX
+- 银行编号：006
+- 分行名称：Hong Kong Branch
+- 分行编号：391
+- 银行地址：Citibank Tower, Citibank Plaza, 3 Garden Road, Central, Hong Kong
+
+**汇入其他币种时的代理银行为 BNY Mellon**
+
+- 银行名称：THE BANK OF NEW YORK MELLON
+- SWIFT Code：IRVTUS3NXXX
+- 银行地址：THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States

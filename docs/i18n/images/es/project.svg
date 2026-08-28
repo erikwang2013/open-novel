@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
+    </marker>
+  </defs>
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — Panorama del proyecto</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Project Overview</text>
+
+  <!-- Banner de posicionamiento del producto -->
+  <rect x="44" y="72" width="912" height="56" rx="12" fill="#263238"/>
+  <text x="500" y="106" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">Plataforma global de novelas multilingüe · 12+ idiomas · Microservicios cloud-native</text>
+
+  <!-- Cuatro columnas de stack tecnico -->
+  <g>
+    <rect x="44" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="62" y="184" font-size="13" font-weight="700" fill="#1e88e5">Backend</text>
+    <text x="62" y="210" font-size="11" fill="#546e7a">Go-Kratos v2</text>
+    <text x="62" y="232" font-size="11" fill="#546e7a">Protocolo dual gRPC / HTTP</text>
+    <text x="62" y="254" font-size="11" fill="#546e7a">Arquitectura de microservicios</text>
+    <text x="62" y="276" font-size="11" fill="#546e7a">Definición de interfaces protobuf</text>
+  </g>
+  <g>
+    <rect x="275" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="293" y="184" font-size="13" font-weight="700" fill="#1e88e5">Frontend</text>
+    <text x="293" y="210" font-size="11" fill="#546e7a">Flutter multiplataforma</text>
+    <text x="293" y="232" font-size="11" fill="#546e7a">Web / Desktop / Mobile</text>
+    <text x="293" y="254" font-size="11" fill="#546e7a">HarmonyOS NEXT</text>
+    <text x="293" y="276" font-size="11" fill="#546e7a">ArkTS / ArkUI</text>
+  </g>
+  <g>
+    <rect x="506" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="524" y="184" font-size="13" font-weight="700" fill="#1e88e5">Almacenamiento</text>
+    <text x="524" y="210" font-size="11" fill="#546e7a">MySQL 8 maestro-esclavo L/E</text>
+    <text x="524" y="232" font-size="11" fill="#546e7a">Redis caché caliente</text>
+    <text x="524" y="254" font-size="11" fill="#546e7a">Índice de búsqueda OpenSearch</text>
+    <text x="524" y="276" font-size="11" fill="#546e7a">Almacenamiento de objetos OSS</text>
+  </g>
+  <g>
+    <rect x="737" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="755" y="184" font-size="13" font-weight="700" fill="#1e88e5">DevOps</text>
+    <text x="755" y="210" font-size="11" fill="#546e7a">Docker contenedores</text>
+    <text x="755" y="232" font-size="11" fill="#546e7a">Prometheus + Grafana</text>
+    <text x="755" y="254" font-size="11" fill="#546e7a">GitHub Actions CI/CD</text>
+    <text x="755" y="276" font-size="11" fill="#546e7a">Análisis de logs ELK</text>
+  </g>
+
+  <!-- Titulo del roadmap -->
+  <text x="44" y="344" font-size="13" font-weight="700" fill="#37474f">Hoja de ruta Roadmap</text>
+
+  <!-- Roadmap de cinco fases -->
+  <line x1="214" y1="414" x2="236" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="406" y1="414" x2="429" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="599" y1="414" x2="621" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="791" y1="414" x2="814" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="44" y="368" width="170" height="92" rx="10" fill="#1e88e5"/>
+    <text x="129" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 1</text>
+    <text x="129" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Servicios base backend</text>
+    <text x="129" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">2-3 semanas</text>
+  </g>
+  <g>
+    <rect x="236" y="368" width="170" height="92" rx="10" fill="#5e35b1"/>
+    <text x="321" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 2</text>
+    <text x="321" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Frontends + i18n</text>
+    <text x="321" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">3-4 semanas</text>
+  </g>
+  <g>
+    <rect x="429" y="368" width="170" height="92" rx="10" fill="#00897b"/>
+    <text x="514" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 3</text>
+    <text x="514" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Refuerzo de seguridad</text>
+    <text x="514" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">2 semanas</text>
+  </g>
+  <g>
+    <rect x="621" y="368" width="170" height="92" rx="10" fill="#fb8c00"/>
+    <text x="706" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 4</text>
+    <text x="706" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Integración y CDN</text>
+    <text x="706" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">1-2 semanas</text>
+  </g>
+  <g>
+    <rect x="814" y="368" width="170" height="92" rx="10" fill="#d81b60"/>
+    <text x="899" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 5</text>
+    <text x="899" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Recomendación IA + analítica</text>
+    <text x="899" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">Continuo</text>
+  </g>
+
+  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">Hito: MVP en 12 semanas · Stack Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
+  <text x="988" y="628" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

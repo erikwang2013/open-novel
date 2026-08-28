@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
+    </marker>
+  </defs>
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — प्रोजेक्ट ओवरव्यू</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Project Overview</text>
+
+  <!-- 产品定位横幅 -->
+  <rect x="44" y="72" width="912" height="56" rx="12" fill="#263238"/>
+  <text x="500" y="106" font-size="16" font-weight="600" fill="#ffffff" text-anchor="middle">वैश्विक बहुभाषी उपन्यास मंच · 12+ भाषाएँ · क्लाउड-नेटिव माइक्रोसर्विस</text>
+
+  <!-- 四列技术选型 -->
+  <g>
+    <rect x="44" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="62" y="184" font-size="13" font-weight="700" fill="#1e88e5">बैकएंड Backend</text>
+    <text x="62" y="210" font-size="11" fill="#546e7a">Go-Kratos v2</text>
+    <text x="62" y="232" font-size="11" fill="#546e7a">gRPC / HTTP दोहरा प्रोटोकॉल</text>
+    <text x="62" y="254" font-size="11" fill="#546e7a">माइक्रोसर्विस आर्किटेक्चर</text>
+    <text x="62" y="276" font-size="11" fill="#546e7a">protobuf इंटरफ़ेस परिभाषा</text>
+  </g>
+  <g>
+    <rect x="275" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="293" y="184" font-size="13" font-weight="700" fill="#1e88e5">फ्रंटएंड Frontend</text>
+    <text x="293" y="210" font-size="11" fill="#546e7a">Flutter सभी प्लेटफ़ॉर्म</text>
+    <text x="293" y="232" font-size="11" fill="#546e7a">Web / Desktop / Mobile</text>
+    <text x="293" y="254" font-size="11" fill="#546e7a">HarmonyOS NEXT</text>
+    <text x="293" y="276" font-size="11" fill="#546e7a">ArkTS / ArkUI</text>
+  </g>
+  <g>
+    <rect x="506" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="524" y="184" font-size="13" font-weight="700" fill="#1e88e5">स्टोरेज Storage</text>
+    <text x="524" y="210" font-size="11" fill="#546e7a">MySQL 8 मास्टर-स्लेव रीड/राइट</text>
+    <text x="524" y="232" font-size="11" fill="#546e7a">Redis हॉट कैश</text>
+    <text x="524" y="254" font-size="11" fill="#546e7a">OpenSearch सर्च इंडेक्स</text>
+    <text x="524" y="276" font-size="11" fill="#546e7a">ऑब्जेक्ट स्टोरेज OSS</text>
+  </g>
+  <g>
+    <rect x="737" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <text x="755" y="184" font-size="13" font-weight="700" fill="#1e88e5">ऑप्स DevOps</text>
+    <text x="755" y="210" font-size="11" fill="#546e7a">Docker कंटेनराइज़ेशन</text>
+    <text x="755" y="232" font-size="11" fill="#546e7a">Prometheus + Grafana</text>
+    <text x="755" y="254" font-size="11" fill="#546e7a">GitHub Actions CI/CD</text>
+    <text x="755" y="276" font-size="11" fill="#546e7a">ELK लॉग विश्लेषण</text>
+  </g>
+
+  <!-- 路线图标题 -->
+  <text x="44" y="344" font-size="13" font-weight="700" fill="#37474f">डेवलपमेंट रोडमैप Roadmap</text>
+
+  <!-- 五阶段路线图 -->
+  <line x1="214" y1="414" x2="236" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="406" y1="414" x2="429" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="599" y1="414" x2="621" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="791" y1="414" x2="814" y2="414" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="44" y="368" width="170" height="92" rx="10" fill="#1e88e5"/>
+    <text x="129" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 1</text>
+    <text x="129" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">बैकएंड आधारभूत सेवाएँ</text>
+    <text x="129" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">2-3 सप्ताह</text>
+  </g>
+  <g>
+    <rect x="236" y="368" width="170" height="92" rx="10" fill="#5e35b1"/>
+    <text x="321" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 2</text>
+    <text x="321" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">मल्टी-प्लेटफ़ॉर्म फ्रंटएंड और बहुभाषी</text>
+    <text x="321" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">3-4 सप्ताह</text>
+  </g>
+  <g>
+    <rect x="429" y="368" width="170" height="92" rx="10" fill="#00897b"/>
+    <text x="514" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 3</text>
+    <text x="514" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">सुरक्षा सुदृढ़ीकरण और स्ट्रेस टेस्ट</text>
+    <text x="514" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">2 सप्ताह</text>
+  </g>
+  <g>
+    <rect x="621" y="368" width="170" height="92" rx="10" fill="#fb8c00"/>
+    <text x="706" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 4</text>
+    <text x="706" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">एकीकरण परीक्षण और CDN</text>
+    <text x="706" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">1-2 सप्ताह</text>
+  </g>
+  <g>
+    <rect x="814" y="368" width="170" height="92" rx="10" fill="#d81b60"/>
+    <text x="899" y="394" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">PHASE 5</text>
+    <text x="899" y="416" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">AI अनुशंसा और ट्रैकिंग</text>
+    <text x="899" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">निरंतर</text>
+  </g>
+
+  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">माइलस्टोन: MVP 12 सप्ताह में लाइव · टेक स्टैक Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
+  <text x="988" y="628" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

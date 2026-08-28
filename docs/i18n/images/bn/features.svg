@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — ফিচার আর্কিটেকচার</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Feature Modules</text>
+
+  <!-- 中心到各功能组的连接线 -->
+  <g stroke="#90a4ae" stroke-width="1.5">
+    <line x1="390" y1="345" x2="294" y2="166"/>
+    <line x1="390" y1="345" x2="294" y2="342"/>
+    <line x1="390" y1="345" x2="294" y2="518"/>
+    <line x1="610" y1="345" x2="706" y2="166"/>
+    <line x1="610" y1="345" x2="706" y2="342"/>
+    <line x1="610" y1="345" x2="706" y2="518"/>
+  </g>
+
+  <!-- 中心核心卡片 -->
+  <g>
+    <rect x="390" y="295" width="220" height="100" rx="14" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <text x="500" y="326" font-size="15" font-weight="700" fill="#263238" text-anchor="middle">Open Novel নভেল প্ল্যাটফর্ম</text>
+    <text x="500" y="347" font-size="10" fill="#78909c" text-anchor="middle">Global Multilingual Novel Platform</text>
+    <text x="500" y="367" font-size="11" fill="#00897b" text-anchor="middle">12+ ভাষা · মাল্টি-ডিভাইস · ক্লাউড-নেটিভ</text>
+  </g>
+
+  <!-- ইউজার সেন্টার -->
+  <g>
+    <rect x="44" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <rect x="149" y="114" width="40" height="4" rx="2" fill="#1e88e5"/>
+    <text x="169" y="128" font-size="13" font-weight="700" fill="#1e88e5" text-anchor="middle">ইউজার সেন্টার</text>
+    <text x="169" y="150" font-size="11" fill="#546e7a" text-anchor="middle">রেজি/লগইন (JWT)</text>
+    <text x="169" y="167" font-size="11" fill="#546e7a" text-anchor="middle">ব্যক্তিগত বুকশেলফ</text>
+    <text x="169" y="184" font-size="11" fill="#546e7a" text-anchor="middle">প্রগ্রেস সিঙ্ক</text>
+    <text x="169" y="201" font-size="11" fill="#546e7a" text-anchor="middle">বহুভাষিক প্রোফাইল (12+ ভাষা)</text>
+  </g>
+
+  <!-- রিডিং এক্সপেরিয়েন্স -->
+  <g>
+    <rect x="706" y="100" width="250" height="132" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+    <rect x="811" y="114" width="40" height="4" rx="2" fill="#5e35b1"/>
+    <text x="831" y="128" font-size="13" font-weight="700" fill="#5e35b1" text-anchor="middle">রিডিং এক্সপেরিয়েন্স</text>
+    <text x="831" y="150" font-size="11" fill="#546e7a" text-anchor="middle">অধ্যায়ভিত্তিক পড়া</text>
+    <text x="831" y="167" font-size="11" fill="#546e7a" text-anchor="middle">ফন্ট ও সাইজ পরিবর্তন</text>
+    <text x="831" y="184" font-size="11" fill="#546e7a" text-anchor="middle">হালকা/গাঢ় থিম</text>
+    <text x="831" y="201" font-size="11" fill="#546e7a" text-anchor="middle">অফলাইন ক্যাশ</text>
+    <text x="831" y="218" font-size="11" fill="#546e7a" text-anchor="middle">পেজ-ফ্লিপ অ্যানিমেশন</text>
+  </g>
+
+  <!-- বইয়ের বিষয়বস্তু -->
+  <g>
+    <rect x="44" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <rect x="149" y="290" width="40" height="4" rx="2" fill="#00897b"/>
+    <text x="169" y="304" font-size="13" font-weight="700" fill="#00897b" text-anchor="middle">বইয়ের বিষয়বস্তু</text>
+    <text x="169" y="326" font-size="11" fill="#546e7a" text-anchor="middle">বইয়ের মেটাডেটা</text>
+    <text x="169" y="343" font-size="11" fill="#546e7a" text-anchor="middle">অধ্যায় ব্যবস্থাপনা</text>
+    <text x="169" y="360" font-size="11" fill="#546e7a" text-anchor="middle">ক্যাটাগরি ট্যাগ</text>
+    <text x="169" y="377" font-size="11" fill="#546e7a" text-anchor="middle">সিরিয়াল আপডেট</text>
+    <text x="169" y="394" font-size="11" fill="#546e7a" text-anchor="middle">বহুভাষিক অনুবাদ</text>
+  </g>
+
+  <!-- ইন্টারঅ্যাক্টিভ কমিউনিটি -->
+  <g>
+    <rect x="706" y="276" width="250" height="132" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+    <rect x="811" y="290" width="40" height="4" rx="2" fill="#fb8c00"/>
+    <text x="831" y="304" font-size="13" font-weight="700" fill="#fb8c00" text-anchor="middle">ইন্টারঅ্যাক্টিভ কমিউনিটি</text>
+    <text x="831" y="326" font-size="11" fill="#546e7a" text-anchor="middle">মন্তব্য ও রিভিউ</text>
+    <text x="831" y="343" font-size="11" fill="#546e7a" text-anchor="middle">লাইক</text>
+    <text x="831" y="360" font-size="11" fill="#546e7a" text-anchor="middle">বুকমার্ক</text>
+    <text x="831" y="377" font-size="11" fill="#546e7a" text-anchor="middle">রিপোর্ট ও মডারেশন</text>
+  </g>
+
+  <!-- সার্চ ও আবিষ্কার -->
+  <g>
+    <rect x="44" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+    <rect x="149" y="466" width="40" height="4" rx="2" fill="#d81b60"/>
+    <text x="169" y="480" font-size="13" font-weight="700" fill="#d81b60" text-anchor="middle">সার্চ ও আবিষ্কার</text>
+    <text x="169" y="502" font-size="11" fill="#546e7a" text-anchor="middle">বহুভাষিক টোকেনাইজড সার্চ</text>
+    <text x="169" y="519" font-size="11" fill="#546e7a" text-anchor="middle">জনপ্রিয় র্যাঙ্কিং</text>
+    <text x="169" y="536" font-size="11" fill="#546e7a" text-anchor="middle">AI রিকমেন্ডেশন</text>
+    <text x="169" y="553" font-size="11" fill="#546e7a" text-anchor="middle">ক্যাটাগরি ব্রাউজিং</text>
+  </g>
+
+  <!-- অ্যাডমিন প্যানেল -->
+  <g>
+    <rect x="706" y="452" width="250" height="132" rx="8" fill="#ffffff" stroke="#546e7a" stroke-width="2"/>
+    <rect x="811" y="466" width="40" height="4" rx="2" fill="#546e7a"/>
+    <text x="831" y="480" font-size="13" font-weight="700" fill="#546e7a" text-anchor="middle">অ্যাডমিন প্যানেল</text>
+    <text x="831" y="502" font-size="11" fill="#546e7a" text-anchor="middle">কন্টেন্ট মডারেশন</text>
+    <text x="831" y="519" font-size="11" fill="#546e7a" text-anchor="middle">ইউজার ম্যানেজমেন্ট</text>
+    <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">ডেটা পরিসংখ্যান</text>
+    <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">কনফিগ ম্যানেজমেন্ট</text>
+  </g>
+
+  <text x="500" y="700" font-size="12" fill="#78909c" text-anchor="middle">কোর রিডিং ফ্লো: আবিষ্কার → পড়া → ইন্টারঅ্যাকশন → সিঙ্ক · ফুল-পাইপলাইন i18n</text>
+  <text x="988" y="708" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="760" viewBox="0 0 1000 760" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
+    </marker>
+  </defs>
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — Arsitektur Sistem</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Global Multilingual Novel Platform · System Architecture</text>
+
+  <!-- ============ Lapisan Klien ============ -->
+  <g>
+    <rect x="30" y="72" width="940" height="96" rx="12" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/>
+    <rect x="46" y="84" width="86" height="24" rx="6" fill="#1e88e5"/>
+    <text x="89" y="100" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Lapisan Klien</text>
+    <text x="140" y="100" font-size="11" fill="#1565c0">CLIENT</text>
+
+    <g>
+      <rect x="46" y="120" width="208" height="34" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="150" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Flutter Web</text>
+    </g>
+    <g>
+      <rect x="270" y="120" width="208" height="34" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="374" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Flutter Desktop</text>
+    </g>
+    <g>
+      <rect x="494" y="120" width="208" height="34" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="598" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Flutter Mobile</text>
+    </g>
+    <g>
+      <rect x="718" y="120" width="208" height="34" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+      <text x="822" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">HarmonyOS App</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="172" x2="500" y2="196" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ============ Lapisan Gateway ============ -->
+  <g>
+    <rect x="30" y="200" width="940" height="92" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+    <rect x="46" y="212" width="86" height="24" rx="6" fill="#5e35b1"/>
+    <text x="89" y="228" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Lapisan Gateway</text>
+    <text x="140" y="228" font-size="11" fill="#4527a0">GATEWAY</text>
+
+    <g>
+      <rect x="46" y="248" width="440" height="34" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="266" y="270" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Nginx + CDN · Statis / Load Balancer / Reverse Proxy</text>
+    </g>
+    <g>
+      <rect x="510" y="248" width="440" height="34" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="730" y="270" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Go-Kratos API Gateway · Protokol Ganda gRPC / HTTP</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="296" x2="500" y2="320" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ============ Lapisan Layanan ============ -->
+  <g>
+    <rect x="30" y="324" width="940" height="140" rx="12" fill="#e0f2f1" stroke="#00897b" stroke-width="1.5"/>
+    <rect x="46" y="336" width="86" height="24" rx="6" fill="#00897b"/>
+    <text x="89" y="352" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Lapisan Layanan</text>
+    <text x="140" y="352" font-size="11" fill="#00695c">SERVICE</text>
+
+    <g>
+      <rect x="46" y="372" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="196" y="389" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Layanan Pengguna User Service</text>
+      <text x="196" y="404" font-size="10" fill="#78909c" text-anchor="middle">Reg/Login · Profil Multibahasa · Anggota</text>
+    </g>
+    <g>
+      <rect x="362" y="372" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="512" y="389" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Layanan Buku Book Service</text>
+      <text x="512" y="404" font-size="10" fill="#78909c" text-anchor="middle">Metadata · Tag Kategori · Multibahasa</text>
+    </g>
+    <g>
+      <rect x="678" y="372" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="828" y="389" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Layanan Bab Chapter Service</text>
+      <text x="828" y="404" font-size="10" fill="#78909c" text-anchor="middle">Konten Bab · Progres Baca · Paginasi</text>
+    </g>
+    <g>
+      <rect x="46" y="420" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="196" y="437" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Layanan Komentar Comment Service</text>
+      <text x="196" y="452" font-size="10" fill="#78909c" text-anchor="middle">Ulasan · Suka · Moderasi Laporan</text>
+    </g>
+    <g>
+      <rect x="362" y="420" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="512" y="437" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Layanan Pencarian Search Service</text>
+      <text x="512" y="452" font-size="10" fill="#78909c" text-anchor="middle">Pencarian Tokenisasi Multibahasa OpenSearch</text>
+    </g>
+    <g>
+      <rect x="678" y="420" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="828" y="437" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Layanan Rekomendasi Recommendation Service</text>
+      <text x="828" y="452" font-size="10" fill="#78909c" text-anchor="middle">Rekomendasi AI · Analisis Perilaku</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="468" x2="500" y2="492" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ============ Lapisan Penyimpanan ============ -->
+  <g>
+    <rect x="30" y="496" width="940" height="92" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
+    <rect x="46" y="508" width="86" height="24" rx="6" fill="#fb8c00"/>
+    <text x="89" y="524" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Lapisan Penyimpanan</text>
+    <text x="140" y="524" font-size="11" fill="#e65100">STORAGE</text>
+
+    <g>
+      <rect x="46" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="150" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">MySQL 8 · Baca/Tulis Master-Slave</text>
+      <text x="150" y="573" font-size="10" fill="#78909c" text-anchor="middle">DB novel · Prefiks Tabel novel_</text>
+    </g>
+    <g>
+      <rect x="270" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="374" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Redis Cluster</text>
+      <text x="374" y="573" font-size="10" fill="#78909c" text-anchor="middle">Cache Panas · Sesi · Hitung Rate-Limit</text>
+    </g>
+    <g>
+      <rect x="494" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="598" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">OpenSearch 2.x</text>
+      <text x="598" y="573" font-size="10" fill="#78909c" text-anchor="middle">Tokenizer Multibahasa · Indeks Pencarian</text>
+    </g>
+    <g>
+      <rect x="718" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="822" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Penyimpanan Objek OSS</text>
+      <text x="822" y="573" font-size="10" fill="#78909c" text-anchor="middle">Sampul / Aset / Statis</text>
+    </g>
+  </g>
+
+  <line x1="500" y1="592" x2="500" y2="616" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ============ Lapisan Ops ============ -->
+  <g>
+    <rect x="30" y="620" width="940" height="92" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
+    <rect x="46" y="632" width="86" height="24" rx="6" fill="#d81b60"/>
+    <text x="89" y="648" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Lapisan Ops</text>
+    <text x="140" y="648" font-size="11" fill="#880e4f">OPS</text>
+
+    <g>
+      <rect x="46" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="150" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Prometheus + Grafana</text>
+    </g>
+    <g>
+      <rect x="270" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="374" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Agregasi Log ELK</text>
+    </g>
+    <g>
+      <rect x="494" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="598" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">CI/CD · GitHub Actions</text>
+    </g>
+    <g>
+      <rect x="718" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="822" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Konfigurasi · Manajemen Kunci</text>
+    </g>
+  </g>
+
+  <text x="500" y="740" font-size="12" fill="#78909c" text-anchor="middle">Full pipeline: i18n · Auth JWT · Rate-Limit &amp; Circuit Breaker · Tracing · Observability</text>
+  <text x="988" y="748" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

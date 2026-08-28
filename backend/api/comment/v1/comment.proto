@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+// 评论服务：评论 / 点赞 / 举报 / 收藏（任务 #19）
+// 业务码段 15xxxx；写操作均需登录（JWT），发布评论/举报有限流
+package comment.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/comment/v1;v1";
+
+service Comment {
+  // 发表评论（内容 ≤2000 字符；chapter_id 缺省 = 书籍级评论）
+  rpc CreateComment(CreateCommentReq) returns (CommentReply) {
+    option (google.api.http) = {
+      post: "/api/v1/comments"
+      body: "*"
+    };
+  }
+  // 评论列表：chapter_id 缺省 = 全部；0 = 仅书籍级
+  rpc ListComments(ListCommentsReq) returns (ListCommentsReply) {
+    option (google.api.http) = {
+      get: "/api/v1/comments"
+    };
+  }
+  rpc LikeComment(LikeCommentReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      post: "/api/v1/comments/{id}/like"
+    };
+  }
+  rpc UnlikeComment(UnlikeCommentReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/comments/{id}/like"
+    };
+  }
+  // 举报：置 status=2 待审核
+  rpc ReportComment(ReportCommentReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      post: "/api/v1/comments/{id}/report"
+    };
+  }
+  rpc AddFavorite(AddFavoriteReq) returns (FavoriteReply) {
+    option (google.api.http) = {
+      post: "/api/v1/books/{book_id}/favorite"
+    };
+  }
+  rpc DelFavorite(DelFavoriteReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      delete: "/api/v1/books/{book_id}/favorite"
+    };
+  }
+  rpc ListFavorites(ListFavoritesReq) returns (ListFavoritesReply) {
+    option (google.api.http) = {
+      get: "/api/v1/favorites"
+    };
+  }
+}
+
+message CreateCommentReq {
+  int64 book_id = 1;
+  optional int64 chapter_id = 2; // 缺省 = 书籍级
+  string content = 3;
+}
+
+message CommentReply {
+  int64 id = 1;
+  int64 book_id = 2;
+  int64 chapter_id = 3; // 0 = 书籍级
+  int64 user_id = 4;
+  int64 parent_id = 5;
+  string content = 6;
+  uint32 like_count = 7;
+  uint32 report_count = 8;
+  int32 status = 9;
+  string created_at = 10;
+}
+
+message ListCommentsReq {
+  int64 book_id = 1;
+  optional int64 chapter_id = 2; // 缺省 = 全部；0 = 仅书籍级
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListCommentsReply {
+  repeated CommentReply list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message LikeCommentReq {
+  int64 id = 1;
+}
+
+message UnlikeCommentReq {
+  int64 id = 1;
+}
+
+message ReportCommentReq {
+  int64 id = 1;
+}
+
+message EmptyReply {}
+
+message AddFavoriteReq {
+  int64 book_id = 1;
+}
+
+message FavoriteReply {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 book_id = 3;
+}
+
+message DelFavoriteReq {
+  int64 book_id = 1;
+}
+
+message ListFavoritesReq {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListFavoritesReply {
+  repeated FavoriteReply list = 1;
+  int64 total = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}

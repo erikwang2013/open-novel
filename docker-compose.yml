@@ -1,0 +1,64 @@
+# Open Novel 本地开发栈：MySQL 8 + Redis 7 + OpenSearch 2
+# 口令为开发默认值，生产必须通过 .env / 环境变量注入（见下方 ${VAR:-default} 写法）
+# 注意：宿主机 3306/6379 已被本机 systemd 的 mysql/redis 服务占用，
+# 故外部端口映射为 3307/6380；容器内部端口不变，compose 网络内服务仍用 mysql:3306 / redis:6379
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: open-novel-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-novel_dev_2026}
+      MYSQL_DATABASE: novel
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backend/sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    container_name: open-novel-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  opensearch:
+    build: ./backend/opensearch
+    container_name: open-novel-opensearch
+    environment:
+      - discovery.type=single-node
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - bootstrap.memory_lock=false
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200 >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+volumes:
+  mysql-data:
+  redis-data:
+  opensearch-data:
