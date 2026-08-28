@@ -97,7 +97,7 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## Префикс API
 
-Все HTTP-интерфейсы бэкенда начинаются с `/api` и сгруппированы по доменам:
+Все HTTP-интерфейсы бэкенда начинаются с `/api`; версия согласуется через заголовок запроса `X-Api-Version: v1` (не указывается в URL). Интерфейсы сгруппированы по доменам:
 
 | Домен | Примеры маршрутов | Определение proto |
 | :--- | :--- | :--- |
@@ -131,7 +131,8 @@ cd apps/flutter && flutter pub get && flutter run -d chrome
 
 ## Процесс релиза
 
-- **Автоматически**: после пуша в `main` запускается [scripts/post-push.sh](../../scripts/post-push.sh) (либо как git push-хук, либо вручную). Скрипт увеличивает patch-версию на основе последнего тега `v*`, создаёт и пушит тег, затем создаёт GitHub Release с инкрементальным changelog; требуется авторизованный `gh`. Первый релиз начинается с `v1.0.0`.
+- **Автоматически**: после пуша в `main` GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) автоматически увеличивает patch-версию на основе последнего тега `v*`, создаёт и пушит тег, затем создаёт GitHub Release с инкрементальным changelog; пропускается, если HEAD уже содержит тег версии. Первый релиз начинается с `v1.0.0`.
+- **Ручной резервный вариант**: запустите [scripts/post-push.sh](../../scripts/post-push.sh) (требуется авторизованный `gh`): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **Вручную**:
 
   ```bash

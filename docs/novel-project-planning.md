@@ -248,12 +248,12 @@ services:
       - MYSQL_ROOT_PASSWORD=secret123
       - MYSQL_DATABASE=novel
     ports:
-      - "3306:3306"
+      - "3307:3307"
 
   redis:
     image: redis:alpine
     ports:
-      - "6379:6379"
+      - "6380:6380"
 
   opensearch:
     image: opensearchproject/opensearch:latest
@@ -266,7 +266,7 @@ services:
     build: ./kratos/backend
     depends_on: [mysql, redis, opensearch]
     ports:
-      - "8080:8080"
+      - "8000:8000"
 
   flutter-web:
     build: ./apps/flutter

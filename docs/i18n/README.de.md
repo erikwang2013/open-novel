@@ -39,6 +39,18 @@ Die Gesamtarchitektur ist eine Go-Kratos-Mikroservice-Architektur: Die Flutter- 
 
 Weitere Diagramme: Projektübersicht [../project.svg](../project.svg) · Anfragezyklus [../request-cycle.svg](../request-cycle.svg) · Sicherheitsarchitektur [../security.svg](../security.svg) · Projektstruktur [../structure.svg](../structure.svg).
 
+## Projektübersicht
+
+<p align="center"><img src="images/de/project.svg" alt="Projektübersicht" width="860"/></p>
+
+## Anfragezyklus
+
+<p align="center"><img src="images/de/request-cycle.svg" alt="Anfragezyklus" width="860"/></p>
+
+## Sicherheitsarchitektur
+
+<p align="center"><img src="images/de/security.svg" alt="Sicherheitsarchitektur" width="860"/></p>
+
 ## Verzeichnisstruktur
 
 ```
@@ -83,7 +95,7 @@ Tabellen-Skript: `kratos/backend/sql/init.sql` (wird beim ersten Start von Docke
 
 ## API-Präfix
 
-Die HTTP-Schnittstellen des Backends beginnen einheitlich mit `/api` und sind nach Domänen gruppiert:
+Die HTTP-Schnittstellen des Backends beginnen einheitlich mit `/api`; die Version wird über den Request-Header `X-Api-Version: v1` ausgehandelt (nicht in der URL). Sie sind nach Domänen gruppiert:
 
 | Domäne | Beispielrouten | proto-Definition |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ Siehe [apps/README.md](../../apps/README.md) und [apps/flutter/README.md](../../
 
 ## Release-Prozess
 
-- **Automatisch**: Nach dem Push auf `main` wird [scripts/post-push.sh](../../scripts/post-push.sh) ausgeführt (als Git-Push-Hook oder manuell). Das Skript erhöht ausgehend vom neuesten `v*`-Tag die Patch-Version, erstellt und pusht einen Tag und erstellt anschließend mit einem inkrementellen Changelog ein GitHub Release; hierfür muss `gh` authentifiziert sein. Das erste Release startet bei `v1.0.0`.
+- **Automatisch**: Nach dem Push auf `main` erhöht GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) automatisch die Patch-Version auf Basis des neuesten `v*`-Tags, erstellt und pusht den Tag und erstellt anschließend mit einem inkrementellen Changelog ein GitHub Release; übersprungen, wenn HEAD bereits einen Versions-Tag trägt. Das erste Release startet bei `v1.0.0`.
+- **Manueller Fallback**: Führen Sie [scripts/post-push.sh](../../scripts/post-push.sh) aus (`gh` muss authentifiziert sein): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **Manuell**:
 
   ```bash

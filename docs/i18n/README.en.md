@@ -98,7 +98,7 @@ Table creation script: `kratos/backend/sql/init.sql` (automatically executed on 
 
 ## API Prefix
 
-Backend HTTP APIs uniformly start with `/api`, grouped by domain:
+Backend HTTP APIs uniformly start with `/api`; the version is negotiated via the `X-Api-Version: v1` request header (not in the URL). Endpoints are grouped by domain:
 
 | Domain | Example routes | proto definition |
 | :--- | :--- | :--- |
@@ -132,7 +132,8 @@ See [apps/README.md](../../apps/README.md) and [apps/flutter/README.md](../../ap
 
 ## Release Process
 
-- **Automatic**: after pushing `main`, run [scripts/post-push.sh](../../scripts/post-push.sh) (either as a git push hook or manually). The script bumps the patch version based on the latest `v*` tag, creates and pushes the tag, then creates a GitHub Release with an incremental changelog; `gh` must be authenticated. The first release starts from `v1.0.0`.
+- **Automatic**: after pushing `main`, GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) automatically bumps the patch version based on the latest `v*` tag, creates and pushes the tag, then creates a GitHub Release with an incremental changelog; skipped if HEAD already carries a version tag. The first release starts from `v1.0.0`.
+- **Manual fallback**: run [scripts/post-push.sh](../../scripts/post-push.sh) (requires authenticated `gh`): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **Manual**:
 
   ```bash

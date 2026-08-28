@@ -39,6 +39,18 @@ A arquitetura geral é uma arquitetura de microsserviços Go-Kratos: os clientes
 
 Outros diagramas: visão geral do projeto [../project.svg](../project.svg) · ciclo de solicitações [../request-cycle.svg](../request-cycle.svg) · arquitetura de segurança [../security.svg](../security.svg) · estrutura do projeto [../structure.svg](../structure.svg).
 
+## Visão geral do projeto
+
+<p align="center"><img src="images/pt/project.svg" alt="Visão geral do projeto" width="860"/></p>
+
+## Ciclo de solicitações
+
+<p align="center"><img src="images/pt/request-cycle.svg" alt="Ciclo de solicitações" width="860"/></p>
+
+## Arquitetura de segurança
+
+<p align="center"><img src="images/pt/security.svg" alt="Arquitetura de segurança" width="860"/></p>
+
 ## Estrutura de diretórios
 
 ```
@@ -83,7 +95,7 @@ Script de criação das tabelas: `kratos/backend/sql/init.sql` (executado automa
 
 ## Prefixo de API
 
-As interfaces HTTP do backend começam uniformemente com `/api` e são agrupadas por domínio:
+As interfaces HTTP do backend começam uniformemente com `/api`; a versão é negociada pelo cabeçalho `X-Api-Version: v1` (não na URL). São agrupadas por domínio:
 
 | Domínio | Exemplos de rotas | Definição proto |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ Consulte [apps/README.md](../../apps/README.md) e [apps/flutter/README.md](../..
 
 ## Processo de lançamento
 
-- **Automático**: após o push para `main`, execute [scripts/post-push.sh](../../scripts/post-push.sh) (via hook de push do git ou manualmente). O script incrementa a versão patch a partir da tag `v*` mais recente, cria e envia uma tag e, em seguida, cria uma Release do GitHub com changelog incremental; requer `gh` autenticado. O primeiro lançamento começa em `v1.0.0`.
+- **Automático**: após o push para `main`, o GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) incrementa automaticamente a versão patch a partir do tag `v*` mais recente, cria e envia um tag e, em seguida, cria uma Release do GitHub com changelog incremental; ignorado se HEAD já tiver um tag de versão. O primeiro lançamento começa em `v1.0.0`.
+- **Fallback manual**: execute [scripts/post-push.sh](../../scripts/post-push.sh) (requer `gh` autenticado): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **Manual**:
 
   ```bash

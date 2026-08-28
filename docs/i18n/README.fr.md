@@ -39,6 +39,18 @@ L'architecture globale est une architecture microservices Go-Kratos : les client
 
 Autres schémas : vue d'ensemble du projet [../project.svg](../project.svg) · cycle de requête [../request-cycle.svg](../request-cycle.svg) · architecture de sécurité [../security.svg](../security.svg) · structure du projet [../structure.svg](../structure.svg).
 
+## Vue d'ensemble du projet
+
+<p align="center"><img src="images/fr/project.svg" alt="Vue d'ensemble du projet" width="860"/></p>
+
+## Cycle de requête
+
+<p align="center"><img src="images/fr/request-cycle.svg" alt="Cycle de requête" width="860"/></p>
+
+## Architecture de sécurité
+
+<p align="center"><img src="images/fr/security.svg" alt="Architecture de sécurité" width="860"/></p>
+
 ## Structure des répertoires
 
 ```
@@ -83,7 +95,7 @@ Script de création des tables : `kratos/backend/sql/init.sql` (exécuté automa
 
 ## Préfixe d'API
 
-Les interfaces HTTP du backend commencent toutes par `/api` et sont regroupées par domaine :
+Les interfaces HTTP du backend commencent toutes par `/api` ; la version est négociée via l'en-tête `X-Api-Version: v1` (pas dans l'URL). Elles sont regroupées par domaine :
 
 | Domaine | Exemples de routes | Définition proto |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ Voir [apps/README.md](../../apps/README.md) et [apps/flutter/README.md](../../ap
 
 ## Processus de publication
 
-- **Automatique** : après un push sur `main`, exécutez [scripts/post-push.sh](../../scripts/post-push.sh) (via un hook de push git ou manuellement). Le script incrémente la version patch à partir du dernier tag `v*`, crée et pousse un tag, puis crée une Release GitHub avec un changelog incrémental ; `gh` doit être authentifié. La première release démarre à `v1.0.0`.
+- **Automatique** : après un push sur `main`, GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) incrémente automatiquement la version patch à partir du dernier tag `v*`, crée et pousse un tag, puis crée une Release GitHub avec un changelog incrémental ; ignoré si HEAD porte déjà un tag de version. La première release démarre à `v1.0.0`.
+- **Solution de secours manuelle** : exécutez [scripts/post-push.sh](../../scripts/post-push.sh) (`gh` doit être authentifié) : `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **Manuel** :
 
   ```bash

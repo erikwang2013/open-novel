@@ -46,6 +46,7 @@ open-novel/
 ├─ apps/                     # 多端前端
 │  ├─ flutter/               #   Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
 │  └─ harmonyos/             #   HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
+├─ .github/                  # CI/CD：GitHub Actions 发布工作流（release.yml）
 ├─ kratos/                   # Go-Kratos 框架源码（上游框架，原样保留，勿改）
 │  └─ backend/               #   本项目业务后端：cmd/server 入口 + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # 项目文档（规划、架构图、i18n README、打赏码）

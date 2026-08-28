@@ -39,6 +39,18 @@ Seluruh sistem dibangun di atas arsitektur mikroservis Go-Kratos: klien Flutter 
 
 Diagram desain lainnya: gambaran umum proyek [../project.svg](../project.svg) · siklus permintaan [../request-cycle.svg](../request-cycle.svg) · arsitektur keamanan [../security.svg](../security.svg) · struktur proyek [../structure.svg](../structure.svg).
 
+## Gambaran umum proyek
+
+<p align="center"><img src="images/id/project.svg" alt="Gambaran umum proyek" width="860"/></p>
+
+## Siklus permintaan
+
+<p align="center"><img src="images/id/request-cycle.svg" alt="Siklus permintaan" width="860"/></p>
+
+## Arsitektur keamanan
+
+<p align="center"><img src="images/id/security.svg" alt="Arsitektur keamanan" width="860"/></p>
+
 ## Struktur direktori
 
 ```
@@ -83,7 +95,7 @@ Skrip pembuatan tabel: `kratos/backend/sql/init.sql` (dijalankan otomatis saat D
 
 ## Prefiks API
 
-Seluruh antarmuka HTTP backend dimulai dengan `/api`, dikelompokkan per domain:
+Seluruh antarmuka HTTP backend dimulai dengan `/api`; versi dinegosiasikan melalui header `X-Api-Version: v1` (tidak di URL). Dikelompokkan per domain:
 
 | Domain | Contoh rute | Definisi proto |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ Lihat [apps/README.md](../../apps/README.md) dan [apps/flutter/README.md](../../
 
 ## Proses rilis
 
-- **Otomatis**: setelah push ke `main`, jalankan [scripts/post-push.sh](../../scripts/post-push.sh) (baik melalui hook git push maupun manual). Skrip menaikkan versi patch berdasarkan tag `v*` terbaru, membuat dan mendorong tag, lalu membuat GitHub Release dengan changelog inkremental; `gh` harus sudah diautentikasi. Rilis pertama dimulai dari `v1.0.0`.
+- **Otomatis**: setelah push ke `main`, GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) otomatis menaikkan versi patch berdasarkan tag `v*` terbaru, membuat dan mendorong tag, lalu membuat GitHub Release dengan changelog inkremental; dilewati jika HEAD sudah memiliki tag versi. Rilis pertama dimulai dari `v1.0.0`.
+- **Fallback manual**: jalankan [scripts/post-push.sh](../../scripts/post-push.sh) (memerlukan `gh` terautentikasi): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **Manual**:
 
   ```bash

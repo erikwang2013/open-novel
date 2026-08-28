@@ -98,7 +98,7 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API プレフィックス
 
-バックエンドの HTTP インターフェースはすべて `/api` で始まり、ドメインごとにグループ化されています：
+バックエンドの HTTP インターフェースはすべて `/api` で始まり、バージョンはリクエストヘッダー `X-Api-Version: v1` でネゴシエーションされます（URL には記載しません）。エンドポイントはドメインごとにグループ化されています：
 
 | ドメイン | サンプルルート | proto 定義 |
 | :--- | :--- | :--- |
@@ -132,7 +132,8 @@ cd apps/flutter && flutter pub get && flutter run -d chrome
 
 ## リリースフロー
 
-- **自動**：`main` をプッシュした後、[scripts/post-push.sh](../../scripts/post-push.sh) を実行（git プッシュフックまたは手動実行のどちらでも可）。スクリプトは最新の `v*` タグに基づいて patch バージョンをインクリメントし、タグを作成してプッシュした後、増分チェンジログ付きで GitHub Release を作成します。`gh` の認証が必要です。初回リリースは `v1.0.0` から始まります。
+- **自動**：`main` をプッシュすると、GitHub Actions（[.github/workflows/release.yml](../../.github/workflows/release.yml)）が最新の `v*` タグに基づいて patch バージョンを自動インクリメントし、タグを作成してプッシュした後、増分チェンジログ付きで GitHub Release を作成します。HEAD がすでにバージョンタグを保持している場合はスキップされます。初回リリースは `v1.0.0` から始まります。
+- **手動フォールバック**：[scripts/post-push.sh](../../scripts/post-push.sh) を実行（`gh` の認証が必要）：`echo "x y refs/heads/main z" | scripts/post-push.sh`。
 - **手動**：
 
   ```bash

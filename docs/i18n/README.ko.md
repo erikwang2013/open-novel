@@ -97,7 +97,7 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API 접두사
 
-백엔드 HTTP 인터페이스는 모두 `/api`로 시작하며 도메인별로 그룹화됩니다:
+백엔드 HTTP 인터페이스는 모두 `/api`로 시작하며, 버전은 요청 헤더 `X-Api-Version: v1`로 협상됩니다(URL에 적지 않음). 엔드포인트는 도메인별로 그룹화됩니다:
 
 | 도메인 | 예시 라우트 | proto 정의 |
 | :--- | :--- | :--- |
@@ -131,7 +131,8 @@ cd apps/flutter && flutter pub get && flutter run -d chrome
 
 ## 릴리스 프로세스
 
-- **자동**: `main` 푸시 후 [scripts/post-push.sh](../../scripts/post-push.sh) 실행(git 푸시 훅 또는 수동 실행 모두 가능). 스크립트는 최신 `v*` 태그 기준으로 patch 버전을 증가시키고 태그를 생성·푸시한 뒤 증분 체인지로그로 GitHub Release를 생성합니다. `gh` 인증이 필요합니다. 첫 릴리스는 `v1.0.0`부터 시작합니다.
+- **자동**: `main` 푸시 후 GitHub Actions([.github/workflows/release.yml](../../.github/workflows/release.yml))가 최신 `v*` 태그 기준으로 patch 버전을 자동 증가시키고 태그를 생성·푸시한 뒤 증분 체인지로그로 GitHub Release를 생성합니다. HEAD에 이미 버전 태그가 있으면 건너뜁니다. 첫 릴리스는 `v1.0.0`부터 시작합니다.
+- **수동 폴백**: [scripts/post-push.sh](../../scripts/post-push.sh) 실행(`gh` 인증 필요): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **수동**:
 
   ```bash

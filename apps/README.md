@@ -35,4 +35,4 @@ cd harmonyos && hvigorw assembleHap
 - 多端共用后端 API（前缀 `/api`），接口定义（proto）维护在 `kratos/backend/api/`
 - 各端内部结构说明由各端自己的 README 负责：
   - [flutter/README.md](flutter/README.md) — 运行、构建、API_BASE_URL、l10n 使用说明
-  - harmonyos — 详见端内说明（待补充）
+  - [harmonyos/README.md](harmonyos/README.md) — 构建、BASE_URL（`common/Config.ets`）、unsigned hap 说明

@@ -39,6 +39,18 @@ Open Novel منصة عالمية للروايات متعددة اللغات بم
 
 مخططات التصميم الأخرى: نظرة عامة على المشروع [../project.svg](../project.svg) · دورة الطلب [../request-cycle.svg](../request-cycle.svg) · المعمارية الأمنية [../security.svg](../security.svg) · هيكل المشروع [../structure.svg](../structure.svg).
 
+## نظرة عامة على المشروع
+
+<p align="center"><img src="images/ar/project.svg" alt="نظرة عامة على المشروع" width="860"/></p>
+
+## دورة الطلب
+
+<p align="center"><img src="images/ar/request-cycle.svg" alt="دورة الطلب" width="860"/></p>
+
+## المعمارية الأمنية
+
+<p align="center"><img src="images/ar/security.svg" alt="المعمارية الأمنية" width="860"/></p>
+
 ## هيكل الدليل
 
 ```
@@ -83,7 +95,7 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## بادئة API
 
-جميع واجهات HTTP الخلفية تبدأ بـ `/api`، وتُقسم حسب المجالات:
+جميع واجهات HTTP الخلفية تبدأ بـ `/api`؛ يتم التفاوض على الإصدار عبر ترويسة `X-Api-Version: v1` (وليس في الرابط). تُقسم الواجهات حسب المجالات:
 
 | المجال | أمثلة على المسارات | تعريف proto |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ cd apps/flutter && flutter pub get && flutter run -d chrome
 
 ## عملية الإصدار
 
-- **تلقائي**: بعد دفع `main`، شغّل [scripts/post-push.sh](../../scripts/post-push.sh) (عبر خطاف git push أو يدويًا). يرفع السكربت رقم الإصدار patch استنادًا إلى أحدث وسم `v*`، وينشئ الوسم ويدفعه، ثم ينشئ إصدار GitHub مع سجل تغييرات تدريجي؛ يتطلب مصادقة `gh`. أول إصدار يبدأ من `v1.0.0`.
+- **تلقائي**: بعد دفع `main`، تقوم GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) تلقائيًا برفع رقم الإصدار patch استنادًا إلى أحدث وسم `v*`، وتنشئ الوسم وتدفعه، ثم تنشئ إصدار GitHub مع سجل تغييرات تدريجي؛ يُتخطى إذا كان HEAD يحمل وسم إصدار بالفعل. أول إصدار يبدأ من `v1.0.0`.
+- **الحل اليدوي الاحتياطي**: شغّل [scripts/post-push.sh](../../scripts/post-push.sh) (يتطلب مصادقة `gh`): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **يدوي**:
 
   ```bash

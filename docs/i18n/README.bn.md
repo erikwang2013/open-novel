@@ -39,6 +39,18 @@ Open Novel একটি ক্লাউড-নেটিভ মাইক্রো
 
 অন্যান্য ডিজাইন ডায়াগ্রাম: প্রকল্পের সার্বিক চিত্র [../project.svg](../project.svg) · রিকোয়েস্ট সাইকেল [../request-cycle.svg](../request-cycle.svg) · নিরাপত্তা আর্কিটেকচার [../security.svg](../security.svg) · প্রকল্প কাঠামো [../structure.svg](../structure.svg)।
 
+## প্রকল্পের সার্বিক চিত্র
+
+<p align="center"><img src="images/bn/project.svg" alt="প্রকল্পের সার্বিক চিত্র" width="860"/></p>
+
+## রিকোয়েস্ট সাইকেল
+
+<p align="center"><img src="images/bn/request-cycle.svg" alt="রিকোয়েস্ট সাইকেল" width="860"/></p>
+
+## নিরাপত্তা আর্কিটেকচার
+
+<p align="center"><img src="images/bn/security.svg" alt="নিরাপত্তা আর্কিটেকচার" width="860"/></p>
+
 ## ডিরেক্টরি স্ট্রাকচার
 
 ```
@@ -83,7 +95,7 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API প্রিফিক্স
 
-ব্যাকএন্ডের সব HTTP ইন্টারফেস `/api` দিয়ে শুরু হয়, ডোমেইন অনুযায়ী গ্রুপ করা:
+ব্যাকএন্ডের সব HTTP ইন্টারফেস `/api` দিয়ে শুরু হয়; সংস্করণ `X-Api-Version: v1` হেডারের মাধ্যমে নির্ধারিত হয় (URL-এ নয়)। এন্ডপয়েন্ট ডোমেইন অনুযায়ী গ্রুপ করা:
 
 | ডোমেইন | উদাহরণ রুট | proto ডেফিনিশন |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ cd apps/flutter && flutter pub get && flutter run -d chrome
 
 ## রিলিজ প্রক্রিয়া
 
-- **স্বয়ংক্রিয়**: `main` পুশ করার পর [scripts/post-push.sh](../../scripts/post-push.sh) চালান (git পুশ হুক বা ম্যানুয়ালি)। স্ক্রিপ্ট সর্বশেষ `v*` ট্যাগের ভিত্তিতে patch ভার্সন বাড়ায়, ট্যাগ তৈরি করে পুশ করে, তারপর ইনক্রিমেন্টাল changelog দিয়ে GitHub Release তৈরি করে; `gh` অথেনটিকেটেড থাকা প্রয়োজন। প্রথম রিলিজ `v1.0.0` থেকে শুরু হয়।
+- **স্বয়ংক্রিয়**: `main` পুশ করার পর GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) সর্বশেষ `v*` ট্যাগের ভিত্তিতে patch ভার্সন স্বয়ংক্রিয়ভাবে বাড়ায়, ট্যাগ তৈরি করে পুশ করে, তারপর ইনক্রিমেন্টাল changelog দিয়ে GitHub Release তৈরি করে; HEAD-এ ইতিমধ্যে ভার্সন ট্যাগ থাকলে এড়িয়ে যায়। প্রথম রিলিজ `v1.0.0` থেকে শুরু হয়।
+- **ম্যানুয়াল ফলব্যাক**: [scripts/post-push.sh](../../scripts/post-push.sh) চালান (`gh` অথেনটিকেটেড থাকা প্রয়োজন): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **ম্যানুয়াল**:
 
   ```bash

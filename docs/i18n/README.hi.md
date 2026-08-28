@@ -39,6 +39,18 @@ Open Novel एक क्लाउड-नेटिव माइक्रोसर
 
 अन्य डिज़ाइन आरेख: परियोजना अवलोकन [../project.svg](../project.svg) · अनुरोध चक्र [../request-cycle.svg](../request-cycle.svg) · सुरक्षा आर्किटेक्चर [../security.svg](../security.svg) · परियोजना संरचना [../structure.svg](../structure.svg)।
 
+## परियोजना अवलोकन
+
+<p align="center"><img src="images/hi/project.svg" alt="परियोजना अवलोकन" width="860"/></p>
+
+## अनुरोध चक्र
+
+<p align="center"><img src="images/hi/request-cycle.svg" alt="अनुरोध चक्र" width="860"/></p>
+
+## सुरक्षा आर्किटेक्चर
+
+<p align="center"><img src="images/hi/security.svg" alt="सुरक्षा आर्किटेक्चर" width="860"/></p>
+
 ## निर्देशिका संरचना
 
 ```
@@ -83,7 +95,7 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## API उपसर्ग
 
-बैकएंड HTTP इंटरफेस सभी `/api` से शुरू होते हैं, डोमेन के अनुसार समूहीकृत:
+बैकएंड HTTP इंटरफेस सभी `/api` से शुरू होते हैं; संस्करण `X-Api-Version: v1` हेडर से तय होता है (URL में नहीं)। एंडपॉइंट डोमेन के अनुसार समूहीकृत हैं:
 
 | डोमेन | उदाहरण रूट | proto परिभाषा |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ cd apps/flutter && flutter pub get && flutter run -d chrome
 
 ## रिलीज़ प्रक्रिया
 
-- **स्वचालित**: `main` पुश करने के बाद [scripts/post-push.sh](../../scripts/post-push.sh) चलाएँ (git पुश हुक या मैन्युअल रूप से)। स्क्रिप्ट नवीनतम `v*` टैग के आधार पर patch वर्ज़न बढ़ाती है, टैग बनाकर पुश करती है, फिर इंक्रीमेंटल changelog के साथ GitHub Release बनाती है; `gh` प्रमाणित होना आवश्यक है। पहली रिलीज़ `v1.0.0` से शुरू होती है।
+- **स्वचालित**: `main` पुश करने के बाद GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) नवीनतम `v*` टैग के आधार पर patch वर्ज़न स्वचालित रूप से बढ़ाता है, टैग बनाकर पुश करता है, फिर इंक्रीमेंटल changelog के साथ GitHub Release बनाता है; यदि HEAD में पहले से वर्ज़न टैग है तो छोड़ दिया जाता है। पहली रिलीज़ `v1.0.0` से शुरू होती है।
+- **मैन्युअल फ़ॉलबैक**: [scripts/post-push.sh](../../scripts/post-push.sh) चलाएँ (`gh` प्रमाणित होना आवश्यक): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **मैन्युअल**:
 
   ```bash

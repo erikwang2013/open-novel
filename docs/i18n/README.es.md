@@ -39,6 +39,18 @@ La arquitectura general es una arquitectura de microservicios Go-Kratos: los cli
 
 Otros diagramas: panorama del proyecto [../project.svg](../project.svg) · ciclo de solicitudes [../request-cycle.svg](../request-cycle.svg) · arquitectura de seguridad [../security.svg](../security.svg) · estructura del proyecto [../structure.svg](../structure.svg).
 
+## Panorama del proyecto
+
+<p align="center"><img src="images/es/project.svg" alt="Panorama del proyecto" width="860"/></p>
+
+## Ciclo de solicitudes
+
+<p align="center"><img src="images/es/request-cycle.svg" alt="Ciclo de solicitudes" width="860"/></p>
+
+## Arquitectura de seguridad
+
+<p align="center"><img src="images/es/security.svg" alt="Arquitectura de seguridad" width="860"/></p>
+
 ## Estructura de directorios
 
 ```
@@ -83,7 +95,7 @@ Script de creación de tablas: `kratos/backend/sql/init.sql` (se ejecuta automá
 
 ## Prefijo de API
 
-Las interfaces HTTP del backend comienzan uniformemente con `/api` y se agrupan por dominio:
+Las interfaces HTTP del backend comienzan uniformemente con `/api`; la versión se negocia mediante la cabecera `X-Api-Version: v1` (no en la URL). Se agrupan por dominio:
 
 | Dominio | Rutas de ejemplo | Definición proto |
 | :--- | :--- | :--- |
@@ -117,7 +129,8 @@ Consulta [apps/README.md](../../apps/README.md) y [apps/flutter/README.md](../..
 
 ## Proceso de lanzamiento
 
-- **Automático**: tras hacer push a `main`, se ejecuta [scripts/post-push.sh](../../scripts/post-push.sh) (mediante un hook de push de git o manualmente). El script incrementa la versión patch a partir de la última etiqueta `v*`, crea y empuja una etiqueta, y luego crea una Release de GitHub con un changelog incremental; requiere `gh` autenticado. El primer lanzamiento comienza en `v1.0.0`.
+- **Automático**: tras hacer push a `main`, GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) incrementa automáticamente la versión patch a partir de la última etiqueta `v*`, crea y empuja una etiqueta, y luego crea una Release de GitHub con un changelog incremental; se omite si HEAD ya lleva una etiqueta de versión. El primer lanzamiento comienza en `v1.0.0`.
+- **Respaldo manual**: ejecute [scripts/post-push.sh](../../scripts/post-push.sh) (requiere `gh` autenticado): `echo "x y refs/heads/main z" | scripts/post-push.sh`.
 - **Manual**:
 
   ```bash
