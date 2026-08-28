@@ -52,8 +52,14 @@ type PaymentProvider interface {
 type providerFactory func(cfg map[string]any, pay *conf.Payment) (PaymentProvider, error)
 
 var providerFactories = map[string]providerFactory{
-	"stripe":  newStripeProvider,
-	"np_usdt": newNPProvider,
+	"stripe":       newStripeProvider,
+	"np_usdt":      newNPProvider,
+	"razorpay":     newRazorpayProvider,
+	"komoju":       newKomojuProvider,
+	"portone":      newPortOneProvider,
+	"mercadopago":  newMercadoPagoProvider,
+	"xendit":       newXenditProvider,
+	"paypal":       newPayPalProvider,
 }
 
 // webhookAlias 把 webhook 路径参数（stripe/nowpayments）归一为渠道码。
@@ -210,7 +216,12 @@ func (pc *PaymentUsecase) ListMethods(ctx context.Context, lang string) ([]Metho
 // Webhook 渠道回调：验签→金额强校验→幂等→status 0→1 + VIP 激活。
 func (pc *PaymentUsecase) Webhook(ctx context.Context, providerName string, rawBody []byte, headers map[string]string) error {
 	code := webhookAlias(providerName)
-	switch code { // 验签仅需 webhook 密钥，不依赖渠道 API key
+	factory, ok := providerFactories[code]
+	if !ok {
+		return pkg.ErrProviderOn
+	}
+	var cfg map[string]any
+	switch code { // stripe/np_usdt 验签密钥在全局配置；新渠道在渠道行 config（DB 加密）
 	case "stripe":
 		if pc.payCfg.StripeWebhookSecret == "" {
 			return pkg.ErrProviderOn
@@ -220,13 +231,15 @@ func (pc *PaymentUsecase) Webhook(ctx context.Context, providerName string, rawB
 			return pkg.ErrProviderOn
 		}
 	default:
-		return pkg.ErrProviderOn
+		row, err := pc.providerByCode(ctx, code)
+		if err != nil {
+			return pkg.ErrProviderOn
+		}
+		if cfg, err = pc.decryptConfig(row.Config); err != nil {
+			return pkg.ErrProviderOn
+		}
 	}
-	factory, ok := providerFactories[code]
-	if !ok {
-		return pkg.ErrProviderOn
-	}
-	prov, err := factory(nil, pc.payCfg)
+	prov, err := factory(cfg, pc.payCfg)
 	if err != nil {
 		return pkg.ErrProviderOn
 	}
@@ -316,6 +329,15 @@ func (pc *PaymentUsecase) settle(ctx context.Context, o *data.PaymentOrder, ev P
 		}
 		return nil
 	})
+}
+
+// providerByCode 按渠道码取行（webhook 验签密钥存于渠道 config，DB 加密）。
+func (pc *PaymentUsecase) providerByCode(ctx context.Context, code string) (*data.PaymentProvider, error) {
+	var r data.PaymentProvider
+	if err := pc.db.Clauses(gormdb.Write).WithContext(ctx).Where("code = ?", code).First(&r).Error; err != nil {
+		return nil, err
+	}
+	return &r, nil
 }
 
 func (pc *PaymentUsecase) enabledProviders(ctx context.Context) ([]data.PaymentProvider, error) {

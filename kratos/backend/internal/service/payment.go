@@ -101,8 +101,15 @@ func (s *PaymentService) Webhook(ctx context.Context, req *paymentv1.WebhookReq)
 	headers := map[string]string{}
 	if tr, ok := transport.FromServerContext(ctx); ok {
 		h := tr.RequestHeader()
-		headers["Stripe-Signature"] = h.Get("Stripe-Signature")
-		headers["X-Nowpayments-Sig"] = h.Get("X-Nowpayments-Sig")
+		for _, name := range []string{
+			"Stripe-Signature", "X-Nowpayments-Sig",
+			"X-Razorpay-Signature", "X-KOMOJU-SIGNATURE", "X-IAMPORT-TOKEN",
+			"X-CALLBACK-TOKEN",
+			"PayPal-Transmission-Id", "PayPal-Transmission-Time",
+			"PayPal-Transmission-Sig", "PayPal-Webhook-Id",
+		} {
+			headers[name] = h.Get(name)
+		}
 	}
 	if err := s.uc.Webhook(ctx, req.Provider, raw, headers); err != nil {
 		return nil, err

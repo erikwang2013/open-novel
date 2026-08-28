@@ -125,7 +125,24 @@
 | GET | `/api/payments/plans` | 公开 VIP 套餐列表（仅 status=1，sort 升序；DB 套餐表优先，回退内置默认） | 无 |
 | GET | `/api/payments/vip-status` | 当前用户 VIP 状态 → `{active, vip_expires_at?}` | Bearer |
 | GET | `/api/payments/methods?lang=` | 支付方式列表（enabled 且 lang/region 匹配，sort 升序） | 无 |
-| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe / nowpayments，验签在内部；回调金额=订单金额强校验，幂等 settle） | 无 |
+| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe / nowpayments / razorpay / komoju / portone / mercadopago / xendit / paypal，验签在内部；回调金额=订单金额强校验，幂等 settle） | 无 |
+
+### 渠道与 config 键（T-P-19~20）
+
+provider 行由 admin「支付方式」页创建，config 键 AES-GCM 加密存储；语言路由由行的 lang/region 决定。
+
+| 渠道码 | 语言路由 | config 键 | 验签方式 |
+| :--- | :--- | :--- | :--- |
+| stripe | * | 全局 env STRIPE_SECRET_KEY / STRIPE_WEBHOOK_SECRET（config 键 `currency` 可覆盖币种） | Stripe-Signature |
+| np_usdt | * | 全局 env NP_API_KEY / NP_IPN_SECRET（config 键 `coin`） | X-Nowpayments-Sig HMAC-SHA512 |
+| razorpay | hi | `key_id` `key_secret` `webhook_secret` | X-Razorpay-Signature HMAC-SHA256 |
+| komoju | ja | `api_key` `webhook_secret` | X-KOMOJU-SIGNATURE HMAC-SHA256 |
+| portone | ko | `api_secret` `webhook_token` | X-IAMPORT-TOKEN 比对 |
+| mercadopago | pt-BR | `access_token` | IPN 无签名，access_token 回查 GET /v1/payments/{id} |
+| xendit | id / th / vn | `api_key` `callback_token` | X-CALLBACK-TOKEN 比对 |
+| paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | transmission 头 + webhook-id 比对（简化，见实现） |
+
+zh-CN 支付宝/微信需中国大陆企业资质，未实现（见 tasks.md）。
 
 ### 支付管理（T-P-09~13，全部 requireAdmin → 180401）
 
