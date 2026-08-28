@@ -82,16 +82,46 @@ class _HomeTabState extends State<HomeTab> {
   }
 }
 
-/// 顶部语言切换（zh/en）。
+/// 支持的语言（code, 自称标签）。
+const _langOptions = [
+  ('zh', '简体中文'),
+  ('en', 'English'),
+  ('ja', '日本語'),
+  ('ko', '한국어'),
+  ('fr', 'Français'),
+  ('de', 'Deutsch'),
+  ('es', 'Español'),
+  ('ru', 'Русский'),
+  ('ar', 'العربية'),
+  ('pt', 'Português'),
+  ('hi', 'हिन्दी'),
+  ('bn', 'বাংলা'),
+  ('id', 'Bahasa Indonesia'),
+];
+
+/// 顶部语言切换（13 语言下拉）。
 class _LangSwitch extends StatelessWidget {
   const _LangSwitch();
 
   @override
   Widget build(BuildContext context) {
     final cur = localeNotifier.value;
-    return TextButton(
-      onPressed: () => localeNotifier.value = cur == 'zh' ? 'en' : 'zh',
-      child: Text(cur == 'zh' ? 'EN' : '中文'),
+    final label = _langOptions.firstWhere(
+      (o) => o.$1 == cur,
+      orElse: () => _langOptions.first,
+    );
+    return PopupMenuButton<String>(
+      initialValue: cur,
+      tooltip: 'Language',
+      onSelected: (code) => localeNotifier.value = code,
+      itemBuilder: (_) => [
+        for (final (code, name) in _langOptions)
+          PopupMenuItem(value: code, child: Text(name)),
+      ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Text(label.$2),
+      ),
     );
   }
 }

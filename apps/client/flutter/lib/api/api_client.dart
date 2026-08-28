@@ -232,5 +232,13 @@ class ApiClient {
   }
 }
 
-String langCode(String locale) =>
-    locale.startsWith('en') ? 'en' : (locale.startsWith('ja') ? 'ja' : 'zh');
+/// 客户端语言码 → 后端语言参数（见 kratos/backend/internal/pkg/lang.go NormalizeLang：
+/// zh*→zh-CN、en/ja/ko 保留，未知语言原样透传）。
+String langCode(String locale) {
+  final l = locale.toLowerCase();
+  if (l.startsWith('zh')) return 'zh-CN';
+  if (l.startsWith('en')) return 'en';
+  if (l.startsWith('ja')) return 'ja';
+  if (l.startsWith('ko')) return 'ko';
+  return locale; // fr/de/es/ru/ar/pt/hi/bn/id 等直接透传
+}

@@ -33,6 +33,9 @@
     { "name": "vip", "value": "VIP" },
     { "name": "nextChapter", "value": "Next" },
     { "name": "prevChapter", "value": "Prev" },
-    { "name": "errorMsg", "value": "%s" }
+    { "name": "errorMsg", "value": "%s" },
+    { "name": "comments", "value": "Comments" },
+    { "name": "commentHint", "value": "Write a comment…" },
+    { "name": "post", "value": "Post" }
   ]
 }
