@@ -120,14 +120,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. Запустите клиент Flutter (по умолчанию подключается к localhost:8000, дополнительная настройка не требуется)
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - Проброс портов стека зависимостей: MySQL `3307`, Redis `6380`, OpenSearch `9200` (порты хоста 3306/6379 заняты локальными сервисами, см. комментарии в docker-compose.yml).
 - Адрес бэкенда и секреты настраиваются в `kratos/backend/config/`, поддерживается переопределение через переменные окружения (например, `PORT`, `OPENSEARCH_ADDR`).
 - Для подключения Flutter к другому бэкенду: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
 
-Подробности — в [apps/README.md](../../apps/README.md) и [apps/flutter/README.md](../../apps/flutter/README.md).
+Подробности — в [apps/README.md](../../apps/README.md) и [apps/client/flutter/README.md](../../apps/client/flutter/README.md).
 
 ## Процесс релиза
 

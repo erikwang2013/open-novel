@@ -118,14 +118,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. Flutter एंड शुरू करें (डिफ़ॉल्ट रूप से localhost:8000 से जुड़ता है, अतिरिक्त कॉन्फ़िगरेशन की आवश्यकता नहीं)
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - डिपेंडेंसी स्टैक पोर्ट मैपिंग: MySQL `3307`, Redis `6380`, OpenSearch `9200` (होस्ट पर 3306/6379 स्थानीय सेवाओं द्वारा उपयोग में हैं, docker-compose.yml टिप्पणियाँ देखें)।
 - बैकएंड पता और कुंजियाँ `kratos/backend/config/` में कॉन्फ़िगर की जाती हैं, पर्यावरण चर (जैसे `PORT`, `OPENSEARCH_ADDR`) से ओवरराइड संभव है।
 - किसी अन्य बैकएंड से जुड़ने के लिए: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`।
 
-विस्तृत जानकारी के लिए [apps/README.md](../../apps/README.md) और [apps/flutter/README.md](../../apps/flutter/README.md) देखें।
+विस्तृत जानकारी के लिए [apps/README.md](../../apps/README.md) और [apps/client/flutter/README.md](../../apps/client/flutter/README.md) देखें।
 
 ## रिलीज़ प्रक्रिया
 

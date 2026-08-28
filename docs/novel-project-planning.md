@@ -269,7 +269,7 @@ services:
       - "8000:8000"
 
   flutter-web:
-    build: ./apps/flutter
+    build: ./apps/client/flutter
     volumes:
       - /var/www/flutter-web:/var/www/html
 ```

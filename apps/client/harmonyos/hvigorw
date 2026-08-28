@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# 直接委托给已安装的 hvigorw（5.19.2），由其配置 DEVECO_NODE_HOME / DEVECO_SDK_HOME。
+exec /home/component/command-line-tools/bin/hvigorw "$@"

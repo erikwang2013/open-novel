@@ -11,7 +11,7 @@ Open Novel 的多端前端之一：Flutter 全平台应用（Web / Desktop / Mob
 ## 安装依赖
 
 ```bash
-cd apps/flutter
+cd apps/client/flutter
 flutter pub get
 ```
 
@@ -24,7 +24,7 @@ flutter pub get
 cd kratos/backend && go run ./cmd/server
 
 # 再跑 Flutter（Web 调试）
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 ### 修改 API_BASE_URL

@@ -121,14 +121,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. Flutter クライアントを起動（デフォルトで localhost:8000 に接続、追加設定不要）
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - 依存スタックのポートマッピング：MySQL `3307`、Redis `6380`、OpenSearch `9200`（ホストの 3306/6379 はローカルサービスが使用中のため、docker-compose.yml のコメント参照）。
 - バックエンドのアドレスとシークレットは `kratos/backend/config/` で設定し、環境変数による上書きに対応（例：`PORT`、`OPENSEARCH_ADDR`）。
 - Flutter を別のバックエンドに接続する場合：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`。
 
-詳細は [apps/README.md](../../apps/README.md) と [apps/flutter/README.md](../../apps/flutter/README.md) を参照してください。
+詳細は [apps/README.md](../../apps/README.md) と [apps/client/flutter/README.md](../../apps/client/flutter/README.md) を参照してください。
 
 ## リリースフロー
 

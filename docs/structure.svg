@@ -31,7 +31,7 @@
   <g>
     <rect x="120" y="130" width="96" height="28" rx="6" fill="#263238"/>
     <text x="168" y="149" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">apps/</text>
-    <text x="248" y="149" font-size="12" fill="#78909c"># 多端前端目录</text>
+    <text x="248" y="149" font-size="12" fill="#78909c"># client/ 客户端 + admin/ 管理端</text>
   </g>
   <g>
     <rect x="120" y="262" width="96" height="28" rx="6" fill="#263238"/>
@@ -83,6 +83,6 @@
     <text x="248" y="545" font-size="12" fill="#78909c"># 项目说明文档</text>
   </g>
 
-  <text x="500" y="610" font-size="12" fill="#78909c" text-anchor="middle">apps/ 多端前端 · kratos/ 框架源码 + kratos/backend 业务 · docs/ 文档与设计 · 全栈工程结构</text>
+  <text x="500" y="610" font-size="12" fill="#78909c" text-anchor="middle">apps/ client+admin 前端 · kratos/ 框架源码 + kratos/backend 业务 · docs/ 文档与设计 · 全栈工程结构</text>
   <text x="988" y="688" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

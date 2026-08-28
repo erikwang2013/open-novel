@@ -118,14 +118,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. Flutter-Frontend starten (verbindet sich standardmäßig mit localhost:8000, keine weitere Konfiguration nötig)
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - Port-Zuordnung des Abhängigkeits-Stacks: MySQL `3307`、Redis `6380`、OpenSearch `9200` (die Host-Ports 3306/6379 sind durch lokale Dienste belegt, siehe Kommentar in docker-compose.yml).
 - Backend-Adresse und Schlüssel werden in `kratos/backend/config/` konfiguriert und unterstützen Überschreibung über Umgebungsvariablen (z. B. `PORT`, `OPENSEARCH_ADDR`).
 - Flutter mit anderem Backend verbinden: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
 
-Siehe [apps/README.md](../../apps/README.md) und [apps/flutter/README.md](../../apps/flutter/README.md).
+Siehe [apps/README.md](../../apps/README.md) und [apps/client/flutter/README.md](../../apps/client/flutter/README.md).
 
 ## Release-Prozess
 

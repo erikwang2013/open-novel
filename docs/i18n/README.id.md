@@ -118,14 +118,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. Mulai aplikasi Flutter (terhubung ke localhost:8000 secara default, tanpa konfigurasi tambahan)
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - Pemetaan port stack dependensi: MySQL `3307`, Redis `6380`, OpenSearch `9200` (port 3306/6379 di host digunakan oleh layanan lokal, lihat komentar di docker-compose.yml).
 - Alamat dan kunci backend dikonfigurasi di `kratos/backend/config/`, dapat ditimpa dengan variabel lingkungan (misalnya `PORT`, `OPENSEARCH_ADDR`).
 - Untuk menghubungkan Flutter ke backend lain: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
 
-Lihat [apps/README.md](../../apps/README.md) dan [apps/flutter/README.md](../../apps/flutter/README.md) untuk detailnya.
+Lihat [apps/README.md](../../apps/README.md) dan [apps/client/flutter/README.md](../../apps/client/flutter/README.md) untuk detailnya.
 
 ## Proses rilis
 

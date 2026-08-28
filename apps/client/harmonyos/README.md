@@ -5,7 +5,7 @@ Open Novel 的 HarmonyOS NEXT 客户端，使用 ArkTS + ArkUI 开发，与 Flut
 ## 目录结构
 
 ```
-apps/harmonyos/
+apps/client/harmonyos/
 ├─ AppScope/                 # 应用级配置（图标、名称）
 ├─ entry/                    # 主模块（HAP）
 │  └─ src/main/ets/          #   ArkTS 源码
@@ -19,7 +19,7 @@ apps/harmonyos/
 ## 构建
 
 ```bash
-cd apps/harmonyos && ./hvigorw assembleHap
+cd apps/client/harmonyos && ./hvigorw assembleHap
 ```
 
 产物为 `.hap` 包，位于 `entry/build/` 下。

@@ -118,14 +118,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. تشغيل تطبيق Flutter (يتصل بـ localhost:8000 افتراضيًا، دون إعدادات إضافية)
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - تعيين منافذ مجموعة التبعيات: MySQL `3307` و Redis `6380` و OpenSearch `9200` (المنفذان 3306/6379 على المضيف مستخدمان من خدمات محلية، انظر تعليقات docker-compose.yml).
 - عنوان الخادم والمفاتيح تُكوَّن في `kratos/backend/config/`، ويمكن تجاوزها بمتغيرات البيئة (مثل `PORT` و `OPENSEARCH_ADDR`).
 - للاتصال بخادم آخر من Flutter: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
 
-انظر [apps/README.md](../../apps/README.md) و [apps/flutter/README.md](../../apps/flutter/README.md) لمزيد من التفاصيل.
+انظر [apps/README.md](../../apps/README.md) و [apps/client/flutter/README.md](../../apps/client/flutter/README.md) لمزيد من التفاصيل.
 
 ## عملية الإصدار
 

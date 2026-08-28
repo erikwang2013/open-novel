@@ -118,14 +118,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. Flutter এন্ড চালু করুন (ডিফল্টভাবে localhost:8000-এর সাথে সংযুক্ত হয়, অতিরিক্ত কনফিগারেশনের প্রয়োজন নেই)
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - ডিপেন্ডেন্সি স্ট্যাক পোর্ট ম্যাপিং: MySQL `3307`, Redis `6380`, OpenSearch `9200` (হোস্টের 3306/6379 লোকাল সার্ভিস ব্যবহার করে, docker-compose.yml-এর কমেন্ট দেখুন)।
 - ব্যাকএন্ড ঠিকানা ও কী `kratos/backend/config/`-এ কনফিগার করা হয়, এনভায়রনমেন্ট ভেরিয়েবল (যেমন `PORT`, `OPENSEARCH_ADDR`) দিয়ে ওভাররাইড করা যায়।
 - অন্য ব্যাকএন্ডের সাথে Flutter সংযোগ: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`।
 
-বিস্তারিত জানতে দেখুন [apps/README.md](../../apps/README.md) এবং [apps/flutter/README.md](../../apps/flutter/README.md)।
+বিস্তারিত জানতে দেখুন [apps/README.md](../../apps/README.md) এবং [apps/client/flutter/README.md](../../apps/client/flutter/README.md)।
 
 ## রিলিজ প্রক্রিয়া
 

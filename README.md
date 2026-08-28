@@ -44,8 +44,10 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 ```
 open-novel/
 ├─ apps/                     # 多端前端
-│  ├─ flutter/               #   Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
-│  └─ harmonyos/             #   HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
+│  ├─ client/                #   客户端（C 端）
+│  │  ├─ flutter/            #     Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
+│  │  └─ harmonyos/          #     HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
+│  └─ admin/                 #   管理端（Flutter Web，B 端后台）
 ├─ .github/                  # CI/CD：GitHub Actions 发布工作流（release.yml）
 ├─ kratos/                   # Go-Kratos 框架源码（上游框架，原样保留，勿改）
 │  └─ backend/               #   本项目业务后端：cmd/server 入口 + api/ + internal/ + sql/ + opensearch/
@@ -65,6 +67,7 @@ open-novel/
 | 层次 | 技术选型 |
 | :--- | :--- |
 | 客户端 | Flutter（Web / Desktop / Mobile）、HarmonyOS NEXT（ArkTS / ArkUI） |
+| 管理端 | Flutter Web（`apps/admin/`，B 端后台） |
 | 网关 | Nginx + CDN、Go-Kratos API 网关（gRPC / HTTP 双协议） |
 | 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC |
 | 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、OpenSearch 2.x |
@@ -107,14 +110,14 @@ docker compose up -d
 cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # 3. 启动 Flutter 端（默认连 localhost:8000，无需额外配置）
-cd apps/flutter && flutter pub get && flutter run -d chrome
+cd apps/client/flutter && flutter pub get && flutter run -d chrome
 ```
 
 - 依赖栈端口映射：MySQL `3307`、Redis `6380`、OpenSearch `9200`（宿主机 3306/6379 被本机服务占用，见 docker-compose.yml 注释）。
 - 后端地址与密钥在 `kratos/backend/config/` 配置，支持环境变量覆盖（如 `PORT`、`OPENSEARCH_ADDR`）。
 - Flutter 连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`。
 
-详见 [apps/README.md](apps/README.md) 与 [apps/flutter/README.md](apps/flutter/README.md)。
+详见 [apps/README.md](apps/README.md) 与 [apps/client/flutter/README.md](apps/client/flutter/README.md)。
 
 ## 发布流程
 
