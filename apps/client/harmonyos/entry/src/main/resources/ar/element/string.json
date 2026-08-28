@@ -145,6 +145,38 @@
       "value": "اكتب تعليقًا…"
     },
     {
+      "name": "unlike",
+      "value": "إلغاء الإعجاب"
+    },
+    {
+      "name": "report",
+      "value": "الإبلاغ"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "تم الإبلاغ"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "الإبلاغ عن هذا التعليق؟"
+    },
+    {
+      "name": "cancel",
+      "value": "إلغاء"
+    },
+    {
+      "name": "confirm",
+      "value": "تأكيد"
+    },
+    {
+      "name": "all",
+      "value": "الكل"
+    },
+    {
+      "name": "hotSearch",
+      "value": "البحث الشائع"
+    },
+    {
       "name": "post",
       "value": "نشر"
     },

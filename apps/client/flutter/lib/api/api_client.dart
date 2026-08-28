@@ -108,9 +108,16 @@ class ApiClient {
   }
 
   Future<List<Book>> listBooks(
-      {int page = 1, int pageSize = 20, String lang = 'zh'}) async {
-    final r = await _dio.get('/api/books',
-        queryParameters: {'page': page, 'page_size': pageSize, 'lang': lang});
+      {int page = 1,
+      int pageSize = 20,
+      String lang = 'zh',
+      String? categoryId}) async {
+    final r = await _dio.get('/api/books', queryParameters: {
+      'page': page,
+      'page_size': pageSize,
+      'lang': lang,
+      'category_id': ?categoryId,
+    });
     return _parseList<Book>(r.data, Book.fromJson);
   }
 
@@ -214,6 +221,21 @@ class ApiClient {
 
   Future<void> unlikeComment(String id) =>
       _dio.delete('/api/comments/$id/like');
+
+  Future<void> reportComment(String id) =>
+      _dio.post('/api/comments/$id/report');
+
+  /// 一级分类（GET /api/categories 公开路由）。
+  Future<List<Category>> listCategories() async {
+    final r = await _dio.get('/api/categories');
+    return _parseList<Category>(r.data, Category.fromJson);
+  }
+
+  /// 热门搜索（GET /api/search/hot）：后端返回热门书籍 BookDoc，字段与 SearchDoc 一致。
+  Future<List<SearchDoc>> hotSearches() async {
+    final r = await _dio.get('/api/search/hot');
+    return _parseList<SearchDoc>(r.data, SearchDoc.fromJson);
+  }
 
   Future<void> favoriteBook(String bookId) =>
       _dio.post('/api/books/$bookId/favorite');

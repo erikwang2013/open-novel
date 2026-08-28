@@ -145,6 +145,38 @@
       "value": "Écrire un commentaire…"
     },
     {
+      "name": "unlike",
+      "value": "Annuler le like"
+    },
+    {
+      "name": "report",
+      "value": "Signaler"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "Signalement envoyé"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "Signaler ce commentaire ?"
+    },
+    {
+      "name": "cancel",
+      "value": "Annuler"
+    },
+    {
+      "name": "confirm",
+      "value": "Confirmer"
+    },
+    {
+      "name": "all",
+      "value": "Tous"
+    },
+    {
+      "name": "hotSearch",
+      "value": "Recherches populaires"
+    },
+    {
       "name": "post",
       "value": "Publier"
     },

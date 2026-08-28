@@ -145,6 +145,38 @@
       "value": "댓글을 남겨보세요…"
     },
     {
+      "name": "unlike",
+      "value": "좋아요 취소"
+    },
+    {
+      "name": "report",
+      "value": "신고"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "신고 완료"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "이 댓글을 신고할까요?"
+    },
+    {
+      "name": "cancel",
+      "value": "취소"
+    },
+    {
+      "name": "confirm",
+      "value": "확인"
+    },
+    {
+      "name": "all",
+      "value": "전체"
+    },
+    {
+      "name": "hotSearch",
+      "value": "인기 검색"
+    },
+    {
       "name": "post",
       "value": "등록"
     },

@@ -78,6 +78,30 @@ class AppLocalizationsEs extends AppLocalizations {
   String get like => 'Me gusta';
 
   @override
+  String get unlike => 'Quitar Me Gusta';
+
+  @override
+  String get report => 'Denunciar';
+
+  @override
+  String get reportSuccess => 'Denuncia enviada';
+
+  @override
+  String get reportConfirm => '¿Denunciar este comentario?';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get confirm => 'Confirmar';
+
+  @override
+  String get all => 'Todos';
+
+  @override
+  String get hotSearch => 'Búsquedas populares';
+
+  @override
   String get loading => 'Cargando…';
 
   @override

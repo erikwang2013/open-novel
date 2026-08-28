@@ -83,10 +83,39 @@ struct CommentsPage {
   }
 
   private like(c: Comment): void {
-    ApiClient.instance.likeComment(c.id).then(() => {
+    const req = c.likeCount > 0
+      ? ApiClient.instance.unlikeComment(c.id)
+      : ApiClient.instance.likeComment(c.id);
+    req.then(() => {
       this.load();
     }).catch(() => {
-      // 点赞失败静默（含重复点赞业务错误 150409）
+      // 点赞/取消点赞失败静默（含重复点赞业务错误 150409）
+    });
+  }
+
+  private report(c: Comment): void {
+    if (ApiClient.instance.accessToken === '') {
+      router.pushUrl({ url: 'pages/LoginPage' });
+      return;
+    }
+    AlertDialog.show({
+      title: $r('app.string.report'),
+      message: this.t($r('app.string.reportConfirm')),
+      primaryButton: {
+        value: $r('app.string.cancel'),
+        action: () => {
+        }
+      },
+      secondaryButton: {
+        value: $r('app.string.confirm'),
+        action: () => {
+          ApiClient.instance.reportComment(c.id).then(() => {
+            promptAction.showToast({ message: this.t($r('app.string.reportSuccess')) });
+          }).catch((e: Error) => {
+            promptAction.showToast({ message: e.message });
+          });
+        }
+      }
     });
   }
 
@@ -155,17 +184,26 @@ struct CommentsPage {
                 .alignItems(HorizontalAlign.Start)
                 .layoutWeight(1)
 
-                Row({ space: 2 }) {
-                  SymbolGlyph(c.likeCount > 0 ? $r('sys.symbol.hand_thumbsup_fill') : $r('sys.symbol.hand_thumbsup'))
-                    .fontSize(18)
-                    .fontColor([c.likeCount > 0 ? '#E84026' : '#999999'])
-                  Text(`${c.likeCount}`)
-                    .fontSize(12)
-                    .fontColor(c.likeCount > 0 ? '#E84026' : '#999999')
+                Row({ space: 12 }) {
+                  Row({ space: 2 }) {
+                    SymbolGlyph(c.likeCount > 0 ? $r('sys.symbol.hand_thumbsup_fill') : $r('sys.symbol.hand_thumbsup'))
+                      .fontSize(18)
+                      .fontColor([c.likeCount > 0 ? '#E84026' : '#999999'])
+                    Text(`${c.likeCount}`)
+                      .fontSize(12)
+                      .fontColor(c.likeCount > 0 ? '#E84026' : '#999999')
+                  }
+                  .onClick(() => {
+                    this.like(c);
+                  })
+
+                  SymbolGlyph($r('sys.symbol.flag'))
+                    .fontSize(16)
+                    .fontColor(['#999999'])
+                    .onClick(() => {
+                      this.report(c);
+                    })
                 }
-                .onClick(() => {
-                  this.like(c);
-                })
               }
               .width('100%')
               .padding({ left: 16, right: 16, top: 12, bottom: 12 })

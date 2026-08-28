@@ -78,6 +78,30 @@ class AppLocalizationsAr extends AppLocalizations {
   String get like => 'إعجاب';
 
   @override
+  String get unlike => 'إلغاء الإعجاب';
+
+  @override
+  String get report => 'الإبلاغ';
+
+  @override
+  String get reportSuccess => 'تم الإبلاغ';
+
+  @override
+  String get reportConfirm => 'الإبلاغ عن هذا التعليق؟';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get hotSearch => 'البحث الشائع';
+
+  @override
   String get loading => 'جارٍ التحميل…';
 
   @override

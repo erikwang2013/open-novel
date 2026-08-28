@@ -78,6 +78,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get like => 'Gefällt mir';
 
   @override
+  String get unlike => 'Like entfernen';
+
+  @override
+  String get report => 'Melden';
+
+  @override
+  String get reportSuccess => 'Meldung gesendet';
+
+  @override
+  String get reportConfirm => 'Diesen Kommentar melden?';
+
+  @override
+  String get cancel => 'Abbrechen';
+
+  @override
+  String get confirm => 'Bestätigen';
+
+  @override
+  String get all => 'Alle';
+
+  @override
+  String get hotSearch => 'Beliebte Suchanfragen';
+
+  @override
   String get loading => 'Wird geladen…';
 
   @override

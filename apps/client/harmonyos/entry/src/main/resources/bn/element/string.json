@@ -145,6 +145,38 @@
       "value": "মন্তব্য লিখুন…"
     },
     {
+      "name": "unlike",
+      "value": "লাইক বাতিল"
+    },
+    {
+      "name": "report",
+      "value": "রিপোর্ট"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "রিপোর্ট সফল"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "এই মন্তব্যটি রিপোর্ট করবেন?"
+    },
+    {
+      "name": "cancel",
+      "value": "বাতিল"
+    },
+    {
+      "name": "confirm",
+      "value": "নিশ্চিত"
+    },
+    {
+      "name": "all",
+      "value": "সব"
+    },
+    {
+      "name": "hotSearch",
+      "value": "জনপ্রিয় অনুসন্ধান"
+    },
+    {
       "name": "post",
       "value": "পোস্ট করুন"
     },

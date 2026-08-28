@@ -73,10 +73,54 @@ class _CommentsPageState extends State<CommentsPage> {
 
   Future<void> _toggleLike(Comment c) async {
     try {
-      await ApiClient.instance.likeComment(c.id);
+      if (c.likeCount > 0) {
+        await ApiClient.instance.unlikeComment(c.id);
+      } else {
+        await ApiClient.instance.likeComment(c.id);
+      }
       await _load();
     } catch (_) {
-      // 点赞失败忽略
+      // 点赞/取消点赞失败忽略
+    }
+  }
+
+  Future<void> _report(Comment c) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (!await ensureLogin(context)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.loginRequired)));
+      }
+      return;
+    }
+    if (!mounted) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.report),
+        content: Text(l10n.reportConfirm),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.confirm)),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    try {
+      await ApiClient.instance.reportComment(c.id);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.reportSuccess)));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(ApiClient.instance.errorMessage(e))));
+      }
     }
   }
 
@@ -136,13 +180,25 @@ class _CommentsPageState extends State<CommentsPage> {
             title: Text(c.content),
             subtitle: Text(c.createdAt,
                 style: Theme.of(context).textTheme.bodySmall),
-            trailing: IconButton(
-              icon: Icon(
-                c.likeCount > 0 ? Icons.thumb_up : Icons.thumb_up_outlined,
-                size: 18,
-              ),
-              tooltip: '${l10n.like} ${c.likeCount}',
-              onPressed: () => _toggleLike(c),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    c.likeCount > 0
+                        ? Icons.thumb_up
+                        : Icons.thumb_up_outlined,
+                    size: 18,
+                  ),
+                  tooltip: '${l10n.like} ${c.likeCount}',
+                  onPressed: () => _toggleLike(c),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.flag_outlined, size: 18),
+                  tooltip: l10n.report,
+                  onPressed: () => _report(c),
+                ),
+              ],
             ),
           );
         },

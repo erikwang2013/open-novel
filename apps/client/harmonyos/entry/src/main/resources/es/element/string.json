@@ -145,6 +145,38 @@
       "value": "Escribe un comentario…"
     },
     {
+      "name": "unlike",
+      "value": "Quitar Me Gusta"
+    },
+    {
+      "name": "report",
+      "value": "Denunciar"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "Denuncia enviada"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "¿Denunciar este comentario?"
+    },
+    {
+      "name": "cancel",
+      "value": "Cancelar"
+    },
+    {
+      "name": "confirm",
+      "value": "Confirmar"
+    },
+    {
+      "name": "all",
+      "value": "Todos"
+    },
+    {
+      "name": "hotSearch",
+      "value": "Búsquedas populares"
+    },
+    {
       "name": "post",
       "value": "Publicar"
     },

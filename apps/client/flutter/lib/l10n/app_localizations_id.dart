@@ -78,6 +78,30 @@ class AppLocalizationsId extends AppLocalizations {
   String get like => 'Suka';
 
   @override
+  String get unlike => 'Batal suka';
+
+  @override
+  String get report => 'Laporkan';
+
+  @override
+  String get reportSuccess => 'Laporan terkirim';
+
+  @override
+  String get reportConfirm => 'Laporkan komentar ini?';
+
+  @override
+  String get cancel => 'Batal';
+
+  @override
+  String get confirm => 'Konfirmasi';
+
+  @override
+  String get all => 'Semua';
+
+  @override
+  String get hotSearch => 'Pencarian populer';
+
+  @override
   String get loading => 'Memuat…';
 
   @override

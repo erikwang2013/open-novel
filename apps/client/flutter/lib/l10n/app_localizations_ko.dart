@@ -78,6 +78,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get like => '좋아요';
 
   @override
+  String get unlike => '좋아요 취소';
+
+  @override
+  String get report => '신고';
+
+  @override
+  String get reportSuccess => '신고 완료';
+
+  @override
+  String get reportConfirm => '이 댓글을 신고할까요?';
+
+  @override
+  String get cancel => '취소';
+
+  @override
+  String get confirm => '확인';
+
+  @override
+  String get all => '전체';
+
+  @override
+  String get hotSearch => '인기 검색';
+
+  @override
   String get loading => '불러오는 중…';
 
   @override

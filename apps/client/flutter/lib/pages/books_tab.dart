@@ -18,6 +18,9 @@ class _BooksTabState extends State<BooksTab> {
   final _searchCtrl = TextEditingController();
   List<Book>? _books;
   List<SearchDoc>? _searchResults;
+  List<Category> _categories = [];
+  List<SearchDoc> _hot = [];
+  String? _categoryId;
   String? _error;
   bool _searching = false;
 
@@ -25,6 +28,22 @@ class _BooksTabState extends State<BooksTab> {
   void initState() {
     super.initState();
     _loadBooks();
+    // 分类 / 热搜为增强功能，失败静默不影响书单浏览
+    _loadMeta();
+  }
+
+  Future<void> _loadMeta() async {
+    try {
+      final cats = await ApiClient.instance.listCategories();
+      final hot = await ApiClient.instance.hotSearches();
+      if (!mounted) return;
+      setState(() {
+        _categories = cats;
+        _hot = hot;
+      });
+    } catch (_) {
+      // 静默
+    }
   }
 
   @override
@@ -42,8 +61,9 @@ class _BooksTabState extends State<BooksTab> {
     });
     try {
       final lang = langCode(localeNotifier.value);
-      final books =
-          await ApiClient.instance.listBooks(pageSize: 20, lang: lang);
+      final categoryId = _categoryId;
+      final books = await ApiClient.instance
+          .listBooks(pageSize: 20, lang: lang, categoryId: categoryId);
       setState(() => _books = books);
     } catch (e) {
       setState(() => _error = ApiClient.instance.errorMessage(e));
@@ -131,18 +151,65 @@ class _BooksTabState extends State<BooksTab> {
     final books = _books;
     if (books == null) return const Center(child: CircularProgressIndicator());
     if (books.isEmpty) return Center(child: Text(l10n.empty));
+    final topCats = _categories.where((c) => c.parentId == 0).toList();
     return RefreshIndicator(
       onRefresh: _loadBooks,
-      child: ListView.builder(
+      child: ListView(
         padding: const EdgeInsets.all(8),
-        itemCount: books.length,
-        itemBuilder: (_, i) => BookCard(
-          bookId: books[i].id,
-          title: books[i].title,
-          author: books[i].author,
-          summary: books[i].summary,
-          vip: books[i].isVip == 1,
-        ),
+        children: [
+          if (topCats.isNotEmpty)
+            SizedBox(
+              height: 40,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  _catChip(l10n.all, null),
+                  for (final c in topCats) _catChip(c.name, c.id),
+                ],
+              ),
+            ),
+          if (_hot.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.only(top: 8, bottom: 4),
+              child: Text(l10n.hotSearch,
+                  style: Theme.of(context).textTheme.titleSmall),
+            ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                for (final d in _hot)
+                  ActionChip(
+                    label: Text(d.title(langCode(localeNotifier.value))),
+                    onPressed: () => _search(d.title(langCode(localeNotifier.value))),
+                  ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 8),
+          ...books.map((b) => BookCard(
+                bookId: b.id,
+                title: b.title,
+                author: b.author,
+                summary: b.summary,
+                vip: b.isVip == 1,
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget _catChip(String label, String? id) {
+    final sel = _categoryId == id;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: sel,
+        onSelected: (_) {
+          setState(() => _categoryId = id);
+          _loadBooks();
+        },
       ),
     );
   }

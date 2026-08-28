@@ -78,6 +78,30 @@ class AppLocalizationsPt extends AppLocalizations {
   String get like => 'Curtir';
 
   @override
+  String get unlike => 'Descurtir';
+
+  @override
+  String get report => 'Denunciar';
+
+  @override
+  String get reportSuccess => 'Denúncia enviada';
+
+  @override
+  String get reportConfirm => 'Denunciar este comentário?';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get confirm => 'Confirmar';
+
+  @override
+  String get all => 'Todos';
+
+  @override
+  String get hotSearch => 'Pesquisas populares';
+
+  @override
   String get loading => 'Carregando…';
 
   @override

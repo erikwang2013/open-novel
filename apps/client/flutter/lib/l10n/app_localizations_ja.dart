@@ -78,6 +78,30 @@ class AppLocalizationsJa extends AppLocalizations {
   String get like => 'いいね';
 
   @override
+  String get unlike => 'いいねを解除';
+
+  @override
+  String get report => '通報';
+
+  @override
+  String get reportSuccess => '通報しました';
+
+  @override
+  String get reportConfirm => 'このコメントを通報しますか？';
+
+  @override
+  String get cancel => 'キャンセル';
+
+  @override
+  String get confirm => '確認';
+
+  @override
+  String get all => 'すべて';
+
+  @override
+  String get hotSearch => '人気検索';
+
+  @override
   String get loading => '読み込み中…';
 
   @override

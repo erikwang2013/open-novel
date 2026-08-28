@@ -78,6 +78,30 @@ class AppLocalizationsHi extends AppLocalizations {
   String get like => 'पसंद';
 
   @override
+  String get unlike => 'लाइक हटाएं';
+
+  @override
+  String get report => 'रिपोर्ट करें';
+
+  @override
+  String get reportSuccess => 'रिपोर्ट सफल';
+
+  @override
+  String get reportConfirm => 'क्या यह टिप्पणी रिपोर्ट करें?';
+
+  @override
+  String get cancel => 'रद्द करें';
+
+  @override
+  String get confirm => 'पुष्टि करें';
+
+  @override
+  String get all => 'सभी';
+
+  @override
+  String get hotSearch => 'लोकप्रिय खोज';
+
+  @override
   String get loading => 'लोड हो रहा है…';
 
   @override

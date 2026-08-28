@@ -78,6 +78,30 @@ class AppLocalizationsRu extends AppLocalizations {
   String get like => 'Нравится';
 
   @override
+  String get unlike => 'Убрать лайк';
+
+  @override
+  String get report => 'Пожаловаться';
+
+  @override
+  String get reportSuccess => 'Жалоба отправлена';
+
+  @override
+  String get reportConfirm => 'Пожаловаться на комментарий?';
+
+  @override
+  String get cancel => 'Отмена';
+
+  @override
+  String get confirm => 'Подтвердить';
+
+  @override
+  String get all => 'Все';
+
+  @override
+  String get hotSearch => 'Популярные запросы';
+
+  @override
   String get loading => 'Загрузка…';
 
   @override

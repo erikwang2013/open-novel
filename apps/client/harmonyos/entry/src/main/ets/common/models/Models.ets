@@ -199,6 +199,21 @@ export class Comment {
   }
 }
 
+/// 分类（GET /api/categories 公开路由）。按一级分类（parentId === 0）做筛选。
+export class Category {
+  id: string = '';
+  name: string = '';
+  parentId: number = 0;
+
+  static fromJson(j: Record<string, Object>): Category {
+    const c = new Category();
+    c.id = asStr(j['id']);
+    c.name = asStr(j['name']);
+    c.parentId = asInt(j['parentId']);
+    return c;
+  }
+}
+
 /// VIP 套餐（GET /api/payments/plans 公开）。amount 为分。
 export class Plan {
   planCode: string = '';

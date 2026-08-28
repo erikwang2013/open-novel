@@ -145,6 +145,38 @@
       "value": "写评论…"
     },
     {
+      "name": "unlike",
+      "value": "取消点赞"
+    },
+    {
+      "name": "report",
+      "value": "举报"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "举报成功"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "确认举报这条评论？"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "confirm",
+      "value": "确认"
+    },
+    {
+      "name": "all",
+      "value": "全部"
+    },
+    {
+      "name": "hotSearch",
+      "value": "热门搜索"
+    },
+    {
       "name": "post",
       "value": "发布"
     },

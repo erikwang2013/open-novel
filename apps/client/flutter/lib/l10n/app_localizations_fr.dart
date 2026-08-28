@@ -78,6 +78,30 @@ class AppLocalizationsFr extends AppLocalizations {
   String get like => 'J\'aime';
 
   @override
+  String get unlike => 'Annuler le like';
+
+  @override
+  String get report => 'Signaler';
+
+  @override
+  String get reportSuccess => 'Signalement envoyé';
+
+  @override
+  String get reportConfirm => 'Signaler ce commentaire ?';
+
+  @override
+  String get cancel => 'Annuler';
+
+  @override
+  String get confirm => 'Confirmer';
+
+  @override
+  String get all => 'Tous';
+
+  @override
+  String get hotSearch => 'Recherches populaires';
+
+  @override
   String get loading => 'Chargement…';
 
   @override

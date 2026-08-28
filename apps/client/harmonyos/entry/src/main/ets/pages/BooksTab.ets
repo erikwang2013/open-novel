@@ -1,13 +1,16 @@
 import { router } from '@kit.ArkUI';
 import { common } from '@kit.AbilityKit';
 import { ApiClient } from '../common/api/ApiClient';
-import { Book, SearchDoc } from '../common/models/Models';
+import { Book, Category, SearchDoc } from '../common/models/Models';
 
-/// 全部书籍 tab：搜索框 + 书籍列表（GET /api/books 分页、GET /api/search）。
+/// 全部书籍 tab：搜索框 + 分类筛选 + 热门搜索 + 书籍列表（GET /api/books、GET /api/categories、GET /api/search/hot）。
 @Component
 export struct BooksTab {
   @State books: Book[] = [];
   @State results: SearchDoc[] = [];
+  @State categories: Category[] = [];
+  @State hot: SearchDoc[] = [];
+  @State categoryId: string = '';
   @State searching: boolean = false;
   @State loading: boolean = true;
   @State errorMsg: string = '';
@@ -17,6 +20,19 @@ export struct BooksTab {
 
   aboutToAppear(): void {
     this.loadBooks();
+    this.loadMeta();
+  }
+
+  /// 分类 / 热搜为增强功能，失败静默不影响书单浏览。
+  private async loadMeta(): Promise<void> {
+    try {
+      const cats = await ApiClient.instance.listCategories();
+      const hot = await ApiClient.instance.hotSearches();
+      this.categories = cats;
+      this.hot = hot;
+    } catch (e) {
+      // 静默
+    }
   }
 
   private async loadBooks(): Promise<void> {
@@ -27,7 +43,7 @@ export struct BooksTab {
     this.page = 1;
     this.hasMore = true;
     try {
-      this.books = await ApiClient.instance.listBooks(1, 20);
+      this.books = await ApiClient.instance.listBooks(1, 20, this.categoryId);
     } catch (e) {
       this.errorMsg = (e as Error).message;
     }
@@ -39,7 +55,7 @@ export struct BooksTab {
       return;
     }
     try {
-      const more = await ApiClient.instance.listBooks(this.page + 1, 20);
+      const more = await ApiClient.instance.listBooks(this.page + 1, 20, this.categoryId);
       if (more.length === 0) {
         this.hasMore = false;
       } else {
@@ -81,6 +97,17 @@ export struct BooksTab {
 
   private t(res: Resource, ...args: string[]): string {
     return (getContext(this) as common.UIAbilityContext).resourceManager.getStringSync(res, ...args);
+  }
+
+  @Builder
+  catChip(label: string | Resource, selected: boolean, act: () => void) {
+    Text(label)
+      .fontSize(14)
+      .fontColor(selected ? '#FFFFFF' : '#666666')
+      .backgroundColor(selected ? '#E84026' : '#F2F2F2')
+      .borderRadius(16)
+      .padding({ left: 12, right: 12, top: 6, bottom: 6 })
+      .onClick(act)
   }
 
   @Builder
@@ -139,6 +166,26 @@ export struct BooksTab {
       }
       .padding(12)
 
+      if (this.keyword === '' && this.results.length === 0) {
+        Scroll() {
+          Row({ space: 8 }) {
+            this.catChip($r('app.string.all'), this.categoryId === '', () => {
+              this.categoryId = '';
+              this.loadBooks();
+            })
+            ForEach(this.categories.filter((c: Category) => c.parentId === 0), (c: Category) => {
+              this.catChip(c.name, this.categoryId === c.id, () => {
+                this.categoryId = c.id;
+                this.loadBooks();
+              })
+            }, (c: Category) => c.id)
+          }
+        }
+        .scrollable(ScrollDirection.Horizontal)
+        .scrollBar(BarState.Off)
+        .padding({ left: 12, right: 12 })
+      }
+
       if (this.searching) {
         LoadingProgress().width(50).height(50)
       } else if (this.errorMsg !== '') {
@@ -181,21 +228,44 @@ export struct BooksTab {
           .fontSize(14)
           .fontColor('#999999')
       } else {
-        List({ space: 8 }) {
-          ForEach(this.books, (b: Book) => {
-            ListItem() {
-              this.bookRow(b.title, b.author, b.summary, b.isVip === 1)
+        Column() {
+          if (this.hot.length > 0) {
+            Column() {
+              Text($r('app.string.hotSearch'))
+                .fontSize(14)
+                .fontWeight(FontWeight.Medium)
+                .fontColor('#666666')
+                .width('100%')
+              Flex({ wrap: FlexWrap.Wrap }) {
+                ForEach(this.hot, (d: SearchDoc) => {
+                  this.catChip(d.title(ApiClient.LANG), false, () => {
+                    this.keyword = d.title(ApiClient.LANG);
+                    this.doSearch(this.keyword);
+                  })
+                }, (d: SearchDoc) => d.bookId)
+              }
+              .width('100%')
             }
-            .onClick(() => {
-              this.openBook(b.id, b.title, b.author, b.summary);
-            })
-          }, (b: Book) => b.id)
+            .alignItems(HorizontalAlign.Start)
+            .padding({ left: 12, right: 12, top: 8 })
+          }
+          List({ space: 8 }) {
+            ForEach(this.books, (b: Book) => {
+              ListItem() {
+                this.bookRow(b.title, b.author, b.summary, b.isVip === 1)
+              }
+              .onClick(() => {
+                this.openBook(b.id, b.title, b.author, b.summary);
+              })
+            }, (b: Book) => b.id)
+          }
+          .layoutWeight(1)
+          .padding({ left: 12, right: 12, top: 8, bottom: 8 })
+          .onReachEnd(() => {
+            this.loadMore();
+          })
         }
         .layoutWeight(1)
-        .padding({ left: 12, right: 12, top: 8, bottom: 8 })
-        .onReachEnd(() => {
-          this.loadMore();
-        })
       }
     }
     .width('100%')

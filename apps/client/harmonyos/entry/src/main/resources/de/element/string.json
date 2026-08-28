@@ -145,6 +145,38 @@
       "value": "Kommentar schreiben…"
     },
     {
+      "name": "unlike",
+      "value": "Like entfernen"
+    },
+    {
+      "name": "report",
+      "value": "Melden"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "Meldung gesendet"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "Diesen Kommentar melden?"
+    },
+    {
+      "name": "cancel",
+      "value": "Abbrechen"
+    },
+    {
+      "name": "confirm",
+      "value": "Bestätigen"
+    },
+    {
+      "name": "all",
+      "value": "Alle"
+    },
+    {
+      "name": "hotSearch",
+      "value": "Beliebte Suchanfragen"
+    },
+    {
       "name": "post",
       "value": "Veröffentlichen"
     },

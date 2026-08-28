@@ -145,6 +145,38 @@
       "value": "Напишите комментарий…"
     },
     {
+      "name": "unlike",
+      "value": "Убрать лайк"
+    },
+    {
+      "name": "report",
+      "value": "Пожаловаться"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "Жалоба отправлена"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "Пожаловаться на комментарий?"
+    },
+    {
+      "name": "cancel",
+      "value": "Отмена"
+    },
+    {
+      "name": "confirm",
+      "value": "Подтвердить"
+    },
+    {
+      "name": "all",
+      "value": "Все"
+    },
+    {
+      "name": "hotSearch",
+      "value": "Популярные запросы"
+    },
+    {
       "name": "post",
       "value": "Опубликовать"
     },

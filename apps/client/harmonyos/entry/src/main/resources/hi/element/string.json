@@ -145,6 +145,38 @@
       "value": "टिप्पणी लिखें…"
     },
     {
+      "name": "unlike",
+      "value": "लाइक हटाएं"
+    },
+    {
+      "name": "report",
+      "value": "रिपोर्ट करें"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "रिपोर्ट सफल"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "क्या यह टिप्पणी रिपोर्ट करें?"
+    },
+    {
+      "name": "cancel",
+      "value": "रद्द करें"
+    },
+    {
+      "name": "confirm",
+      "value": "पुष्टि करें"
+    },
+    {
+      "name": "all",
+      "value": "सभी"
+    },
+    {
+      "name": "hotSearch",
+      "value": "लोकप्रिय खोज"
+    },
+    {
       "name": "post",
       "value": "पोस्ट करें"
     },

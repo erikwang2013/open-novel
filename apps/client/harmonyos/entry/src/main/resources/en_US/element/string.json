@@ -145,6 +145,38 @@
       "value": "Write a comment…"
     },
     {
+      "name": "unlike",
+      "value": "Unlike"
+    },
+    {
+      "name": "report",
+      "value": "Report"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "Report submitted"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "Report this comment?"
+    },
+    {
+      "name": "cancel",
+      "value": "Cancel"
+    },
+    {
+      "name": "confirm",
+      "value": "Confirm"
+    },
+    {
+      "name": "all",
+      "value": "All"
+    },
+    {
+      "name": "hotSearch",
+      "value": "Hot searches"
+    },
+    {
       "name": "post",
       "value": "Post"
     },

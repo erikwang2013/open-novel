@@ -248,6 +248,18 @@ class RecommendItem {
         summary = asStr(j['summary']);
 }
 
+/// 分类（GET /api/categories 公开路由）：按一级分类（parentId==0）做筛选。
+class Category {
+  final String id;
+  final String name;
+  final int parentId;
+
+  Category.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        name = asStr(j['name']),
+        parentId = asInt(j['parentId']);
+}
+
 /// OpenSearch 搜索结果文档：按 lang 取对应语言字段。
 class SearchDoc {
   final String bookId;

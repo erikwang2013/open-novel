@@ -145,6 +145,38 @@
       "value": "Tulis komentar…"
     },
     {
+      "name": "unlike",
+      "value": "Batal suka"
+    },
+    {
+      "name": "report",
+      "value": "Laporkan"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "Laporan terkirim"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "Laporkan komentar ini?"
+    },
+    {
+      "name": "cancel",
+      "value": "Batal"
+    },
+    {
+      "name": "confirm",
+      "value": "Konfirmasi"
+    },
+    {
+      "name": "all",
+      "value": "Semua"
+    },
+    {
+      "name": "hotSearch",
+      "value": "Pencarian populer"
+    },
+    {
       "name": "post",
       "value": "Kirim"
     },

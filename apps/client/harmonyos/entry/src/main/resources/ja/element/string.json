@@ -145,6 +145,38 @@
       "value": "コメントを書く…"
     },
     {
+      "name": "unlike",
+      "value": "いいねを解除"
+    },
+    {
+      "name": "report",
+      "value": "通報"
+    },
+    {
+      "name": "reportSuccess",
+      "value": "通報しました"
+    },
+    {
+      "name": "reportConfirm",
+      "value": "このコメントを通報しますか？"
+    },
+    {
+      "name": "cancel",
+      "value": "キャンセル"
+    },
+    {
+      "name": "confirm",
+      "value": "確認"
+    },
+    {
+      "name": "all",
+      "value": "すべて"
+    },
+    {
+      "name": "hotSearch",
+      "value": "人気検索"
+    },
+    {
       "name": "post",
       "value": "投稿"
     },

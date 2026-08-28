@@ -78,6 +78,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get like => 'Like';
 
   @override
+  String get unlike => 'Unlike';
+
+  @override
+  String get report => 'Report';
+
+  @override
+  String get reportSuccess => 'Report submitted';
+
+  @override
+  String get reportConfirm => 'Report this comment?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get hotSearch => 'Hot searches';
+
+  @override
   String get loading => 'Loading…';
 
   @override

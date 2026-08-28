@@ -78,6 +78,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get like => '点赞';
 
   @override
+  String get unlike => '取消点赞';
+
+  @override
+  String get report => '举报';
+
+  @override
+  String get reportSuccess => '举报成功';
+
+  @override
+  String get reportConfirm => '确认举报这条评论？';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get confirm => '确认';
+
+  @override
+  String get all => '全部';
+
+  @override
+  String get hotSearch => '热门搜索';
+
+  @override
   String get loading => '加载中…';
 
   @override

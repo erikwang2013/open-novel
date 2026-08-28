@@ -10,6 +10,7 @@ import { Config } from '../Config';
 import {
   Book,
   BookshelfItem,
+  Category,
   Chapter,
   ChapterContent,
   Comment,
@@ -79,9 +80,12 @@ export class ApiClient {
     return await this.saveSession(LoginResult.fromJson(obj));
   }
 
-  async listBooks(page: number = 1, pageSize: number = 20): Promise<Book[]> {
-    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(
-      `/api/books?page=${page}&page_size=${pageSize}&lang=${ApiClient.LANG}`);
+  async listBooks(page: number = 1, pageSize: number = 20, categoryId: string = ''): Promise<Book[]> {
+    let q = `/api/books?page=${page}&page_size=${pageSize}&lang=${ApiClient.LANG}`;
+    if (categoryId !== '') {
+      q += `&category_id=${encodeURIComponent(categoryId)}`;
+    }
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(q);
     return this.parseList(obj, Book.fromJson);
   }
 
@@ -212,6 +216,26 @@ export class ApiClient {
 
   async likeComment(id: string): Promise<void> {
     await this.post<Record<string, Object>>(`/api/comments/${id}/like`, {});
+  }
+
+  async unlikeComment(id: string): Promise<void> {
+    await this.delete<Record<string, Object>>(`/api/comments/${id}/like`);
+  }
+
+  async reportComment(id: string): Promise<void> {
+    await this.post<Record<string, Object>>(`/api/comments/${id}/report`, {});
+  }
+
+  /// 一级分类（GET /api/categories 公开路由）。
+  async listCategories(): Promise<Category[]> {
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>('/api/categories');
+    return this.parseList(obj, Category.fromJson);
+  }
+
+  /// 热门搜索（GET /api/search/hot）：后端返回热门书籍 BookDoc，字段与 SearchDoc 一致。
+  async hotSearches(): Promise<SearchDoc[]> {
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>('/api/search/hot');
+    return this.parseList(obj, SearchDoc.fromJson);
   }
 
   async logout(): Promise<void> {

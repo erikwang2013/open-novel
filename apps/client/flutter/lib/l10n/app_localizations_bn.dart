@@ -78,6 +78,30 @@ class AppLocalizationsBn extends AppLocalizations {
   String get like => 'পছন্দ';
 
   @override
+  String get unlike => 'লাইক বাতিল';
+
+  @override
+  String get report => 'রিপোর্ট';
+
+  @override
+  String get reportSuccess => 'রিপোর্ট সফল';
+
+  @override
+  String get reportConfirm => 'এই মন্তব্যটি রিপোর্ট করবেন?';
+
+  @override
+  String get cancel => 'বাতিল';
+
+  @override
+  String get confirm => 'নিশ্চিত';
+
+  @override
+  String get all => 'সব';
+
+  @override
+  String get hotSearch => 'জনপ্রিয় অনুসন্ধান';
+
+  @override
   String get loading => 'লোড হচ্ছে…';
 
   @override

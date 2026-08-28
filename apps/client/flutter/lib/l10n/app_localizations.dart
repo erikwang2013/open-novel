@@ -258,6 +258,54 @@ abstract class AppLocalizations {
   /// **'点赞'**
   String get like;
 
+  /// No description provided for @unlike.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消点赞'**
+  String get unlike;
+
+  /// No description provided for @report.
+  ///
+  /// In zh, this message translates to:
+  /// **'举报'**
+  String get report;
+
+  /// No description provided for @reportSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'举报成功'**
+  String get reportSuccess;
+
+  /// No description provided for @reportConfirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认举报这条评论？'**
+  String get reportConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认'**
+  String get confirm;
+
+  /// No description provided for @all.
+  ///
+  /// In zh, this message translates to:
+  /// **'全部'**
+  String get all;
+
+  /// No description provided for @hotSearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'热门搜索'**
+  String get hotSearch;
+
   /// No description provided for @loading.
   ///
   /// In zh, this message translates to:
