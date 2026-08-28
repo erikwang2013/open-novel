@@ -20,6 +20,7 @@
 | 客户端 | T-C-13~15 | 社区与发现（评论增强 / 分类 / 热搜） | C3 |
 | 客户端 | T-C-16~21 | 多端统一（分页 / token / 桌面布局） | C4 |
 | 客户端 | T-C-22~23 | 加载空态统一 + 全链路回归 | 收尾 |
+| 支付 | T-P-01~20 | 国际/本地/USDT 支付、后台展示控制与流水（2026-08-29 用户立项） | 新增需求 |
 
 ## 二、管理端链（T-A-01~17）
 
@@ -136,7 +137,44 @@
 
 | 项 | 说明 | 触发条件 |
 | :--- | :--- | :--- |
-| VIP / 支付链路 | `novel_vip_order` / `novel_payment_order` 表 + 支付服务 | 产品确认后立项 |
 | AI 推荐 | 埋点（`novel_search_log` 已有）后算法推荐替代策略推荐 | 埋点数据量达标 |
 | ristretto 本地二级缓存 | 超热 key 兜底 | 压测发现缓存瓶颈 |
 | 离线缓存（后端 CDN 侧） | 章节静态化 / CDN 预热 | 流量规模达阈值 |
+
+---
+
+## 六、支付链（T-P-01~20，2026-08-29 用户立项）
+
+定位：平台商业化支撑。国际主流支付 + 按语言优先本地支付 + USDT 等主流币；后台可控制支付方式展示与流水对账。
+
+**调研结论（2026-08）**：
+- **Stripe**：官方 Go SDK（stripe-go），135+ 币种、120+ 本地方式、>45 国收单 —— 一期首选（欧美卡 + iDEAL/SEPA/Apple Pay/Google Pay 全覆盖；韩日本地卡弱）
+- **本地聚合网关**（二期按语言接入，实现同一 Provider 接口，语言路由表优先本地）：hi→Razorpay(UPI)、ja→KOMOJU、ko→PortOne/Toss、pt-BR→Mercado Pago、id/th/vn→Xendit、zh-CN→支付宝/微信（需 CN 企业资质或经 Adyen）
+- **USDT/主流币**：NOWPayments（350+ 币、0.5~1% 费率、REST + HMAC-SHA512 webhook + 沙箱，TRON/ERC20/BSC）—— 一期；BitPay 备选
+- **架构**：Provider 抽象接口（CreateCheckout / Verify / VerifyWebhook）+ 语言→方式路由表（DB 驱动，admin 控制 enabled / region / sort）
+
+| 编号 | 任务 | 说明 | 依赖 |
+| :--- | :--- | :--- | :--- |
+| T-P-01 | 支付表结构 | `novel_payment_provider`（code/lang/region/enabled/sort/config 密钥加密）、`novel_payment_order`（order_no/user_id/amount/currency/provider/status/tx_id/paid_at）、`novel_vip_order`（套餐/时长/到期）；`novel_user` 加 `vip_expires_at`；init.sql | 无 |
+| T-P-02 | 支付错误码 | 19xxxx 段：190401 下单失败 / 190402 订单不存在 / 190403 金额不匹配 / 190404 支付未完成 / 190405 方式未启用 | T-P-01 |
+| T-P-03 | Provider 抽象 + payment.v1 | proto（下单 / 查单 / 方式列表 / 回调）+ Provider 接口 + 注册表 | T-P-01/02 |
+| T-P-04 | Stripe 实现 | 官方 stripe-go SDK，Checkout Session + webhook 签名验签，沙箱先行 | T-P-03 |
+| T-P-05 | NOWPayments 实现 | USDT（TRON/ERC20/BSC）支付 + IPN webhook 验签 | T-P-03 |
+| T-P-06 | 语言→方式路由 | `GET /api/payments/methods?lang=`：本地支付优先、enabled/sort/region 过滤；后台可控 | T-P-01 |
+| T-P-07 | 下单/查单 | 幂等、15min 超时未付、webhook 幂等处理、回调金额=订单金额强校验、FORCE_MASTER + Redis | T-P-04/05 |
+| T-P-08 | VIP 激活链路 | 支付成功 → `vip_expires_at` 续期（可叠加）、VIP 章节/书籍校验打通（IsVip 已有） | T-P-07 |
+| T-P-09 | 流水账单 API | 订单分页/按用户/方式/状态/时间筛选 + 汇总统计，requireAdmin | T-P-07 |
+| T-P-10 | 支付方式管理 API | provider CRUD + enabled + region + sort，密钥加密存储，requireAdmin | T-P-01 |
+| T-P-11 | 管理端支付方式页 | 列表 / 启停 / 排序 / 区域 / 密钥配置 | T-P-10 |
+| T-P-12 | 管理端流水页 | 分页 / 筛选 / 详情 / 汇总卡片 | T-P-09 |
+| T-P-13 | 管理端 VIP 套餐配置 | 套餐 CRUD（时长 / 价格 / 币种 / 标签） | T-P-01 |
+| T-P-14 | 客户端 VIP 购买页 | 套餐列表 + 按语言推荐支付方式 + 下单 / 跳转 / 回跳 | T-P-06/07 |
+| T-P-15 | 支付结果页 | 成功 / 失败 / 待确认态 + 订单轮询 | T-P-14 |
+| T-P-16 | 阅读器 VIP 引导 | VIP 章节未订阅 → 引导购买（两端对齐） | T-P-08 |
+| T-P-17 | 我的-VIP 状态 | 到期时间 / 续费入口（两端） | T-P-08 |
+| T-P-18 | 安全与合规 | 回调验签、金额防篡改、幂等、审计日志、日志脱敏 | T-P-04~07 |
+| T-P-19 | 本地支付补强（二期） | 按语言：hi→Razorpay、ja→KOMOJU、ko→PortOne、pt-BR→Mercado Pago、id/th/vn→Xendit、zh-CN→支付宝/微信（需 CN 资质） | T-P-03 后逐语言 |
+| T-P-20 | PayPal 接入（备选） | Stripe 未覆盖市场兜底 | T-P-03 |
+
+**调度**：第一批 T-P-01~08（后端支付底座，1-2 周）→ T-P-09~13（管理端）→ T-P-14~17（客户端）；T-P-18 随各批内嵌；T-P-19/20 二期按商户资质逐语言启用。
+**前置条件**：Stripe / NOWPayments 商户密钥（沙箱即可开发）；zh-CN 支付宝/微信需中国大陆企业资质（或 Adyen 渠道），立项时确认。
