@@ -39,7 +39,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg)。
 
-项目规划：架构设计 [docs/novel-project-planning.md](docs/novel-project-planning.md) · 现状盘点与阶段路线 [docs/roadmap.md](docs/roadmap.md)。
+项目规划：架构设计 [docs/novel-project-planning.md](docs/novel-project-planning.md) · 现状盘点与阶段路线 [docs/roadmap.md](docs/roadmap.md) · 详细任务分解 [docs/tasks.md](docs/tasks.md)。
 
 ## 目录结构
 
