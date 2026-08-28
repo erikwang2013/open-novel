@@ -214,6 +214,106 @@ class ApiClient {
     _data(await _dio.delete('/api/tags/$id'));
   }
 
+  // ---------- 支付管理 ----------
+
+  /// 支付方式列表（含禁用）。config 仅返回是否已配置。
+  Future<(List<PaymentProvider>, int)> providers() async {
+    final d = _data(await _dio.get('/api/payments/admin/providers'));
+    return (_listOf(d, PaymentProvider.fromJson), asInt(d['total']));
+  }
+
+  Future<void> createProvider({
+    required String code,
+    String lang = '*',
+    String region = '*',
+    int sort = 0,
+    Map<String, String> config = const {},
+  }) async {
+    _data(await _dio.post('/api/payments/admin/providers', data: {
+      'code': code,
+      'lang': lang,
+      'region': region,
+      'sort': sort,
+      'config': config,
+    }));
+  }
+
+  Future<void> updateProvider(String id, Map<String, dynamic> patch) async {
+    _data(await _dio.put('/api/payments/admin/providers/$id', data: patch));
+  }
+
+  Future<void> toggleProvider(String id) async {
+    _data(await _dio.patch('/api/payments/admin/providers/$id/toggle'));
+  }
+
+  Future<void> deleteProvider(String id) async {
+    _data(await _dio.delete('/api/payments/admin/providers/$id'));
+  }
+
+  /// 流水分页。status: -1 全部；userId/provider 空=全部。
+  Future<(List<PaymentOrder>, int)> orders({
+    String userId = '',
+    String provider = '',
+    int status = -1,
+    String startAt = '',
+    String endAt = '',
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    final r = await _dio.get('/api/payments/admin/orders', queryParameters: {
+      if (userId.isNotEmpty) 'user_id': userId,
+      if (provider.isNotEmpty) 'provider': provider,
+      'status': status,
+      if (startAt.isNotEmpty) 'start_at': startAt,
+      if (endAt.isNotEmpty) 'end_at': endAt,
+      'page': page,
+      'page_size': pageSize,
+    });
+    final d = _data(r);
+    return (_listOf(d, PaymentOrder.fromJson), asInt(d['total']));
+  }
+
+  Future<OrderStats> orderStats({String startAt = '', String endAt = ''}) async {
+    final d = _data(await _dio.get('/api/payments/admin/order-stats',
+        queryParameters: {
+          if (startAt.isNotEmpty) 'start_at': startAt,
+          if (endAt.isNotEmpty) 'end_at': endAt,
+        }));
+    return OrderStats.fromJson(d);
+  }
+
+  /// VIP 套餐列表（含禁用）。
+  Future<(List<VipPlan>, int)> plans() async {
+    final d = _data(await _dio.get('/api/payments/admin/plans'));
+    return (_listOf(d, VipPlan.fromJson), asInt(d['total']));
+  }
+
+  Future<void> createPlan({
+    required String planCode,
+    required int days,
+    required int amount,
+    String currency = 'USD',
+    String label = '',
+    int sort = 0,
+  }) async {
+    _data(await _dio.post('/api/payments/admin/plans', data: {
+      'plan_code': planCode,
+      'days': days,
+      'amount': amount,
+      'currency': currency,
+      'label': label,
+      'sort': sort,
+    }));
+  }
+
+  Future<void> updatePlan(String id, Map<String, dynamic> patch) async {
+    _data(await _dio.put('/api/payments/admin/plans/$id', data: patch));
+  }
+
+  Future<void> deletePlan(String id) async {
+    _data(await _dio.delete('/api/payments/admin/plans/$id'));
+  }
+
   // ---------- 内部工具 ----------
 
   /// 解析响应体；业务错误（HTTP 200 + code != null）显式抛出，与 login 一致。

@@ -497,6 +497,1246 @@ func (x *WebhookReq) GetRawBody() []byte {
 	return nil
 }
 
+type ListOrdersReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`   // 0=全部
+	Provider      string                 `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`              // 空=全部
+	Status        int32                  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`                 // -1=全部 0待支付 1已付 2失败 3关闭
+	StartAt       string                 `protobuf:"bytes,6,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"` // RFC3339 或 2006-01-02（含当天）
+	EndAt         string                 `protobuf:"bytes,7,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`       // RFC3339 或 2006-01-02（含当天）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListOrdersReq) Reset() {
+	*x = ListOrdersReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrdersReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrdersReq) ProtoMessage() {}
+
+func (x *ListOrdersReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrdersReq.ProtoReflect.Descriptor instead.
+func (*ListOrdersReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListOrdersReq) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListOrdersReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListOrdersReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListOrdersReq) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *ListOrdersReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *ListOrdersReq) GetStartAt() string {
+	if x != nil {
+		return x.StartAt
+	}
+	return ""
+}
+
+func (x *ListOrdersReq) GetEndAt() string {
+	if x != nil {
+		return x.EndAt
+	}
+	return ""
+}
+
+type ListOrdersReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	List          []*OrderItem           `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListOrdersReply) Reset() {
+	*x = ListOrdersReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListOrdersReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOrdersReply) ProtoMessage() {}
+
+func (x *ListOrdersReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOrdersReply.ProtoReflect.Descriptor instead.
+func (*ListOrdersReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ListOrdersReply) GetList() []*OrderItem {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+func (x *ListOrdersReply) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type OrderItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrderNo       string                 `protobuf:"bytes,1,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"` // 分
+	Currency      string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	Provider      string                 `protobuf:"bytes,5,opt,name=provider,proto3" json:"provider,omitempty"`
+	Status        int32                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"` // 0待支付 1已付 2失败 3关闭
+	TxId          string                 `protobuf:"bytes,7,opt,name=tx_id,json=txId,proto3" json:"tx_id,omitempty"`
+	PaidAt        string                 `protobuf:"bytes,8,opt,name=paid_at,json=paidAt,proto3" json:"paid_at,omitempty"`          // RFC3339，未支付为空
+	CreatedAt     string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // RFC3339
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderItem) Reset() {
+	*x = OrderItem{}
+	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderItem) ProtoMessage() {}
+
+func (x *OrderItem) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderItem.ProtoReflect.Descriptor instead.
+func (*OrderItem) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *OrderItem) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+func (x *OrderItem) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *OrderItem) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *OrderItem) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *OrderItem) GetProvider() string {
+	if x != nil {
+		return x.Provider
+	}
+	return ""
+}
+
+func (x *OrderItem) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *OrderItem) GetTxId() string {
+	if x != nil {
+		return x.TxId
+	}
+	return ""
+}
+
+func (x *OrderItem) GetPaidAt() string {
+	if x != nil {
+		return x.PaidAt
+	}
+	return ""
+}
+
+func (x *OrderItem) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+type OrderStatsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StartAt       string                 `protobuf:"bytes,1,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"` // RFC3339 或 2006-01-02（含当天）
+	EndAt         string                 `protobuf:"bytes,2,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderStatsReq) Reset() {
+	*x = OrderStatsReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderStatsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderStatsReq) ProtoMessage() {}
+
+func (x *OrderStatsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderStatsReq.ProtoReflect.Descriptor instead.
+func (*OrderStatsReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *OrderStatsReq) GetStartAt() string {
+	if x != nil {
+		return x.StartAt
+	}
+	return ""
+}
+
+func (x *OrderStatsReq) GetEndAt() string {
+	if x != nil {
+		return x.EndAt
+	}
+	return ""
+}
+
+type OrderStatsReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`     // 总单数
+	Paid          int64                  `protobuf:"varint,2,opt,name=paid,proto3" json:"paid,omitempty"`       // 已付单数
+	Pending       int64                  `protobuf:"varint,3,opt,name=pending,proto3" json:"pending,omitempty"` // 待支付单数
+	Failed        int64                  `protobuf:"varint,4,opt,name=failed,proto3" json:"failed,omitempty"`   // 失败单数
+	Closed        int64                  `protobuf:"varint,5,opt,name=closed,proto3" json:"closed,omitempty"`   // 已关闭单数
+	Amount        int64                  `protobuf:"varint,6,opt,name=amount,proto3" json:"amount,omitempty"`   // 已付总金额（分）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderStatsReply) Reset() {
+	*x = OrderStatsReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderStatsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderStatsReply) ProtoMessage() {}
+
+func (x *OrderStatsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderStatsReply.ProtoReflect.Descriptor instead.
+func (*OrderStatsReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *OrderStatsReply) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *OrderStatsReply) GetPaid() int64 {
+	if x != nil {
+		return x.Paid
+	}
+	return 0
+}
+
+func (x *OrderStatsReply) GetPending() int64 {
+	if x != nil {
+		return x.Pending
+	}
+	return 0
+}
+
+func (x *OrderStatsReply) GetFailed() int64 {
+	if x != nil {
+		return x.Failed
+	}
+	return 0
+}
+
+func (x *OrderStatsReply) GetClosed() int64 {
+	if x != nil {
+		return x.Closed
+	}
+	return 0
+}
+
+func (x *OrderStatsReply) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type ListProvidersReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListProvidersReq) Reset() {
+	*x = ListProvidersReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListProvidersReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListProvidersReq) ProtoMessage() {}
+
+func (x *ListProvidersReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListProvidersReq.ProtoReflect.Descriptor instead.
+func (*ListProvidersReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{13}
+}
+
+type ProviderReply struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Code             string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	Lang             string                 `protobuf:"bytes,3,opt,name=lang,proto3" json:"lang,omitempty"`                                                  // '*' 或语言码
+	Region           string                 `protobuf:"bytes,4,opt,name=region,proto3" json:"region,omitempty"`                                              // '*' 或地区码
+	Enabled          int32                  `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`                                           // 0禁用 1启用
+	Sort             int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`                                                 // 升序
+	ConfigConfigured bool                   `protobuf:"varint,7,opt,name=config_configured,json=configConfigured,proto3" json:"config_configured,omitempty"` // 密钥是否已配置（绝不返回明文）
+	CreatedAt        string                 `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`                       // RFC3339
+	UpdatedAt        string                 `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`                       // RFC3339
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ProviderReply) Reset() {
+	*x = ProviderReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProviderReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProviderReply) ProtoMessage() {}
+
+func (x *ProviderReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProviderReply.ProtoReflect.Descriptor instead.
+func (*ProviderReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ProviderReply) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ProviderReply) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *ProviderReply) GetLang() string {
+	if x != nil {
+		return x.Lang
+	}
+	return ""
+}
+
+func (x *ProviderReply) GetRegion() string {
+	if x != nil {
+		return x.Region
+	}
+	return ""
+}
+
+func (x *ProviderReply) GetEnabled() int32 {
+	if x != nil {
+		return x.Enabled
+	}
+	return 0
+}
+
+func (x *ProviderReply) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *ProviderReply) GetConfigConfigured() bool {
+	if x != nil {
+		return x.ConfigConfigured
+	}
+	return false
+}
+
+func (x *ProviderReply) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *ProviderReply) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type ListProvidersReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	List          []*ProviderReply       `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListProvidersReply) Reset() {
+	*x = ListProvidersReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListProvidersReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListProvidersReply) ProtoMessage() {}
+
+func (x *ListProvidersReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListProvidersReply.ProtoReflect.Descriptor instead.
+func (*ListProvidersReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ListProvidersReply) GetList() []*ProviderReply {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+func (x *ListProvidersReply) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type CreateProviderReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`     // 渠道码：stripe/np_usdt
+	Lang          string                 `protobuf:"bytes,2,opt,name=lang,proto3" json:"lang,omitempty"`     // 缺省 '*'
+	Region        string                 `protobuf:"bytes,3,opt,name=region,proto3" json:"region,omitempty"` // 缺省 '*'
+	Sort          int32                  `protobuf:"varint,4,opt,name=sort,proto3" json:"sort,omitempty"`
+	Config        map[string]string      `protobuf:"bytes,5,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 密钥字段（currency/coin 等），加密存储
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateProviderReq) Reset() {
+	*x = CreateProviderReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateProviderReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateProviderReq) ProtoMessage() {}
+
+func (x *CreateProviderReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateProviderReq.ProtoReflect.Descriptor instead.
+func (*CreateProviderReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CreateProviderReq) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *CreateProviderReq) GetLang() string {
+	if x != nil {
+		return x.Lang
+	}
+	return ""
+}
+
+func (x *CreateProviderReq) GetRegion() string {
+	if x != nil {
+		return x.Region
+	}
+	return ""
+}
+
+func (x *CreateProviderReq) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *CreateProviderReq) GetConfig() map[string]string {
+	if x != nil {
+		return x.Config
+	}
+	return nil
+}
+
+type UpdateProviderReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Lang          *string                `protobuf:"bytes,2,opt,name=lang,proto3,oneof" json:"lang,omitempty"`
+	Region        *string                `protobuf:"bytes,3,opt,name=region,proto3,oneof" json:"region,omitempty"`
+	Sort          *int32                 `protobuf:"varint,4,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
+	Enabled       *int32                 `protobuf:"varint,5,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                                                                  // 0禁用 1启用
+	Config        map[string]string      `protobuf:"bytes,6,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 传入字段重加密合并；空值保留原值
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProviderReq) Reset() {
+	*x = UpdateProviderReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProviderReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProviderReq) ProtoMessage() {}
+
+func (x *UpdateProviderReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProviderReq.ProtoReflect.Descriptor instead.
+func (*UpdateProviderReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *UpdateProviderReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateProviderReq) GetLang() string {
+	if x != nil && x.Lang != nil {
+		return *x.Lang
+	}
+	return ""
+}
+
+func (x *UpdateProviderReq) GetRegion() string {
+	if x != nil && x.Region != nil {
+		return *x.Region
+	}
+	return ""
+}
+
+func (x *UpdateProviderReq) GetSort() int32 {
+	if x != nil && x.Sort != nil {
+		return *x.Sort
+	}
+	return 0
+}
+
+func (x *UpdateProviderReq) GetEnabled() int32 {
+	if x != nil && x.Enabled != nil {
+		return *x.Enabled
+	}
+	return 0
+}
+
+func (x *UpdateProviderReq) GetConfig() map[string]string {
+	if x != nil {
+		return x.Config
+	}
+	return nil
+}
+
+type DeleteProviderReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteProviderReq) Reset() {
+	*x = DeleteProviderReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteProviderReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteProviderReq) ProtoMessage() {}
+
+func (x *DeleteProviderReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteProviderReq.ProtoReflect.Descriptor instead.
+func (*DeleteProviderReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *DeleteProviderReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type ToggleProviderReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ToggleProviderReq) Reset() {
+	*x = ToggleProviderReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ToggleProviderReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ToggleProviderReq) ProtoMessage() {}
+
+func (x *ToggleProviderReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ToggleProviderReq.ProtoReflect.Descriptor instead.
+func (*ToggleProviderReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ToggleProviderReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type ListPlansReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPlansReq) Reset() {
+	*x = ListPlansReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPlansReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPlansReq) ProtoMessage() {}
+
+func (x *ListPlansReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPlansReq.ProtoReflect.Descriptor instead.
+func (*ListPlansReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{20}
+}
+
+type PlanReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	PlanCode      string                 `protobuf:"bytes,2,opt,name=plan_code,json=planCode,proto3" json:"plan_code,omitempty"` // monthly/quarterly/yearly
+	Days          int64                  `protobuf:"varint,3,opt,name=days,proto3" json:"days,omitempty"`                        // 有效天数
+	Amount        int64                  `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`                    // 分
+	Currency      string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"`                 // USD
+	Label         string                 `protobuf:"bytes,6,opt,name=label,proto3" json:"label,omitempty"`
+	Sort          int32                  `protobuf:"varint,7,opt,name=sort,proto3" json:"sort,omitempty"`
+	Status        int32                  `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"` // 0禁用 1启用
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlanReply) Reset() {
+	*x = PlanReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlanReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlanReply) ProtoMessage() {}
+
+func (x *PlanReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlanReply.ProtoReflect.Descriptor instead.
+func (*PlanReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *PlanReply) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *PlanReply) GetPlanCode() string {
+	if x != nil {
+		return x.PlanCode
+	}
+	return ""
+}
+
+func (x *PlanReply) GetDays() int64 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+func (x *PlanReply) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *PlanReply) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *PlanReply) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *PlanReply) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+func (x *PlanReply) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type ListPlansReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	List          []*PlanReply           `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPlansReply) Reset() {
+	*x = ListPlansReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPlansReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPlansReply) ProtoMessage() {}
+
+func (x *ListPlansReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPlansReply.ProtoReflect.Descriptor instead.
+func (*ListPlansReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *ListPlansReply) GetList() []*PlanReply {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+func (x *ListPlansReply) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type CreatePlanReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PlanCode      string                 `protobuf:"bytes,1,opt,name=plan_code,json=planCode,proto3" json:"plan_code,omitempty"` // monthly/quarterly/yearly
+	Days          int64                  `protobuf:"varint,2,opt,name=days,proto3" json:"days,omitempty"`
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`    // 分
+	Currency      string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"` // 缺省 USD
+	Label         string                 `protobuf:"bytes,5,opt,name=label,proto3" json:"label,omitempty"`
+	Sort          int32                  `protobuf:"varint,6,opt,name=sort,proto3" json:"sort,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreatePlanReq) Reset() {
+	*x = CreatePlanReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreatePlanReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreatePlanReq) ProtoMessage() {}
+
+func (x *CreatePlanReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreatePlanReq.ProtoReflect.Descriptor instead.
+func (*CreatePlanReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *CreatePlanReq) GetPlanCode() string {
+	if x != nil {
+		return x.PlanCode
+	}
+	return ""
+}
+
+func (x *CreatePlanReq) GetDays() int64 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+func (x *CreatePlanReq) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *CreatePlanReq) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *CreatePlanReq) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *CreatePlanReq) GetSort() int32 {
+	if x != nil {
+		return x.Sort
+	}
+	return 0
+}
+
+type UpdatePlanReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Label         *string                `protobuf:"bytes,2,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	Days          *int64                 `protobuf:"varint,3,opt,name=days,proto3,oneof" json:"days,omitempty"`
+	Amount        *int64                 `protobuf:"varint,4,opt,name=amount,proto3,oneof" json:"amount,omitempty"` // 分
+	Currency      *string                `protobuf:"bytes,5,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
+	Sort          *int32                 `protobuf:"varint,6,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
+	Status        *int32                 `protobuf:"varint,7,opt,name=status,proto3,oneof" json:"status,omitempty"` // 0禁用 1启用
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdatePlanReq) Reset() {
+	*x = UpdatePlanReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdatePlanReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdatePlanReq) ProtoMessage() {}
+
+func (x *UpdatePlanReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdatePlanReq.ProtoReflect.Descriptor instead.
+func (*UpdatePlanReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *UpdatePlanReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdatePlanReq) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
+}
+
+func (x *UpdatePlanReq) GetDays() int64 {
+	if x != nil && x.Days != nil {
+		return *x.Days
+	}
+	return 0
+}
+
+func (x *UpdatePlanReq) GetAmount() int64 {
+	if x != nil && x.Amount != nil {
+		return *x.Amount
+	}
+	return 0
+}
+
+func (x *UpdatePlanReq) GetCurrency() string {
+	if x != nil && x.Currency != nil {
+		return *x.Currency
+	}
+	return ""
+}
+
+func (x *UpdatePlanReq) GetSort() int32 {
+	if x != nil && x.Sort != nil {
+		return *x.Sort
+	}
+	return 0
+}
+
+func (x *UpdatePlanReq) GetStatus() int32 {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return 0
+}
+
+type DeletePlanReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeletePlanReq) Reset() {
+	*x = DeletePlanReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeletePlanReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeletePlanReq) ProtoMessage() {}
+
+func (x *DeletePlanReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeletePlanReq.ProtoReflect.Descriptor instead.
+func (*DeletePlanReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *DeletePlanReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 type EmptyReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -505,7 +1745,7 @@ type EmptyReply struct {
 
 func (x *EmptyReply) Reset() {
 	*x = EmptyReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	mi := &file_payment_v1_payment_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -517,7 +1757,7 @@ func (x *EmptyReply) String() string {
 func (*EmptyReply) ProtoMessage() {}
 
 func (x *EmptyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	mi := &file_payment_v1_payment_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -530,7 +1770,7 @@ func (x *EmptyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmptyReply.ProtoReflect.Descriptor instead.
 func (*EmptyReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{8}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{26}
 }
 
 var File_payment_v1_payment_proto protoreflect.FileDescriptor
@@ -571,11 +1811,139 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\n" +
 	"WebhookReq\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12\x19\n" +
-	"\braw_body\x18\x02 \x01(\fR\arawBody\"\f\n" +
+	"\braw_body\x18\x02 \x01(\fR\arawBody\"\xbf\x01\n" +
+	"\rListOrdersReq\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1a\n" +
+	"\bprovider\x18\x04 \x01(\tR\bprovider\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\x05R\x06status\x12\x19\n" +
+	"\bstart_at\x18\x06 \x01(\tR\astartAt\x12\x15\n" +
+	"\x06end_at\x18\a \x01(\tR\x05endAt\"R\n" +
+	"\x0fListOrdersReply\x12)\n" +
+	"\x04list\x18\x01 \x03(\v2\x15.payment.v1.OrderItemR\x04list\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xf4\x01\n" +
+	"\tOrderItem\x12\x19\n" +
+	"\border_no\x18\x01 \x01(\tR\aorderNo\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x1a\n" +
+	"\bprovider\x18\x05 \x01(\tR\bprovider\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\x05R\x06status\x12\x13\n" +
+	"\x05tx_id\x18\a \x01(\tR\x04txId\x12\x17\n" +
+	"\apaid_at\x18\b \x01(\tR\x06paidAt\x12\x1d\n" +
 	"\n" +
-	"EmptyReply2\xaa\x03\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\"A\n" +
+	"\rOrderStatsReq\x12\x19\n" +
+	"\bstart_at\x18\x01 \x01(\tR\astartAt\x12\x15\n" +
+	"\x06end_at\x18\x02 \x01(\tR\x05endAt\"\x9d\x01\n" +
+	"\x0fOrderStatsReply\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12\x12\n" +
+	"\x04paid\x18\x02 \x01(\x03R\x04paid\x12\x18\n" +
+	"\apending\x18\x03 \x01(\x03R\apending\x12\x16\n" +
+	"\x06failed\x18\x04 \x01(\x03R\x06failed\x12\x16\n" +
+	"\x06closed\x18\x05 \x01(\x03R\x06closed\x12\x16\n" +
+	"\x06amount\x18\x06 \x01(\x03R\x06amount\"\x12\n" +
+	"\x10ListProvidersReq\"\xf8\x01\n" +
+	"\rProviderReply\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\x12\x12\n" +
+	"\x04lang\x18\x03 \x01(\tR\x04lang\x12\x16\n" +
+	"\x06region\x18\x04 \x01(\tR\x06region\x12\x18\n" +
+	"\aenabled\x18\x05 \x01(\x05R\aenabled\x12\x12\n" +
+	"\x04sort\x18\x06 \x01(\x05R\x04sort\x12+\n" +
+	"\x11config_configured\x18\a \x01(\bR\x10configConfigured\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\b \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\t \x01(\tR\tupdatedAt\"Y\n" +
+	"\x12ListProvidersReply\x12-\n" +
+	"\x04list\x18\x01 \x03(\v2\x19.payment.v1.ProviderReplyR\x04list\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xe5\x01\n" +
+	"\x11CreateProviderReq\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x12\n" +
+	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x16\n" +
+	"\x06region\x18\x03 \x01(\tR\x06region\x12\x12\n" +
+	"\x04sort\x18\x04 \x01(\x05R\x04sort\x12A\n" +
+	"\x06config\x18\x05 \x03(\v2).payment.v1.CreateProviderReq.ConfigEntryR\x06config\x1a9\n" +
+	"\vConfigEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xb8\x02\n" +
+	"\x11UpdateProviderReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\x04lang\x18\x02 \x01(\tH\x00R\x04lang\x88\x01\x01\x12\x1b\n" +
+	"\x06region\x18\x03 \x01(\tH\x01R\x06region\x88\x01\x01\x12\x17\n" +
+	"\x04sort\x18\x04 \x01(\x05H\x02R\x04sort\x88\x01\x01\x12\x1d\n" +
+	"\aenabled\x18\x05 \x01(\x05H\x03R\aenabled\x88\x01\x01\x12A\n" +
+	"\x06config\x18\x06 \x03(\v2).payment.v1.UpdateProviderReq.ConfigEntryR\x06config\x1a9\n" +
+	"\vConfigEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\a\n" +
+	"\x05_langB\t\n" +
+	"\a_regionB\a\n" +
+	"\x05_sortB\n" +
+	"\n" +
+	"\b_enabled\"#\n" +
+	"\x11DeleteProviderReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"#\n" +
+	"\x11ToggleProviderReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x0e\n" +
+	"\fListPlansReq\"\xc2\x01\n" +
+	"\tPlanReply\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
+	"\tplan_code\x18\x02 \x01(\tR\bplanCode\x12\x12\n" +
+	"\x04days\x18\x03 \x01(\x03R\x04days\x12\x16\n" +
+	"\x06amount\x18\x04 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x12\x14\n" +
+	"\x05label\x18\x06 \x01(\tR\x05label\x12\x12\n" +
+	"\x04sort\x18\a \x01(\x05R\x04sort\x12\x16\n" +
+	"\x06status\x18\b \x01(\x05R\x06status\"Q\n" +
+	"\x0eListPlansReply\x12)\n" +
+	"\x04list\x18\x01 \x03(\v2\x15.payment.v1.PlanReplyR\x04list\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\x9e\x01\n" +
+	"\rCreatePlanReq\x12\x1b\n" +
+	"\tplan_code\x18\x01 \x01(\tR\bplanCode\x12\x12\n" +
+	"\x04days\x18\x02 \x01(\x03R\x04days\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x14\n" +
+	"\x05label\x18\x05 \x01(\tR\x05label\x12\x12\n" +
+	"\x04sort\x18\x06 \x01(\x05R\x04sort\"\x86\x02\n" +
+	"\rUpdatePlanReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\x05label\x18\x02 \x01(\tH\x00R\x05label\x88\x01\x01\x12\x17\n" +
+	"\x04days\x18\x03 \x01(\x03H\x01R\x04days\x88\x01\x01\x12\x1b\n" +
+	"\x06amount\x18\x04 \x01(\x03H\x02R\x06amount\x88\x01\x01\x12\x1f\n" +
+	"\bcurrency\x18\x05 \x01(\tH\x03R\bcurrency\x88\x01\x01\x12\x17\n" +
+	"\x04sort\x18\x06 \x01(\x05H\x04R\x04sort\x88\x01\x01\x12\x1b\n" +
+	"\x06status\x18\a \x01(\x05H\x05R\x06status\x88\x01\x01B\b\n" +
+	"\x06_labelB\a\n" +
+	"\x05_daysB\t\n" +
+	"\a_amountB\v\n" +
+	"\t_currencyB\a\n" +
+	"\x05_sortB\t\n" +
+	"\a_status\"\x1f\n" +
+	"\rDeletePlanReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\f\n" +
+	"\n" +
+	"EmptyReply2\xfe\f\n" +
 	"\aPayment\x12g\n" +
-	"\vCreateOrder\x12\x1a.payment.v1.CreateOrderReq\x1a\x1c.payment.v1.CreateOrderReply\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/payments/order\x12f\n" +
+	"\vCreateOrder\x12\x1a.payment.v1.CreateOrderReq\x1a\x1c.payment.v1.CreateOrderReply\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/payments/order\x12h\n" +
+	"\n" +
+	"ListOrders\x12\x19.payment.v1.ListOrdersReq\x1a\x1b.payment.v1.ListOrdersReply\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/payments/admin/orders\x12m\n" +
+	"\n" +
+	"OrderStats\x12\x19.payment.v1.OrderStatsReq\x1a\x1b.payment.v1.OrderStatsReply\"'\x82\xd3\xe4\x93\x02!\x12\x1f/api/payments/admin/order-stats\x12t\n" +
+	"\rListProviders\x12\x1c.payment.v1.ListProvidersReq\x1a\x1e.payment.v1.ListProvidersReply\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/api/payments/admin/providers\x12t\n" +
+	"\x0eCreateProvider\x12\x1d.payment.v1.CreateProviderReq\x1a\x19.payment.v1.ProviderReply\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/api/payments/admin/providers\x12y\n" +
+	"\x0eUpdateProvider\x12\x1d.payment.v1.UpdateProviderReq\x1a\x19.payment.v1.ProviderReply\"-\x82\xd3\xe4\x93\x02':\x01*\x1a\"/api/payments/admin/providers/{id}\x12s\n" +
+	"\x0eDeleteProvider\x12\x1d.payment.v1.DeleteProviderReq\x1a\x16.payment.v1.EmptyReply\"*\x82\xd3\xe4\x93\x02$*\"/api/payments/admin/providers/{id}\x12}\n" +
+	"\x0eToggleProvider\x12\x1d.payment.v1.ToggleProviderReq\x1a\x19.payment.v1.ProviderReply\"1\x82\xd3\xe4\x93\x02+2)/api/payments/admin/providers/{id}/toggle\x12d\n" +
+	"\tListPlans\x12\x18.payment.v1.ListPlansReq\x1a\x1a.payment.v1.ListPlansReply\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/api/payments/admin/plans\x12d\n" +
+	"\n" +
+	"CreatePlan\x12\x19.payment.v1.CreatePlanReq\x1a\x15.payment.v1.PlanReply\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/api/payments/admin/plans\x12i\n" +
+	"\n" +
+	"UpdatePlan\x12\x19.payment.v1.UpdatePlanReq\x1a\x15.payment.v1.PlanReply\")\x82\xd3\xe4\x93\x02#:\x01*\x1a\x1e/api/payments/admin/plans/{id}\x12g\n" +
+	"\n" +
+	"DeletePlan\x12\x19.payment.v1.DeletePlanReq\x1a\x16.payment.v1.EmptyReply\"&\x82\xd3\xe4\x93\x02 *\x1e/api/payments/admin/plans/{id}\x12f\n" +
 	"\bGetOrder\x12\x17.payment.v1.GetOrderReq\x1a\x19.payment.v1.GetOrderReply\"&\x82\xd3\xe4\x93\x02 \x12\x1e/api/payments/order/{order_no}\x12f\n" +
 	"\vListMethods\x12\x1a.payment.v1.ListMethodsReq\x1a\x1c.payment.v1.ListMethodsReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/payments/methods\x12f\n" +
 	"\aWebhook\x12\x16.payment.v1.WebhookReq\x1a\x16.payment.v1.EmptyReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /api/payments/webhook/{provider}B&Z$open-novel/backend/api/payment/v1;v1b\x06proto3"
@@ -592,33 +1960,80 @@ func file_payment_v1_payment_proto_rawDescGZIP() []byte {
 	return file_payment_v1_payment_proto_rawDescData
 }
 
-var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
 var file_payment_v1_payment_proto_goTypes = []any{
-	(*CreateOrderReq)(nil),   // 0: payment.v1.CreateOrderReq
-	(*CreateOrderReply)(nil), // 1: payment.v1.CreateOrderReply
-	(*GetOrderReq)(nil),      // 2: payment.v1.GetOrderReq
-	(*GetOrderReply)(nil),    // 3: payment.v1.GetOrderReply
-	(*ListMethodsReq)(nil),   // 4: payment.v1.ListMethodsReq
-	(*ListMethodsReply)(nil), // 5: payment.v1.ListMethodsReply
-	(*MethodItem)(nil),       // 6: payment.v1.MethodItem
-	(*WebhookReq)(nil),       // 7: payment.v1.WebhookReq
-	(*EmptyReply)(nil),       // 8: payment.v1.EmptyReply
+	(*CreateOrderReq)(nil),     // 0: payment.v1.CreateOrderReq
+	(*CreateOrderReply)(nil),   // 1: payment.v1.CreateOrderReply
+	(*GetOrderReq)(nil),        // 2: payment.v1.GetOrderReq
+	(*GetOrderReply)(nil),      // 3: payment.v1.GetOrderReply
+	(*ListMethodsReq)(nil),     // 4: payment.v1.ListMethodsReq
+	(*ListMethodsReply)(nil),   // 5: payment.v1.ListMethodsReply
+	(*MethodItem)(nil),         // 6: payment.v1.MethodItem
+	(*WebhookReq)(nil),         // 7: payment.v1.WebhookReq
+	(*ListOrdersReq)(nil),      // 8: payment.v1.ListOrdersReq
+	(*ListOrdersReply)(nil),    // 9: payment.v1.ListOrdersReply
+	(*OrderItem)(nil),          // 10: payment.v1.OrderItem
+	(*OrderStatsReq)(nil),      // 11: payment.v1.OrderStatsReq
+	(*OrderStatsReply)(nil),    // 12: payment.v1.OrderStatsReply
+	(*ListProvidersReq)(nil),   // 13: payment.v1.ListProvidersReq
+	(*ProviderReply)(nil),      // 14: payment.v1.ProviderReply
+	(*ListProvidersReply)(nil), // 15: payment.v1.ListProvidersReply
+	(*CreateProviderReq)(nil),  // 16: payment.v1.CreateProviderReq
+	(*UpdateProviderReq)(nil),  // 17: payment.v1.UpdateProviderReq
+	(*DeleteProviderReq)(nil),  // 18: payment.v1.DeleteProviderReq
+	(*ToggleProviderReq)(nil),  // 19: payment.v1.ToggleProviderReq
+	(*ListPlansReq)(nil),       // 20: payment.v1.ListPlansReq
+	(*PlanReply)(nil),          // 21: payment.v1.PlanReply
+	(*ListPlansReply)(nil),     // 22: payment.v1.ListPlansReply
+	(*CreatePlanReq)(nil),      // 23: payment.v1.CreatePlanReq
+	(*UpdatePlanReq)(nil),      // 24: payment.v1.UpdatePlanReq
+	(*DeletePlanReq)(nil),      // 25: payment.v1.DeletePlanReq
+	(*EmptyReply)(nil),         // 26: payment.v1.EmptyReply
+	nil,                        // 27: payment.v1.CreateProviderReq.ConfigEntry
+	nil,                        // 28: payment.v1.UpdateProviderReq.ConfigEntry
 }
 var file_payment_v1_payment_proto_depIdxs = []int32{
-	6, // 0: payment.v1.ListMethodsReply.list:type_name -> payment.v1.MethodItem
-	0, // 1: payment.v1.Payment.CreateOrder:input_type -> payment.v1.CreateOrderReq
-	2, // 2: payment.v1.Payment.GetOrder:input_type -> payment.v1.GetOrderReq
-	4, // 3: payment.v1.Payment.ListMethods:input_type -> payment.v1.ListMethodsReq
-	7, // 4: payment.v1.Payment.Webhook:input_type -> payment.v1.WebhookReq
-	1, // 5: payment.v1.Payment.CreateOrder:output_type -> payment.v1.CreateOrderReply
-	3, // 6: payment.v1.Payment.GetOrder:output_type -> payment.v1.GetOrderReply
-	5, // 7: payment.v1.Payment.ListMethods:output_type -> payment.v1.ListMethodsReply
-	8, // 8: payment.v1.Payment.Webhook:output_type -> payment.v1.EmptyReply
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	6,  // 0: payment.v1.ListMethodsReply.list:type_name -> payment.v1.MethodItem
+	10, // 1: payment.v1.ListOrdersReply.list:type_name -> payment.v1.OrderItem
+	14, // 2: payment.v1.ListProvidersReply.list:type_name -> payment.v1.ProviderReply
+	27, // 3: payment.v1.CreateProviderReq.config:type_name -> payment.v1.CreateProviderReq.ConfigEntry
+	28, // 4: payment.v1.UpdateProviderReq.config:type_name -> payment.v1.UpdateProviderReq.ConfigEntry
+	21, // 5: payment.v1.ListPlansReply.list:type_name -> payment.v1.PlanReply
+	0,  // 6: payment.v1.Payment.CreateOrder:input_type -> payment.v1.CreateOrderReq
+	8,  // 7: payment.v1.Payment.ListOrders:input_type -> payment.v1.ListOrdersReq
+	11, // 8: payment.v1.Payment.OrderStats:input_type -> payment.v1.OrderStatsReq
+	13, // 9: payment.v1.Payment.ListProviders:input_type -> payment.v1.ListProvidersReq
+	16, // 10: payment.v1.Payment.CreateProvider:input_type -> payment.v1.CreateProviderReq
+	17, // 11: payment.v1.Payment.UpdateProvider:input_type -> payment.v1.UpdateProviderReq
+	18, // 12: payment.v1.Payment.DeleteProvider:input_type -> payment.v1.DeleteProviderReq
+	19, // 13: payment.v1.Payment.ToggleProvider:input_type -> payment.v1.ToggleProviderReq
+	20, // 14: payment.v1.Payment.ListPlans:input_type -> payment.v1.ListPlansReq
+	23, // 15: payment.v1.Payment.CreatePlan:input_type -> payment.v1.CreatePlanReq
+	24, // 16: payment.v1.Payment.UpdatePlan:input_type -> payment.v1.UpdatePlanReq
+	25, // 17: payment.v1.Payment.DeletePlan:input_type -> payment.v1.DeletePlanReq
+	2,  // 18: payment.v1.Payment.GetOrder:input_type -> payment.v1.GetOrderReq
+	4,  // 19: payment.v1.Payment.ListMethods:input_type -> payment.v1.ListMethodsReq
+	7,  // 20: payment.v1.Payment.Webhook:input_type -> payment.v1.WebhookReq
+	1,  // 21: payment.v1.Payment.CreateOrder:output_type -> payment.v1.CreateOrderReply
+	9,  // 22: payment.v1.Payment.ListOrders:output_type -> payment.v1.ListOrdersReply
+	12, // 23: payment.v1.Payment.OrderStats:output_type -> payment.v1.OrderStatsReply
+	15, // 24: payment.v1.Payment.ListProviders:output_type -> payment.v1.ListProvidersReply
+	14, // 25: payment.v1.Payment.CreateProvider:output_type -> payment.v1.ProviderReply
+	14, // 26: payment.v1.Payment.UpdateProvider:output_type -> payment.v1.ProviderReply
+	26, // 27: payment.v1.Payment.DeleteProvider:output_type -> payment.v1.EmptyReply
+	14, // 28: payment.v1.Payment.ToggleProvider:output_type -> payment.v1.ProviderReply
+	22, // 29: payment.v1.Payment.ListPlans:output_type -> payment.v1.ListPlansReply
+	21, // 30: payment.v1.Payment.CreatePlan:output_type -> payment.v1.PlanReply
+	21, // 31: payment.v1.Payment.UpdatePlan:output_type -> payment.v1.PlanReply
+	26, // 32: payment.v1.Payment.DeletePlan:output_type -> payment.v1.EmptyReply
+	3,  // 33: payment.v1.Payment.GetOrder:output_type -> payment.v1.GetOrderReply
+	5,  // 34: payment.v1.Payment.ListMethods:output_type -> payment.v1.ListMethodsReply
+	26, // 35: payment.v1.Payment.Webhook:output_type -> payment.v1.EmptyReply
+	21, // [21:36] is the sub-list for method output_type
+	6,  // [6:21] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_payment_v1_payment_proto_init() }
@@ -626,13 +2041,15 @@ func file_payment_v1_payment_proto_init() {
 	if File_payment_v1_payment_proto != nil {
 		return
 	}
+	file_payment_v1_payment_proto_msgTypes[17].OneofWrappers = []any{}
+	file_payment_v1_payment_proto_msgTypes[24].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_v1_payment_proto_rawDesc), len(file_payment_v1_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   29,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

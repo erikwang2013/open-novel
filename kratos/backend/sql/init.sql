@@ -295,8 +295,8 @@ CREATE TABLE IF NOT EXISTS novel_vip_order (
 CREATE TABLE IF NOT EXISTS novel_payment_provider (
   id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   code       VARCHAR(32)    NOT NULL COMMENT '渠道码：stripe/np_usdt',
-  lang       VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用语言：'en' 或 '*' 全局',
-  region     VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用地区：US/CN 或 '*' 全局',
+  lang       VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用语言: en 或 * 全局',
+  region     VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用地区: US/CN 或 * 全局',
   enabled    TINYINT        NOT NULL DEFAULT 1 COMMENT '0禁用 1启用',
   sort       INT            NOT NULL DEFAULT 0 COMMENT '排序（升序）',
   config     TEXT           NULL COMMENT '加密 JSON 配置（API key/webhook secret/币种等）',
@@ -325,6 +325,23 @@ CREATE TABLE IF NOT EXISTS novel_payment_order (
   KEY idx_user (user_id),
   KEY idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='支付订单表';
+
+-- ------------------------------------------------------------
+-- VIP 套餐表：支付流程生效金额/天数数据源（T-P-13），表空/缺行回退内置默认
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS novel_vip_plan (
+  id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  plan_code   VARCHAR(32)    NOT NULL COMMENT '套餐码：monthly/quarterly/yearly',
+  days        INT            NOT NULL COMMENT '有效天数',
+  amount_cents BIGINT       NOT NULL COMMENT '金额（分）',
+  currency    CHAR(3)        NOT NULL DEFAULT 'USD' COMMENT '币种',
+  label       VARCHAR(64)    NOT NULL DEFAULT '' COMMENT '展示标签',
+  sort        INT            NOT NULL DEFAULT 0 COMMENT '排序（升序）',
+  status      TINYINT        NOT NULL DEFAULT 1 COMMENT '0禁用 1启用',
+  created_at  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_plan_code (plan_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='VIP 套餐表';
 
 -- ------------------------------------------------------------
 -- 审计日志表：登录 / 管理操作 / 支付审计

@@ -17,6 +17,72 @@ service Payment {
       body: "*"
     };
   }
+  // 流水分页（requireAdmin，T-P-09）：user_id/provider/status/时间筛选
+  rpc ListOrders(ListOrdersReq) returns (ListOrdersReply) {
+    option (google.api.http) = {
+      get: "/api/payments/admin/orders"
+    };
+  }
+  // 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
+  rpc OrderStats(OrderStatsReq) returns (OrderStatsReply) {
+    option (google.api.http) = {
+      get: "/api/payments/admin/order-stats"
+    };
+  }
+  // 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
+  rpc ListProviders(ListProvidersReq) returns (ListProvidersReply) {
+    option (google.api.http) = {
+      get: "/api/payments/admin/providers"
+    };
+  }
+  rpc CreateProvider(CreateProviderReq) returns (ProviderReply) {
+    option (google.api.http) = {
+      post: "/api/payments/admin/providers"
+      body: "*"
+    };
+  }
+  // 更新支付方式；config 传入字段重加密合并，空值保留原值
+  rpc UpdateProvider(UpdateProviderReq) returns (ProviderReply) {
+    option (google.api.http) = {
+      put: "/api/payments/admin/providers/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteProvider(DeleteProviderReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      delete: "/api/payments/admin/providers/{id}"
+    };
+  }
+  // 启停支付方式（requireAdmin）
+  rpc ToggleProvider(ToggleProviderReq) returns (ProviderReply) {
+    option (google.api.http) = {
+      patch: "/api/payments/admin/providers/{id}/toggle"
+    };
+  }
+  // VIP 套餐列表（requireAdmin，T-P-13）
+  rpc ListPlans(ListPlansReq) returns (ListPlansReply) {
+    option (google.api.http) = {
+      get: "/api/payments/admin/plans"
+    };
+  }
+  rpc CreatePlan(CreatePlanReq) returns (PlanReply) {
+    option (google.api.http) = {
+      post: "/api/payments/admin/plans"
+      body: "*"
+    };
+  }
+  rpc UpdatePlan(UpdatePlanReq) returns (PlanReply) {
+    option (google.api.http) = {
+      put: "/api/payments/admin/plans/{id}"
+      body: "*"
+    };
+  }
+  // 删除套餐 = 禁用（软删，历史订单仍引用 plan_code，不可硬删）
+  rpc DeletePlan(DeletePlanReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      delete: "/api/payments/admin/plans/{id}"
+    };
+  }
   // 查询订单状态（登录态，只允许查自己的）
   rpc GetOrder(GetOrderReq) returns (GetOrderReply) {
     option (google.api.http) = {
@@ -83,6 +149,132 @@ message MethodItem {
 message WebhookReq {
   string provider = 1; // 渠道码：stripe/nowpayments
   bytes raw_body = 2;  // 原始 body（透传验签）
+}
+
+message ListOrdersReq {
+  int32 page = 1;
+  int32 page_size = 2;
+  int64 user_id = 3;     // 0=全部
+  string provider = 4;   // 空=全部
+  int32 status = 5;      // -1=全部 0待支付 1已付 2失败 3关闭
+  string start_at = 6;   // RFC3339 或 2006-01-02（含当天）
+  string end_at = 7;     // RFC3339 或 2006-01-02（含当天）
+}
+
+message ListOrdersReply {
+  repeated OrderItem list = 1;
+  int64 total = 2;
+}
+
+message OrderItem {
+  string order_no = 1;
+  int64 user_id = 2;
+  int64 amount = 3;      // 分
+  string currency = 4;
+  string provider = 5;
+  int32 status = 6;      // 0待支付 1已付 2失败 3关闭
+  string tx_id = 7;
+  string paid_at = 8;    // RFC3339，未支付为空
+  string created_at = 9; // RFC3339
+}
+
+message OrderStatsReq {
+  string start_at = 1; // RFC3339 或 2006-01-02（含当天）
+  string end_at = 2;
+}
+
+message OrderStatsReply {
+  int64 total = 1;   // 总单数
+  int64 paid = 2;    // 已付单数
+  int64 pending = 3; // 待支付单数
+  int64 failed = 4;  // 失败单数
+  int64 closed = 5;  // 已关闭单数
+  int64 amount = 6;  // 已付总金额（分）
+}
+
+message ListProvidersReq {}
+
+message ProviderReply {
+  int64 id = 1;
+  string code = 2;
+  string lang = 3;       // '*' 或语言码
+  string region = 4;     // '*' 或地区码
+  int32 enabled = 5;     // 0禁用 1启用
+  int32 sort = 6;        // 升序
+  bool config_configured = 7; // 密钥是否已配置（绝不返回明文）
+  string created_at = 8; // RFC3339
+  string updated_at = 9; // RFC3339
+}
+
+message ListProvidersReply {
+  repeated ProviderReply list = 1;
+  int64 total = 2;
+}
+
+message CreateProviderReq {
+  string code = 1;                  // 渠道码：stripe/np_usdt
+  string lang = 2;                  // 缺省 '*'
+  string region = 3;                // 缺省 '*'
+  int32 sort = 4;
+  map<string, string> config = 5;   // 密钥字段（currency/coin 等），加密存储
+}
+
+message UpdateProviderReq {
+  int64 id = 1;
+  optional string lang = 2;
+  optional string region = 3;
+  optional int32 sort = 4;
+  optional int32 enabled = 5;       // 0禁用 1启用
+  map<string, string> config = 6;   // 传入字段重加密合并；空值保留原值
+}
+
+message DeleteProviderReq {
+  int64 id = 1;
+}
+
+message ToggleProviderReq {
+  int64 id = 1;
+}
+
+message ListPlansReq {}
+
+message PlanReply {
+  int64 id = 1;
+  string plan_code = 2; // monthly/quarterly/yearly
+  int64 days = 3;       // 有效天数
+  int64 amount = 4;     // 分
+  string currency = 5;  // USD
+  string label = 6;
+  int32 sort = 7;
+  int32 status = 8;     // 0禁用 1启用
+}
+
+message ListPlansReply {
+  repeated PlanReply list = 1;
+  int64 total = 2;
+}
+
+message CreatePlanReq {
+  string plan_code = 1; // monthly/quarterly/yearly
+  int64 days = 2;
+  int64 amount = 3;     // 分
+  string currency = 4;  // 缺省 USD
+  string label = 5;
+  int32 sort = 6;
+}
+
+message UpdatePlanReq {
+  int64 id = 1;
+  optional string label = 2;
+  optional int64 days = 3;
+  optional int64 amount = 4;     // 分
+  optional string currency = 5;
+  optional int32 sort = 6;
+  optional int32 status = 7;     // 0禁用 1启用
+}
+
+message DeletePlanReq {
+  int64 id = 1;
 }
 
 message EmptyReply {}

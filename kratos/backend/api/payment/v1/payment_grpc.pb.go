@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v5.28.3
-// source: api/payment/v1/payment.proto
+// source: payment/v1/payment.proto
 
 // 支付服务：VIP 下单 / 查单 / 支付方式列表 / 渠道 webhook（任务 T-P-03~08）
 // 业务码段 19xxxx；CreateOrder/GetOrder 需登录，ListMethods/Webhook 公开。
@@ -22,10 +22,21 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Payment_CreateOrder_FullMethodName = "/payment.v1.Payment/CreateOrder"
-	Payment_GetOrder_FullMethodName    = "/payment.v1.Payment/GetOrder"
-	Payment_ListMethods_FullMethodName = "/payment.v1.Payment/ListMethods"
-	Payment_Webhook_FullMethodName     = "/payment.v1.Payment/Webhook"
+	Payment_CreateOrder_FullMethodName    = "/payment.v1.Payment/CreateOrder"
+	Payment_ListOrders_FullMethodName     = "/payment.v1.Payment/ListOrders"
+	Payment_OrderStats_FullMethodName     = "/payment.v1.Payment/OrderStats"
+	Payment_ListProviders_FullMethodName  = "/payment.v1.Payment/ListProviders"
+	Payment_CreateProvider_FullMethodName = "/payment.v1.Payment/CreateProvider"
+	Payment_UpdateProvider_FullMethodName = "/payment.v1.Payment/UpdateProvider"
+	Payment_DeleteProvider_FullMethodName = "/payment.v1.Payment/DeleteProvider"
+	Payment_ToggleProvider_FullMethodName = "/payment.v1.Payment/ToggleProvider"
+	Payment_ListPlans_FullMethodName      = "/payment.v1.Payment/ListPlans"
+	Payment_CreatePlan_FullMethodName     = "/payment.v1.Payment/CreatePlan"
+	Payment_UpdatePlan_FullMethodName     = "/payment.v1.Payment/UpdatePlan"
+	Payment_DeletePlan_FullMethodName     = "/payment.v1.Payment/DeletePlan"
+	Payment_GetOrder_FullMethodName       = "/payment.v1.Payment/GetOrder"
+	Payment_ListMethods_FullMethodName    = "/payment.v1.Payment/ListMethods"
+	Payment_Webhook_FullMethodName        = "/payment.v1.Payment/Webhook"
 )
 
 // PaymentClient is the client API for Payment service.
@@ -34,6 +45,24 @@ const (
 type PaymentClient interface {
 	// 创建 VIP 订单：plan=monthly|quarterly|yearly；返回支付跳转 URL（登录态）
 	CreateOrder(ctx context.Context, in *CreateOrderReq, opts ...grpc.CallOption) (*CreateOrderReply, error)
+	// 流水分页（requireAdmin，T-P-09）：user_id/provider/status/时间筛选
+	ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersReply, error)
+	// 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
+	OrderStats(ctx context.Context, in *OrderStatsReq, opts ...grpc.CallOption) (*OrderStatsReply, error)
+	// 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
+	ListProviders(ctx context.Context, in *ListProvidersReq, opts ...grpc.CallOption) (*ListProvidersReply, error)
+	CreateProvider(ctx context.Context, in *CreateProviderReq, opts ...grpc.CallOption) (*ProviderReply, error)
+	// 更新支付方式；config 传入字段重加密合并，空值保留原值
+	UpdateProvider(ctx context.Context, in *UpdateProviderReq, opts ...grpc.CallOption) (*ProviderReply, error)
+	DeleteProvider(ctx context.Context, in *DeleteProviderReq, opts ...grpc.CallOption) (*EmptyReply, error)
+	// 启停支付方式（requireAdmin）
+	ToggleProvider(ctx context.Context, in *ToggleProviderReq, opts ...grpc.CallOption) (*ProviderReply, error)
+	// VIP 套餐列表（requireAdmin，T-P-13）
+	ListPlans(ctx context.Context, in *ListPlansReq, opts ...grpc.CallOption) (*ListPlansReply, error)
+	CreatePlan(ctx context.Context, in *CreatePlanReq, opts ...grpc.CallOption) (*PlanReply, error)
+	UpdatePlan(ctx context.Context, in *UpdatePlanReq, opts ...grpc.CallOption) (*PlanReply, error)
+	// 删除套餐 = 禁用（软删，历史订单仍引用 plan_code，不可硬删）
+	DeletePlan(ctx context.Context, in *DeletePlanReq, opts ...grpc.CallOption) (*EmptyReply, error)
 	// 查询订单状态（登录态，只允许查自己的）
 	GetOrder(ctx context.Context, in *GetOrderReq, opts ...grpc.CallOption) (*GetOrderReply, error)
 	// 支付方式列表：enabled 且 lang/region 匹配，sort 升序（公开）
@@ -54,6 +83,116 @@ func (c *paymentClient) CreateOrder(ctx context.Context, in *CreateOrderReq, opt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateOrderReply)
 	err := c.cc.Invoke(ctx, Payment_CreateOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) ListOrders(ctx context.Context, in *ListOrdersReq, opts ...grpc.CallOption) (*ListOrdersReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListOrdersReply)
+	err := c.cc.Invoke(ctx, Payment_ListOrders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) OrderStats(ctx context.Context, in *OrderStatsReq, opts ...grpc.CallOption) (*OrderStatsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(OrderStatsReply)
+	err := c.cc.Invoke(ctx, Payment_OrderStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) ListProviders(ctx context.Context, in *ListProvidersReq, opts ...grpc.CallOption) (*ListProvidersReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListProvidersReply)
+	err := c.cc.Invoke(ctx, Payment_ListProviders_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) CreateProvider(ctx context.Context, in *CreateProviderReq, opts ...grpc.CallOption) (*ProviderReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProviderReply)
+	err := c.cc.Invoke(ctx, Payment_CreateProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) UpdateProvider(ctx context.Context, in *UpdateProviderReq, opts ...grpc.CallOption) (*ProviderReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProviderReply)
+	err := c.cc.Invoke(ctx, Payment_UpdateProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) DeleteProvider(ctx context.Context, in *DeleteProviderReq, opts ...grpc.CallOption) (*EmptyReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyReply)
+	err := c.cc.Invoke(ctx, Payment_DeleteProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) ToggleProvider(ctx context.Context, in *ToggleProviderReq, opts ...grpc.CallOption) (*ProviderReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProviderReply)
+	err := c.cc.Invoke(ctx, Payment_ToggleProvider_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) ListPlans(ctx context.Context, in *ListPlansReq, opts ...grpc.CallOption) (*ListPlansReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListPlansReply)
+	err := c.cc.Invoke(ctx, Payment_ListPlans_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) CreatePlan(ctx context.Context, in *CreatePlanReq, opts ...grpc.CallOption) (*PlanReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlanReply)
+	err := c.cc.Invoke(ctx, Payment_CreatePlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) UpdatePlan(ctx context.Context, in *UpdatePlanReq, opts ...grpc.CallOption) (*PlanReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlanReply)
+	err := c.cc.Invoke(ctx, Payment_UpdatePlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentClient) DeletePlan(ctx context.Context, in *DeletePlanReq, opts ...grpc.CallOption) (*EmptyReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmptyReply)
+	err := c.cc.Invoke(ctx, Payment_DeletePlan_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -96,6 +235,24 @@ func (c *paymentClient) Webhook(ctx context.Context, in *WebhookReq, opts ...grp
 type PaymentServer interface {
 	// 创建 VIP 订单：plan=monthly|quarterly|yearly；返回支付跳转 URL（登录态）
 	CreateOrder(context.Context, *CreateOrderReq) (*CreateOrderReply, error)
+	// 流水分页（requireAdmin，T-P-09）：user_id/provider/status/时间筛选
+	ListOrders(context.Context, *ListOrdersReq) (*ListOrdersReply, error)
+	// 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
+	OrderStats(context.Context, *OrderStatsReq) (*OrderStatsReply, error)
+	// 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
+	ListProviders(context.Context, *ListProvidersReq) (*ListProvidersReply, error)
+	CreateProvider(context.Context, *CreateProviderReq) (*ProviderReply, error)
+	// 更新支付方式；config 传入字段重加密合并，空值保留原值
+	UpdateProvider(context.Context, *UpdateProviderReq) (*ProviderReply, error)
+	DeleteProvider(context.Context, *DeleteProviderReq) (*EmptyReply, error)
+	// 启停支付方式（requireAdmin）
+	ToggleProvider(context.Context, *ToggleProviderReq) (*ProviderReply, error)
+	// VIP 套餐列表（requireAdmin，T-P-13）
+	ListPlans(context.Context, *ListPlansReq) (*ListPlansReply, error)
+	CreatePlan(context.Context, *CreatePlanReq) (*PlanReply, error)
+	UpdatePlan(context.Context, *UpdatePlanReq) (*PlanReply, error)
+	// 删除套餐 = 禁用（软删，历史订单仍引用 plan_code，不可硬删）
+	DeletePlan(context.Context, *DeletePlanReq) (*EmptyReply, error)
 	// 查询订单状态（登录态，只允许查自己的）
 	GetOrder(context.Context, *GetOrderReq) (*GetOrderReply, error)
 	// 支付方式列表：enabled 且 lang/region 匹配，sort 升序（公开）
@@ -114,6 +271,39 @@ type UnimplementedPaymentServer struct{}
 
 func (UnimplementedPaymentServer) CreateOrder(context.Context, *CreateOrderReq) (*CreateOrderReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateOrder not implemented")
+}
+func (UnimplementedPaymentServer) ListOrders(context.Context, *ListOrdersReq) (*ListOrdersReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListOrders not implemented")
+}
+func (UnimplementedPaymentServer) OrderStats(context.Context, *OrderStatsReq) (*OrderStatsReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method OrderStats not implemented")
+}
+func (UnimplementedPaymentServer) ListProviders(context.Context, *ListProvidersReq) (*ListProvidersReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListProviders not implemented")
+}
+func (UnimplementedPaymentServer) CreateProvider(context.Context, *CreateProviderReq) (*ProviderReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateProvider not implemented")
+}
+func (UnimplementedPaymentServer) UpdateProvider(context.Context, *UpdateProviderReq) (*ProviderReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateProvider not implemented")
+}
+func (UnimplementedPaymentServer) DeleteProvider(context.Context, *DeleteProviderReq) (*EmptyReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteProvider not implemented")
+}
+func (UnimplementedPaymentServer) ToggleProvider(context.Context, *ToggleProviderReq) (*ProviderReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method ToggleProvider not implemented")
+}
+func (UnimplementedPaymentServer) ListPlans(context.Context, *ListPlansReq) (*ListPlansReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListPlans not implemented")
+}
+func (UnimplementedPaymentServer) CreatePlan(context.Context, *CreatePlanReq) (*PlanReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePlan not implemented")
+}
+func (UnimplementedPaymentServer) UpdatePlan(context.Context, *UpdatePlanReq) (*PlanReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdatePlan not implemented")
+}
+func (UnimplementedPaymentServer) DeletePlan(context.Context, *DeletePlanReq) (*EmptyReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeletePlan not implemented")
 }
 func (UnimplementedPaymentServer) GetOrder(context.Context, *GetOrderReq) (*GetOrderReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOrder not implemented")
@@ -159,6 +349,204 @@ func _Payment_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PaymentServer).CreateOrder(ctx, req.(*CreateOrderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_ListOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOrdersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).ListOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_ListOrders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).ListOrders(ctx, req.(*ListOrdersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_OrderStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OrderStatsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).OrderStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_OrderStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).OrderStats(ctx, req.(*OrderStatsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_ListProviders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListProvidersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).ListProviders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_ListProviders_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).ListProviders(ctx, req.(*ListProvidersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_CreateProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProviderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).CreateProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_CreateProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).CreateProvider(ctx, req.(*CreateProviderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_UpdateProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProviderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).UpdateProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_UpdateProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).UpdateProvider(ctx, req.(*UpdateProviderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_DeleteProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteProviderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).DeleteProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_DeleteProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).DeleteProvider(ctx, req.(*DeleteProviderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_ToggleProvider_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToggleProviderReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).ToggleProvider(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_ToggleProvider_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).ToggleProvider(ctx, req.(*ToggleProviderReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_ListPlans_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPlansReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).ListPlans(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_ListPlans_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).ListPlans(ctx, req.(*ListPlansReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_CreatePlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePlanReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).CreatePlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_CreatePlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).CreatePlan(ctx, req.(*CreatePlanReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_UpdatePlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePlanReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).UpdatePlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_UpdatePlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).UpdatePlan(ctx, req.(*UpdatePlanReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Payment_DeletePlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePlanReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServer).DeletePlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Payment_DeletePlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServer).DeletePlan(ctx, req.(*DeletePlanReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -229,6 +617,50 @@ var Payment_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Payment_CreateOrder_Handler,
 		},
 		{
+			MethodName: "ListOrders",
+			Handler:    _Payment_ListOrders_Handler,
+		},
+		{
+			MethodName: "OrderStats",
+			Handler:    _Payment_OrderStats_Handler,
+		},
+		{
+			MethodName: "ListProviders",
+			Handler:    _Payment_ListProviders_Handler,
+		},
+		{
+			MethodName: "CreateProvider",
+			Handler:    _Payment_CreateProvider_Handler,
+		},
+		{
+			MethodName: "UpdateProvider",
+			Handler:    _Payment_UpdateProvider_Handler,
+		},
+		{
+			MethodName: "DeleteProvider",
+			Handler:    _Payment_DeleteProvider_Handler,
+		},
+		{
+			MethodName: "ToggleProvider",
+			Handler:    _Payment_ToggleProvider_Handler,
+		},
+		{
+			MethodName: "ListPlans",
+			Handler:    _Payment_ListPlans_Handler,
+		},
+		{
+			MethodName: "CreatePlan",
+			Handler:    _Payment_CreatePlan_Handler,
+		},
+		{
+			MethodName: "UpdatePlan",
+			Handler:    _Payment_UpdatePlan_Handler,
+		},
+		{
+			MethodName: "DeletePlan",
+			Handler:    _Payment_DeletePlan_Handler,
+		},
+		{
 			MethodName: "GetOrder",
 			Handler:    _Payment_GetOrder_Handler,
 		},
@@ -242,5 +674,5 @@ var Payment_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/payment/v1/payment.proto",
+	Metadata: "payment/v1/payment.proto",
 }

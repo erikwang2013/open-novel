@@ -108,34 +108,47 @@ func TestStripeVerifyWebhook(t *testing.T) {
 	}
 }
 
-func TestPlanForPrice(t *testing.T) {
+func TestPlansFromRows(t *testing.T) {
+	// 表空 → 内置默认
+	a, d := plansFromRows(nil)
+	if a["monthly"] != 300 || a["quarterly"] != 800 || a["yearly"] != 3000 || d["yearly"] != 365 {
+		t.Fatalf("empty rows must fall back to defaults: %v %v", a, d)
+	}
+	// DB 覆盖金额/天数；缺行回退默认
+	rows := []data.VipPlan{{PlanCode: "monthly", Days: 31, AmountCents: 499}}
+	a, d = plansFromRows(rows)
+	if a["monthly"] != 499 || d["monthly"] != 31 || a["quarterly"] != 800 || a["yearly"] != 3000 {
+		t.Fatalf("db override: %v %v", a, d)
+	}
+	// 同价冲突 → 整体回退默认（反查确定性）
+	collide := []data.VipPlan{{PlanCode: "monthly", Days: 30, AmountCents: 500}, {PlanCode: "quarterly", Days: 90, AmountCents: 500}}
+	a, d = plansFromRows(collide)
+	if a["monthly"] != 300 || a["quarterly"] != 800 {
+		t.Fatalf("collision must fall back to defaults: %v", a)
+	}
+	// 未知 plan_code 忽略
+	rows = []data.VipPlan{{PlanCode: "half-yearly", Days: 180, AmountCents: 1500}}
+	a, _ = plansFromRows(rows)
+	if a["monthly"] != 300 || a["yearly"] != 3000 {
+		t.Fatalf("unknown plan must be ignored: %v", a)
+	}
+}
+
+func TestPlanForAmounts(t *testing.T) {
 	// 默认金额反查
-	if p, d, ok := planForPrice(map[string]any{}, 800); !ok || p != "quarterly" || d != 90 {
+	if p, d, ok := planForAmounts(map[string]int64{"monthly": 300, "quarterly": 800, "yearly": 3000},
+		map[string]int{"monthly": 30, "quarterly": 90, "yearly": 365}, 800); !ok || p != "quarterly" || d != 90 {
 		t.Fatalf("quarterly default: %v %v %v", p, d, ok)
 	}
-	// provider 覆盖金额后反查仍一一对应
-	cfg := map[string]any{"plans": map[string]any{"monthly": float64(999)}}
-	if p, _, ok := planForPrice(cfg, 999); !ok || p != "monthly" {
-		t.Fatalf("override monthly: %v %v", p, ok)
+	// DB 覆盖金额后反查仍一一对应
+	if p, d, ok := planForAmounts(map[string]int64{"monthly": 499, "quarterly": 800, "yearly": 3000},
+		map[string]int{"monthly": 31, "quarterly": 90, "yearly": 365}, 499); !ok || p != "monthly" || d != 31 {
+		t.Fatalf("override monthly: %v %v %v", p, d, ok)
 	}
 	// 未知金额 → 不命中
-	if _, _, ok := planForPrice(map[string]any{}, 1); ok {
+	if _, _, ok := planForAmounts(map[string]int64{"monthly": 300, "quarterly": 800, "yearly": 3000},
+		map[string]int{"monthly": 30, "quarterly": 90, "yearly": 365}, 1); ok {
 		t.Fatal("unknown amount must not map to a plan")
-	}
-	// 配置金额冲突 → 回退默认值，且反查确定性（固定顺序 monthly 优先）
-	collide := map[string]any{"plans": map[string]any{"monthly": float64(500), "quarterly": float64(500), "yearly": float64(3000)}}
-	amounts := planAmounts(collide)
-	if amounts["monthly"] != 300 || amounts["quarterly"] != 800 {
-		t.Fatalf("collision must fall back to defaults: %+v", amounts)
-	}
-	if p, d, ok := planForPrice(collide, 800); !ok || p != "quarterly" || d != 90 {
-		t.Fatalf("collision reverse lookup: %v %v %v", p, d, ok)
-	}
-	for i := 0; i < 20; i++ { // 多次反查结果必须一致
-		p, _, _ := planForPrice(collide, 300)
-		if p != "monthly" {
-			t.Fatalf("non-deterministic reverse lookup: %v", p)
-		}
 	}
 }
 

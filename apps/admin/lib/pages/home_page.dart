@@ -6,6 +6,9 @@ import 'categories_page.dart';
 import 'comments_page.dart';
 import 'dashboard_page.dart';
 import 'login_page.dart';
+import 'orders_page.dart';
+import 'plans_page.dart';
+import 'providers_page.dart';
 import 'reports_page.dart';
 import 'users_page.dart';
 
@@ -20,7 +23,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _index = 0;
 
-  static const _titles = ['仪表盘', '书籍', '评论', '举报', '用户', '分类标签'];
+  static const _titles = [
+    '仪表盘',
+    '书籍',
+    '评论',
+    '举报',
+    '用户',
+    '分类标签',
+    '支付方式',
+    '流水账单',
+    'VIP套餐',
+  ];
   static const _icons = [
     Icons.dashboard_outlined,
     Icons.menu_book_outlined,
@@ -28,6 +41,9 @@ class _HomePageState extends State<HomePage> {
     Icons.report_outlined,
     Icons.people_outline,
     Icons.category_outlined,
+    Icons.account_balance_wallet_outlined,
+    Icons.receipt_long_outlined,
+    Icons.workspace_premium_outlined,
   ];
 
   static const _pages = [
@@ -37,6 +53,9 @@ class _HomePageState extends State<HomePage> {
     ReportsPage(),
     UsersPage(),
     CategoriesPage(),
+    ProvidersPage(),
+    OrdersPage(),
+    PlansPage(),
   ];
 
   void _logout() {

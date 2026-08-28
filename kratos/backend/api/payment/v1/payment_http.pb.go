@@ -20,17 +20,46 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationPaymentCreateOrder = "/payment.v1.Payment/CreateOrder"
+const OperationPaymentCreatePlan = "/payment.v1.Payment/CreatePlan"
+const OperationPaymentCreateProvider = "/payment.v1.Payment/CreateProvider"
+const OperationPaymentDeletePlan = "/payment.v1.Payment/DeletePlan"
+const OperationPaymentDeleteProvider = "/payment.v1.Payment/DeleteProvider"
 const OperationPaymentGetOrder = "/payment.v1.Payment/GetOrder"
 const OperationPaymentListMethods = "/payment.v1.Payment/ListMethods"
+const OperationPaymentListOrders = "/payment.v1.Payment/ListOrders"
+const OperationPaymentListPlans = "/payment.v1.Payment/ListPlans"
+const OperationPaymentListProviders = "/payment.v1.Payment/ListProviders"
+const OperationPaymentOrderStats = "/payment.v1.Payment/OrderStats"
+const OperationPaymentToggleProvider = "/payment.v1.Payment/ToggleProvider"
+const OperationPaymentUpdatePlan = "/payment.v1.Payment/UpdatePlan"
+const OperationPaymentUpdateProvider = "/payment.v1.Payment/UpdateProvider"
 const OperationPaymentWebhook = "/payment.v1.Payment/Webhook"
 
 type PaymentHTTPServer interface {
 	// CreateOrder 创建 VIP 订单：plan=monthly|quarterly|yearly；返回支付跳转 URL（登录态）
 	CreateOrder(context.Context, *CreateOrderReq) (*CreateOrderReply, error)
+	CreatePlan(context.Context, *CreatePlanReq) (*PlanReply, error)
+	CreateProvider(context.Context, *CreateProviderReq) (*ProviderReply, error)
+	// DeletePlan 删除套餐 = 禁用（软删，历史订单仍引用 plan_code，不可硬删）
+	DeletePlan(context.Context, *DeletePlanReq) (*EmptyReply, error)
+	DeleteProvider(context.Context, *DeleteProviderReq) (*EmptyReply, error)
 	// GetOrder 查询订单状态（登录态，只允许查自己的）
 	GetOrder(context.Context, *GetOrderReq) (*GetOrderReply, error)
 	// ListMethods 支付方式列表：enabled 且 lang/region 匹配，sort 升序（公开）
 	ListMethods(context.Context, *ListMethodsReq) (*ListMethodsReply, error)
+	// ListOrders 流水分页（requireAdmin，T-P-09）：user_id/provider/status/时间筛选
+	ListOrders(context.Context, *ListOrdersReq) (*ListOrdersReply, error)
+	// ListPlans VIP 套餐列表（requireAdmin，T-P-13）
+	ListPlans(context.Context, *ListPlansReq) (*ListPlansReply, error)
+	// ListProviders 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
+	ListProviders(context.Context, *ListProvidersReq) (*ListProvidersReply, error)
+	// OrderStats 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
+	OrderStats(context.Context, *OrderStatsReq) (*OrderStatsReply, error)
+	// ToggleProvider 启停支付方式（requireAdmin）
+	ToggleProvider(context.Context, *ToggleProviderReq) (*ProviderReply, error)
+	UpdatePlan(context.Context, *UpdatePlanReq) (*PlanReply, error)
+	// UpdateProvider 更新支付方式；config 传入字段重加密合并，空值保留原值
+	UpdateProvider(context.Context, *UpdateProviderReq) (*ProviderReply, error)
 	// Webhook 渠道回调（stripe/nowpayments，无鉴权，验签在内部）
 	Webhook(context.Context, *WebhookReq) (*EmptyReply, error)
 }
@@ -38,6 +67,17 @@ type PaymentHTTPServer interface {
 func RegisterPaymentHTTPServer(s *http.Server, srv PaymentHTTPServer) {
 	r := s.Route("/")
 	r.POST("/api/payments/order", _Payment_CreateOrder0_HTTP_Handler(srv))
+	r.GET("/api/payments/admin/orders", _Payment_ListOrders0_HTTP_Handler(srv))
+	r.GET("/api/payments/admin/order-stats", _Payment_OrderStats0_HTTP_Handler(srv))
+	r.GET("/api/payments/admin/providers", _Payment_ListProviders0_HTTP_Handler(srv))
+	r.POST("/api/payments/admin/providers", _Payment_CreateProvider0_HTTP_Handler(srv))
+	r.PUT("/api/payments/admin/providers/{id}", _Payment_UpdateProvider0_HTTP_Handler(srv))
+	r.DELETE("/api/payments/admin/providers/{id}", _Payment_DeleteProvider0_HTTP_Handler(srv))
+	r.PATCH("/api/payments/admin/providers/{id}/toggle", _Payment_ToggleProvider0_HTTP_Handler(srv))
+	r.GET("/api/payments/admin/plans", _Payment_ListPlans0_HTTP_Handler(srv))
+	r.POST("/api/payments/admin/plans", _Payment_CreatePlan0_HTTP_Handler(srv))
+	r.PUT("/api/payments/admin/plans/{id}", _Payment_UpdatePlan0_HTTP_Handler(srv))
+	r.DELETE("/api/payments/admin/plans/{id}", _Payment_DeletePlan0_HTTP_Handler(srv))
 	r.GET("/api/payments/order/{order_no}", _Payment_GetOrder0_HTTP_Handler(srv))
 	r.GET("/api/payments/methods", _Payment_ListMethods0_HTTP_Handler(srv))
 	r.POST("/api/payments/webhook/{provider}", _Payment_Webhook0_HTTP_Handler(srv))
@@ -61,6 +101,242 @@ func _Payment_CreateOrder0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Con
 			return err
 		}
 		reply := out.(*CreateOrderReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_ListOrders0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListOrdersReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentListOrders)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListOrders(ctx, req.(*ListOrdersReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListOrdersReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_OrderStats0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in OrderStatsReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentOrderStats)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.OrderStats(ctx, req.(*OrderStatsReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*OrderStatsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_ListProviders0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListProvidersReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentListProviders)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListProviders(ctx, req.(*ListProvidersReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListProvidersReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_CreateProvider0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CreateProviderReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentCreateProvider)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreateProvider(ctx, req.(*CreateProviderReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProviderReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_UpdateProvider0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateProviderReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentUpdateProvider)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateProvider(ctx, req.(*UpdateProviderReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProviderReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_DeleteProvider0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteProviderReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentDeleteProvider)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteProvider(ctx, req.(*DeleteProviderReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_ToggleProvider0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ToggleProviderReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentToggleProvider)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ToggleProvider(ctx, req.(*ToggleProviderReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProviderReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_ListPlans0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListPlansReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentListPlans)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListPlans(ctx, req.(*ListPlansReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListPlansReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_CreatePlan0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CreatePlanReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentCreatePlan)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreatePlan(ctx, req.(*CreatePlanReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*PlanReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_UpdatePlan0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdatePlanReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentUpdatePlan)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdatePlan(ctx, req.(*UpdatePlanReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*PlanReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_DeletePlan0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeletePlanReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentDeletePlan)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeletePlan(ctx, req.(*DeletePlanReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -134,10 +410,28 @@ func _Payment_Webhook0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context
 type PaymentHTTPClient interface {
 	// CreateOrder 创建 VIP 订单：plan=monthly|quarterly|yearly；返回支付跳转 URL（登录态）
 	CreateOrder(ctx context.Context, req *CreateOrderReq, opts ...http.CallOption) (rsp *CreateOrderReply, err error)
+	CreatePlan(ctx context.Context, req *CreatePlanReq, opts ...http.CallOption) (rsp *PlanReply, err error)
+	CreateProvider(ctx context.Context, req *CreateProviderReq, opts ...http.CallOption) (rsp *ProviderReply, err error)
+	// DeletePlan 删除套餐 = 禁用（软删，历史订单仍引用 plan_code，不可硬删）
+	DeletePlan(ctx context.Context, req *DeletePlanReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
+	DeleteProvider(ctx context.Context, req *DeleteProviderReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 	// GetOrder 查询订单状态（登录态，只允许查自己的）
 	GetOrder(ctx context.Context, req *GetOrderReq, opts ...http.CallOption) (rsp *GetOrderReply, err error)
 	// ListMethods 支付方式列表：enabled 且 lang/region 匹配，sort 升序（公开）
 	ListMethods(ctx context.Context, req *ListMethodsReq, opts ...http.CallOption) (rsp *ListMethodsReply, err error)
+	// ListOrders 流水分页（requireAdmin，T-P-09）：user_id/provider/status/时间筛选
+	ListOrders(ctx context.Context, req *ListOrdersReq, opts ...http.CallOption) (rsp *ListOrdersReply, err error)
+	// ListPlans VIP 套餐列表（requireAdmin，T-P-13）
+	ListPlans(ctx context.Context, req *ListPlansReq, opts ...http.CallOption) (rsp *ListPlansReply, err error)
+	// ListProviders 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
+	ListProviders(ctx context.Context, req *ListProvidersReq, opts ...http.CallOption) (rsp *ListProvidersReply, err error)
+	// OrderStats 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
+	OrderStats(ctx context.Context, req *OrderStatsReq, opts ...http.CallOption) (rsp *OrderStatsReply, err error)
+	// ToggleProvider 启停支付方式（requireAdmin）
+	ToggleProvider(ctx context.Context, req *ToggleProviderReq, opts ...http.CallOption) (rsp *ProviderReply, err error)
+	UpdatePlan(ctx context.Context, req *UpdatePlanReq, opts ...http.CallOption) (rsp *PlanReply, err error)
+	// UpdateProvider 更新支付方式；config 传入字段重加密合并，空值保留原值
+	UpdateProvider(ctx context.Context, req *UpdateProviderReq, opts ...http.CallOption) (rsp *ProviderReply, err error)
 	// Webhook 渠道回调（stripe/nowpayments，无鉴权，验签在内部）
 	Webhook(ctx context.Context, req *WebhookReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 }
@@ -158,6 +452,59 @@ func (c *PaymentHTTPClientImpl) CreateOrder(ctx context.Context, in *CreateOrder
 	opts = append(opts, http.Operation(OperationPaymentCreateOrder))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *PaymentHTTPClientImpl) CreatePlan(ctx context.Context, in *CreatePlanReq, opts ...http.CallOption) (*PlanReply, error) {
+	var out PlanReply
+	pattern := "/api/payments/admin/plans"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPaymentCreatePlan))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *PaymentHTTPClientImpl) CreateProvider(ctx context.Context, in *CreateProviderReq, opts ...http.CallOption) (*ProviderReply, error) {
+	var out ProviderReply
+	pattern := "/api/payments/admin/providers"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPaymentCreateProvider))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DeletePlan 删除套餐 = 禁用（软删，历史订单仍引用 plan_code，不可硬删）
+func (c *PaymentHTTPClientImpl) DeletePlan(ctx context.Context, in *DeletePlanReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/payments/admin/plans/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentDeletePlan))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *PaymentHTTPClientImpl) DeleteProvider(ctx context.Context, in *DeleteProviderReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/payments/admin/providers/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentDeleteProvider))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -186,6 +533,103 @@ func (c *PaymentHTTPClientImpl) ListMethods(ctx context.Context, in *ListMethods
 	opts = append(opts, http.Operation(OperationPaymentListMethods))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListOrders 流水分页（requireAdmin，T-P-09）：user_id/provider/status/时间筛选
+func (c *PaymentHTTPClientImpl) ListOrders(ctx context.Context, in *ListOrdersReq, opts ...http.CallOption) (*ListOrdersReply, error) {
+	var out ListOrdersReply
+	pattern := "/api/payments/admin/orders"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentListOrders))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListPlans VIP 套餐列表（requireAdmin，T-P-13）
+func (c *PaymentHTTPClientImpl) ListPlans(ctx context.Context, in *ListPlansReq, opts ...http.CallOption) (*ListPlansReply, error) {
+	var out ListPlansReply
+	pattern := "/api/payments/admin/plans"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentListPlans))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListProviders 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
+func (c *PaymentHTTPClientImpl) ListProviders(ctx context.Context, in *ListProvidersReq, opts ...http.CallOption) (*ListProvidersReply, error) {
+	var out ListProvidersReply
+	pattern := "/api/payments/admin/providers"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentListProviders))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// OrderStats 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
+func (c *PaymentHTTPClientImpl) OrderStats(ctx context.Context, in *OrderStatsReq, opts ...http.CallOption) (*OrderStatsReply, error) {
+	var out OrderStatsReply
+	pattern := "/api/payments/admin/order-stats"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentOrderStats))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ToggleProvider 启停支付方式（requireAdmin）
+func (c *PaymentHTTPClientImpl) ToggleProvider(ctx context.Context, in *ToggleProviderReq, opts ...http.CallOption) (*ProviderReply, error) {
+	var out ProviderReply
+	pattern := "/api/payments/admin/providers/{id}/toggle"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentToggleProvider))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PATCH", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *PaymentHTTPClientImpl) UpdatePlan(ctx context.Context, in *UpdatePlanReq, opts ...http.CallOption) (*PlanReply, error) {
+	var out PlanReply
+	pattern := "/api/payments/admin/plans/{id}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPaymentUpdatePlan))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateProvider 更新支付方式；config 传入字段重加密合并，空值保留原值
+func (c *PaymentHTTPClientImpl) UpdateProvider(ctx context.Context, in *UpdateProviderReq, opts ...http.CallOption) (*ProviderReply, error) {
+	var out ProviderReply
+	pattern := "/api/payments/admin/providers/{id}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPaymentUpdateProvider))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

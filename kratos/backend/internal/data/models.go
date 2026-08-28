@@ -260,3 +260,19 @@ type VipOrder struct {
 }
 
 func (VipOrder) TableName() string { return "novel_vip_order" }
+
+// VipPlan VIP 套餐（T-P-13）：支付流程生效金额/天数的数据源，表空/缺行回退内置默认。
+type VipPlan struct {
+	ID          uint64    `gorm:"primaryKey;column:id"`
+	PlanCode    string    `gorm:"column:plan_code"`    // monthly/quarterly/yearly
+	Days        int       `gorm:"column:days"`         // 有效天数
+	AmountCents int64     `gorm:"column:amount_cents"` // 金额（分）
+	Currency    string    `gorm:"column:currency"`     // USD
+	Label       string    `gorm:"column:label"`
+	Sort        int       `gorm:"column:sort"`
+	Status      int8      `gorm:"column:status"` // 0禁用 1启用
+	CreatedAt   time.Time `gorm:"column:created_at"`
+	UpdatedAt   time.Time `gorm:"column:updated_at"`
+}
+
+func (VipPlan) TableName() string { return "novel_vip_plan" }

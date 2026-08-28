@@ -176,6 +176,90 @@ class HotKeyword {
         count = asInt(j['count']);
 }
 
+/// 支付方式（ProviderReply）。configConfigured: 密钥是否已配置（不返回明文）。
+class PaymentProvider {
+  final String id;
+  final String code;
+  final String lang;
+  final String region;
+  final int enabled;
+  final int sort;
+  final bool configConfigured;
+
+  PaymentProvider.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        code = asStr(j['code']),
+        lang = asStr(j['lang']),
+        region = asStr(j['region']),
+        enabled = asInt(j['enabled']),
+        sort = asInt(j['sort']),
+        configConfigured = j['configConfigured'] == true;
+}
+
+/// 流水（OrderItem）。amount 单位分；status: 0待支付 1已付 2失败 3关闭。
+class PaymentOrder {
+  final String orderNo;
+  final String userId;
+  final int amount;
+  final String currency;
+  final String provider;
+  final int status;
+  final String txId;
+  final String paidAt;
+  final String createdAt;
+
+  PaymentOrder.fromJson(Map<String, dynamic> j)
+      : orderNo = asStr(j['orderNo']),
+        userId = asStr(j['userId']),
+        amount = asInt(j['amount']),
+        currency = asStr(j['currency']),
+        provider = asStr(j['provider']),
+        status = asInt(j['status']),
+        txId = asStr(j['txId']),
+        paidAt = asStr(j['paidAt']),
+        createdAt = asStr(j['createdAt']);
+}
+
+/// 流水汇总（OrderStatsReply）。amount 已付总金额（分）。
+class OrderStats {
+  final int total;
+  final int paid;
+  final int pending;
+  final int failed;
+  final int closed;
+  final int amount;
+
+  OrderStats.fromJson(Map<String, dynamic> j)
+      : total = asInt(j['total']),
+        paid = asInt(j['paid']),
+        pending = asInt(j['pending']),
+        failed = asInt(j['failed']),
+        closed = asInt(j['closed']),
+        amount = asInt(j['amount']);
+}
+
+/// VIP 套餐（PlanReply）。amount 单位分；status: 1 启用 0 禁用。
+class VipPlan {
+  final String id;
+  final String planCode;
+  final int days;
+  final int amount;
+  final String currency;
+  final String label;
+  final int sort;
+  final int status;
+
+  VipPlan.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        planCode = asStr(j['planCode']),
+        days = asInt(j['days']),
+        amount = asInt(j['amount']),
+        currency = asStr(j['currency']),
+        label = asStr(j['label']),
+        sort = asInt(j['sort']),
+        status = asInt(j['status']);
+}
+
 /// 评论（CommentReply）。status: 1 正常 0 下架 2 举报待审。
 class Comment {
   final String id;
