@@ -156,4 +156,51 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get offline => 'オフラインキャッシュ';
+
+  @override
+  String get vipActive => 'VIP会員';
+
+  @override
+  String get vipNotActive => 'VIP未加入';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return '有効期限：$date';
+  }
+
+  @override
+  String get vipRenew => '更新';
+
+  @override
+  String get vipOpen => 'VIPを開く';
+
+  @override
+  String get payNow => '支払う';
+
+  @override
+  String get paymentResult => '決済結果';
+
+  @override
+  String get paymentSuccess => '決済成功';
+
+  @override
+  String get paymentFailed => '決済失敗';
+
+  @override
+  String get paymentPending => '決済待ち';
+
+  @override
+  String get paymentChecking => '決済結果を確認中…';
+
+  @override
+  String get paymentNoMethod => '利用可能な支払い方法がありません';
+
+  @override
+  String get vipChapterLocked => 'この章はVIP専用です。会員登録で読めます。';
+
+  @override
+  String get openVipToRead => '会員登録して読む';
+
+  @override
+  String get retryPay => '再決済';
 }

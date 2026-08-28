@@ -6,6 +6,7 @@ import '../main.dart';
 import '../models/models.dart';
 import 'login_page.dart';
 import 'reader_page.dart';
+import 'vip_page.dart';
 
 /// 我的 tab：未登录显示登录入口；已登录显示书架、收藏与最近阅读进度。
 class MineTab extends StatefulWidget {
@@ -22,6 +23,7 @@ class _MineTabState extends State<MineTab> {
   final Map<String, List<Chapter>> _chapters = {}; // bookId -> 章节列表
   final Map<String, Chapter?> _progressChapter = {}; // bookId -> 进度章节
   final Map<String, String> _progressAt = {}; // bookId -> 进度更新时间
+  VipStatus? _vip;
   String? _error;
 
   @override
@@ -36,6 +38,7 @@ class _MineTabState extends State<MineTab> {
       _error = null;
       _shelf = null;
       _favorites = null;
+      _vip = null;
     });
     if (!api.loggedIn) return;
     try {
@@ -46,10 +49,12 @@ class _MineTabState extends State<MineTab> {
         ...favorites.map((e) => e.bookId),
       });
       await _fillProgress(shelf);
+      final vip = await api.vipStatus();
       if (!mounted) return;
       setState(() {
         _shelf = shelf;
         _favorites = favorites;
+        _vip = vip;
       });
     } catch (e) {
       setState(() => _error = api.errorMessage(e));
@@ -164,6 +169,7 @@ class _MineTabState extends State<MineTab> {
         padding: const EdgeInsets.all(8),
         children: [
           _profileHeader(context, l10n),
+          _vipCard(context, l10n),
           _sectionTitle(context, '我的书架'),
           if (shelf.isEmpty)
             ListTile(title: Text(l10n.empty))
@@ -200,6 +206,31 @@ class _MineTabState extends State<MineTab> {
           _load();
         },
         child: Text(l10n.logout),
+      ),
+    );
+  }
+
+  /// VIP 状态卡（T-P-17）：active/到期时间 + 开通/续费入口。
+  Widget _vipCard(BuildContext context, AppLocalizations l10n) {
+    final vip = _vip;
+    final active = vip?.active == true;
+    return Card(
+      child: ListTile(
+        leading: Icon(Icons.workspace_premium,
+            color: active ? Colors.amber : Theme.of(context).disabledColor),
+        title: Text(active ? l10n.vipActive : l10n.vipNotActive),
+        subtitle: vip != null && vip.vipExpiresAt.isNotEmpty
+            ? Text(l10n.vipExpiresAt(_shortDate(vip.vipExpiresAt)))
+            : null,
+        trailing: FilledButton.tonal(
+          onPressed: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const VipPage()),
+            );
+            if (mounted) _load();
+          },
+          child: Text(active ? l10n.vipRenew : l10n.vipOpen),
+        ),
       ),
     );
   }

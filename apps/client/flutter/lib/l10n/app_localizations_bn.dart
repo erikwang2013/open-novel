@@ -156,4 +156,51 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get offline => 'অফলাইন ক্যাশে';
+
+  @override
+  String get vipActive => 'VIP সদস্য';
+
+  @override
+  String get vipNotActive => 'VIP সক্রিয় নয়';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return 'মেয়াদ শেষ: $date';
+  }
+
+  @override
+  String get vipRenew => 'নবায়ন';
+
+  @override
+  String get vipOpen => 'VIP নিন';
+
+  @override
+  String get payNow => 'এখনই পেমেন্ট';
+
+  @override
+  String get paymentResult => 'পেমেন্ট ফলাফল';
+
+  @override
+  String get paymentSuccess => 'পেমেন্ট সফল';
+
+  @override
+  String get paymentFailed => 'পেমেন্ট ব্যর্থ';
+
+  @override
+  String get paymentPending => 'পেমেন্টের অপেক্ষায়';
+
+  @override
+  String get paymentChecking => 'পেমেন্ট নিশ্চিত হচ্ছে…';
+
+  @override
+  String get paymentNoMethod => 'কোনো পেমেন্ট পদ্ধতি নেই';
+
+  @override
+  String get vipChapterLocked => 'এই অধ্যায়টি শুধু VIP সদস্যদের জন্য।';
+
+  @override
+  String get openVipToRead => 'সদস্য হয়ে পড়ুন';
+
+  @override
+  String get retryPay => 'আবার পেমেন্ট করুন';
 }

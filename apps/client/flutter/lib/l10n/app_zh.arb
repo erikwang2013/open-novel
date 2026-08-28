@@ -46,5 +46,20 @@
   "pageMode": "翻页方式",
   "scrollMode": "上下滚动",
   "pagedMode": "左右翻页",
-  "offline": "离线缓存"
+  "offline": "离线缓存",
+  "vipActive": "VIP 会员",
+  "vipNotActive": "尚未开通 VIP",
+  "vipExpiresAt": "到期时间：{date}",
+  "vipRenew": "续费",
+  "vipOpen": "开通 VIP",
+  "payNow": "立即支付",
+  "paymentResult": "支付结果",
+  "paymentSuccess": "支付成功",
+  "paymentFailed": "支付失败",
+  "paymentPending": "等待支付确认",
+  "paymentChecking": "正在确认支付结果…",
+  "paymentNoMethod": "暂无可用支付方式",
+  "vipChapterLocked": "该章节为 VIP 章节，开通会员后可阅读",
+  "openVipToRead": "开通会员阅读",
+  "retryPay": "重新支付"
 }

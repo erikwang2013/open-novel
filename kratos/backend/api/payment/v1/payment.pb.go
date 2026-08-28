@@ -289,6 +289,250 @@ func (x *GetOrderReply) GetPaidAt() string {
 	return ""
 }
 
+type ListPublicPlansReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPublicPlansReq) Reset() {
+	*x = ListPublicPlansReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPublicPlansReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPublicPlansReq) ProtoMessage() {}
+
+func (x *ListPublicPlansReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPublicPlansReq.ProtoReflect.Descriptor instead.
+func (*ListPublicPlansReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{4}
+}
+
+type PublicPlanItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PlanCode      string                 `protobuf:"bytes,1,opt,name=plan_code,json=planCode,proto3" json:"plan_code,omitempty"` // monthly/quarterly/yearly
+	Days          int64                  `protobuf:"varint,2,opt,name=days,proto3" json:"days,omitempty"`                        // 有效天数
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`                    // 分
+	Currency      string                 `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`                 // USD
+	Label         string                 `protobuf:"bytes,5,opt,name=label,proto3" json:"label,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PublicPlanItem) Reset() {
+	*x = PublicPlanItem{}
+	mi := &file_payment_v1_payment_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PublicPlanItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PublicPlanItem) ProtoMessage() {}
+
+func (x *PublicPlanItem) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PublicPlanItem.ProtoReflect.Descriptor instead.
+func (*PublicPlanItem) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PublicPlanItem) GetPlanCode() string {
+	if x != nil {
+		return x.PlanCode
+	}
+	return ""
+}
+
+func (x *PublicPlanItem) GetDays() int64 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
+func (x *PublicPlanItem) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *PublicPlanItem) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *PublicPlanItem) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+type ListPublicPlansReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	List          []*PublicPlanItem      `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPublicPlansReply) Reset() {
+	*x = ListPublicPlansReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPublicPlansReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPublicPlansReply) ProtoMessage() {}
+
+func (x *ListPublicPlansReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPublicPlansReply.ProtoReflect.Descriptor instead.
+func (*ListPublicPlansReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ListPublicPlansReply) GetList() []*PublicPlanItem {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+type VipStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VipStatusReq) Reset() {
+	*x = VipStatusReq{}
+	mi := &file_payment_v1_payment_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VipStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VipStatusReq) ProtoMessage() {}
+
+func (x *VipStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VipStatusReq.ProtoReflect.Descriptor instead.
+func (*VipStatusReq) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{7}
+}
+
+type VipStatusReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Active        bool                   `protobuf:"varint,1,opt,name=active,proto3" json:"active,omitempty"`                                  // vip_expires_at > now
+	VipExpiresAt  string                 `protobuf:"bytes,2,opt,name=vip_expires_at,json=vipExpiresAt,proto3" json:"vip_expires_at,omitempty"` // RFC3339，非会员为空
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VipStatusReply) Reset() {
+	*x = VipStatusReply{}
+	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VipStatusReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VipStatusReply) ProtoMessage() {}
+
+func (x *VipStatusReply) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VipStatusReply.ProtoReflect.Descriptor instead.
+func (*VipStatusReply) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *VipStatusReply) GetActive() bool {
+	if x != nil {
+		return x.Active
+	}
+	return false
+}
+
+func (x *VipStatusReply) GetVipExpiresAt() string {
+	if x != nil {
+		return x.VipExpiresAt
+	}
+	return ""
+}
+
 type ListMethodsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Lang          string                 `protobuf:"bytes,1,opt,name=lang,proto3" json:"lang,omitempty"`
@@ -298,7 +542,7 @@ type ListMethodsReq struct {
 
 func (x *ListMethodsReq) Reset() {
 	*x = ListMethodsReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[4]
+	mi := &file_payment_v1_payment_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -310,7 +554,7 @@ func (x *ListMethodsReq) String() string {
 func (*ListMethodsReq) ProtoMessage() {}
 
 func (x *ListMethodsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[4]
+	mi := &file_payment_v1_payment_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -323,7 +567,7 @@ func (x *ListMethodsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMethodsReq.ProtoReflect.Descriptor instead.
 func (*ListMethodsReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{4}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListMethodsReq) GetLang() string {
@@ -342,7 +586,7 @@ type ListMethodsReply struct {
 
 func (x *ListMethodsReply) Reset() {
 	*x = ListMethodsReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[5]
+	mi := &file_payment_v1_payment_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -354,7 +598,7 @@ func (x *ListMethodsReply) String() string {
 func (*ListMethodsReply) ProtoMessage() {}
 
 func (x *ListMethodsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[5]
+	mi := &file_payment_v1_payment_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -367,7 +611,7 @@ func (x *ListMethodsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMethodsReply.ProtoReflect.Descriptor instead.
 func (*ListMethodsReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{5}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListMethodsReply) GetList() []*MethodItem {
@@ -389,7 +633,7 @@ type MethodItem struct {
 
 func (x *MethodItem) Reset() {
 	*x = MethodItem{}
-	mi := &file_payment_v1_payment_proto_msgTypes[6]
+	mi := &file_payment_v1_payment_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -401,7 +645,7 @@ func (x *MethodItem) String() string {
 func (*MethodItem) ProtoMessage() {}
 
 func (x *MethodItem) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[6]
+	mi := &file_payment_v1_payment_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -414,7 +658,7 @@ func (x *MethodItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MethodItem.ProtoReflect.Descriptor instead.
 func (*MethodItem) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{6}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *MethodItem) GetCode() string {
@@ -455,7 +699,7 @@ type WebhookReq struct {
 
 func (x *WebhookReq) Reset() {
 	*x = WebhookReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[7]
+	mi := &file_payment_v1_payment_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -467,7 +711,7 @@ func (x *WebhookReq) String() string {
 func (*WebhookReq) ProtoMessage() {}
 
 func (x *WebhookReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[7]
+	mi := &file_payment_v1_payment_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -480,7 +724,7 @@ func (x *WebhookReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WebhookReq.ProtoReflect.Descriptor instead.
 func (*WebhookReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{7}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *WebhookReq) GetProvider() string {
@@ -512,7 +756,7 @@ type ListOrdersReq struct {
 
 func (x *ListOrdersReq) Reset() {
 	*x = ListOrdersReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	mi := &file_payment_v1_payment_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -524,7 +768,7 @@ func (x *ListOrdersReq) String() string {
 func (*ListOrdersReq) ProtoMessage() {}
 
 func (x *ListOrdersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[8]
+	mi := &file_payment_v1_payment_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -537,7 +781,7 @@ func (x *ListOrdersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOrdersReq.ProtoReflect.Descriptor instead.
 func (*ListOrdersReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{8}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListOrdersReq) GetPage() int32 {
@@ -599,7 +843,7 @@ type ListOrdersReply struct {
 
 func (x *ListOrdersReply) Reset() {
 	*x = ListOrdersReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[9]
+	mi := &file_payment_v1_payment_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -611,7 +855,7 @@ func (x *ListOrdersReply) String() string {
 func (*ListOrdersReply) ProtoMessage() {}
 
 func (x *ListOrdersReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[9]
+	mi := &file_payment_v1_payment_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -624,7 +868,7 @@ func (x *ListOrdersReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOrdersReply.ProtoReflect.Descriptor instead.
 func (*ListOrdersReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{9}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListOrdersReply) GetList() []*OrderItem {
@@ -658,7 +902,7 @@ type OrderItem struct {
 
 func (x *OrderItem) Reset() {
 	*x = OrderItem{}
-	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	mi := &file_payment_v1_payment_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -670,7 +914,7 @@ func (x *OrderItem) String() string {
 func (*OrderItem) ProtoMessage() {}
 
 func (x *OrderItem) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	mi := &file_payment_v1_payment_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -683,7 +927,7 @@ func (x *OrderItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderItem.ProtoReflect.Descriptor instead.
 func (*OrderItem) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{10}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *OrderItem) GetOrderNo() string {
@@ -759,7 +1003,7 @@ type OrderStatsReq struct {
 
 func (x *OrderStatsReq) Reset() {
 	*x = OrderStatsReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -771,7 +1015,7 @@ func (x *OrderStatsReq) String() string {
 func (*OrderStatsReq) ProtoMessage() {}
 
 func (x *OrderStatsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -784,7 +1028,7 @@ func (x *OrderStatsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderStatsReq.ProtoReflect.Descriptor instead.
 func (*OrderStatsReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{11}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *OrderStatsReq) GetStartAt() string {
@@ -815,7 +1059,7 @@ type OrderStatsReply struct {
 
 func (x *OrderStatsReply) Reset() {
 	*x = OrderStatsReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[12]
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -827,7 +1071,7 @@ func (x *OrderStatsReply) String() string {
 func (*OrderStatsReply) ProtoMessage() {}
 
 func (x *OrderStatsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[12]
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -840,7 +1084,7 @@ func (x *OrderStatsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderStatsReply.ProtoReflect.Descriptor instead.
 func (*OrderStatsReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{12}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *OrderStatsReply) GetTotal() int64 {
@@ -893,7 +1137,7 @@ type ListProvidersReq struct {
 
 func (x *ListProvidersReq) Reset() {
 	*x = ListProvidersReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[13]
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -905,7 +1149,7 @@ func (x *ListProvidersReq) String() string {
 func (*ListProvidersReq) ProtoMessage() {}
 
 func (x *ListProvidersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[13]
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +1162,7 @@ func (x *ListProvidersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProvidersReq.ProtoReflect.Descriptor instead.
 func (*ListProvidersReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{13}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{18}
 }
 
 type ProviderReply struct {
@@ -938,7 +1182,7 @@ type ProviderReply struct {
 
 func (x *ProviderReply) Reset() {
 	*x = ProviderReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[14]
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -950,7 +1194,7 @@ func (x *ProviderReply) String() string {
 func (*ProviderReply) ProtoMessage() {}
 
 func (x *ProviderReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[14]
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -963,7 +1207,7 @@ func (x *ProviderReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProviderReply.ProtoReflect.Descriptor instead.
 func (*ProviderReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{14}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ProviderReply) GetId() int64 {
@@ -1039,7 +1283,7 @@ type ListProvidersReply struct {
 
 func (x *ListProvidersReply) Reset() {
 	*x = ListProvidersReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[15]
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1051,7 +1295,7 @@ func (x *ListProvidersReply) String() string {
 func (*ListProvidersReply) ProtoMessage() {}
 
 func (x *ListProvidersReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[15]
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1064,7 +1308,7 @@ func (x *ListProvidersReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListProvidersReply.ProtoReflect.Descriptor instead.
 func (*ListProvidersReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{15}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListProvidersReply) GetList() []*ProviderReply {
@@ -1094,7 +1338,7 @@ type CreateProviderReq struct {
 
 func (x *CreateProviderReq) Reset() {
 	*x = CreateProviderReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1106,7 +1350,7 @@ func (x *CreateProviderReq) String() string {
 func (*CreateProviderReq) ProtoMessage() {}
 
 func (x *CreateProviderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1119,7 +1363,7 @@ func (x *CreateProviderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProviderReq.ProtoReflect.Descriptor instead.
 func (*CreateProviderReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{16}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *CreateProviderReq) GetCode() string {
@@ -1171,7 +1415,7 @@ type UpdateProviderReq struct {
 
 func (x *UpdateProviderReq) Reset() {
 	*x = UpdateProviderReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1183,7 +1427,7 @@ func (x *UpdateProviderReq) String() string {
 func (*UpdateProviderReq) ProtoMessage() {}
 
 func (x *UpdateProviderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1196,7 +1440,7 @@ func (x *UpdateProviderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateProviderReq.ProtoReflect.Descriptor instead.
 func (*UpdateProviderReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{17}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *UpdateProviderReq) GetId() int64 {
@@ -1250,7 +1494,7 @@ type DeleteProviderReq struct {
 
 func (x *DeleteProviderReq) Reset() {
 	*x = DeleteProviderReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1262,7 +1506,7 @@ func (x *DeleteProviderReq) String() string {
 func (*DeleteProviderReq) ProtoMessage() {}
 
 func (x *DeleteProviderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1275,7 +1519,7 @@ func (x *DeleteProviderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProviderReq.ProtoReflect.Descriptor instead.
 func (*DeleteProviderReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{18}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *DeleteProviderReq) GetId() int64 {
@@ -1294,7 +1538,7 @@ type ToggleProviderReq struct {
 
 func (x *ToggleProviderReq) Reset() {
 	*x = ToggleProviderReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	mi := &file_payment_v1_payment_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1306,7 +1550,7 @@ func (x *ToggleProviderReq) String() string {
 func (*ToggleProviderReq) ProtoMessage() {}
 
 func (x *ToggleProviderReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	mi := &file_payment_v1_payment_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1319,7 +1563,7 @@ func (x *ToggleProviderReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToggleProviderReq.ProtoReflect.Descriptor instead.
 func (*ToggleProviderReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{19}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ToggleProviderReq) GetId() int64 {
@@ -1337,7 +1581,7 @@ type ListPlansReq struct {
 
 func (x *ListPlansReq) Reset() {
 	*x = ListPlansReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	mi := &file_payment_v1_payment_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1349,7 +1593,7 @@ func (x *ListPlansReq) String() string {
 func (*ListPlansReq) ProtoMessage() {}
 
 func (x *ListPlansReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	mi := &file_payment_v1_payment_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1362,7 +1606,7 @@ func (x *ListPlansReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPlansReq.ProtoReflect.Descriptor instead.
 func (*ListPlansReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{20}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{25}
 }
 
 type PlanReply struct {
@@ -1381,7 +1625,7 @@ type PlanReply struct {
 
 func (x *PlanReply) Reset() {
 	*x = PlanReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	mi := &file_payment_v1_payment_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1393,7 +1637,7 @@ func (x *PlanReply) String() string {
 func (*PlanReply) ProtoMessage() {}
 
 func (x *PlanReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	mi := &file_payment_v1_payment_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1406,7 +1650,7 @@ func (x *PlanReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanReply.ProtoReflect.Descriptor instead.
 func (*PlanReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{21}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *PlanReply) GetId() int64 {
@@ -1475,7 +1719,7 @@ type ListPlansReply struct {
 
 func (x *ListPlansReply) Reset() {
 	*x = ListPlansReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	mi := &file_payment_v1_payment_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1487,7 +1731,7 @@ func (x *ListPlansReply) String() string {
 func (*ListPlansReply) ProtoMessage() {}
 
 func (x *ListPlansReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	mi := &file_payment_v1_payment_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1500,7 +1744,7 @@ func (x *ListPlansReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPlansReply.ProtoReflect.Descriptor instead.
 func (*ListPlansReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{22}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListPlansReply) GetList() []*PlanReply {
@@ -1531,7 +1775,7 @@ type CreatePlanReq struct {
 
 func (x *CreatePlanReq) Reset() {
 	*x = CreatePlanReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	mi := &file_payment_v1_payment_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1543,7 +1787,7 @@ func (x *CreatePlanReq) String() string {
 func (*CreatePlanReq) ProtoMessage() {}
 
 func (x *CreatePlanReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	mi := &file_payment_v1_payment_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1556,7 +1800,7 @@ func (x *CreatePlanReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePlanReq.ProtoReflect.Descriptor instead.
 func (*CreatePlanReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{23}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *CreatePlanReq) GetPlanCode() string {
@@ -1616,7 +1860,7 @@ type UpdatePlanReq struct {
 
 func (x *UpdatePlanReq) Reset() {
 	*x = UpdatePlanReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[24]
+	mi := &file_payment_v1_payment_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1628,7 +1872,7 @@ func (x *UpdatePlanReq) String() string {
 func (*UpdatePlanReq) ProtoMessage() {}
 
 func (x *UpdatePlanReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[24]
+	mi := &file_payment_v1_payment_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1641,7 +1885,7 @@ func (x *UpdatePlanReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePlanReq.ProtoReflect.Descriptor instead.
 func (*UpdatePlanReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{24}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *UpdatePlanReq) GetId() int64 {
@@ -1702,7 +1946,7 @@ type DeletePlanReq struct {
 
 func (x *DeletePlanReq) Reset() {
 	*x = DeletePlanReq{}
-	mi := &file_payment_v1_payment_proto_msgTypes[25]
+	mi := &file_payment_v1_payment_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1714,7 +1958,7 @@ func (x *DeletePlanReq) String() string {
 func (*DeletePlanReq) ProtoMessage() {}
 
 func (x *DeletePlanReq) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[25]
+	mi := &file_payment_v1_payment_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1727,7 +1971,7 @@ func (x *DeletePlanReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeletePlanReq.ProtoReflect.Descriptor instead.
 func (*DeletePlanReq) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{25}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *DeletePlanReq) GetId() int64 {
@@ -1745,7 +1989,7 @@ type EmptyReply struct {
 
 func (x *EmptyReply) Reset() {
 	*x = EmptyReply{}
-	mi := &file_payment_v1_payment_proto_msgTypes[26]
+	mi := &file_payment_v1_payment_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1757,7 +2001,7 @@ func (x *EmptyReply) String() string {
 func (*EmptyReply) ProtoMessage() {}
 
 func (x *EmptyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[26]
+	mi := &file_payment_v1_payment_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1770,7 +2014,7 @@ func (x *EmptyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmptyReply.ProtoReflect.Descriptor instead.
 func (*EmptyReply) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{26}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{31}
 }
 
 var File_payment_v1_payment_proto protoreflect.FileDescriptor
@@ -1797,7 +2041,20 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x1a\n" +
 	"\bprovider\x18\x05 \x01(\tR\bprovider\x12\x13\n" +
 	"\x05tx_id\x18\x06 \x01(\tR\x04txId\x12\x17\n" +
-	"\apaid_at\x18\a \x01(\tR\x06paidAt\"$\n" +
+	"\apaid_at\x18\a \x01(\tR\x06paidAt\"\x14\n" +
+	"\x12ListPublicPlansReq\"\x8b\x01\n" +
+	"\x0ePublicPlanItem\x12\x1b\n" +
+	"\tplan_code\x18\x01 \x01(\tR\bplanCode\x12\x12\n" +
+	"\x04days\x18\x02 \x01(\x03R\x04days\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x14\n" +
+	"\x05label\x18\x05 \x01(\tR\x05label\"F\n" +
+	"\x14ListPublicPlansReply\x12.\n" +
+	"\x04list\x18\x01 \x03(\v2\x1a.payment.v1.PublicPlanItemR\x04list\"\x0e\n" +
+	"\fVipStatusReq\"N\n" +
+	"\x0eVipStatusReply\x12\x16\n" +
+	"\x06active\x18\x01 \x01(\bR\x06active\x12$\n" +
+	"\x0evip_expires_at\x18\x02 \x01(\tR\fvipExpiresAt\"$\n" +
 	"\x0eListMethodsReq\x12\x12\n" +
 	"\x04lang\x18\x01 \x01(\tR\x04lang\">\n" +
 	"\x10ListMethodsReply\x12*\n" +
@@ -1925,7 +2182,7 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\rDeletePlanReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\f\n" +
 	"\n" +
-	"EmptyReply2\xfe\f\n" +
+	"EmptyReply2\xd5\x0e\n" +
 	"\aPayment\x12g\n" +
 	"\vCreateOrder\x12\x1a.payment.v1.CreateOrderReq\x1a\x1c.payment.v1.CreateOrderReply\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/payments/order\x12h\n" +
 	"\n" +
@@ -1944,7 +2201,9 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"UpdatePlan\x12\x19.payment.v1.UpdatePlanReq\x1a\x15.payment.v1.PlanReply\")\x82\xd3\xe4\x93\x02#:\x01*\x1a\x1e/api/payments/admin/plans/{id}\x12g\n" +
 	"\n" +
 	"DeletePlan\x12\x19.payment.v1.DeletePlanReq\x1a\x16.payment.v1.EmptyReply\"&\x82\xd3\xe4\x93\x02 *\x1e/api/payments/admin/plans/{id}\x12f\n" +
-	"\bGetOrder\x12\x17.payment.v1.GetOrderReq\x1a\x19.payment.v1.GetOrderReply\"&\x82\xd3\xe4\x93\x02 \x12\x1e/api/payments/order/{order_no}\x12f\n" +
+	"\bGetOrder\x12\x17.payment.v1.GetOrderReq\x1a\x19.payment.v1.GetOrderReply\"&\x82\xd3\xe4\x93\x02 \x12\x1e/api/payments/order/{order_no}\x12p\n" +
+	"\x0fListPublicPlans\x12\x1e.payment.v1.ListPublicPlansReq\x1a .payment.v1.ListPublicPlansReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/payments/plans\x12c\n" +
+	"\tVipStatus\x12\x18.payment.v1.VipStatusReq\x1a\x1a.payment.v1.VipStatusReply\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/payments/vip-status\x12f\n" +
 	"\vListMethods\x12\x1a.payment.v1.ListMethodsReq\x1a\x1c.payment.v1.ListMethodsReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/payments/methods\x12f\n" +
 	"\aWebhook\x12\x16.payment.v1.WebhookReq\x1a\x16.payment.v1.EmptyReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /api/payments/webhook/{provider}B&Z$open-novel/backend/api/payment/v1;v1b\x06proto3"
 
@@ -1960,80 +2219,90 @@ func file_payment_v1_payment_proto_rawDescGZIP() []byte {
 	return file_payment_v1_payment_proto_rawDescData
 }
 
-var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
 var file_payment_v1_payment_proto_goTypes = []any{
-	(*CreateOrderReq)(nil),     // 0: payment.v1.CreateOrderReq
-	(*CreateOrderReply)(nil),   // 1: payment.v1.CreateOrderReply
-	(*GetOrderReq)(nil),        // 2: payment.v1.GetOrderReq
-	(*GetOrderReply)(nil),      // 3: payment.v1.GetOrderReply
-	(*ListMethodsReq)(nil),     // 4: payment.v1.ListMethodsReq
-	(*ListMethodsReply)(nil),   // 5: payment.v1.ListMethodsReply
-	(*MethodItem)(nil),         // 6: payment.v1.MethodItem
-	(*WebhookReq)(nil),         // 7: payment.v1.WebhookReq
-	(*ListOrdersReq)(nil),      // 8: payment.v1.ListOrdersReq
-	(*ListOrdersReply)(nil),    // 9: payment.v1.ListOrdersReply
-	(*OrderItem)(nil),          // 10: payment.v1.OrderItem
-	(*OrderStatsReq)(nil),      // 11: payment.v1.OrderStatsReq
-	(*OrderStatsReply)(nil),    // 12: payment.v1.OrderStatsReply
-	(*ListProvidersReq)(nil),   // 13: payment.v1.ListProvidersReq
-	(*ProviderReply)(nil),      // 14: payment.v1.ProviderReply
-	(*ListProvidersReply)(nil), // 15: payment.v1.ListProvidersReply
-	(*CreateProviderReq)(nil),  // 16: payment.v1.CreateProviderReq
-	(*UpdateProviderReq)(nil),  // 17: payment.v1.UpdateProviderReq
-	(*DeleteProviderReq)(nil),  // 18: payment.v1.DeleteProviderReq
-	(*ToggleProviderReq)(nil),  // 19: payment.v1.ToggleProviderReq
-	(*ListPlansReq)(nil),       // 20: payment.v1.ListPlansReq
-	(*PlanReply)(nil),          // 21: payment.v1.PlanReply
-	(*ListPlansReply)(nil),     // 22: payment.v1.ListPlansReply
-	(*CreatePlanReq)(nil),      // 23: payment.v1.CreatePlanReq
-	(*UpdatePlanReq)(nil),      // 24: payment.v1.UpdatePlanReq
-	(*DeletePlanReq)(nil),      // 25: payment.v1.DeletePlanReq
-	(*EmptyReply)(nil),         // 26: payment.v1.EmptyReply
-	nil,                        // 27: payment.v1.CreateProviderReq.ConfigEntry
-	nil,                        // 28: payment.v1.UpdateProviderReq.ConfigEntry
+	(*CreateOrderReq)(nil),       // 0: payment.v1.CreateOrderReq
+	(*CreateOrderReply)(nil),     // 1: payment.v1.CreateOrderReply
+	(*GetOrderReq)(nil),          // 2: payment.v1.GetOrderReq
+	(*GetOrderReply)(nil),        // 3: payment.v1.GetOrderReply
+	(*ListPublicPlansReq)(nil),   // 4: payment.v1.ListPublicPlansReq
+	(*PublicPlanItem)(nil),       // 5: payment.v1.PublicPlanItem
+	(*ListPublicPlansReply)(nil), // 6: payment.v1.ListPublicPlansReply
+	(*VipStatusReq)(nil),         // 7: payment.v1.VipStatusReq
+	(*VipStatusReply)(nil),       // 8: payment.v1.VipStatusReply
+	(*ListMethodsReq)(nil),       // 9: payment.v1.ListMethodsReq
+	(*ListMethodsReply)(nil),     // 10: payment.v1.ListMethodsReply
+	(*MethodItem)(nil),           // 11: payment.v1.MethodItem
+	(*WebhookReq)(nil),           // 12: payment.v1.WebhookReq
+	(*ListOrdersReq)(nil),        // 13: payment.v1.ListOrdersReq
+	(*ListOrdersReply)(nil),      // 14: payment.v1.ListOrdersReply
+	(*OrderItem)(nil),            // 15: payment.v1.OrderItem
+	(*OrderStatsReq)(nil),        // 16: payment.v1.OrderStatsReq
+	(*OrderStatsReply)(nil),      // 17: payment.v1.OrderStatsReply
+	(*ListProvidersReq)(nil),     // 18: payment.v1.ListProvidersReq
+	(*ProviderReply)(nil),        // 19: payment.v1.ProviderReply
+	(*ListProvidersReply)(nil),   // 20: payment.v1.ListProvidersReply
+	(*CreateProviderReq)(nil),    // 21: payment.v1.CreateProviderReq
+	(*UpdateProviderReq)(nil),    // 22: payment.v1.UpdateProviderReq
+	(*DeleteProviderReq)(nil),    // 23: payment.v1.DeleteProviderReq
+	(*ToggleProviderReq)(nil),    // 24: payment.v1.ToggleProviderReq
+	(*ListPlansReq)(nil),         // 25: payment.v1.ListPlansReq
+	(*PlanReply)(nil),            // 26: payment.v1.PlanReply
+	(*ListPlansReply)(nil),       // 27: payment.v1.ListPlansReply
+	(*CreatePlanReq)(nil),        // 28: payment.v1.CreatePlanReq
+	(*UpdatePlanReq)(nil),        // 29: payment.v1.UpdatePlanReq
+	(*DeletePlanReq)(nil),        // 30: payment.v1.DeletePlanReq
+	(*EmptyReply)(nil),           // 31: payment.v1.EmptyReply
+	nil,                          // 32: payment.v1.CreateProviderReq.ConfigEntry
+	nil,                          // 33: payment.v1.UpdateProviderReq.ConfigEntry
 }
 var file_payment_v1_payment_proto_depIdxs = []int32{
-	6,  // 0: payment.v1.ListMethodsReply.list:type_name -> payment.v1.MethodItem
-	10, // 1: payment.v1.ListOrdersReply.list:type_name -> payment.v1.OrderItem
-	14, // 2: payment.v1.ListProvidersReply.list:type_name -> payment.v1.ProviderReply
-	27, // 3: payment.v1.CreateProviderReq.config:type_name -> payment.v1.CreateProviderReq.ConfigEntry
-	28, // 4: payment.v1.UpdateProviderReq.config:type_name -> payment.v1.UpdateProviderReq.ConfigEntry
-	21, // 5: payment.v1.ListPlansReply.list:type_name -> payment.v1.PlanReply
-	0,  // 6: payment.v1.Payment.CreateOrder:input_type -> payment.v1.CreateOrderReq
-	8,  // 7: payment.v1.Payment.ListOrders:input_type -> payment.v1.ListOrdersReq
-	11, // 8: payment.v1.Payment.OrderStats:input_type -> payment.v1.OrderStatsReq
-	13, // 9: payment.v1.Payment.ListProviders:input_type -> payment.v1.ListProvidersReq
-	16, // 10: payment.v1.Payment.CreateProvider:input_type -> payment.v1.CreateProviderReq
-	17, // 11: payment.v1.Payment.UpdateProvider:input_type -> payment.v1.UpdateProviderReq
-	18, // 12: payment.v1.Payment.DeleteProvider:input_type -> payment.v1.DeleteProviderReq
-	19, // 13: payment.v1.Payment.ToggleProvider:input_type -> payment.v1.ToggleProviderReq
-	20, // 14: payment.v1.Payment.ListPlans:input_type -> payment.v1.ListPlansReq
-	23, // 15: payment.v1.Payment.CreatePlan:input_type -> payment.v1.CreatePlanReq
-	24, // 16: payment.v1.Payment.UpdatePlan:input_type -> payment.v1.UpdatePlanReq
-	25, // 17: payment.v1.Payment.DeletePlan:input_type -> payment.v1.DeletePlanReq
-	2,  // 18: payment.v1.Payment.GetOrder:input_type -> payment.v1.GetOrderReq
-	4,  // 19: payment.v1.Payment.ListMethods:input_type -> payment.v1.ListMethodsReq
-	7,  // 20: payment.v1.Payment.Webhook:input_type -> payment.v1.WebhookReq
-	1,  // 21: payment.v1.Payment.CreateOrder:output_type -> payment.v1.CreateOrderReply
-	9,  // 22: payment.v1.Payment.ListOrders:output_type -> payment.v1.ListOrdersReply
-	12, // 23: payment.v1.Payment.OrderStats:output_type -> payment.v1.OrderStatsReply
-	15, // 24: payment.v1.Payment.ListProviders:output_type -> payment.v1.ListProvidersReply
-	14, // 25: payment.v1.Payment.CreateProvider:output_type -> payment.v1.ProviderReply
-	14, // 26: payment.v1.Payment.UpdateProvider:output_type -> payment.v1.ProviderReply
-	26, // 27: payment.v1.Payment.DeleteProvider:output_type -> payment.v1.EmptyReply
-	14, // 28: payment.v1.Payment.ToggleProvider:output_type -> payment.v1.ProviderReply
-	22, // 29: payment.v1.Payment.ListPlans:output_type -> payment.v1.ListPlansReply
-	21, // 30: payment.v1.Payment.CreatePlan:output_type -> payment.v1.PlanReply
-	21, // 31: payment.v1.Payment.UpdatePlan:output_type -> payment.v1.PlanReply
-	26, // 32: payment.v1.Payment.DeletePlan:output_type -> payment.v1.EmptyReply
-	3,  // 33: payment.v1.Payment.GetOrder:output_type -> payment.v1.GetOrderReply
-	5,  // 34: payment.v1.Payment.ListMethods:output_type -> payment.v1.ListMethodsReply
-	26, // 35: payment.v1.Payment.Webhook:output_type -> payment.v1.EmptyReply
-	21, // [21:36] is the sub-list for method output_type
-	6,  // [6:21] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	5,  // 0: payment.v1.ListPublicPlansReply.list:type_name -> payment.v1.PublicPlanItem
+	11, // 1: payment.v1.ListMethodsReply.list:type_name -> payment.v1.MethodItem
+	15, // 2: payment.v1.ListOrdersReply.list:type_name -> payment.v1.OrderItem
+	19, // 3: payment.v1.ListProvidersReply.list:type_name -> payment.v1.ProviderReply
+	32, // 4: payment.v1.CreateProviderReq.config:type_name -> payment.v1.CreateProviderReq.ConfigEntry
+	33, // 5: payment.v1.UpdateProviderReq.config:type_name -> payment.v1.UpdateProviderReq.ConfigEntry
+	26, // 6: payment.v1.ListPlansReply.list:type_name -> payment.v1.PlanReply
+	0,  // 7: payment.v1.Payment.CreateOrder:input_type -> payment.v1.CreateOrderReq
+	13, // 8: payment.v1.Payment.ListOrders:input_type -> payment.v1.ListOrdersReq
+	16, // 9: payment.v1.Payment.OrderStats:input_type -> payment.v1.OrderStatsReq
+	18, // 10: payment.v1.Payment.ListProviders:input_type -> payment.v1.ListProvidersReq
+	21, // 11: payment.v1.Payment.CreateProvider:input_type -> payment.v1.CreateProviderReq
+	22, // 12: payment.v1.Payment.UpdateProvider:input_type -> payment.v1.UpdateProviderReq
+	23, // 13: payment.v1.Payment.DeleteProvider:input_type -> payment.v1.DeleteProviderReq
+	24, // 14: payment.v1.Payment.ToggleProvider:input_type -> payment.v1.ToggleProviderReq
+	25, // 15: payment.v1.Payment.ListPlans:input_type -> payment.v1.ListPlansReq
+	28, // 16: payment.v1.Payment.CreatePlan:input_type -> payment.v1.CreatePlanReq
+	29, // 17: payment.v1.Payment.UpdatePlan:input_type -> payment.v1.UpdatePlanReq
+	30, // 18: payment.v1.Payment.DeletePlan:input_type -> payment.v1.DeletePlanReq
+	2,  // 19: payment.v1.Payment.GetOrder:input_type -> payment.v1.GetOrderReq
+	4,  // 20: payment.v1.Payment.ListPublicPlans:input_type -> payment.v1.ListPublicPlansReq
+	7,  // 21: payment.v1.Payment.VipStatus:input_type -> payment.v1.VipStatusReq
+	9,  // 22: payment.v1.Payment.ListMethods:input_type -> payment.v1.ListMethodsReq
+	12, // 23: payment.v1.Payment.Webhook:input_type -> payment.v1.WebhookReq
+	1,  // 24: payment.v1.Payment.CreateOrder:output_type -> payment.v1.CreateOrderReply
+	14, // 25: payment.v1.Payment.ListOrders:output_type -> payment.v1.ListOrdersReply
+	17, // 26: payment.v1.Payment.OrderStats:output_type -> payment.v1.OrderStatsReply
+	20, // 27: payment.v1.Payment.ListProviders:output_type -> payment.v1.ListProvidersReply
+	19, // 28: payment.v1.Payment.CreateProvider:output_type -> payment.v1.ProviderReply
+	19, // 29: payment.v1.Payment.UpdateProvider:output_type -> payment.v1.ProviderReply
+	31, // 30: payment.v1.Payment.DeleteProvider:output_type -> payment.v1.EmptyReply
+	19, // 31: payment.v1.Payment.ToggleProvider:output_type -> payment.v1.ProviderReply
+	27, // 32: payment.v1.Payment.ListPlans:output_type -> payment.v1.ListPlansReply
+	26, // 33: payment.v1.Payment.CreatePlan:output_type -> payment.v1.PlanReply
+	26, // 34: payment.v1.Payment.UpdatePlan:output_type -> payment.v1.PlanReply
+	31, // 35: payment.v1.Payment.DeletePlan:output_type -> payment.v1.EmptyReply
+	3,  // 36: payment.v1.Payment.GetOrder:output_type -> payment.v1.GetOrderReply
+	6,  // 37: payment.v1.Payment.ListPublicPlans:output_type -> payment.v1.ListPublicPlansReply
+	8,  // 38: payment.v1.Payment.VipStatus:output_type -> payment.v1.VipStatusReply
+	10, // 39: payment.v1.Payment.ListMethods:output_type -> payment.v1.ListMethodsReply
+	31, // 40: payment.v1.Payment.Webhook:output_type -> payment.v1.EmptyReply
+	24, // [24:41] is the sub-list for method output_type
+	7,  // [7:24] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_payment_v1_payment_proto_init() }
@@ -2041,15 +2310,15 @@ func file_payment_v1_payment_proto_init() {
 	if File_payment_v1_payment_proto != nil {
 		return
 	}
-	file_payment_v1_payment_proto_msgTypes[17].OneofWrappers = []any{}
-	file_payment_v1_payment_proto_msgTypes[24].OneofWrappers = []any{}
+	file_payment_v1_payment_proto_msgTypes[22].OneofWrappers = []any{}
+	file_payment_v1_payment_proto_msgTypes[29].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_v1_payment_proto_rawDesc), len(file_payment_v1_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   29,
+			NumMessages:   34,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -156,4 +156,51 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get offline => '오프라인 캐시';
+
+  @override
+  String get vipActive => 'VIP 회원';
+
+  @override
+  String get vipNotActive => 'VIP 미가입';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return '만료일: $date';
+  }
+
+  @override
+  String get vipRenew => '갱신';
+
+  @override
+  String get vipOpen => 'VIP 가입';
+
+  @override
+  String get payNow => '결제하기';
+
+  @override
+  String get paymentResult => '결제 결과';
+
+  @override
+  String get paymentSuccess => '결제 성공';
+
+  @override
+  String get paymentFailed => '결제 실패';
+
+  @override
+  String get paymentPending => '결제 확인 중';
+
+  @override
+  String get paymentChecking => '결제 결과 확인 중…';
+
+  @override
+  String get paymentNoMethod => '사용 가능한 결제 수단이 없습니다';
+
+  @override
+  String get vipChapterLocked => 'VIP 전용 챕터입니다. 회원 가입 후 읽을 수 있습니다.';
+
+  @override
+  String get openVipToRead => '회원 가입 후 읽기';
+
+  @override
+  String get retryPay => '다시 결제';
 }

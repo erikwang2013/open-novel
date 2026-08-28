@@ -156,4 +156,51 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get offline => '离线缓存';
+
+  @override
+  String get vipActive => 'VIP 会员';
+
+  @override
+  String get vipNotActive => '尚未开通 VIP';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return '到期时间：$date';
+  }
+
+  @override
+  String get vipRenew => '续费';
+
+  @override
+  String get vipOpen => '开通 VIP';
+
+  @override
+  String get payNow => '立即支付';
+
+  @override
+  String get paymentResult => '支付结果';
+
+  @override
+  String get paymentSuccess => '支付成功';
+
+  @override
+  String get paymentFailed => '支付失败';
+
+  @override
+  String get paymentPending => '等待支付确认';
+
+  @override
+  String get paymentChecking => '正在确认支付结果…';
+
+  @override
+  String get paymentNoMethod => '暂无可用支付方式';
+
+  @override
+  String get vipChapterLocked => '该章节为 VIP 章节，开通会员后可阅读';
+
+  @override
+  String get openVipToRead => '开通会员阅读';
+
+  @override
+  String get retryPay => '重新支付';
 }

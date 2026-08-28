@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "Open Novel main module" },
-    { "name": "EntryAbility_desc", "value": "Open Novel main entry" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "Home" },
-    { "name": "mine", "value": "Mine" },
-    { "name": "read", "value": "Read" },
-    { "name": "recommend", "value": "Recommended" },
-    { "name": "allBooks", "value": "Library" },
-    { "name": "bookDetail", "value": "Book Detail" },
-    { "name": "chapters", "value": "Chapters" },
-    { "name": "login", "value": "Log In" },
-    { "name": "register", "value": "Sign Up" },
-    { "name": "logout", "value": "Log Out" },
-    { "name": "username", "value": "Username" },
-    { "name": "password", "value": "Password" },
-    { "name": "email", "value": "Email" },
-    { "name": "nickname", "value": "Nickname" },
-    { "name": "welcome", "value": "Welcome, %s" },
-    { "name": "loginRequired", "value": "Please log in to read" },
-    { "name": "notLoggedIn", "value": "Not logged in" },
-    { "name": "searchHint", "value": "Search title/author" },
-    { "name": "searchResult", "value": "Search" },
-    { "name": "loading", "value": "Loading…" },
-    { "name": "empty", "value": "No data" },
-    { "name": "errorNetwork", "value": "Network error, check your connection" },
-    { "name": "errorServer", "value": "Server error: %s" },
-    { "name": "retry", "value": "Retry" },
-    { "name": "bookCount", "value": "%s chapters" },
-    { "name": "free", "value": "Free" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "Next" },
-    { "name": "prevChapter", "value": "Prev" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "Comments" },
-    { "name": "commentHint", "value": "Write a comment…" },
-    { "name": "post", "value": "Post" },
-    { "name": "settings", "value": "Settings" },
-    { "name": "theme", "value": "Theme" },
-    { "name": "themeSystem", "value": "Follow system" },
-    { "name": "themeLight", "value": "Light" },
-    { "name": "themeDark", "value": "Dark" },
-    { "name": "fontSize", "value": "Font size" },
-    { "name": "lineHeight", "value": "Line height" },
-    { "name": "pageMode", "value": "Page mode" },
-    { "name": "scrollMode", "value": "Vertical scroll" },
-    { "name": "pagedMode", "value": "Page flip" },
-    { "name": "offline", "value": "Offline cache" }
+    {
+      "name": "module_desc",
+      "value": "Open Novel main module"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Open Novel main entry"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "Home"
+    },
+    {
+      "name": "mine",
+      "value": "Mine"
+    },
+    {
+      "name": "read",
+      "value": "Read"
+    },
+    {
+      "name": "recommend",
+      "value": "Recommended"
+    },
+    {
+      "name": "allBooks",
+      "value": "Library"
+    },
+    {
+      "name": "bookDetail",
+      "value": "Book Detail"
+    },
+    {
+      "name": "chapters",
+      "value": "Chapters"
+    },
+    {
+      "name": "login",
+      "value": "Log In"
+    },
+    {
+      "name": "register",
+      "value": "Sign Up"
+    },
+    {
+      "name": "logout",
+      "value": "Log Out"
+    },
+    {
+      "name": "username",
+      "value": "Username"
+    },
+    {
+      "name": "password",
+      "value": "Password"
+    },
+    {
+      "name": "email",
+      "value": "Email"
+    },
+    {
+      "name": "nickname",
+      "value": "Nickname"
+    },
+    {
+      "name": "welcome",
+      "value": "Welcome, %s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "Please log in to read"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "Not logged in"
+    },
+    {
+      "name": "searchHint",
+      "value": "Search title/author"
+    },
+    {
+      "name": "searchResult",
+      "value": "Search"
+    },
+    {
+      "name": "loading",
+      "value": "Loading…"
+    },
+    {
+      "name": "empty",
+      "value": "No data"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "Network error, check your connection"
+    },
+    {
+      "name": "errorServer",
+      "value": "Server error: %s"
+    },
+    {
+      "name": "retry",
+      "value": "Retry"
+    },
+    {
+      "name": "bookCount",
+      "value": "%s chapters"
+    },
+    {
+      "name": "free",
+      "value": "Free"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "Next"
+    },
+    {
+      "name": "prevChapter",
+      "value": "Prev"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "Comments"
+    },
+    {
+      "name": "commentHint",
+      "value": "Write a comment…"
+    },
+    {
+      "name": "post",
+      "value": "Post"
+    },
+    {
+      "name": "settings",
+      "value": "Settings"
+    },
+    {
+      "name": "theme",
+      "value": "Theme"
+    },
+    {
+      "name": "themeSystem",
+      "value": "Follow system"
+    },
+    {
+      "name": "themeLight",
+      "value": "Light"
+    },
+    {
+      "name": "themeDark",
+      "value": "Dark"
+    },
+    {
+      "name": "fontSize",
+      "value": "Font size"
+    },
+    {
+      "name": "lineHeight",
+      "value": "Line height"
+    },
+    {
+      "name": "pageMode",
+      "value": "Page mode"
+    },
+    {
+      "name": "scrollMode",
+      "value": "Vertical scroll"
+    },
+    {
+      "name": "pagedMode",
+      "value": "Page flip"
+    },
+    {
+      "name": "offline",
+      "value": "Offline cache"
+    },
+    {
+      "name": "vipActive",
+      "value": "VIP Member"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "VIP not activated"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "Expires: %s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "Renew"
+    },
+    {
+      "name": "vipOpen",
+      "value": "Get VIP"
+    },
+    {
+      "name": "payNow",
+      "value": "Pay Now"
+    },
+    {
+      "name": "paymentResult",
+      "value": "Payment Result"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "Payment Successful"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "Payment Failed"
+    },
+    {
+      "name": "paymentPending",
+      "value": "Awaiting payment"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "Confirming payment…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "No payment method available"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "This is a VIP chapter. Get VIP to read."
+    },
+    {
+      "name": "openVipToRead",
+      "value": "Get VIP to read"
+    },
+    {
+      "name": "retryPay",
+      "value": "Pay Again"
+    }
   ]
 }

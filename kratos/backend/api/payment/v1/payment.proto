@@ -89,6 +89,18 @@ service Payment {
       get: "/api/payments/order/{order_no}"
     };
   }
+  // 公开套餐列表（无鉴权，T-P-14）：仅 status=1，sort 升序
+  rpc ListPublicPlans(ListPublicPlansReq) returns (ListPublicPlansReply) {
+    option (google.api.http) = {
+      get: "/api/payments/plans"
+    };
+  }
+  // VIP 状态（登录态，T-P-14）：active + 到期时间
+  rpc VipStatus(VipStatusReq) returns (VipStatusReply) {
+    option (google.api.http) = {
+      get: "/api/payments/vip-status"
+    };
+  }
   // 支付方式列表：enabled 且 lang/region 匹配，sort 升序（公开）
   rpc ListMethods(ListMethodsReq) returns (ListMethodsReply) {
     option (google.api.http) = {
@@ -129,6 +141,27 @@ message GetOrderReply {
   string provider = 5;
   string tx_id = 6;
   string paid_at = 7;
+}
+
+message ListPublicPlansReq {}
+
+message PublicPlanItem {
+  string plan_code = 1; // monthly/quarterly/yearly
+  int64 days = 2;       // 有效天数
+  int64 amount = 3;     // 分
+  string currency = 4;  // USD
+  string label = 5;
+}
+
+message ListPublicPlansReply {
+  repeated PublicPlanItem list = 1;
+}
+
+message VipStatusReq {}
+
+message VipStatusReply {
+  bool active = 1;           // vip_expires_at > now
+  string vip_expires_at = 2; // RFC3339，非会员为空
 }
 
 message ListMethodsReq {

@@ -24,6 +24,14 @@ func (s *rawBodyEcho) Webhook(ctx context.Context, req *paymentv1.WebhookReq) (*
 	return &paymentv1.EmptyReply{}, nil
 }
 
+func (s *rawBodyEcho) ListPublicPlans(context.Context, *paymentv1.ListPublicPlansReq) (*paymentv1.ListPublicPlansReply, error) {
+	return &paymentv1.ListPublicPlansReply{}, nil
+}
+
+func (s *rawBodyEcho) VipStatus(context.Context, *paymentv1.VipStatusReq) (*paymentv1.VipStatusReply, error) {
+	return &paymentv1.VipStatusReply{}, nil
+}
+
 func TestRawBodyMiddleware(t *testing.T) {
 	body := `{"payment_id":1,"payment_status":"finished"}`
 	srv := khttp.NewServer(khttp.Middleware(RawBody()))

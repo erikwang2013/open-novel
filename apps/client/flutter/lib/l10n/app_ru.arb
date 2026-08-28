@@ -46,5 +46,20 @@
   "pageMode": "Режим страниц",
   "scrollMode": "Вертикальная прокрутка",
   "pagedMode": "Перелистывание",
-  "offline": "Офлайн-кэш"
+  "offline": "Офлайн-кэш",
+  "vipActive": "VIP-участник",
+  "vipNotActive": "VIP не активирован",
+  "vipExpiresAt": "Истекает: {date}",
+  "vipRenew": "Продлить",
+  "vipOpen": "Получить VIP",
+  "payNow": "Оплатить",
+  "paymentResult": "Результат оплаты",
+  "paymentSuccess": "Оплата успешна",
+  "paymentFailed": "Оплата не удалась",
+  "paymentPending": "Ожидание оплаты",
+  "paymentChecking": "Проверка оплаты…",
+  "paymentNoMethod": "Нет доступных способов оплаты",
+  "vipChapterLocked": "Эта глава доступна только для VIP-участников.",
+  "openVipToRead": "Стать участником",
+  "retryPay": "Оплатить снова"
 }

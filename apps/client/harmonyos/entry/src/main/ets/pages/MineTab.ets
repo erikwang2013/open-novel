@@ -11,6 +11,8 @@ export struct MineTab {
   @State shelfRows: ShelfRow[] = [];
   @State favRows: FavRow[] = [];
   @State progressRows: ProgressRow[] = [];
+  @State vipActive: boolean = false;
+  @State vipExpiresAt: string = '';
 
   aboutToAppear(): void {
     this.refresh();
@@ -25,10 +27,24 @@ export struct MineTab {
     this.shelfRows = [];
     this.favRows = [];
     this.progressRows = [];
+    this.vipActive = false;
+    this.vipExpiresAt = '';
     if (this.user === null) {
       return;
     }
     this.loadSections();
+    this.loadVip();
+  }
+
+  /// VIP 状态（T-P-17）：失败静默，不阻塞页面。
+  private async loadVip(): Promise<void> {
+    try {
+      const v = await ApiClient.instance.vipStatus();
+      this.vipActive = v.active;
+      this.vipExpiresAt = v.vipExpiresAt;
+    } catch (e) {
+      // 静默
+    }
   }
 
   private async loadSections(): Promise<void> {
@@ -150,6 +166,40 @@ export struct MineTab {
     return (getContext(this) as common.UIAbilityContext).resourceManager.getStringSync(res, ...args);
   }
 
+  /// VIP 状态卡（T-P-17）：active/到期时间 + 开通/续费入口（跳购买页，返回后刷新）。
+  @Builder
+  vipCard() {
+    Row({ space: 8 }) {
+      Text(this.vipActive ? $r('app.string.vipActive') : $r('app.string.vipNotActive'))
+        .fontSize(15)
+        .fontWeight(FontWeight.Bold)
+        .layoutWeight(1)
+      Text(this.vipExpiresAt !== '' ? this.t($r('app.string.vipExpiresAt'), this.shortDate(this.vipExpiresAt)) : '')
+        .fontSize(13)
+        .fontColor('#888888')
+      Button(this.vipActive ? $r('app.string.vipRenew') : $r('app.string.vipOpen'))
+        .fontSize(13)
+        .height(32)
+        .backgroundColor('#FFF3E0')
+        .fontColor('#B45309')
+        .onClick(() => {
+          router.pushUrl({ url: 'pages/VipPage' }).then(() => {
+            this.refresh();
+          });
+        })
+    }
+    .width('100%')
+    .padding(12)
+    .backgroundColor('#FFF8E1')
+    .borderRadius(8)
+    .margin({ top: 16 })
+  }
+
+  /// 截取日期部分（后端时间串含时分秒时只留 yyyy-MM-dd）。
+  private shortDate(s: string): string {
+    return s.length >= 10 ? s.substring(0, 10) : s;
+  }
+
   @Builder
   sectionTitle(text: string) {
     Text(text)
@@ -261,6 +311,8 @@ export struct MineTab {
             .onClick(() => {
               this.logout();
             })
+
+          this.vipCard()
 
           this.sectionTitle('书架')
           if (this.shelfRows.length === 0) {

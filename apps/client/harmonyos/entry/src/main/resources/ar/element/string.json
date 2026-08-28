@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "الوحدة الرئيسية لتطبيق Open Novel" },
-    { "name": "EntryAbility_desc", "value": "المدخل الرئيسي لتطبيق Open Novel" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "الرئيسية" },
-    { "name": "mine", "value": "حسابي" },
-    { "name": "read", "value": "اقرأ" },
-    { "name": "recommend", "value": "الموصى بها" },
-    { "name": "allBooks", "value": "المكتبة" },
-    { "name": "bookDetail", "value": "تفاصيل الكتاب" },
-    { "name": "chapters", "value": "الفصول" },
-    { "name": "login", "value": "تسجيل الدخول" },
-    { "name": "register", "value": "إنشاء حساب" },
-    { "name": "logout", "value": "تسجيل الخروج" },
-    { "name": "username", "value": "اسم المستخدم" },
-    { "name": "password", "value": "كلمة المرور" },
-    { "name": "email", "value": "البريد الإلكتروني" },
-    { "name": "nickname", "value": "الاسم المستعار" },
-    { "name": "welcome", "value": "مرحبًا، %s" },
-    { "name": "loginRequired", "value": "سجّل الدخول للقراءة" },
-    { "name": "notLoggedIn", "value": "غير مسجل الدخول" },
-    { "name": "searchHint", "value": "ابحث عن العنوان/المؤلف" },
-    { "name": "searchResult", "value": "بحث" },
-    { "name": "loading", "value": "جارٍ التحميل…" },
-    { "name": "empty", "value": "لا توجد بيانات" },
-    { "name": "errorNetwork", "value": "خطأ في الشبكة، تحقق من الاتصال" },
-    { "name": "errorServer", "value": "خطأ في الخادم: %s" },
-    { "name": "retry", "value": "إعادة المحاولة" },
-    { "name": "bookCount", "value": "%s فصول" },
-    { "name": "free", "value": "مجاني" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "الفصل التالي" },
-    { "name": "prevChapter", "value": "الفصل السابق" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "التعليقات" },
-    { "name": "commentHint", "value": "اكتب تعليقًا…" },
-    { "name": "post", "value": "نشر" },
-    { "name": "settings", "value": "الإعدادات" },
-    { "name": "theme", "value": "السمة" },
-    { "name": "themeSystem", "value": "تبعا للنظام" },
-    { "name": "themeLight", "value": "فاتح" },
-    { "name": "themeDark", "value": "داكن" },
-    { "name": "fontSize", "value": "حجم الخط" },
-    { "name": "lineHeight", "value": "تباعد الأسطر" },
-    { "name": "pageMode", "value": "وضع الصفحات" },
-    { "name": "scrollMode", "value": "تمرير عمودي" },
-    { "name": "pagedMode", "value": "تقليب الصفحات" },
-    { "name": "offline", "value": "ذاكرة تخزين دون اتصال" }
+    {
+      "name": "module_desc",
+      "value": "الوحدة الرئيسية لتطبيق Open Novel"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "المدخل الرئيسي لتطبيق Open Novel"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "الرئيسية"
+    },
+    {
+      "name": "mine",
+      "value": "حسابي"
+    },
+    {
+      "name": "read",
+      "value": "اقرأ"
+    },
+    {
+      "name": "recommend",
+      "value": "الموصى بها"
+    },
+    {
+      "name": "allBooks",
+      "value": "المكتبة"
+    },
+    {
+      "name": "bookDetail",
+      "value": "تفاصيل الكتاب"
+    },
+    {
+      "name": "chapters",
+      "value": "الفصول"
+    },
+    {
+      "name": "login",
+      "value": "تسجيل الدخول"
+    },
+    {
+      "name": "register",
+      "value": "إنشاء حساب"
+    },
+    {
+      "name": "logout",
+      "value": "تسجيل الخروج"
+    },
+    {
+      "name": "username",
+      "value": "اسم المستخدم"
+    },
+    {
+      "name": "password",
+      "value": "كلمة المرور"
+    },
+    {
+      "name": "email",
+      "value": "البريد الإلكتروني"
+    },
+    {
+      "name": "nickname",
+      "value": "الاسم المستعار"
+    },
+    {
+      "name": "welcome",
+      "value": "مرحبًا، %s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "سجّل الدخول للقراءة"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "غير مسجل الدخول"
+    },
+    {
+      "name": "searchHint",
+      "value": "ابحث عن العنوان/المؤلف"
+    },
+    {
+      "name": "searchResult",
+      "value": "بحث"
+    },
+    {
+      "name": "loading",
+      "value": "جارٍ التحميل…"
+    },
+    {
+      "name": "empty",
+      "value": "لا توجد بيانات"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "خطأ في الشبكة، تحقق من الاتصال"
+    },
+    {
+      "name": "errorServer",
+      "value": "خطأ في الخادم: %s"
+    },
+    {
+      "name": "retry",
+      "value": "إعادة المحاولة"
+    },
+    {
+      "name": "bookCount",
+      "value": "%s فصول"
+    },
+    {
+      "name": "free",
+      "value": "مجاني"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "الفصل التالي"
+    },
+    {
+      "name": "prevChapter",
+      "value": "الفصل السابق"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "التعليقات"
+    },
+    {
+      "name": "commentHint",
+      "value": "اكتب تعليقًا…"
+    },
+    {
+      "name": "post",
+      "value": "نشر"
+    },
+    {
+      "name": "settings",
+      "value": "الإعدادات"
+    },
+    {
+      "name": "theme",
+      "value": "السمة"
+    },
+    {
+      "name": "themeSystem",
+      "value": "تبعا للنظام"
+    },
+    {
+      "name": "themeLight",
+      "value": "فاتح"
+    },
+    {
+      "name": "themeDark",
+      "value": "داكن"
+    },
+    {
+      "name": "fontSize",
+      "value": "حجم الخط"
+    },
+    {
+      "name": "lineHeight",
+      "value": "تباعد الأسطر"
+    },
+    {
+      "name": "pageMode",
+      "value": "وضع الصفحات"
+    },
+    {
+      "name": "scrollMode",
+      "value": "تمرير عمودي"
+    },
+    {
+      "name": "pagedMode",
+      "value": "تقليب الصفحات"
+    },
+    {
+      "name": "offline",
+      "value": "ذاكرة تخزين دون اتصال"
+    },
+    {
+      "name": "vipActive",
+      "value": "عضو VIP"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "VIP غير مفعل"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "تنتهي في: %s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "تجديد"
+    },
+    {
+      "name": "vipOpen",
+      "value": "اشترك في VIP"
+    },
+    {
+      "name": "payNow",
+      "value": "ادفع الآن"
+    },
+    {
+      "name": "paymentResult",
+      "value": "نتيجة الدفع"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "تم الدفع بنجاح"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "فشل الدفع"
+    },
+    {
+      "name": "paymentPending",
+      "value": "في انتظار الدفع"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "جارٍ تأكيد الدفع…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "لا توجد طريقة دفع متاحة"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "هذا الفصل مخصص لأعضاء VIP فقط."
+    },
+    {
+      "name": "openVipToRead",
+      "value": "اشترك للقراءة"
+    },
+    {
+      "name": "retryPay",
+      "value": "إعادة الدفع"
+    }
   ]
 }

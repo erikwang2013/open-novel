@@ -156,4 +156,51 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get offline => 'Offline-Cache';
+
+  @override
+  String get vipActive => 'VIP-Mitglied';
+
+  @override
+  String get vipNotActive => 'VIP nicht aktiviert';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return 'Gültig bis $date';
+  }
+
+  @override
+  String get vipRenew => 'Verlängern';
+
+  @override
+  String get vipOpen => 'VIP erhalten';
+
+  @override
+  String get payNow => 'Jetzt zahlen';
+
+  @override
+  String get paymentResult => 'Zahlungsergebnis';
+
+  @override
+  String get paymentSuccess => 'Zahlung erfolgreich';
+
+  @override
+  String get paymentFailed => 'Zahlung fehlgeschlagen';
+
+  @override
+  String get paymentPending => 'Warte auf Zahlung';
+
+  @override
+  String get paymentChecking => 'Zahlung wird geprüft…';
+
+  @override
+  String get paymentNoMethod => 'Keine Zahlungsmethode verfügbar';
+
+  @override
+  String get vipChapterLocked => 'Dieses Kapitel ist nur für VIP-Mitglieder.';
+
+  @override
+  String get openVipToRead => 'Mitglied werden';
+
+  @override
+  String get retryPay => 'Erneut zahlen';
 }

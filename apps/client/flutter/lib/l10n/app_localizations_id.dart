@@ -156,4 +156,51 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get offline => 'Cache offline';
+
+  @override
+  String get vipActive => 'Anggota VIP';
+
+  @override
+  String get vipNotActive => 'VIP belum aktif';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return 'Berakhir: $date';
+  }
+
+  @override
+  String get vipRenew => 'Perpanjang';
+
+  @override
+  String get vipOpen => 'Dapatkan VIP';
+
+  @override
+  String get payNow => 'Bayar Sekarang';
+
+  @override
+  String get paymentResult => 'Hasil Pembayaran';
+
+  @override
+  String get paymentSuccess => 'Pembayaran Berhasil';
+
+  @override
+  String get paymentFailed => 'Pembayaran Gagal';
+
+  @override
+  String get paymentPending => 'Menunggu Pembayaran';
+
+  @override
+  String get paymentChecking => 'Memverifikasi pembayaran…';
+
+  @override
+  String get paymentNoMethod => 'Tidak ada metode pembayaran tersedia';
+
+  @override
+  String get vipChapterLocked => 'Bab ini khusus anggota VIP.';
+
+  @override
+  String get openVipToRead => 'Jadi anggota untuk membaca';
+
+  @override
+  String get retryPay => 'Bayar Lagi';
 }

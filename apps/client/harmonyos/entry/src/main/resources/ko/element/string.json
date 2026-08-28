@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "Open Novel 앱 메인 모듈" },
-    { "name": "EntryAbility_desc", "value": "Open Novel 앱 메인 진입점" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "홈" },
-    { "name": "mine", "value": "마이페이지" },
-    { "name": "read", "value": "읽기" },
-    { "name": "recommend", "value": "추천" },
-    { "name": "allBooks", "value": "서재" },
-    { "name": "bookDetail", "value": "작품 정보" },
-    { "name": "chapters", "value": "목차" },
-    { "name": "login", "value": "로그인" },
-    { "name": "register", "value": "회원가입" },
-    { "name": "logout", "value": "로그아웃" },
-    { "name": "username", "value": "사용자 이름" },
-    { "name": "password", "value": "비밀번호" },
-    { "name": "email", "value": "이메일" },
-    { "name": "nickname", "value": "닉네임" },
-    { "name": "welcome", "value": "환영합니다, %s" },
-    { "name": "loginRequired", "value": "먼저 로그인해 주세요" },
-    { "name": "notLoggedIn", "value": "로그인되지 않음" },
-    { "name": "searchHint", "value": "제목/작가 검색" },
-    { "name": "searchResult", "value": "검색" },
-    { "name": "loading", "value": "불러오는 중…" },
-    { "name": "empty", "value": "데이터가 없습니다" },
-    { "name": "errorNetwork", "value": "네트워크 오류가 발생했습니다. 연결을 확인해 주세요" },
-    { "name": "errorServer", "value": "서버 오류: %s" },
-    { "name": "retry", "value": "다시 시도" },
-    { "name": "bookCount", "value": "총 %s장" },
-    { "name": "free", "value": "무료" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "다음 장" },
-    { "name": "prevChapter", "value": "이전 장" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "댓글" },
-    { "name": "commentHint", "value": "댓글을 남겨보세요…" },
-    { "name": "post", "value": "등록" },
-    { "name": "settings", "value": "설정" },
-    { "name": "theme", "value": "테마" },
-    { "name": "themeSystem", "value": "시스템 따르기" },
-    { "name": "themeLight", "value": "라이트" },
-    { "name": "themeDark", "value": "다크" },
-    { "name": "fontSize", "value": "글자 크기" },
-    { "name": "lineHeight", "value": "줄 간격" },
-    { "name": "pageMode", "value": "페이지 모드" },
-    { "name": "scrollMode", "value": "상하 스크롤" },
-    { "name": "pagedMode", "value": "좌우 페이지 넘김" },
-    { "name": "offline", "value": "오프라인 캐시" }
+    {
+      "name": "module_desc",
+      "value": "Open Novel 앱 메인 모듈"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Open Novel 앱 메인 진입점"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "홈"
+    },
+    {
+      "name": "mine",
+      "value": "마이페이지"
+    },
+    {
+      "name": "read",
+      "value": "읽기"
+    },
+    {
+      "name": "recommend",
+      "value": "추천"
+    },
+    {
+      "name": "allBooks",
+      "value": "서재"
+    },
+    {
+      "name": "bookDetail",
+      "value": "작품 정보"
+    },
+    {
+      "name": "chapters",
+      "value": "목차"
+    },
+    {
+      "name": "login",
+      "value": "로그인"
+    },
+    {
+      "name": "register",
+      "value": "회원가입"
+    },
+    {
+      "name": "logout",
+      "value": "로그아웃"
+    },
+    {
+      "name": "username",
+      "value": "사용자 이름"
+    },
+    {
+      "name": "password",
+      "value": "비밀번호"
+    },
+    {
+      "name": "email",
+      "value": "이메일"
+    },
+    {
+      "name": "nickname",
+      "value": "닉네임"
+    },
+    {
+      "name": "welcome",
+      "value": "환영합니다, %s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "먼저 로그인해 주세요"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "로그인되지 않음"
+    },
+    {
+      "name": "searchHint",
+      "value": "제목/작가 검색"
+    },
+    {
+      "name": "searchResult",
+      "value": "검색"
+    },
+    {
+      "name": "loading",
+      "value": "불러오는 중…"
+    },
+    {
+      "name": "empty",
+      "value": "데이터가 없습니다"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "네트워크 오류가 발생했습니다. 연결을 확인해 주세요"
+    },
+    {
+      "name": "errorServer",
+      "value": "서버 오류: %s"
+    },
+    {
+      "name": "retry",
+      "value": "다시 시도"
+    },
+    {
+      "name": "bookCount",
+      "value": "총 %s장"
+    },
+    {
+      "name": "free",
+      "value": "무료"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "다음 장"
+    },
+    {
+      "name": "prevChapter",
+      "value": "이전 장"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "댓글"
+    },
+    {
+      "name": "commentHint",
+      "value": "댓글을 남겨보세요…"
+    },
+    {
+      "name": "post",
+      "value": "등록"
+    },
+    {
+      "name": "settings",
+      "value": "설정"
+    },
+    {
+      "name": "theme",
+      "value": "테마"
+    },
+    {
+      "name": "themeSystem",
+      "value": "시스템 따르기"
+    },
+    {
+      "name": "themeLight",
+      "value": "라이트"
+    },
+    {
+      "name": "themeDark",
+      "value": "다크"
+    },
+    {
+      "name": "fontSize",
+      "value": "글자 크기"
+    },
+    {
+      "name": "lineHeight",
+      "value": "줄 간격"
+    },
+    {
+      "name": "pageMode",
+      "value": "페이지 모드"
+    },
+    {
+      "name": "scrollMode",
+      "value": "상하 스크롤"
+    },
+    {
+      "name": "pagedMode",
+      "value": "좌우 페이지 넘김"
+    },
+    {
+      "name": "offline",
+      "value": "오프라인 캐시"
+    },
+    {
+      "name": "vipActive",
+      "value": "VIP 회원"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "VIP 미가입"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "만료일: %s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "갱신"
+    },
+    {
+      "name": "vipOpen",
+      "value": "VIP 가입"
+    },
+    {
+      "name": "payNow",
+      "value": "결제하기"
+    },
+    {
+      "name": "paymentResult",
+      "value": "결제 결과"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "결제 성공"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "결제 실패"
+    },
+    {
+      "name": "paymentPending",
+      "value": "결제 확인 중"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "결제 결과 확인 중…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "사용 가능한 결제 수단이 없습니다"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "VIP 전용 챕터입니다. 회원 가입 후 읽을 수 있습니다."
+    },
+    {
+      "name": "openVipToRead",
+      "value": "회원 가입 후 읽기"
+    },
+    {
+      "name": "retryPay",
+      "value": "다시 결제"
+    }
   ]
 }

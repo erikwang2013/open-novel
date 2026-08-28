@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "Modul utama aplikasi Open Novel" },
-    { "name": "EntryAbility_desc", "value": "Pintu masuk utama aplikasi Open Novel" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "Beranda" },
-    { "name": "mine", "value": "Akun saya" },
-    { "name": "read", "value": "Baca" },
-    { "name": "recommend", "value": "Rekomendasi" },
-    { "name": "allBooks", "value": "Perpustakaan" },
-    { "name": "bookDetail", "value": "Detail buku" },
-    { "name": "chapters", "value": "Bab" },
-    { "name": "login", "value": "Masuk" },
-    { "name": "register", "value": "Daftar" },
-    { "name": "logout", "value": "Keluar" },
-    { "name": "username", "value": "Nama pengguna" },
-    { "name": "password", "value": "Kata sandi" },
-    { "name": "email", "value": "Email" },
-    { "name": "nickname", "value": "Nama panggilan" },
-    { "name": "welcome", "value": "Selamat datang, %s" },
-    { "name": "loginRequired", "value": "Silakan masuk untuk membaca" },
-    { "name": "notLoggedIn", "value": "Belum masuk" },
-    { "name": "searchHint", "value": "Cari judul/penulis" },
-    { "name": "searchResult", "value": "Cari" },
-    { "name": "loading", "value": "Memuat…" },
-    { "name": "empty", "value": "Tidak ada data" },
-    { "name": "errorNetwork", "value": "Kesalahan jaringan, periksa koneksi" },
-    { "name": "errorServer", "value": "Kesalahan server: %s" },
-    { "name": "retry", "value": "Coba lagi" },
-    { "name": "bookCount", "value": "%s bab" },
-    { "name": "free", "value": "Gratis" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "Bab berikutnya" },
-    { "name": "prevChapter", "value": "Bab sebelumnya" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "Komentar" },
-    { "name": "commentHint", "value": "Tulis komentar…" },
-    { "name": "post", "value": "Kirim" },
-    { "name": "settings", "value": "Pengaturan" },
-    { "name": "theme", "value": "Tema" },
-    { "name": "themeSystem", "value": "Ikuti sistem" },
-    { "name": "themeLight", "value": "Terang" },
-    { "name": "themeDark", "value": "Gelap" },
-    { "name": "fontSize", "value": "Ukuran font" },
-    { "name": "lineHeight", "value": "Spasi baris" },
-    { "name": "pageMode", "value": "Mode halaman" },
-    { "name": "scrollMode", "value": "Gulir vertikal" },
-    { "name": "pagedMode", "value": "Balik halaman" },
-    { "name": "offline", "value": "Cache offline" }
+    {
+      "name": "module_desc",
+      "value": "Modul utama aplikasi Open Novel"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Pintu masuk utama aplikasi Open Novel"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "Beranda"
+    },
+    {
+      "name": "mine",
+      "value": "Akun saya"
+    },
+    {
+      "name": "read",
+      "value": "Baca"
+    },
+    {
+      "name": "recommend",
+      "value": "Rekomendasi"
+    },
+    {
+      "name": "allBooks",
+      "value": "Perpustakaan"
+    },
+    {
+      "name": "bookDetail",
+      "value": "Detail buku"
+    },
+    {
+      "name": "chapters",
+      "value": "Bab"
+    },
+    {
+      "name": "login",
+      "value": "Masuk"
+    },
+    {
+      "name": "register",
+      "value": "Daftar"
+    },
+    {
+      "name": "logout",
+      "value": "Keluar"
+    },
+    {
+      "name": "username",
+      "value": "Nama pengguna"
+    },
+    {
+      "name": "password",
+      "value": "Kata sandi"
+    },
+    {
+      "name": "email",
+      "value": "Email"
+    },
+    {
+      "name": "nickname",
+      "value": "Nama panggilan"
+    },
+    {
+      "name": "welcome",
+      "value": "Selamat datang, %s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "Silakan masuk untuk membaca"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "Belum masuk"
+    },
+    {
+      "name": "searchHint",
+      "value": "Cari judul/penulis"
+    },
+    {
+      "name": "searchResult",
+      "value": "Cari"
+    },
+    {
+      "name": "loading",
+      "value": "Memuat…"
+    },
+    {
+      "name": "empty",
+      "value": "Tidak ada data"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "Kesalahan jaringan, periksa koneksi"
+    },
+    {
+      "name": "errorServer",
+      "value": "Kesalahan server: %s"
+    },
+    {
+      "name": "retry",
+      "value": "Coba lagi"
+    },
+    {
+      "name": "bookCount",
+      "value": "%s bab"
+    },
+    {
+      "name": "free",
+      "value": "Gratis"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "Bab berikutnya"
+    },
+    {
+      "name": "prevChapter",
+      "value": "Bab sebelumnya"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "Komentar"
+    },
+    {
+      "name": "commentHint",
+      "value": "Tulis komentar…"
+    },
+    {
+      "name": "post",
+      "value": "Kirim"
+    },
+    {
+      "name": "settings",
+      "value": "Pengaturan"
+    },
+    {
+      "name": "theme",
+      "value": "Tema"
+    },
+    {
+      "name": "themeSystem",
+      "value": "Ikuti sistem"
+    },
+    {
+      "name": "themeLight",
+      "value": "Terang"
+    },
+    {
+      "name": "themeDark",
+      "value": "Gelap"
+    },
+    {
+      "name": "fontSize",
+      "value": "Ukuran font"
+    },
+    {
+      "name": "lineHeight",
+      "value": "Spasi baris"
+    },
+    {
+      "name": "pageMode",
+      "value": "Mode halaman"
+    },
+    {
+      "name": "scrollMode",
+      "value": "Gulir vertikal"
+    },
+    {
+      "name": "pagedMode",
+      "value": "Balik halaman"
+    },
+    {
+      "name": "offline",
+      "value": "Cache offline"
+    },
+    {
+      "name": "vipActive",
+      "value": "Anggota VIP"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "VIP belum aktif"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "Berakhir: %s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "Perpanjang"
+    },
+    {
+      "name": "vipOpen",
+      "value": "Dapatkan VIP"
+    },
+    {
+      "name": "payNow",
+      "value": "Bayar Sekarang"
+    },
+    {
+      "name": "paymentResult",
+      "value": "Hasil Pembayaran"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "Pembayaran Berhasil"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "Pembayaran Gagal"
+    },
+    {
+      "name": "paymentPending",
+      "value": "Menunggu Pembayaran"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "Memverifikasi pembayaran…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "Tidak ada metode pembayaran tersedia"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "Bab ini khusus anggota VIP."
+    },
+    {
+      "name": "openVipToRead",
+      "value": "Jadi anggota untuk membaca"
+    },
+    {
+      "name": "retryPay",
+      "value": "Bayar Lagi"
+    }
   ]
 }

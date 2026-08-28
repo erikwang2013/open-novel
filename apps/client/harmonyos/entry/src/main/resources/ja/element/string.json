@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "Open Novel アプリのメインモジュール" },
-    { "name": "EntryAbility_desc", "value": "Open Novel アプリのメインエントリ" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "ホーム" },
-    { "name": "mine", "value": "マイページ" },
-    { "name": "read", "value": "読む" },
-    { "name": "recommend", "value": "おすすめ" },
-    { "name": "allBooks", "value": "本棚" },
-    { "name": "bookDetail", "value": "書籍詳細" },
-    { "name": "chapters", "value": "章" },
-    { "name": "login", "value": "ログイン" },
-    { "name": "register", "value": "新規登録" },
-    { "name": "logout", "value": "ログアウト" },
-    { "name": "username", "value": "ユーザー名" },
-    { "name": "password", "value": "パスワード" },
-    { "name": "email", "value": "メールアドレス" },
-    { "name": "nickname", "value": "ニックネーム" },
-    { "name": "welcome", "value": "ようこそ、%s" },
-    { "name": "loginRequired", "value": "ログインしてからご利用ください" },
-    { "name": "notLoggedIn", "value": "未ログイン" },
-    { "name": "searchHint", "value": "タイトル/作者で検索" },
-    { "name": "searchResult", "value": "検索結果" },
-    { "name": "loading", "value": "読み込み中…" },
-    { "name": "empty", "value": "データがありません" },
-    { "name": "errorNetwork", "value": "ネットワークエラーです。接続をご確認ください" },
-    { "name": "errorServer", "value": "サーバーエラー：%s" },
-    { "name": "retry", "value": "再試行" },
-    { "name": "bookCount", "value": "全%s章" },
-    { "name": "free", "value": "無料" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "次の章" },
-    { "name": "prevChapter", "value": "前の章" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "コメント" },
-    { "name": "commentHint", "value": "コメントを書く…" },
-    { "name": "post", "value": "投稿" },
-    { "name": "settings", "value": "設定" },
-    { "name": "theme", "value": "テーマ" },
-    { "name": "themeSystem", "value": "システムに従う" },
-    { "name": "themeLight", "value": "ライト" },
-    { "name": "themeDark", "value": "ダーク" },
-    { "name": "fontSize", "value": "文字サイズ" },
-    { "name": "lineHeight", "value": "行間" },
-    { "name": "pageMode", "value": "ページモード" },
-    { "name": "scrollMode", "value": "上下スクロール" },
-    { "name": "pagedMode", "value": "左右ページめくり" },
-    { "name": "offline", "value": "オフラインキャッシュ" }
+    {
+      "name": "module_desc",
+      "value": "Open Novel アプリのメインモジュール"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Open Novel アプリのメインエントリ"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "ホーム"
+    },
+    {
+      "name": "mine",
+      "value": "マイページ"
+    },
+    {
+      "name": "read",
+      "value": "読む"
+    },
+    {
+      "name": "recommend",
+      "value": "おすすめ"
+    },
+    {
+      "name": "allBooks",
+      "value": "本棚"
+    },
+    {
+      "name": "bookDetail",
+      "value": "書籍詳細"
+    },
+    {
+      "name": "chapters",
+      "value": "章"
+    },
+    {
+      "name": "login",
+      "value": "ログイン"
+    },
+    {
+      "name": "register",
+      "value": "新規登録"
+    },
+    {
+      "name": "logout",
+      "value": "ログアウト"
+    },
+    {
+      "name": "username",
+      "value": "ユーザー名"
+    },
+    {
+      "name": "password",
+      "value": "パスワード"
+    },
+    {
+      "name": "email",
+      "value": "メールアドレス"
+    },
+    {
+      "name": "nickname",
+      "value": "ニックネーム"
+    },
+    {
+      "name": "welcome",
+      "value": "ようこそ、%s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "ログインしてからご利用ください"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "未ログイン"
+    },
+    {
+      "name": "searchHint",
+      "value": "タイトル/作者で検索"
+    },
+    {
+      "name": "searchResult",
+      "value": "検索結果"
+    },
+    {
+      "name": "loading",
+      "value": "読み込み中…"
+    },
+    {
+      "name": "empty",
+      "value": "データがありません"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "ネットワークエラーです。接続をご確認ください"
+    },
+    {
+      "name": "errorServer",
+      "value": "サーバーエラー：%s"
+    },
+    {
+      "name": "retry",
+      "value": "再試行"
+    },
+    {
+      "name": "bookCount",
+      "value": "全%s章"
+    },
+    {
+      "name": "free",
+      "value": "無料"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "次の章"
+    },
+    {
+      "name": "prevChapter",
+      "value": "前の章"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "コメント"
+    },
+    {
+      "name": "commentHint",
+      "value": "コメントを書く…"
+    },
+    {
+      "name": "post",
+      "value": "投稿"
+    },
+    {
+      "name": "settings",
+      "value": "設定"
+    },
+    {
+      "name": "theme",
+      "value": "テーマ"
+    },
+    {
+      "name": "themeSystem",
+      "value": "システムに従う"
+    },
+    {
+      "name": "themeLight",
+      "value": "ライト"
+    },
+    {
+      "name": "themeDark",
+      "value": "ダーク"
+    },
+    {
+      "name": "fontSize",
+      "value": "文字サイズ"
+    },
+    {
+      "name": "lineHeight",
+      "value": "行間"
+    },
+    {
+      "name": "pageMode",
+      "value": "ページモード"
+    },
+    {
+      "name": "scrollMode",
+      "value": "上下スクロール"
+    },
+    {
+      "name": "pagedMode",
+      "value": "左右ページめくり"
+    },
+    {
+      "name": "offline",
+      "value": "オフラインキャッシュ"
+    },
+    {
+      "name": "vipActive",
+      "value": "VIP会員"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "VIP未加入"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "有効期限：%s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "更新"
+    },
+    {
+      "name": "vipOpen",
+      "value": "VIPを開く"
+    },
+    {
+      "name": "payNow",
+      "value": "支払う"
+    },
+    {
+      "name": "paymentResult",
+      "value": "決済結果"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "決済成功"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "決済失敗"
+    },
+    {
+      "name": "paymentPending",
+      "value": "決済待ち"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "決済結果を確認中…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "利用可能な支払い方法がありません"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "この章はVIP専用です。会員登録で読めます。"
+    },
+    {
+      "name": "openVipToRead",
+      "value": "会員登録して読む"
+    },
+    {
+      "name": "retryPay",
+      "value": "再決済"
+    }
   ]
 }

@@ -46,5 +46,20 @@
   "pageMode": "페이지 모드",
   "scrollMode": "상하 스크롤",
   "pagedMode": "좌우 페이지 넘김",
-  "offline": "오프라인 캐시"
+  "offline": "오프라인 캐시",
+  "vipActive": "VIP 회원",
+  "vipNotActive": "VIP 미가입",
+  "vipExpiresAt": "만료일: {date}",
+  "vipRenew": "갱신",
+  "vipOpen": "VIP 가입",
+  "payNow": "결제하기",
+  "paymentResult": "결제 결과",
+  "paymentSuccess": "결제 성공",
+  "paymentFailed": "결제 실패",
+  "paymentPending": "결제 확인 중",
+  "paymentChecking": "결제 결과 확인 중…",
+  "paymentNoMethod": "사용 가능한 결제 수단이 없습니다",
+  "vipChapterLocked": "VIP 전용 챕터입니다. 회원 가입 후 읽을 수 있습니다.",
+  "openVipToRead": "회원 가입 후 읽기",
+  "retryPay": "다시 결제"
 }

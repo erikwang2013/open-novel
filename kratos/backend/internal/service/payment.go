@@ -54,6 +54,34 @@ func (s *PaymentService) GetOrder(ctx context.Context, req *paymentv1.GetOrderRe
 	return r, nil
 }
 
+// ListPublicPlans 公开套餐列表（无鉴权）：仅 status=1，sort 升序。
+func (s *PaymentService) ListPublicPlans(ctx context.Context, req *paymentv1.ListPublicPlansReq) (*paymentv1.ListPublicPlansReply, error) {
+	items, err := s.uc.ListPublicPlans(ctx)
+	if err != nil {
+		return nil, err
+	}
+	r := &paymentv1.ListPublicPlansReply{}
+	for _, it := range items {
+		r.List = append(r.List, &paymentv1.PublicPlanItem{PlanCode: it.PlanCode, Days: int64(it.Days),
+			Amount: it.AmountCents, Currency: it.Currency, Label: it.Label})
+	}
+	return r, nil
+}
+
+// VipStatus 登录态：active（vip_expires_at > now）+ 到期时间（RFC3339，非会员为空）。
+func (s *PaymentService) VipStatus(ctx context.Context, req *paymentv1.VipStatusReq) (*paymentv1.VipStatusReply, error) {
+	c, err := auth(ctx)
+	if err != nil {
+		return nil, err
+	}
+	active, at := s.uc.IsVipActive(ctx, uint64(c.UID))
+	r := &paymentv1.VipStatusReply{Active: active}
+	if !at.IsZero() {
+		r.VipExpiresAt = at.Format(time.RFC3339)
+	}
+	return r, nil
+}
+
 func (s *PaymentService) ListMethods(ctx context.Context, req *paymentv1.ListMethodsReq) (*paymentv1.ListMethodsReply, error) {
 	items, err := s.uc.ListMethods(ctx, pickLang(ctx, req.Lang))
 	if err != nil {

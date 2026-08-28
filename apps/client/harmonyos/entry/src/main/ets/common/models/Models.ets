@@ -199,6 +199,95 @@ export class Comment {
   }
 }
 
+/// VIP 套餐（GET /api/payments/plans 公开）。amount 为分。
+export class Plan {
+  planCode: string = '';
+  days: number = 0;
+  amountCents: number = 0;
+  currency: string = '';
+  label: string = '';
+
+  static fromJson(j: Record<string, Object>): Plan {
+    const p = new Plan();
+    p.planCode = asStr(j['planCode']);
+    p.days = asInt(j['days']);
+    p.amountCents = asInt(j['amount']);
+    p.currency = asStr(j['currency']);
+    p.label = asStr(j['label']);
+    return p;
+  }
+}
+
+/// 创建订单结果（POST /api/payments/order）。
+export class CreateOrderResult {
+  orderNo: string = '';
+  amount: number = 0;
+  currency: string = '';
+  checkoutUrl: string = '';
+  provider: string = '';
+
+  static fromJson(j: Record<string, Object>): CreateOrderResult {
+    const o = new CreateOrderResult();
+    o.orderNo = asStr(j['orderNo']);
+    o.amount = asInt(j['amount']);
+    o.currency = asStr(j['currency']);
+    o.checkoutUrl = asStr(j['checkoutUrl']);
+    o.provider = asStr(j['provider']);
+    return o;
+  }
+}
+
+/// 支付方式（GET /api/payments/methods）。
+export class PaymentMethod {
+  code: string = '';
+  lang: string = '';
+  region: string = '';
+
+  static fromJson(j: Record<string, Object>): PaymentMethod {
+    const m = new PaymentMethod();
+    m.code = asStr(j['code']);
+    m.lang = asStr(j['lang']);
+    m.region = asStr(j['region']);
+    return m;
+  }
+}
+
+/// 订单状态（GET /api/payments/order/{order_no}）。status 0待支付 1已付 2失败 3关闭。
+export class OrderStatus {
+  orderNo: string = '';
+  status: number = 0;
+  amount: number = 0;
+  currency: string = '';
+  provider: string = '';
+  txId: string = '';
+  paidAt: string = '';
+
+  static fromJson(j: Record<string, Object>): OrderStatus {
+    const o = new OrderStatus();
+    o.orderNo = asStr(j['orderNo']);
+    o.status = asInt(j['status']);
+    o.amount = asInt(j['amount']);
+    o.currency = asStr(j['currency']);
+    o.provider = asStr(j['provider']);
+    o.txId = asStr(j['txId']);
+    o.paidAt = asStr(j['paidAt']);
+    return o;
+  }
+}
+
+/// VIP 状态（GET /api/payments/vip-status）。
+export class VipStatus {
+  active: boolean = false;
+  vipExpiresAt: string = '';
+
+  static fromJson(j: Record<string, Object>): VipStatus {
+    const v = new VipStatus();
+    v.active = j['active'] === true;
+    v.vipExpiresAt = asStr(j['vipExpiresAt']);
+    return v;
+  }
+}
+
 /// OpenSearch 搜索结果文档：按 lang 取对应语言字段（同 Flutter 实现）。
 export class SearchDoc {
   bookId: string = '';

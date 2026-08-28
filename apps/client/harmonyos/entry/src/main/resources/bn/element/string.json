@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "Open Novel অ্যাপের মূল মডিউল" },
-    { "name": "EntryAbility_desc", "value": "Open Novel অ্যাপের মূল প্রবেশদ্বার" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "হোম" },
-    { "name": "mine", "value": "আমার" },
-    { "name": "read", "value": "পড়ুন" },
-    { "name": "recommend", "value": "সুপারিশকৃত" },
-    { "name": "allBooks", "value": "লাইব্রেরি" },
-    { "name": "bookDetail", "value": "বইয়ের বিবরণ" },
-    { "name": "chapters", "value": "অধ্যায়" },
-    { "name": "login", "value": "লগ ইন করুন" },
-    { "name": "register", "value": "নিবন্ধন করুন" },
-    { "name": "logout", "value": "লগ আউট করুন" },
-    { "name": "username", "value": "ব্যবহারকারীর নাম" },
-    { "name": "password", "value": "পাসওয়ার্ড" },
-    { "name": "email", "value": "ইমেইল" },
-    { "name": "nickname", "value": "ডাকনাম" },
-    { "name": "welcome", "value": "স্বাগতম, %s" },
-    { "name": "loginRequired", "value": "পড়তে লগ ইন করুন" },
-    { "name": "notLoggedIn", "value": "লগ ইন করা হয়নি" },
-    { "name": "searchHint", "value": "শিরোনাম/লেখক খুঁজুন" },
-    { "name": "searchResult", "value": "অনুসন্ধান" },
-    { "name": "loading", "value": "লোড হচ্ছে…" },
-    { "name": "empty", "value": "কোনো তথ্য নেই" },
-    { "name": "errorNetwork", "value": "নেটওয়ার্ক ত্রুটি, সংযোগ পরীক্ষা করুন" },
-    { "name": "errorServer", "value": "সার্ভার ত্রুটি: %s" },
-    { "name": "retry", "value": "আবার চেষ্টা করুন" },
-    { "name": "bookCount", "value": "%sটি অধ্যায়" },
-    { "name": "free", "value": "বিনামূল্য" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "পরের অধ্যায়" },
-    { "name": "prevChapter", "value": "আগের অধ্যায়" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "মন্তব্য" },
-    { "name": "commentHint", "value": "মন্তব্য লিখুন…" },
-    { "name": "post", "value": "পোস্ট করুন" },
-    { "name": "settings", "value": "সেটিংস" },
-    { "name": "theme", "value": "থিম" },
-    { "name": "themeSystem", "value": "সিস্টেম অনুসারে" },
-    { "name": "themeLight", "value": "হালকা" },
-    { "name": "themeDark", "value": "গাঢ়" },
-    { "name": "fontSize", "value": "ফন্ট সাইজ" },
-    { "name": "lineHeight", "value": "লাইন স্পেসিং" },
-    { "name": "pageMode", "value": "পৃষ্ঠা মোড" },
-    { "name": "scrollMode", "value": "উপর-নিচে স্ক্রল" },
-    { "name": "pagedMode", "value": "বাম-ডান পাতা" },
-    { "name": "offline", "value": "অফলাইন ক্যাশে" }
+    {
+      "name": "module_desc",
+      "value": "Open Novel অ্যাপের মূল মডিউল"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Open Novel অ্যাপের মূল প্রবেশদ্বার"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "হোম"
+    },
+    {
+      "name": "mine",
+      "value": "আমার"
+    },
+    {
+      "name": "read",
+      "value": "পড়ুন"
+    },
+    {
+      "name": "recommend",
+      "value": "সুপারিশকৃত"
+    },
+    {
+      "name": "allBooks",
+      "value": "লাইব্রেরি"
+    },
+    {
+      "name": "bookDetail",
+      "value": "বইয়ের বিবরণ"
+    },
+    {
+      "name": "chapters",
+      "value": "অধ্যায়"
+    },
+    {
+      "name": "login",
+      "value": "লগ ইন করুন"
+    },
+    {
+      "name": "register",
+      "value": "নিবন্ধন করুন"
+    },
+    {
+      "name": "logout",
+      "value": "লগ আউট করুন"
+    },
+    {
+      "name": "username",
+      "value": "ব্যবহারকারীর নাম"
+    },
+    {
+      "name": "password",
+      "value": "পাসওয়ার্ড"
+    },
+    {
+      "name": "email",
+      "value": "ইমেইল"
+    },
+    {
+      "name": "nickname",
+      "value": "ডাকনাম"
+    },
+    {
+      "name": "welcome",
+      "value": "স্বাগতম, %s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "পড়তে লগ ইন করুন"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "লগ ইন করা হয়নি"
+    },
+    {
+      "name": "searchHint",
+      "value": "শিরোনাম/লেখক খুঁজুন"
+    },
+    {
+      "name": "searchResult",
+      "value": "অনুসন্ধান"
+    },
+    {
+      "name": "loading",
+      "value": "লোড হচ্ছে…"
+    },
+    {
+      "name": "empty",
+      "value": "কোনো তথ্য নেই"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "নেটওয়ার্ক ত্রুটি, সংযোগ পরীক্ষা করুন"
+    },
+    {
+      "name": "errorServer",
+      "value": "সার্ভার ত্রুটি: %s"
+    },
+    {
+      "name": "retry",
+      "value": "আবার চেষ্টা করুন"
+    },
+    {
+      "name": "bookCount",
+      "value": "%sটি অধ্যায়"
+    },
+    {
+      "name": "free",
+      "value": "বিনামূল্য"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "পরের অধ্যায়"
+    },
+    {
+      "name": "prevChapter",
+      "value": "আগের অধ্যায়"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "মন্তব্য"
+    },
+    {
+      "name": "commentHint",
+      "value": "মন্তব্য লিখুন…"
+    },
+    {
+      "name": "post",
+      "value": "পোস্ট করুন"
+    },
+    {
+      "name": "settings",
+      "value": "সেটিংস"
+    },
+    {
+      "name": "theme",
+      "value": "থিম"
+    },
+    {
+      "name": "themeSystem",
+      "value": "সিস্টেম অনুসারে"
+    },
+    {
+      "name": "themeLight",
+      "value": "হালকা"
+    },
+    {
+      "name": "themeDark",
+      "value": "গাঢ়"
+    },
+    {
+      "name": "fontSize",
+      "value": "ফন্ট সাইজ"
+    },
+    {
+      "name": "lineHeight",
+      "value": "লাইন স্পেসিং"
+    },
+    {
+      "name": "pageMode",
+      "value": "পৃষ্ঠা মোড"
+    },
+    {
+      "name": "scrollMode",
+      "value": "উপর-নিচে স্ক্রল"
+    },
+    {
+      "name": "pagedMode",
+      "value": "বাম-ডান পাতা"
+    },
+    {
+      "name": "offline",
+      "value": "অফলাইন ক্যাশে"
+    },
+    {
+      "name": "vipActive",
+      "value": "VIP সদস্য"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "VIP সক্রিয় নয়"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "মেয়াদ শেষ: %s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "নবায়ন"
+    },
+    {
+      "name": "vipOpen",
+      "value": "VIP নিন"
+    },
+    {
+      "name": "payNow",
+      "value": "এখনই পেমেন্ট"
+    },
+    {
+      "name": "paymentResult",
+      "value": "পেমেন্ট ফলাফল"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "পেমেন্ট সফল"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "পেমেন্ট ব্যর্থ"
+    },
+    {
+      "name": "paymentPending",
+      "value": "পেমেন্টের অপেক্ষায়"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "পেমেন্ট নিশ্চিত হচ্ছে…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "কোনো পেমেন্ট পদ্ধতি নেই"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "এই অধ্যায়টি শুধু VIP সদস্যদের জন্য।"
+    },
+    {
+      "name": "openVipToRead",
+      "value": "সদস্য হয়ে পড়ুন"
+    },
+    {
+      "name": "retryPay",
+      "value": "আবার পেমেন্ট করুন"
+    }
   ]
 }

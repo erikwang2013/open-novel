@@ -401,6 +401,96 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'离线缓存'**
   String get offline;
+
+  /// No description provided for @vipActive.
+  ///
+  /// In zh, this message translates to:
+  /// **'VIP 会员'**
+  String get vipActive;
+
+  /// No description provided for @vipNotActive.
+  ///
+  /// In zh, this message translates to:
+  /// **'尚未开通 VIP'**
+  String get vipNotActive;
+
+  /// No description provided for @vipExpiresAt.
+  ///
+  /// In zh, this message translates to:
+  /// **'到期时间：{date}'**
+  String vipExpiresAt(Object date);
+
+  /// No description provided for @vipRenew.
+  ///
+  /// In zh, this message translates to:
+  /// **'续费'**
+  String get vipRenew;
+
+  /// No description provided for @vipOpen.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通 VIP'**
+  String get vipOpen;
+
+  /// No description provided for @payNow.
+  ///
+  /// In zh, this message translates to:
+  /// **'立即支付'**
+  String get payNow;
+
+  /// No description provided for @paymentResult.
+  ///
+  /// In zh, this message translates to:
+  /// **'支付结果'**
+  String get paymentResult;
+
+  /// No description provided for @paymentSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'支付成功'**
+  String get paymentSuccess;
+
+  /// No description provided for @paymentFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'支付失败'**
+  String get paymentFailed;
+
+  /// No description provided for @paymentPending.
+  ///
+  /// In zh, this message translates to:
+  /// **'等待支付确认'**
+  String get paymentPending;
+
+  /// No description provided for @paymentChecking.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在确认支付结果…'**
+  String get paymentChecking;
+
+  /// No description provided for @paymentNoMethod.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂无可用支付方式'**
+  String get paymentNoMethod;
+
+  /// No description provided for @vipChapterLocked.
+  ///
+  /// In zh, this message translates to:
+  /// **'该章节为 VIP 章节，开通会员后可阅读'**
+  String get vipChapterLocked;
+
+  /// No description provided for @openVipToRead.
+  ///
+  /// In zh, this message translates to:
+  /// **'开通会员阅读'**
+  String get openVipToRead;
+
+  /// No description provided for @retryPay.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新支付'**
+  String get retryPay;
 }
 
 class _AppLocalizationsDelegate

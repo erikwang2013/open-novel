@@ -180,6 +180,16 @@ func (pc *PaymentUsecase) GetOrder(ctx context.Context, uid uint64, orderNo stri
 	return orderInfo(o), nil
 }
 
+// ListPublicPlans 公开套餐列表（T-P-14）：仅启用，sort 升序。
+// 公开读走默认连接（只读不敏感，无需 FORCE_MASTER）。
+func (pc *PaymentUsecase) ListPublicPlans(ctx context.Context) ([]data.VipPlan, error) {
+	var rows []data.VipPlan
+	if err := pc.db.WithContext(ctx).Where("status = 1").Order("sort ASC, id ASC").Find(&rows).Error; err != nil {
+		return nil, pkg.ErrAdminDB
+	}
+	return rows, nil
+}
+
 // ListMethods 公开接口：enabled 且 lang/region 匹配，sort 升序。
 func (pc *PaymentUsecase) ListMethods(ctx context.Context, lang string) ([]MethodInfo, error) {
 	rows, err := pc.enabledProviders(ctx)

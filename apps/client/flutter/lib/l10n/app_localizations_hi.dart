@@ -156,4 +156,51 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get offline => 'ऑफ़लाइन कैश';
+
+  @override
+  String get vipActive => 'VIP सदस्य';
+
+  @override
+  String get vipNotActive => 'VIP सक्रिय नहीं';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return 'समाप्ति: $date';
+  }
+
+  @override
+  String get vipRenew => 'नवीनीकरण';
+
+  @override
+  String get vipOpen => 'VIP लें';
+
+  @override
+  String get payNow => 'अभी भुगतान करें';
+
+  @override
+  String get paymentResult => 'भुगतान परिणाम';
+
+  @override
+  String get paymentSuccess => 'भुगतान सफल';
+
+  @override
+  String get paymentFailed => 'भुगतान विफल';
+
+  @override
+  String get paymentPending => 'भुगतान की प्रतीक्षा';
+
+  @override
+  String get paymentChecking => 'भुगतान की पुष्टि हो रही है…';
+
+  @override
+  String get paymentNoMethod => 'कोई भुगतान विधि उपलब्ध नहीं';
+
+  @override
+  String get vipChapterLocked => 'यह अध्याय केवल VIP सदस्यों के लिए है।';
+
+  @override
+  String get openVipToRead => 'सदस्य बनकर पढ़ें';
+
+  @override
+  String get retryPay => 'फिर से भुगतान करें';
 }

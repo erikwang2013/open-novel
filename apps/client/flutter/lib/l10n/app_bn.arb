@@ -46,5 +46,20 @@
   "pageMode": "পৃষ্ঠা মোড",
   "scrollMode": "উপর-নিচে স্ক্রল",
   "pagedMode": "বাম-ডান পাতা",
-  "offline": "অফলাইন ক্যাশে"
+  "offline": "অফলাইন ক্যাশে",
+  "vipActive": "VIP সদস্য",
+  "vipNotActive": "VIP সক্রিয় নয়",
+  "vipExpiresAt": "মেয়াদ শেষ: {date}",
+  "vipRenew": "নবায়ন",
+  "vipOpen": "VIP নিন",
+  "payNow": "এখনই পেমেন্ট",
+  "paymentResult": "পেমেন্ট ফলাফল",
+  "paymentSuccess": "পেমেন্ট সফল",
+  "paymentFailed": "পেমেন্ট ব্যর্থ",
+  "paymentPending": "পেমেন্টের অপেক্ষায়",
+  "paymentChecking": "পেমেন্ট নিশ্চিত হচ্ছে…",
+  "paymentNoMethod": "কোনো পেমেন্ট পদ্ধতি নেই",
+  "vipChapterLocked": "এই অধ্যায়টি শুধু VIP সদস্যদের জন্য।",
+  "openVipToRead": "সদস্য হয়ে পড়ুন",
+  "retryPay": "আবার পেমেন্ট করুন"
 }

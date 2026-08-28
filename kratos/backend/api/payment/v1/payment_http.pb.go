@@ -29,10 +29,12 @@ const OperationPaymentListMethods = "/payment.v1.Payment/ListMethods"
 const OperationPaymentListOrders = "/payment.v1.Payment/ListOrders"
 const OperationPaymentListPlans = "/payment.v1.Payment/ListPlans"
 const OperationPaymentListProviders = "/payment.v1.Payment/ListProviders"
+const OperationPaymentListPublicPlans = "/payment.v1.Payment/ListPublicPlans"
 const OperationPaymentOrderStats = "/payment.v1.Payment/OrderStats"
 const OperationPaymentToggleProvider = "/payment.v1.Payment/ToggleProvider"
 const OperationPaymentUpdatePlan = "/payment.v1.Payment/UpdatePlan"
 const OperationPaymentUpdateProvider = "/payment.v1.Payment/UpdateProvider"
+const OperationPaymentVipStatus = "/payment.v1.Payment/VipStatus"
 const OperationPaymentWebhook = "/payment.v1.Payment/Webhook"
 
 type PaymentHTTPServer interface {
@@ -53,6 +55,8 @@ type PaymentHTTPServer interface {
 	ListPlans(context.Context, *ListPlansReq) (*ListPlansReply, error)
 	// ListProviders 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
 	ListProviders(context.Context, *ListProvidersReq) (*ListProvidersReply, error)
+	// ListPublicPlans 公开套餐列表（无鉴权，T-P-14）：仅 status=1，sort 升序
+	ListPublicPlans(context.Context, *ListPublicPlansReq) (*ListPublicPlansReply, error)
 	// OrderStats 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
 	OrderStats(context.Context, *OrderStatsReq) (*OrderStatsReply, error)
 	// ToggleProvider 启停支付方式（requireAdmin）
@@ -60,6 +64,8 @@ type PaymentHTTPServer interface {
 	UpdatePlan(context.Context, *UpdatePlanReq) (*PlanReply, error)
 	// UpdateProvider 更新支付方式；config 传入字段重加密合并，空值保留原值
 	UpdateProvider(context.Context, *UpdateProviderReq) (*ProviderReply, error)
+	// VipStatus VIP 状态（登录态，T-P-14）：active + 到期时间
+	VipStatus(context.Context, *VipStatusReq) (*VipStatusReply, error)
 	// Webhook 渠道回调（stripe/nowpayments，无鉴权，验签在内部）
 	Webhook(context.Context, *WebhookReq) (*EmptyReply, error)
 }
@@ -79,6 +85,8 @@ func RegisterPaymentHTTPServer(s *http.Server, srv PaymentHTTPServer) {
 	r.PUT("/api/payments/admin/plans/{id}", _Payment_UpdatePlan0_HTTP_Handler(srv))
 	r.DELETE("/api/payments/admin/plans/{id}", _Payment_DeletePlan0_HTTP_Handler(srv))
 	r.GET("/api/payments/order/{order_no}", _Payment_GetOrder0_HTTP_Handler(srv))
+	r.GET("/api/payments/plans", _Payment_ListPublicPlans0_HTTP_Handler(srv))
+	r.GET("/api/payments/vip-status", _Payment_VipStatus0_HTTP_Handler(srv))
 	r.GET("/api/payments/methods", _Payment_ListMethods0_HTTP_Handler(srv))
 	r.POST("/api/payments/webhook/{provider}", _Payment_Webhook0_HTTP_Handler(srv))
 }
@@ -363,6 +371,44 @@ func _Payment_GetOrder0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _Payment_ListPublicPlans0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListPublicPlansReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentListPublicPlans)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListPublicPlans(ctx, req.(*ListPublicPlansReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListPublicPlansReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Payment_VipStatus0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in VipStatusReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentVipStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.VipStatus(ctx, req.(*VipStatusReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*VipStatusReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Payment_ListMethods0_HTTP_Handler(srv PaymentHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListMethodsReq
@@ -425,6 +471,8 @@ type PaymentHTTPClient interface {
 	ListPlans(ctx context.Context, req *ListPlansReq, opts ...http.CallOption) (rsp *ListPlansReply, err error)
 	// ListProviders 支付方式列表（requireAdmin，T-P-10）：全部渠道，config 仅返回是否已配置
 	ListProviders(ctx context.Context, req *ListProvidersReq, opts ...http.CallOption) (rsp *ListProvidersReply, err error)
+	// ListPublicPlans 公开套餐列表（无鉴权，T-P-14）：仅 status=1，sort 升序
+	ListPublicPlans(ctx context.Context, req *ListPublicPlansReq, opts ...http.CallOption) (rsp *ListPublicPlansReply, err error)
 	// OrderStats 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
 	OrderStats(ctx context.Context, req *OrderStatsReq, opts ...http.CallOption) (rsp *OrderStatsReply, err error)
 	// ToggleProvider 启停支付方式（requireAdmin）
@@ -432,6 +480,8 @@ type PaymentHTTPClient interface {
 	UpdatePlan(ctx context.Context, req *UpdatePlanReq, opts ...http.CallOption) (rsp *PlanReply, err error)
 	// UpdateProvider 更新支付方式；config 传入字段重加密合并，空值保留原值
 	UpdateProvider(ctx context.Context, req *UpdateProviderReq, opts ...http.CallOption) (rsp *ProviderReply, err error)
+	// VipStatus VIP 状态（登录态，T-P-14）：active + 到期时间
+	VipStatus(ctx context.Context, req *VipStatusReq, opts ...http.CallOption) (rsp *VipStatusReply, err error)
 	// Webhook 渠道回调（stripe/nowpayments，无鉴权，验签在内部）
 	Webhook(ctx context.Context, req *WebhookReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 }
@@ -581,6 +631,20 @@ func (c *PaymentHTTPClientImpl) ListProviders(ctx context.Context, in *ListProvi
 	return &out, nil
 }
 
+// ListPublicPlans 公开套餐列表（无鉴权，T-P-14）：仅 status=1，sort 升序
+func (c *PaymentHTTPClientImpl) ListPublicPlans(ctx context.Context, in *ListPublicPlansReq, opts ...http.CallOption) (*ListPublicPlansReply, error) {
+	var out ListPublicPlansReply
+	pattern := "/api/payments/plans"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentListPublicPlans))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // OrderStats 流水汇总（requireAdmin，T-P-09）：总单数/各状态/已付金额
 func (c *PaymentHTTPClientImpl) OrderStats(ctx context.Context, in *OrderStatsReq, opts ...http.CallOption) (*OrderStatsReply, error) {
 	var out OrderStatsReply
@@ -630,6 +694,20 @@ func (c *PaymentHTTPClientImpl) UpdateProvider(ctx context.Context, in *UpdatePr
 	opts = append(opts, http.Operation(OperationPaymentUpdateProvider))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// VipStatus VIP 状态（登录态，T-P-14）：active + 到期时间
+func (c *PaymentHTTPClientImpl) VipStatus(ctx context.Context, in *VipStatusReq, opts ...http.CallOption) (*VipStatusReply, error) {
+	var out VipStatusReply
+	pattern := "/api/payments/vip-status"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentVipStatus))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

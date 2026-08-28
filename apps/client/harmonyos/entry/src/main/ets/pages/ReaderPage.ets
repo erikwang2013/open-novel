@@ -33,6 +33,7 @@ struct ReaderPage {
   @State pageList: string[] = [];
   @State currentPage: number = 0;
   @State fromCache: boolean = false;
+  @State vipLocked: boolean = false; // VIP 章节未订阅 → 引导购买
   private bookId: string = '';
   private loadSeq: number = 0;
   private scroller: Scroller = new Scroller();
@@ -106,7 +107,18 @@ struct ReaderPage {
           this.index = this.chapters.length - 1; // 越界钳制到末章
         }
       }
-      const id = this.chapters[this.index].id;
+      const ch = this.chapters[this.index];
+      // VIP 章节未订阅 → 引导购买，不拉正文（后端未做 VIP 拦截，客户端自行判断）
+      if (ch.isVip === 1 && !(await this.isVipActive())) {
+        if (seq !== this.loadSeq) {
+          return;
+        }
+        this.vipLocked = true;
+        this.loading = false;
+        return;
+      }
+      this.vipLocked = false;
+      const id = ch.id;
       try {
         const c = await ApiClient.instance.getChapterContent(id);
         if (seq !== this.loadSeq) {
@@ -139,6 +151,26 @@ struct ReaderPage {
       this.errorMsg = (e as Error).message;
     }
     this.loading = false;
+  }
+
+  /// 是否 VIP 会员：未登录视为非会员；接口失败也视为非会员（保守引导）。
+  private async isVipActive(): Promise<boolean> {
+    if (ApiClient.instance.accessToken === '') {
+      return false;
+    }
+    try {
+      return (await ApiClient.instance.vipStatus()).active;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// 打开 VIP 购买页；返回后重新检查（可能已开通）。
+  private openVipGuide(): void {
+    router.pushUrl({ url: 'pages/VipPage' }).then(() => {
+      this.vipLocked = false;
+      this.load();
+    });
   }
 
   /// best-effort 保存进度：滚动模式存 y 偏移，翻页模式存页码。
@@ -231,6 +263,7 @@ struct ReaderPage {
     this.index = n;
     this.content = '';
     this.restorePos = -1;
+    this.vipLocked = false;
     this.load();
   }
 
@@ -331,22 +364,22 @@ struct ReaderPage {
         .layoutWeight(1)
         .width('100%')
         .justifyContent(FlexAlign.Center)
-      } else if (this.errorMsg !== '') {
-        Column({ space: 12 }) {
-          Text(this.errorMsg === 'network'
-            ? $r('app.string.errorNetwork')
-            : this.t($r('app.string.errorServer'), this.errorMsg))
-            .fontSize(14)
-            .fontColor('#666666')
-          Button($r('app.string.retry'))
+      } else if (this.vipLocked) {
+        Column({ space: 16 }) {
+          Text($r('app.string.vipChapterLocked'))
+            .fontSize(15)
+            .fontColor(this.textColor)
+            .textAlign(TextAlign.Center)
+          Button($r('app.string.openVipToRead'))
             .onClick(() => {
-              this.load();
+              this.openVipGuide();
             })
         }
         .layoutWeight(1)
         .width('100%')
         .justifyContent(FlexAlign.Center)
-      } else {
+        .padding({ left: 32, right: 32 })
+      } else if (this.errorMsg !== '') {
         Column() {
           if (this.fromCache) {
             Text($r('app.string.offline'))

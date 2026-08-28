@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "Open Novel 应用主模块" },
-    { "name": "EntryAbility_desc", "value": "Open Novel 应用主入口" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "首页" },
-    { "name": "mine", "value": "我的" },
-    { "name": "read", "value": "阅读" },
-    { "name": "recommend", "value": "推荐" },
-    { "name": "allBooks", "value": "书库" },
-    { "name": "bookDetail", "value": "书籍详情" },
-    { "name": "chapters", "value": "章节" },
-    { "name": "login", "value": "登录" },
-    { "name": "register", "value": "注册" },
-    { "name": "logout", "value": "退出登录" },
-    { "name": "username", "value": "用户名" },
-    { "name": "password", "value": "密码" },
-    { "name": "email", "value": "邮箱" },
-    { "name": "nickname", "value": "昵称" },
-    { "name": "welcome", "value": "欢迎，%s" },
-    { "name": "loginRequired", "value": "请先登录后阅读" },
-    { "name": "notLoggedIn", "value": "尚未登录" },
-    { "name": "searchHint", "value": "搜索书名/作者" },
-    { "name": "searchResult", "value": "搜索" },
-    { "name": "loading", "value": "加载中…" },
-    { "name": "empty", "value": "暂无数据" },
-    { "name": "errorNetwork", "value": "网络异常，请检查网络连接" },
-    { "name": "errorServer", "value": "服务异常：%s" },
-    { "name": "retry", "value": "重试" },
-    { "name": "bookCount", "value": "共 %s 章" },
-    { "name": "free", "value": "免费" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "下一章" },
-    { "name": "prevChapter", "value": "上一章" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "评论" },
-    { "name": "commentHint", "value": "写评论…" },
-    { "name": "post", "value": "发布" },
-    { "name": "settings", "value": "设置" },
-    { "name": "theme", "value": "主题" },
-    { "name": "themeSystem", "value": "跟随系统" },
-    { "name": "themeLight", "value": "浅色" },
-    { "name": "themeDark", "value": "深色" },
-    { "name": "fontSize", "value": "字号" },
-    { "name": "lineHeight", "value": "行距" },
-    { "name": "pageMode", "value": "翻页方式" },
-    { "name": "scrollMode", "value": "上下滚动" },
-    { "name": "pagedMode", "value": "左右翻页" },
-    { "name": "offline", "value": "离线缓存" }
+    {
+      "name": "module_desc",
+      "value": "Open Novel 应用主模块"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Open Novel 应用主入口"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "首页"
+    },
+    {
+      "name": "mine",
+      "value": "我的"
+    },
+    {
+      "name": "read",
+      "value": "阅读"
+    },
+    {
+      "name": "recommend",
+      "value": "推荐"
+    },
+    {
+      "name": "allBooks",
+      "value": "书库"
+    },
+    {
+      "name": "bookDetail",
+      "value": "书籍详情"
+    },
+    {
+      "name": "chapters",
+      "value": "章节"
+    },
+    {
+      "name": "login",
+      "value": "登录"
+    },
+    {
+      "name": "register",
+      "value": "注册"
+    },
+    {
+      "name": "logout",
+      "value": "退出登录"
+    },
+    {
+      "name": "username",
+      "value": "用户名"
+    },
+    {
+      "name": "password",
+      "value": "密码"
+    },
+    {
+      "name": "email",
+      "value": "邮箱"
+    },
+    {
+      "name": "nickname",
+      "value": "昵称"
+    },
+    {
+      "name": "welcome",
+      "value": "欢迎，%s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "请先登录后阅读"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "尚未登录"
+    },
+    {
+      "name": "searchHint",
+      "value": "搜索书名/作者"
+    },
+    {
+      "name": "searchResult",
+      "value": "搜索"
+    },
+    {
+      "name": "loading",
+      "value": "加载中…"
+    },
+    {
+      "name": "empty",
+      "value": "暂无数据"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "网络异常，请检查网络连接"
+    },
+    {
+      "name": "errorServer",
+      "value": "服务异常：%s"
+    },
+    {
+      "name": "retry",
+      "value": "重试"
+    },
+    {
+      "name": "bookCount",
+      "value": "共 %s 章"
+    },
+    {
+      "name": "free",
+      "value": "免费"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "下一章"
+    },
+    {
+      "name": "prevChapter",
+      "value": "上一章"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "评论"
+    },
+    {
+      "name": "commentHint",
+      "value": "写评论…"
+    },
+    {
+      "name": "post",
+      "value": "发布"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "theme",
+      "value": "主题"
+    },
+    {
+      "name": "themeSystem",
+      "value": "跟随系统"
+    },
+    {
+      "name": "themeLight",
+      "value": "浅色"
+    },
+    {
+      "name": "themeDark",
+      "value": "深色"
+    },
+    {
+      "name": "fontSize",
+      "value": "字号"
+    },
+    {
+      "name": "lineHeight",
+      "value": "行距"
+    },
+    {
+      "name": "pageMode",
+      "value": "翻页方式"
+    },
+    {
+      "name": "scrollMode",
+      "value": "上下滚动"
+    },
+    {
+      "name": "pagedMode",
+      "value": "左右翻页"
+    },
+    {
+      "name": "offline",
+      "value": "离线缓存"
+    },
+    {
+      "name": "vipActive",
+      "value": "VIP 会员"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "尚未开通 VIP"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "到期时间：%s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "续费"
+    },
+    {
+      "name": "vipOpen",
+      "value": "开通 VIP"
+    },
+    {
+      "name": "payNow",
+      "value": "立即支付"
+    },
+    {
+      "name": "paymentResult",
+      "value": "支付结果"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "支付成功"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "支付失败"
+    },
+    {
+      "name": "paymentPending",
+      "value": "等待支付确认"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "正在确认支付结果…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "暂无可用支付方式"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "该章节为 VIP 章节，开通会员后可阅读"
+    },
+    {
+      "name": "openVipToRead",
+      "value": "开通会员阅读"
+    },
+    {
+      "name": "retryPay",
+      "value": "重新支付"
+    }
   ]
 }

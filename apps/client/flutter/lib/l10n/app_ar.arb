@@ -46,5 +46,20 @@
   "pageMode": "وضع الصفحات",
   "scrollMode": "تمرير عمودي",
   "pagedMode": "تقليب الصفحات",
-  "offline": "ذاكرة تخزين دون اتصال"
+  "offline": "ذاكرة تخزين دون اتصال",
+  "vipActive": "عضو VIP",
+  "vipNotActive": "VIP غير مفعل",
+  "vipExpiresAt": "تنتهي في: {date}",
+  "vipRenew": "تجديد",
+  "vipOpen": "اشترك في VIP",
+  "payNow": "ادفع الآن",
+  "paymentResult": "نتيجة الدفع",
+  "paymentSuccess": "تم الدفع بنجاح",
+  "paymentFailed": "فشل الدفع",
+  "paymentPending": "في انتظار الدفع",
+  "paymentChecking": "جارٍ تأكيد الدفع…",
+  "paymentNoMethod": "لا توجد طريقة دفع متاحة",
+  "vipChapterLocked": "هذا الفصل مخصص لأعضاء VIP فقط.",
+  "openVipToRead": "اشترك للقراءة",
+  "retryPay": "إعادة الدفع"
 }

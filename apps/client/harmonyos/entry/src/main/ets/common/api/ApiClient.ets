@@ -13,12 +13,17 @@ import {
   Chapter,
   ChapterContent,
   Comment,
+  CreateOrderResult,
   FavoriteItem,
   LoginResult,
+  OrderStatus,
+  PaymentMethod,
+  Plan,
   Progress,
   RecommendItem,
   SearchDoc,
   User,
+  VipStatus,
   asStr
 } from '../models/Models';
 
@@ -144,6 +149,48 @@ export class ApiClient {
   async updateProgress(bookId: string, chapterId: string, position: number): Promise<void> {
     const body: Record<string, Object> = { 'book_id': bookId, 'chapter_id': chapterId, 'position': position };
     await this.put<Record<string, Object>>('/api/progress', body);
+  }
+
+  // ---- VIP / 支付（T-P-14~17）----
+
+  async listPublicPlans(): Promise<Plan[]> {
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>('/api/payments/plans');
+    return this.parseList(obj, Plan.fromJson);
+  }
+
+  async listMethods(lang: string): Promise<PaymentMethod[]> {
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(
+      `/api/payments/methods?lang=${encodeURIComponent(lang)}`);
+    return this.parseList(obj, PaymentMethod.fromJson);
+  }
+
+  async createOrder(plan: string, lang: string): Promise<CreateOrderResult> {
+    const body: Record<string, Object> = { 'plan': plan, 'lang': lang };
+    const obj = await this.post<Record<string, Object>>('/api/payments/order', body);
+    return CreateOrderResult.fromJson(obj);
+  }
+
+  async getOrder(orderNo: string): Promise<OrderStatus> {
+    const obj = await this.get<Record<string, Object>>(`/api/payments/order/${orderNo}`);
+    return OrderStatus.fromJson(obj);
+  }
+
+  async vipStatus(): Promise<VipStatus> {
+    const obj = await this.get<Record<string, Object>>('/api/payments/vip-status');
+    return VipStatus.fromJson(obj);
+  }
+
+  /** 系统浏览器打开支付跳转 URL（UIAbilityContext.openLink）。返回是否成功发起。 */
+  async openCheckoutUrl(url: string): Promise<boolean> {
+    try {
+      if (this.context === null) {
+        return false;
+      }
+      await (this.context as common.UIAbilityContext).openLink(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   async listComments(bookId: string, page: number = 1, pageSize: number = 20, chapterId: string = ''): Promise<Comment[]> {

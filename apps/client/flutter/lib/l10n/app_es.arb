@@ -46,5 +46,20 @@
   "pageMode": "Modo de página",
   "scrollMode": "Desplazamiento vertical",
   "pagedMode": "Pasar página",
-  "offline": "Caché sin conexión"
+  "offline": "Caché sin conexión",
+  "vipActive": "Miembro VIP",
+  "vipNotActive": "VIP no activado",
+  "vipExpiresAt": "Expira: {date}",
+  "vipRenew": "Renovar",
+  "vipOpen": "Obtener VIP",
+  "payNow": "Pagar ahora",
+  "paymentResult": "Resultado del pago",
+  "paymentSuccess": "Pago exitoso",
+  "paymentFailed": "Pago fallido",
+  "paymentPending": "Esperando pago",
+  "paymentChecking": "Confirmando pago…",
+  "paymentNoMethod": "No hay métodos de pago disponibles",
+  "vipChapterLocked": "Este capítulo es solo para miembros VIP.",
+  "openVipToRead": "Hazte miembro para leer",
+  "retryPay": "Pagar de nuevo"
 }

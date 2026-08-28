@@ -46,5 +46,20 @@
   "pageMode": "ページモード",
   "scrollMode": "上下スクロール",
   "pagedMode": "左右ページめくり",
-  "offline": "オフラインキャッシュ"
+  "offline": "オフラインキャッシュ",
+  "vipActive": "VIP会員",
+  "vipNotActive": "VIP未加入",
+  "vipExpiresAt": "有効期限：{date}",
+  "vipRenew": "更新",
+  "vipOpen": "VIPを開く",
+  "payNow": "支払う",
+  "paymentResult": "決済結果",
+  "paymentSuccess": "決済成功",
+  "paymentFailed": "決済失敗",
+  "paymentPending": "決済待ち",
+  "paymentChecking": "決済結果を確認中…",
+  "paymentNoMethod": "利用可能な支払い方法がありません",
+  "vipChapterLocked": "この章はVIP専用です。会員登録で読めます。",
+  "openVipToRead": "会員登録して読む",
+  "retryPay": "再決済"
 }

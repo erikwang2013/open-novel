@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
 
@@ -259,6 +260,40 @@ class ApiClient {
         'chapter_id': chapterId,
         'position': position,
       });
+
+  // ---- VIP / 支付（T-P-14~17）----
+
+  Future<List<Plan>> listPublicPlans() async {
+    final r = await _dio.get('/api/payments/plans');
+    return _parseList<Plan>(r.data, Plan.fromJson);
+  }
+
+  Future<List<PaymentMethod>> listMethods({String lang = 'zh'}) async {
+    final r = await _dio
+        .get('/api/payments/methods', queryParameters: {'lang': lang});
+    return _parseList<PaymentMethod>(r.data, PaymentMethod.fromJson);
+  }
+
+  Future<CreateOrderResult> createOrder(String plan, {String lang = 'zh'}) async {
+    final r = await _dio
+        .post('/api/payments/order', data: {'plan': plan, 'lang': lang});
+    return CreateOrderResult.fromJson(r.data as Map<String, dynamic>);
+  }
+
+  Future<OrderStatus> getOrder(String orderNo) async {
+    final r = await _dio.get('/api/payments/order/$orderNo');
+    return OrderStatus.fromJson(r.data as Map<String, dynamic>);
+  }
+
+  Future<VipStatus> vipStatus() async {
+    final r = await _dio.get('/api/payments/vip-status');
+    return VipStatus.fromJson(r.data as Map<String, dynamic>);
+  }
+
+  /// 打开支付跳转 URL（系统浏览器，外部应用模式）。
+  Future<bool> openCheckoutUrl(String url) {
+    return launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+  }
 
   List<T> _parseList<T>(
       dynamic data, T Function(Map<String, dynamic>) fromJson) {

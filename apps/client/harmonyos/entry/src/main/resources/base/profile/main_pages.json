@@ -3,6 +3,8 @@
     "pages/Index",
     "pages/LoginPage",
     "pages/BookDetailPage",
-    "pages/ReaderPage"
+    "pages/ReaderPage",
+    "pages/VipPage",
+    "pages/PaymentResultPage"
   ]
 }

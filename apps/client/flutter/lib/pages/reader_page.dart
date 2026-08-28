@@ -6,6 +6,7 @@ import '../main.dart';
 import '../models/models.dart';
 import '../reader_settings.dart';
 import 'comments_page.dart';
+import 'vip_page.dart';
 
 /// 阅读器：章节正文 + 上一章 / 下一章（GET /api/chapters/{id}/content）。
 /// 设置入口：AppBar ⋮ 菜单（字号 / 行距 / 主题 / 翻页方式），持久化见 ReaderSettings。
@@ -31,6 +32,7 @@ class _ReaderPageState extends State<ReaderPage> {
   ChapterContent? _content;
   String? _error;
   bool _fromCache = false;
+  bool _vipLocked = false; // VIP 章节未订阅 → 引导购买
 
   final ScrollController _scroll = ScrollController();
   final PageController _page = PageController();
@@ -57,11 +59,18 @@ class _ReaderPageState extends State<ReaderPage> {
     setState(() {
       _error = null;
       _content = null;
+      _vipLocked = false;
       _pages = const [];
       _pageKey = '';
       _pageIndex = 0;
       _restore = -1;
     });
+    // VIP 章节未订阅 → 引导购买，不拉正文（后端未做 VIP 拦截，客户端自行判断）
+    if (_chapter.isVip == 1 && !await _isVipActive()) {
+      if (!mounted) return;
+      setState(() => _vipLocked = true);
+      return;
+    }
     try {
       final lang = langCode(localeNotifier.value);
       final c = await ApiClient.instance
@@ -77,6 +86,25 @@ class _ReaderPageState extends State<ReaderPage> {
       if (!mounted) return;
       setState(() => _error = ApiClient.instance.errorMessage(e));
     }
+  }
+
+  /// 是否 VIP 会员：未登录视为非会员；接口失败也视为非会员（保守引导）。
+  Future<bool> _isVipActive() async {
+    final api = ApiClient.instance;
+    if (!api.loggedIn) return false;
+    try {
+      return (await api.vipStatus()).active;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// 打开 VIP 购买页；返回后重新检查（可能已开通）。
+  Future<void> _openVipGuide() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const VipPage()),
+    );
+    if (mounted) _load();
   }
 
   /// best-effort 保存进度（已登录才调，失败静默不打扰阅读）。
@@ -265,7 +293,29 @@ class _ReaderPageState extends State<ReaderPage> {
 
   Widget _buildBody(BuildContext context, AppLocalizations l10n, int idx) {
     final Widget body;
-    if (_error != null) {
+    if (_vipLocked) {
+      body = Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.lock_outline,
+                size: 64, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(l10n.vipChapterLocked,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleMedium),
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: _openVipGuide,
+              child: Text(l10n.openVipToRead),
+            ),
+          ],
+        ),
+      );
+    } else if (_error != null) {
       body = Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

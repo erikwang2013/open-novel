@@ -46,5 +46,20 @@
   "pageMode": "पृष्ठ मोड",
   "scrollMode": "ऊपर-नीचे स्क्रॉल",
   "pagedMode": "बाएँ-दाएँ पेज",
-  "offline": "ऑफ़लाइन कैश"
+  "offline": "ऑफ़लाइन कैश",
+  "vipActive": "VIP सदस्य",
+  "vipNotActive": "VIP सक्रिय नहीं",
+  "vipExpiresAt": "समाप्ति: {date}",
+  "vipRenew": "नवीनीकरण",
+  "vipOpen": "VIP लें",
+  "payNow": "अभी भुगतान करें",
+  "paymentResult": "भुगतान परिणाम",
+  "paymentSuccess": "भुगतान सफल",
+  "paymentFailed": "भुगतान विफल",
+  "paymentPending": "भुगतान की प्रतीक्षा",
+  "paymentChecking": "भुगतान की पुष्टि हो रही है…",
+  "paymentNoMethod": "कोई भुगतान विधि उपलब्ध नहीं",
+  "vipChapterLocked": "यह अध्याय केवल VIP सदस्यों के लिए है।",
+  "openVipToRead": "सदस्य बनकर पढ़ें",
+  "retryPay": "फिर से भुगतान करें"
 }

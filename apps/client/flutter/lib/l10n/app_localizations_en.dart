@@ -156,4 +156,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offline => 'Offline cache';
+
+  @override
+  String get vipActive => 'VIP Member';
+
+  @override
+  String get vipNotActive => 'VIP not activated';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return 'Expires: $date';
+  }
+
+  @override
+  String get vipRenew => 'Renew';
+
+  @override
+  String get vipOpen => 'Get VIP';
+
+  @override
+  String get payNow => 'Pay Now';
+
+  @override
+  String get paymentResult => 'Payment Result';
+
+  @override
+  String get paymentSuccess => 'Payment Successful';
+
+  @override
+  String get paymentFailed => 'Payment Failed';
+
+  @override
+  String get paymentPending => 'Awaiting payment';
+
+  @override
+  String get paymentChecking => 'Confirming payment…';
+
+  @override
+  String get paymentNoMethod => 'No payment method available';
+
+  @override
+  String get vipChapterLocked => 'This is a VIP chapter. Get VIP to read.';
+
+  @override
+  String get openVipToRead => 'Get VIP to read';
+
+  @override
+  String get retryPay => 'Pay Again';
 }

@@ -46,5 +46,20 @@
   "pageMode": "Mode halaman",
   "scrollMode": "Gulir vertikal",
   "pagedMode": "Balik halaman",
-  "offline": "Cache offline"
+  "offline": "Cache offline",
+  "vipActive": "Anggota VIP",
+  "vipNotActive": "VIP belum aktif",
+  "vipExpiresAt": "Berakhir: {date}",
+  "vipRenew": "Perpanjang",
+  "vipOpen": "Dapatkan VIP",
+  "payNow": "Bayar Sekarang",
+  "paymentResult": "Hasil Pembayaran",
+  "paymentSuccess": "Pembayaran Berhasil",
+  "paymentFailed": "Pembayaran Gagal",
+  "paymentPending": "Menunggu Pembayaran",
+  "paymentChecking": "Memverifikasi pembayaran…",
+  "paymentNoMethod": "Tidak ada metode pembayaran tersedia",
+  "vipChapterLocked": "Bab ini khusus anggota VIP.",
+  "openVipToRead": "Jadi anggota untuk membaca",
+  "retryPay": "Bayar Lagi"
 }

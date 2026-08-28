@@ -156,4 +156,51 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get offline => 'ذاكرة تخزين دون اتصال';
+
+  @override
+  String get vipActive => 'عضو VIP';
+
+  @override
+  String get vipNotActive => 'VIP غير مفعل';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return 'تنتهي في: $date';
+  }
+
+  @override
+  String get vipRenew => 'تجديد';
+
+  @override
+  String get vipOpen => 'اشترك في VIP';
+
+  @override
+  String get payNow => 'ادفع الآن';
+
+  @override
+  String get paymentResult => 'نتيجة الدفع';
+
+  @override
+  String get paymentSuccess => 'تم الدفع بنجاح';
+
+  @override
+  String get paymentFailed => 'فشل الدفع';
+
+  @override
+  String get paymentPending => 'في انتظار الدفع';
+
+  @override
+  String get paymentChecking => 'جارٍ تأكيد الدفع…';
+
+  @override
+  String get paymentNoMethod => 'لا توجد طريقة دفع متاحة';
+
+  @override
+  String get vipChapterLocked => 'هذا الفصل مخصص لأعضاء VIP فقط.';
+
+  @override
+  String get openVipToRead => 'اشترك للقراءة';
+
+  @override
+  String get retryPay => 'إعادة الدفع';
 }

@@ -163,4 +163,52 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get offline => 'Офлайн-кэш';
+
+  @override
+  String get vipActive => 'VIP-участник';
+
+  @override
+  String get vipNotActive => 'VIP не активирован';
+
+  @override
+  String vipExpiresAt(Object date) {
+    return 'Истекает: $date';
+  }
+
+  @override
+  String get vipRenew => 'Продлить';
+
+  @override
+  String get vipOpen => 'Получить VIP';
+
+  @override
+  String get payNow => 'Оплатить';
+
+  @override
+  String get paymentResult => 'Результат оплаты';
+
+  @override
+  String get paymentSuccess => 'Оплата успешна';
+
+  @override
+  String get paymentFailed => 'Оплата не удалась';
+
+  @override
+  String get paymentPending => 'Ожидание оплаты';
+
+  @override
+  String get paymentChecking => 'Проверка оплаты…';
+
+  @override
+  String get paymentNoMethod => 'Нет доступных способов оплаты';
+
+  @override
+  String get vipChapterLocked =>
+      'Эта глава доступна только для VIP-участников.';
+
+  @override
+  String get openVipToRead => 'Стать участником';
+
+  @override
+  String get retryPay => 'Оплатить снова';
 }

@@ -150,6 +150,80 @@ class User {
         role = asInt(j['role']);
 }
 
+/// VIP 套餐（GET /api/payments/plans 公开）。amount 为分。
+class Plan {
+  final String planCode;
+  final int days;
+  final int amountCents;
+  final String currency;
+  final String label;
+
+  Plan.fromJson(Map<String, dynamic> j)
+      : planCode = asStr(j['planCode']),
+        days = asInt(j['days']),
+        amountCents = asInt(j['amount']),
+        currency = asStr(j['currency']),
+        label = asStr(j['label']);
+}
+
+/// 创建订单结果（POST /api/payments/order）。
+class CreateOrderResult {
+  final String orderNo;
+  final int amount;
+  final String currency;
+  final String checkoutUrl;
+  final String provider;
+
+  CreateOrderResult.fromJson(Map<String, dynamic> j)
+      : orderNo = asStr(j['orderNo']),
+        amount = asInt(j['amount']),
+        currency = asStr(j['currency']),
+        checkoutUrl = asStr(j['checkoutUrl']),
+        provider = asStr(j['provider']);
+}
+
+/// 支付方式（GET /api/payments/methods）。
+class PaymentMethod {
+  final String code;
+  final String lang;
+  final String region;
+
+  PaymentMethod.fromJson(Map<String, dynamic> j)
+      : code = asStr(j['code']),
+        lang = asStr(j['lang']),
+        region = asStr(j['region']);
+}
+
+/// 订单状态（GET /api/payments/order/{order_no}）。status 0待支付 1已付 2失败 3关闭。
+class OrderStatus {
+  final String orderNo;
+  final int status;
+  final int amount;
+  final String currency;
+  final String provider;
+  final String txId;
+  final String paidAt;
+
+  OrderStatus.fromJson(Map<String, dynamic> j)
+      : orderNo = asStr(j['orderNo']),
+        status = asInt(j['status']),
+        amount = asInt(j['amount']),
+        currency = asStr(j['currency']),
+        provider = asStr(j['provider']),
+        txId = asStr(j['txId']),
+        paidAt = asStr(j['paidAt']);
+}
+
+/// VIP 状态（GET /api/payments/vip-status）。
+class VipStatus {
+  final bool active;
+  final String vipExpiresAt;
+
+  VipStatus.fromJson(Map<String, dynamic> j)
+      : active = j['active'] == true,
+        vipExpiresAt = asStr(j['vipExpiresAt']);
+}
+
 class LoginResult {
   final String accessToken;
   final String refreshToken;

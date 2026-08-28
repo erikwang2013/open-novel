@@ -1,52 +1,256 @@
 {
   "string": [
-    { "name": "module_desc", "value": "Основной модуль приложения Open Novel" },
-    { "name": "EntryAbility_desc", "value": "Главная точка входа приложения Open Novel" },
-    { "name": "EntryAbility_label", "value": "OpenNovel" },
-    { "name": "appTitle", "value": "OpenNovel" },
-    { "name": "home", "value": "Главная" },
-    { "name": "mine", "value": "Моё" },
-    { "name": "read", "value": "Читать" },
-    { "name": "recommend", "value": "Рекомендации" },
-    { "name": "allBooks", "value": "Библиотека" },
-    { "name": "bookDetail", "value": "О книге" },
-    { "name": "chapters", "value": "Главы" },
-    { "name": "login", "value": "Войти" },
-    { "name": "register", "value": "Регистрация" },
-    { "name": "logout", "value": "Выйти" },
-    { "name": "username", "value": "Имя пользователя" },
-    { "name": "password", "value": "Пароль" },
-    { "name": "email", "value": "Эл. почта" },
-    { "name": "nickname", "value": "Никнейм" },
-    { "name": "welcome", "value": "Добро пожаловать, %s" },
-    { "name": "loginRequired", "value": "Войдите, чтобы читать" },
-    { "name": "notLoggedIn", "value": "Вы не вошли" },
-    { "name": "searchHint", "value": "Поиск по названию/автору" },
-    { "name": "searchResult", "value": "Поиск" },
-    { "name": "loading", "value": "Загрузка…" },
-    { "name": "empty", "value": "Нет данных" },
-    { "name": "errorNetwork", "value": "Ошибка сети, проверьте подключение" },
-    { "name": "errorServer", "value": "Ошибка сервера: %s" },
-    { "name": "retry", "value": "Повторить" },
-    { "name": "bookCount", "value": "%s глав" },
-    { "name": "free", "value": "Бесплатно" },
-    { "name": "vip", "value": "VIP" },
-    { "name": "nextChapter", "value": "Следующая глава" },
-    { "name": "prevChapter", "value": "Предыдущая глава" },
-    { "name": "errorMsg", "value": "%s" },
-    { "name": "comments", "value": "Комментарии" },
-    { "name": "commentHint", "value": "Напишите комментарий…" },
-    { "name": "post", "value": "Опубликовать" },
-    { "name": "settings", "value": "Настройки" },
-    { "name": "theme", "value": "Тема" },
-    { "name": "themeSystem", "value": "Как в системе" },
-    { "name": "themeLight", "value": "Светлая" },
-    { "name": "themeDark", "value": "Тёмная" },
-    { "name": "fontSize", "value": "Размер шрифта" },
-    { "name": "lineHeight", "value": "Межстрочный интервал" },
-    { "name": "pageMode", "value": "Режим страниц" },
-    { "name": "scrollMode", "value": "Вертикальная прокрутка" },
-    { "name": "pagedMode", "value": "Перелистывание" },
-    { "name": "offline", "value": "Офлайн-кэш" }
+    {
+      "name": "module_desc",
+      "value": "Основной модуль приложения Open Novel"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Главная точка входа приложения Open Novel"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "appTitle",
+      "value": "OpenNovel"
+    },
+    {
+      "name": "home",
+      "value": "Главная"
+    },
+    {
+      "name": "mine",
+      "value": "Моё"
+    },
+    {
+      "name": "read",
+      "value": "Читать"
+    },
+    {
+      "name": "recommend",
+      "value": "Рекомендации"
+    },
+    {
+      "name": "allBooks",
+      "value": "Библиотека"
+    },
+    {
+      "name": "bookDetail",
+      "value": "О книге"
+    },
+    {
+      "name": "chapters",
+      "value": "Главы"
+    },
+    {
+      "name": "login",
+      "value": "Войти"
+    },
+    {
+      "name": "register",
+      "value": "Регистрация"
+    },
+    {
+      "name": "logout",
+      "value": "Выйти"
+    },
+    {
+      "name": "username",
+      "value": "Имя пользователя"
+    },
+    {
+      "name": "password",
+      "value": "Пароль"
+    },
+    {
+      "name": "email",
+      "value": "Эл. почта"
+    },
+    {
+      "name": "nickname",
+      "value": "Никнейм"
+    },
+    {
+      "name": "welcome",
+      "value": "Добро пожаловать, %s"
+    },
+    {
+      "name": "loginRequired",
+      "value": "Войдите, чтобы читать"
+    },
+    {
+      "name": "notLoggedIn",
+      "value": "Вы не вошли"
+    },
+    {
+      "name": "searchHint",
+      "value": "Поиск по названию/автору"
+    },
+    {
+      "name": "searchResult",
+      "value": "Поиск"
+    },
+    {
+      "name": "loading",
+      "value": "Загрузка…"
+    },
+    {
+      "name": "empty",
+      "value": "Нет данных"
+    },
+    {
+      "name": "errorNetwork",
+      "value": "Ошибка сети, проверьте подключение"
+    },
+    {
+      "name": "errorServer",
+      "value": "Ошибка сервера: %s"
+    },
+    {
+      "name": "retry",
+      "value": "Повторить"
+    },
+    {
+      "name": "bookCount",
+      "value": "%s глав"
+    },
+    {
+      "name": "free",
+      "value": "Бесплатно"
+    },
+    {
+      "name": "vip",
+      "value": "VIP"
+    },
+    {
+      "name": "nextChapter",
+      "value": "Следующая глава"
+    },
+    {
+      "name": "prevChapter",
+      "value": "Предыдущая глава"
+    },
+    {
+      "name": "errorMsg",
+      "value": "%s"
+    },
+    {
+      "name": "comments",
+      "value": "Комментарии"
+    },
+    {
+      "name": "commentHint",
+      "value": "Напишите комментарий…"
+    },
+    {
+      "name": "post",
+      "value": "Опубликовать"
+    },
+    {
+      "name": "settings",
+      "value": "Настройки"
+    },
+    {
+      "name": "theme",
+      "value": "Тема"
+    },
+    {
+      "name": "themeSystem",
+      "value": "Как в системе"
+    },
+    {
+      "name": "themeLight",
+      "value": "Светлая"
+    },
+    {
+      "name": "themeDark",
+      "value": "Тёмная"
+    },
+    {
+      "name": "fontSize",
+      "value": "Размер шрифта"
+    },
+    {
+      "name": "lineHeight",
+      "value": "Межстрочный интервал"
+    },
+    {
+      "name": "pageMode",
+      "value": "Режим страниц"
+    },
+    {
+      "name": "scrollMode",
+      "value": "Вертикальная прокрутка"
+    },
+    {
+      "name": "pagedMode",
+      "value": "Перелистывание"
+    },
+    {
+      "name": "offline",
+      "value": "Офлайн-кэш"
+    },
+    {
+      "name": "vipActive",
+      "value": "VIP-участник"
+    },
+    {
+      "name": "vipNotActive",
+      "value": "VIP не активирован"
+    },
+    {
+      "name": "vipExpiresAt",
+      "value": "Истекает: %s"
+    },
+    {
+      "name": "vipRenew",
+      "value": "Продлить"
+    },
+    {
+      "name": "vipOpen",
+      "value": "Получить VIP"
+    },
+    {
+      "name": "payNow",
+      "value": "Оплатить"
+    },
+    {
+      "name": "paymentResult",
+      "value": "Результат оплаты"
+    },
+    {
+      "name": "paymentSuccess",
+      "value": "Оплата успешна"
+    },
+    {
+      "name": "paymentFailed",
+      "value": "Оплата не удалась"
+    },
+    {
+      "name": "paymentPending",
+      "value": "Ожидание оплаты"
+    },
+    {
+      "name": "paymentChecking",
+      "value": "Проверка оплаты…"
+    },
+    {
+      "name": "paymentNoMethod",
+      "value": "Нет доступных способов оплаты"
+    },
+    {
+      "name": "vipChapterLocked",
+      "value": "Эта глава доступна только для VIP-участников."
+    },
+    {
+      "name": "openVipToRead",
+      "value": "Стать участником"
+    },
+    {
+      "name": "retryPay",
+      "value": "Оплатить снова"
+    }
   ]
 }
