@@ -76,10 +76,11 @@ type Category struct {
 func (Category) TableName() string { return "novel_category" }
 
 type Tag struct {
-	ID     uint64 `gorm:"column:id"`
-	Name   string `gorm:"column:name"`
-	Lang   string `gorm:"column:lang"`
-	Status int8   `gorm:"column:status"`
+	ID        uint64    `gorm:"column:id"`
+	Name      string    `gorm:"column:name"`
+	Lang      string    `gorm:"column:lang"`
+	Status    int8      `gorm:"column:status"`
+	CreatedAt time.Time `gorm:"column:created_at"`
 }
 
 func (Tag) TableName() string { return "novel_tag" }

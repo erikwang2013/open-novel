@@ -103,6 +103,79 @@ class User {
         createdAt = asStr(j['createdAt']);
 }
 
+/// 分类（CategoryReply）。status: 1 启用 0 禁用；parentId 0=一级。
+class Category {
+  final String id;
+  final String name;
+  final String parentId;
+  final int sortOrder;
+  final int status;
+
+  Category.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        name = asStr(j['name']),
+        parentId = asStr(j['parentId']),
+        sortOrder = asInt(j['sortOrder']),
+        status = asInt(j['status']);
+}
+
+/// 标签（TagReply）。status: 1 启用 0 禁用。
+class Tag {
+  final String id;
+  final String name;
+  final String lang;
+  final int status;
+
+  Tag.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        name = asStr(j['name']),
+        lang = asStr(j['lang']),
+        status = asInt(j['status']);
+}
+
+/// 仪表盘统计（GetStatsReply）。
+class StatsData {
+  final int bookCount;
+  final int userCount;
+  final int commentCount;
+  final int dau;
+  final List<HotBook> hotBooks;
+  final List<HotKeyword> hotKeywords;
+
+  StatsData.fromJson(Map<String, dynamic> j)
+      : bookCount = asInt(j['bookCount']),
+        userCount = asInt(j['userCount']),
+        commentCount = asInt(j['commentCount']),
+        dau = asInt(j['dau']),
+        hotBooks = ((j['hotBooks'] ?? []) as List)
+            .map((e) => HotBook.fromJson((e as Map).cast<String, dynamic>()))
+            .toList(),
+        hotKeywords = ((j['hotKeywords'] ?? []) as List)
+            .map((e) =>
+                HotKeyword.fromJson((e as Map).cast<String, dynamic>()))
+            .toList();
+}
+
+class HotBook {
+  final String bookId;
+  final String title;
+  final int hot;
+
+  HotBook.fromJson(Map<String, dynamic> j)
+      : bookId = asStr(j['bookId']),
+        title = asStr(j['title']),
+        hot = asInt(j['hot']);
+}
+
+class HotKeyword {
+  final String keyword;
+  final int count;
+
+  HotKeyword.fromJson(Map<String, dynamic> j)
+      : keyword = asStr(j['keyword']),
+        count = asInt(j['count']);
+}
+
 /// 评论（CommentReply）。status: 1 正常 0 下架 2 举报待审。
 class Comment {
   final String id;

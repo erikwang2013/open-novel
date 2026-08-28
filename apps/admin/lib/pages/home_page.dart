@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../api/api_client.dart';
 import 'books_page.dart';
+import 'categories_page.dart';
 import 'comments_page.dart';
+import 'dashboard_page.dart';
 import 'login_page.dart';
 import 'reports_page.dart';
 import 'users_page.dart';
@@ -18,21 +20,23 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _index = 0;
 
-  static const _titles = ['仪表盘', '书籍', '评论', '举报', '用户'];
+  static const _titles = ['仪表盘', '书籍', '评论', '举报', '用户', '分类标签'];
   static const _icons = [
     Icons.dashboard_outlined,
     Icons.menu_book_outlined,
     Icons.comment_outlined,
     Icons.report_outlined,
     Icons.people_outline,
+    Icons.category_outlined,
   ];
 
   static const _pages = [
-    _PlaceholderPage(),
+    DashboardPage(),
     BooksPage(),
     CommentsPage(),
     ReportsPage(),
     UsersPage(),
+    CategoriesPage(),
   ];
 
   void _logout() {
@@ -82,15 +86,3 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-/// 占位页（仪表盘 / 用户）。
-class _PlaceholderPage extends StatelessWidget {
-  const _PlaceholderPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('待实现',
-          style: TextStyle(color: Theme.of(context).colorScheme.outline)),
-    );
-  }
-}

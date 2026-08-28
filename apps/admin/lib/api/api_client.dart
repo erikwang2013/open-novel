@@ -167,6 +167,53 @@ class ApiClient {
     _data(await _dio.patch('/api/users/$id/role', data: {'role': role}));
   }
 
+  // ---------- 仪表盘 ----------
+
+  /// 仪表盘统计（管理员）。
+  Future<StatsData> stats() async {
+    return StatsData.fromJson(_data(await _dio.get('/api/stats/overview')));
+  }
+
+  // ---------- 分类 / 标签 ----------
+
+  Future<(List<Category>, int)> categories() async {
+    final d = _data(await _dio.get('/api/categories'));
+    return (_listOf(d, Category.fromJson), asInt(d['total']));
+  }
+
+  Future<void> createCategory(
+      {required String name,
+      String parentId = '0',
+      int sortOrder = 0}) async {
+    _data(await _dio.post('/api/categories',
+        data: {'name': name, 'parent_id': parentId, 'sort_order': sortOrder}));
+  }
+
+  Future<void> updateCategory(String id, Map<String, dynamic> patch) async {
+    _data(await _dio.put('/api/categories/$id', data: patch));
+  }
+
+  Future<void> deleteCategory(String id) async {
+    _data(await _dio.delete('/api/categories/$id'));
+  }
+
+  Future<(List<Tag>, int)> tags() async {
+    final d = _data(await _dio.get('/api/tags'));
+    return (_listOf(d, Tag.fromJson), asInt(d['total']));
+  }
+
+  Future<void> createTag({required String name, String lang = 'zh-CN'}) async {
+    _data(await _dio.post('/api/tags', data: {'name': name, 'lang': lang}));
+  }
+
+  Future<void> updateTag(String id, Map<String, dynamic> patch) async {
+    _data(await _dio.put('/api/tags/$id', data: patch));
+  }
+
+  Future<void> deleteTag(String id) async {
+    _data(await _dio.delete('/api/tags/$id'));
+  }
+
   // ---------- 内部工具 ----------
 
   /// 解析响应体；业务错误（HTTP 200 + code != null）显式抛出，与 login 一致。

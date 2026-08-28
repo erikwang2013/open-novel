@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+// 管理端服务：仪表盘统计 / 分类 / 标签（T-A-14/16）
+// 业务码段 18xxxx；REST 映射 /api/stats/overview、/api/categories、/api/tags
+package admin.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/admin/v1;v1";
+
+service Admin {
+  // 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
+  rpc GetStats(GetStatsReq) returns (GetStatsReply) {
+    option (google.api.http) = {
+      get: "/api/stats/overview"
+    };
+  }
+  // 分类列表（requireAdmin，全量返回，量小）
+  rpc ListCategories(ListCategoriesReq) returns (ListCategoriesReply) {
+    option (google.api.http) = {
+      get: "/api/categories"
+    };
+  }
+  rpc CreateCategory(CreateCategoryReq) returns (CategoryReply) {
+    option (google.api.http) = {
+      post: "/api/categories"
+      body: "*"
+    };
+  }
+  // 更新分类；字段可选，仅更新非空项
+  rpc UpdateCategory(UpdateCategoryReq) returns (CategoryReply) {
+    option (google.api.http) = {
+      put: "/api/categories/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteCategory(DeleteCategoryReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      delete: "/api/categories/{id}"
+    };
+  }
+  // 标签列表（requireAdmin）
+  rpc ListTags(ListTagsReq) returns (ListTagsReply) {
+    option (google.api.http) = {
+      get: "/api/tags"
+    };
+  }
+  rpc CreateTag(CreateTagReq) returns (TagReply) {
+    option (google.api.http) = {
+      post: "/api/tags"
+      body: "*"
+    };
+  }
+  rpc UpdateTag(UpdateTagReq) returns (TagReply) {
+    option (google.api.http) = {
+      put: "/api/tags/{id}"
+      body: "*"
+    };
+  }
+  rpc DeleteTag(DeleteTagReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      delete: "/api/tags/{id}"
+    };
+  }
+}
+
+message GetStatsReq {}
+
+message GetStatsReply {
+  int64 book_count = 1;
+  int64 user_count = 2;
+  int64 comment_count = 3;
+  int64 dau = 4; // DAU 近似：当日登录 + 当日搜索的去重用户
+  repeated HotBook hot_books = 5; // 热门书籍（复用搜索热门榜）
+  repeated HotKeyword hot_keywords = 6; // 热门搜索词（搜索日志聚合）
+}
+
+message HotBook {
+  int64 book_id = 1;
+  string title = 2;
+  int64 hot = 3;
+}
+
+message HotKeyword {
+  string keyword = 1;
+  int64 count = 2;
+}
+
+message CategoryReply {
+  int64 id = 1;
+  string name = 2;
+  int64 parent_id = 3;
+  int32 sort_order = 4;
+  int32 status = 5;
+  string created_at = 6; // RFC3339
+}
+
+message ListCategoriesReq {}
+message ListCategoriesReply {
+  repeated CategoryReply list = 1;
+  int64 total = 2;
+}
+
+message CreateCategoryReq {
+  string name = 1;
+  int64 parent_id = 2; // 0=一级分类
+  int32 sort_order = 3;
+}
+
+message UpdateCategoryReq {
+  int64 id = 1;
+  optional string name = 2;
+  optional int64 parent_id = 3;
+  optional int32 sort_order = 4;
+  optional int32 status = 5; // 0 禁用 1 启用
+}
+
+message DeleteCategoryReq {
+  int64 id = 1;
+}
+
+message TagReply {
+  int64 id = 1;
+  string name = 2;
+  string lang = 3;
+  int32 status = 4;
+  string created_at = 5; // RFC3339
+}
+
+message ListTagsReq {}
+message ListTagsReply {
+  repeated TagReply list = 1;
+  int64 total = 2;
+}
+
+message CreateTagReq {
+  string name = 1;
+  string lang = 2; // 缺省 zh-CN
+}
+
+message UpdateTagReq {
+  int64 id = 1;
+  optional string name = 2;
+  optional string lang = 3;
+  optional int32 status = 4; // 0 禁用 1 启用
+}
+
+message DeleteTagReq {
+  int64 id = 1;
+}
+
+message EmptyReply {}
