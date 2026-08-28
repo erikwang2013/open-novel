@@ -10,7 +10,7 @@
 - Base URL：`http://<host>:8000`（开发默认 `http://localhost:8000`）
 - 序列化：JSON 驼峰字段；**int64 字段（id 等）序列化为字符串**
 - 分页：`page`（从 1 起）+ `page_size`，响应 `{list, total, page, pageSize}`
-- 多语言：查询参数 `lang=zh|en|ja`（`zh` 默认），影响书籍标题/简介/章节内容返回的语言版本
+- 多语言：查询参数 `lang=zh-CN|en|ja|ko`（`zh-CN` 默认，`zh` 为 `zh-CN` 别名），影响书籍标题/简介/章节内容返回的语言版本
 
 ## 错误格式
 

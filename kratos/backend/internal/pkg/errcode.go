@@ -40,6 +40,7 @@ var (
 	ErrChapterDB     = Biz(140500, "DB_ERROR", "db error")
 	ErrChapterNF     = Biz(140404, "CHAPTER_NOT_FOUND", "chapter not found")
 	ErrChapterContent = Biz(140404, "CONTENT_NOT_FOUND", "chapter content not found")
+	ErrChapterDisabled = Biz(140403, "CHAPTER_DISABLED", "chapter disabled")
 	ErrNoProgress    = Biz(140404, "NO_PROGRESS", "no progress yet")
 
 	// Comment（15xxxx）
@@ -55,4 +56,9 @@ var (
 	// Recommendation（17xxxx）
 	ErrRecommendArg = Biz(170400, "INVALID_ARGUMENT", "strategy must be hot or new")
 	ErrRecommend    = Biz(170500, "RECOMMEND_FAILED", "recommend failed")
+
+	// Admin（18xxxx）
+	ErrAdmin    = Biz(180401, "NO_PERMISSION", "admin permission required")
+	ErrTargetNF = Biz(180402, "TARGET_NOT_FOUND", "target not found")
+	ErrBadState = Biz(180403, "INVALID_STATE", "invalid state transition")
 )

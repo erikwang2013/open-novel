@@ -9,9 +9,11 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"gorm.io/gorm"
+	gormdb "gorm.io/plugin/dbresolver"
 
 	"open-novel/backend/internal/data"
 	"open-novel/backend/internal/pkg"
@@ -202,6 +204,25 @@ func (uc *BookUsecase) UpsertTranslation(ctx context.Context, id uint64, lang, t
 	return nil
 }
 
+// SetBookStatus 上下架（仅管理员；1 上架 0 下架）；同步搜索索引状态并失效榜单/详情缓存。
+func (uc *BookUsecase) SetBookStatus(ctx context.Context, adminID int64, id uint64, status int8) error {
+	if id == 0 || (status != 0 && status != 1) {
+		return pkg.ErrBookArg
+	}
+	res := uc.db.Clauses(gormdb.Write).Model(&data.Book{}).Where("id = ?", id).Update("status", status)
+	if res.Error != nil {
+		return pkg.ErrBookInternal
+	}
+	if res.RowsAffected == 0 {
+		return pkg.ErrBookNF
+	}
+	uc.cache.DelPattern(ctx, "recommend:*")
+	uc.cache.DelPattern(ctx, fmt.Sprintf("book:%d:*", id))
+	uc.syncIndexBestEffort(ctx, id)
+	data.WriteAudit(uc.db, ctx, adminID, "book_status", "book", strconv.FormatUint(id, 10), fmt.Sprintf("status=%d", status))
+	return nil
+}
+
 // syncIndexBestEffort 将书籍同步到搜索索引；索引失败只记日志，不阻塞建书/翻译。
 func (uc *BookUsecase) syncIndexBestEffort(ctx context.Context, bookID uint64) {
 	if err := uc.syncIndex(ctx, bookID); err != nil {
@@ -223,17 +244,19 @@ func (uc *BookUsecase) syncIndex(ctx context.Context, bookID uint64) error {
 	for _, tr := range trs {
 		setLang(&doc, tr.Lang, tr.Title, tr.Summary)
 	}
-	doc.AuthorZh, doc.AuthorEn, doc.AuthorJa = b.Author, b.Author, b.Author
+	doc.AuthorZh, doc.AuthorEn, doc.AuthorJa, doc.AuthorKo = b.Author, b.Author, b.Author, b.Author
 	return uc.search.SyncIndex(ctx, doc)
 }
 
 // setLang 按语言填入标题/简介字段（zh-CN 及未列语言归 zh 位）。
 func setLang(doc *data.SearchDoc, lang, title, summary string) {
-	switch lang {
+	switch pkg.NormalizeLang(lang) {
 	case "en":
 		doc.TitleEn, doc.SummaryEn = title, summary
 	case "ja":
 		doc.TitleJa, doc.SummaryJa = title, summary
+	case "ko":
+		doc.TitleKo, doc.SummaryKo = title, summary
 	default:
 		doc.TitleZh, doc.SummaryZh = title, summary
 	}

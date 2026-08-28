@@ -26,6 +26,7 @@ const OperationChapterGetReadingProgress = "/chapter.v1.Chapter/GetReadingProgre
 const OperationChapterListBookshelf = "/chapter.v1.Chapter/ListBookshelf"
 const OperationChapterListChapters = "/chapter.v1.Chapter/ListChapters"
 const OperationChapterRemoveFromBookshelf = "/chapter.v1.Chapter/RemoveFromBookshelf"
+const OperationChapterUpdateChapterStatus = "/chapter.v1.Chapter/UpdateChapterStatus"
 const OperationChapterUpdateReadingProgress = "/chapter.v1.Chapter/UpdateReadingProgress"
 
 type ChapterHTTPServer interface {
@@ -39,6 +40,8 @@ type ChapterHTTPServer interface {
 	// ListChapters 章节列表（缓存 chapter:list:{book_id}:{page}:{page_size}）
 	ListChapters(context.Context, *ListChaptersReq) (*ListChaptersReply, error)
 	RemoveFromBookshelf(context.Context, *RemoveFromBookshelfReq) (*RemoveFromBookshelfReply, error)
+	// UpdateChapterStatus 章节启用/禁用（仅管理员；0 禁用 1 启用；禁用章节正文不可读）
+	UpdateChapterStatus(context.Context, *UpdateChapterStatusReq) (*EmptyReply, error)
 	UpdateReadingProgress(context.Context, *UpdateReadingProgressReq) (*ProgressReply, error)
 }
 
@@ -52,6 +55,7 @@ func RegisterChapterHTTPServer(s *http.Server, srv ChapterHTTPServer) {
 	r.POST("/api/bookshelf", _Chapter_AddToBookshelf0_HTTP_Handler(srv))
 	r.DELETE("/api/bookshelf/{book_id}", _Chapter_RemoveFromBookshelf0_HTTP_Handler(srv))
 	r.GET("/api/bookshelf", _Chapter_ListBookshelf0_HTTP_Handler(srv))
+	r.PATCH("/api/chapters/{id}/status", _Chapter_UpdateChapterStatus0_HTTP_Handler(srv))
 }
 
 func _Chapter_CreateChapter0_HTTP_Handler(srv ChapterHTTPServer) func(ctx http.Context) error {
@@ -227,6 +231,31 @@ func _Chapter_ListBookshelf0_HTTP_Handler(srv ChapterHTTPServer) func(ctx http.C
 	}
 }
 
+func _Chapter_UpdateChapterStatus0_HTTP_Handler(srv ChapterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateChapterStatusReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationChapterUpdateChapterStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateChapterStatus(ctx, req.(*UpdateChapterStatusReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ChapterHTTPClient interface {
 	AddToBookshelf(ctx context.Context, req *AddToBookshelfReq, opts ...http.CallOption) (rsp *ShelfReply, err error)
 	// CreateChapter 新建章节（需登录；章节 + 正文同事务，按 rune 计数）
@@ -238,6 +267,8 @@ type ChapterHTTPClient interface {
 	// ListChapters 章节列表（缓存 chapter:list:{book_id}:{page}:{page_size}）
 	ListChapters(ctx context.Context, req *ListChaptersReq, opts ...http.CallOption) (rsp *ListChaptersReply, err error)
 	RemoveFromBookshelf(ctx context.Context, req *RemoveFromBookshelfReq, opts ...http.CallOption) (rsp *RemoveFromBookshelfReply, err error)
+	// UpdateChapterStatus 章节启用/禁用（仅管理员；0 禁用 1 启用；禁用章节正文不可读）
+	UpdateChapterStatus(ctx context.Context, req *UpdateChapterStatusReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 	UpdateReadingProgress(ctx context.Context, req *UpdateReadingProgressReq, opts ...http.CallOption) (rsp *ProgressReply, err error)
 }
 
@@ -337,6 +368,20 @@ func (c *ChapterHTTPClientImpl) RemoveFromBookshelf(ctx context.Context, in *Rem
 	opts = append(opts, http.Operation(OperationChapterRemoveFromBookshelf))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateChapterStatus 章节启用/禁用（仅管理员；0 禁用 1 启用；禁用章节正文不可读）
+func (c *ChapterHTTPClientImpl) UpdateChapterStatus(ctx context.Context, in *UpdateChapterStatusReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/chapters/{id}/status"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationChapterUpdateChapterStatus))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PATCH", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

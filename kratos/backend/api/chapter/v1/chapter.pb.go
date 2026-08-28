@@ -829,6 +829,94 @@ func (*RemoveFromBookshelfReply) Descriptor() ([]byte, []int) {
 	return file_chapter_v1_chapter_proto_rawDescGZIP(), []int{12}
 }
 
+type UpdateChapterStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` // 0 禁用 1 启用
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateChapterStatusReq) Reset() {
+	*x = UpdateChapterStatusReq{}
+	mi := &file_chapter_v1_chapter_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateChapterStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateChapterStatusReq) ProtoMessage() {}
+
+func (x *UpdateChapterStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_chapter_v1_chapter_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateChapterStatusReq.ProtoReflect.Descriptor instead.
+func (*UpdateChapterStatusReq) Descriptor() ([]byte, []int) {
+	return file_chapter_v1_chapter_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *UpdateChapterStatusReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateChapterStatusReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type EmptyReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmptyReply) Reset() {
+	*x = EmptyReply{}
+	mi := &file_chapter_v1_chapter_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmptyReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyReply) ProtoMessage() {}
+
+func (x *EmptyReply) ProtoReflect() protoreflect.Message {
+	mi := &file_chapter_v1_chapter_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyReply.ProtoReflect.Descriptor instead.
+func (*EmptyReply) Descriptor() ([]byte, []int) {
+	return file_chapter_v1_chapter_proto_rawDescGZIP(), []int{14}
+}
+
 type ListBookshelfReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
@@ -839,7 +927,7 @@ type ListBookshelfReq struct {
 
 func (x *ListBookshelfReq) Reset() {
 	*x = ListBookshelfReq{}
-	mi := &file_chapter_v1_chapter_proto_msgTypes[13]
+	mi := &file_chapter_v1_chapter_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -851,7 +939,7 @@ func (x *ListBookshelfReq) String() string {
 func (*ListBookshelfReq) ProtoMessage() {}
 
 func (x *ListBookshelfReq) ProtoReflect() protoreflect.Message {
-	mi := &file_chapter_v1_chapter_proto_msgTypes[13]
+	mi := &file_chapter_v1_chapter_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -864,7 +952,7 @@ func (x *ListBookshelfReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBookshelfReq.ProtoReflect.Descriptor instead.
 func (*ListBookshelfReq) Descriptor() ([]byte, []int) {
-	return file_chapter_v1_chapter_proto_rawDescGZIP(), []int{13}
+	return file_chapter_v1_chapter_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListBookshelfReq) GetPage() int32 {
@@ -893,7 +981,7 @@ type ListBookshelfReply struct {
 
 func (x *ListBookshelfReply) Reset() {
 	*x = ListBookshelfReply{}
-	mi := &file_chapter_v1_chapter_proto_msgTypes[14]
+	mi := &file_chapter_v1_chapter_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -905,7 +993,7 @@ func (x *ListBookshelfReply) String() string {
 func (*ListBookshelfReply) ProtoMessage() {}
 
 func (x *ListBookshelfReply) ProtoReflect() protoreflect.Message {
-	mi := &file_chapter_v1_chapter_proto_msgTypes[14]
+	mi := &file_chapter_v1_chapter_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +1006,7 @@ func (x *ListBookshelfReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBookshelfReply.ProtoReflect.Descriptor instead.
 func (*ListBookshelfReply) Descriptor() ([]byte, []int) {
-	return file_chapter_v1_chapter_proto_rawDescGZIP(), []int{14}
+	return file_chapter_v1_chapter_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListBookshelfReply) GetList() []*ShelfReply {
@@ -1019,7 +1107,12 @@ const file_chapter_v1_chapter_proto_rawDesc = "" +
 	"sort_order\x18\x04 \x01(\x05R\tsortOrder\"1\n" +
 	"\x16RemoveFromBookshelfReq\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\"\x1a\n" +
-	"\x18RemoveFromBookshelfReply\"C\n" +
+	"\x18RemoveFromBookshelfReply\"@\n" +
+	"\x16UpdateChapterStatusReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\x05R\x06status\"\f\n" +
+	"\n" +
+	"EmptyReply\"C\n" +
 	"\x10ListBookshelfReq\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\"\x87\x01\n" +
@@ -1027,7 +1120,7 @@ const file_chapter_v1_chapter_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x16.chapter.v1.ShelfReplyR\x04list\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\x99\a\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\x92\b\n" +
 	"\aChapter\x12q\n" +
 	"\rCreateChapter\x12\x1c.chapter.v1.CreateChapterReq\x1a\x18.chapter.v1.ChapterReply\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/api/books/{book_id}/chapters\x12q\n" +
 	"\fListChapters\x12\x1b.chapter.v1.ListChaptersReq\x1a\x1d.chapter.v1.ListChaptersReply\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/api/books/{book_id}/chapters\x12z\n" +
@@ -1036,7 +1129,8 @@ const file_chapter_v1_chapter_proto_rawDesc = "" +
 	"\x15UpdateReadingProgress\x12$.chapter.v1.UpdateReadingProgressReq\x1a\x19.chapter.v1.ProgressReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\x1a\r/api/progress\x12b\n" +
 	"\x0eAddToBookshelf\x12\x1d.chapter.v1.AddToBookshelfReq\x1a\x16.chapter.v1.ShelfReply\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/api/bookshelf\x12\x81\x01\n" +
 	"\x13RemoveFromBookshelf\x12\".chapter.v1.RemoveFromBookshelfReq\x1a$.chapter.v1.RemoveFromBookshelfReply\" \x82\xd3\xe4\x93\x02\x1a*\x18/api/bookshelf/{book_id}\x12e\n" +
-	"\rListBookshelf\x12\x1c.chapter.v1.ListBookshelfReq\x1a\x1e.chapter.v1.ListBookshelfReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/bookshelfB&Z$open-novel/backend/api/chapter/v1;v1b\x06proto3"
+	"\rListBookshelf\x12\x1c.chapter.v1.ListBookshelfReq\x1a\x1e.chapter.v1.ListBookshelfReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/bookshelf\x12w\n" +
+	"\x13UpdateChapterStatus\x12\".chapter.v1.UpdateChapterStatusReq\x1a\x16.chapter.v1.EmptyReply\"$\x82\xd3\xe4\x93\x02\x1e:\x01*2\x19/api/chapters/{id}/statusB&Z$open-novel/backend/api/chapter/v1;v1b\x06proto3"
 
 var (
 	file_chapter_v1_chapter_proto_rawDescOnce sync.Once
@@ -1050,7 +1144,7 @@ func file_chapter_v1_chapter_proto_rawDescGZIP() []byte {
 	return file_chapter_v1_chapter_proto_rawDescData
 }
 
-var file_chapter_v1_chapter_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_chapter_v1_chapter_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_chapter_v1_chapter_proto_goTypes = []any{
 	(*CreateChapterReq)(nil),         // 0: chapter.v1.CreateChapterReq
 	(*ChapterReply)(nil),             // 1: chapter.v1.ChapterReply
@@ -1065,8 +1159,10 @@ var file_chapter_v1_chapter_proto_goTypes = []any{
 	(*ShelfReply)(nil),               // 10: chapter.v1.ShelfReply
 	(*RemoveFromBookshelfReq)(nil),   // 11: chapter.v1.RemoveFromBookshelfReq
 	(*RemoveFromBookshelfReply)(nil), // 12: chapter.v1.RemoveFromBookshelfReply
-	(*ListBookshelfReq)(nil),         // 13: chapter.v1.ListBookshelfReq
-	(*ListBookshelfReply)(nil),       // 14: chapter.v1.ListBookshelfReply
+	(*UpdateChapterStatusReq)(nil),   // 13: chapter.v1.UpdateChapterStatusReq
+	(*EmptyReply)(nil),               // 14: chapter.v1.EmptyReply
+	(*ListBookshelfReq)(nil),         // 15: chapter.v1.ListBookshelfReq
+	(*ListBookshelfReply)(nil),       // 16: chapter.v1.ListBookshelfReply
 }
 var file_chapter_v1_chapter_proto_depIdxs = []int32{
 	1,  // 0: chapter.v1.ListChaptersReply.list:type_name -> chapter.v1.ChapterReply
@@ -1078,17 +1174,19 @@ var file_chapter_v1_chapter_proto_depIdxs = []int32{
 	7,  // 6: chapter.v1.Chapter.UpdateReadingProgress:input_type -> chapter.v1.UpdateReadingProgressReq
 	9,  // 7: chapter.v1.Chapter.AddToBookshelf:input_type -> chapter.v1.AddToBookshelfReq
 	11, // 8: chapter.v1.Chapter.RemoveFromBookshelf:input_type -> chapter.v1.RemoveFromBookshelfReq
-	13, // 9: chapter.v1.Chapter.ListBookshelf:input_type -> chapter.v1.ListBookshelfReq
-	1,  // 10: chapter.v1.Chapter.CreateChapter:output_type -> chapter.v1.ChapterReply
-	3,  // 11: chapter.v1.Chapter.ListChapters:output_type -> chapter.v1.ListChaptersReply
-	5,  // 12: chapter.v1.Chapter.GetChapterContent:output_type -> chapter.v1.ChapterContentReply
-	8,  // 13: chapter.v1.Chapter.GetReadingProgress:output_type -> chapter.v1.ProgressReply
-	8,  // 14: chapter.v1.Chapter.UpdateReadingProgress:output_type -> chapter.v1.ProgressReply
-	10, // 15: chapter.v1.Chapter.AddToBookshelf:output_type -> chapter.v1.ShelfReply
-	12, // 16: chapter.v1.Chapter.RemoveFromBookshelf:output_type -> chapter.v1.RemoveFromBookshelfReply
-	14, // 17: chapter.v1.Chapter.ListBookshelf:output_type -> chapter.v1.ListBookshelfReply
-	10, // [10:18] is the sub-list for method output_type
-	2,  // [2:10] is the sub-list for method input_type
+	15, // 9: chapter.v1.Chapter.ListBookshelf:input_type -> chapter.v1.ListBookshelfReq
+	13, // 10: chapter.v1.Chapter.UpdateChapterStatus:input_type -> chapter.v1.UpdateChapterStatusReq
+	1,  // 11: chapter.v1.Chapter.CreateChapter:output_type -> chapter.v1.ChapterReply
+	3,  // 12: chapter.v1.Chapter.ListChapters:output_type -> chapter.v1.ListChaptersReply
+	5,  // 13: chapter.v1.Chapter.GetChapterContent:output_type -> chapter.v1.ChapterContentReply
+	8,  // 14: chapter.v1.Chapter.GetReadingProgress:output_type -> chapter.v1.ProgressReply
+	8,  // 15: chapter.v1.Chapter.UpdateReadingProgress:output_type -> chapter.v1.ProgressReply
+	10, // 16: chapter.v1.Chapter.AddToBookshelf:output_type -> chapter.v1.ShelfReply
+	12, // 17: chapter.v1.Chapter.RemoveFromBookshelf:output_type -> chapter.v1.RemoveFromBookshelfReply
+	16, // 18: chapter.v1.Chapter.ListBookshelf:output_type -> chapter.v1.ListBookshelfReply
+	14, // 19: chapter.v1.Chapter.UpdateChapterStatus:output_type -> chapter.v1.EmptyReply
+	11, // [11:20] is the sub-list for method output_type
+	2,  // [2:11] is the sub-list for method input_type
 	2,  // [2:2] is the sub-list for extension type_name
 	2,  // [2:2] is the sub-list for extension extendee
 	0,  // [0:2] is the sub-list for field type_name
@@ -1105,7 +1203,7 @@ func file_chapter_v1_chapter_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_chapter_v1_chapter_proto_rawDesc), len(file_chapter_v1_chapter_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -55,6 +55,18 @@ func auth(ctx context.Context) (pkg.Claims, error) {
 	return c, nil
 }
 
+// requireAdmin 要求管理员角色（kratos 无按路由挂中间件，管理操作在 service 层校验），否则 180401。
+func requireAdmin(ctx context.Context) (pkg.Claims, error) {
+	c, err := auth(ctx)
+	if err != nil {
+		return c, err
+	}
+	if err := pkg.RequireAdmin(c); err != nil {
+		return c, err
+	}
+	return c, nil
+}
+
 // proto int64 ↔ 模型 uint64 转换（列均为无符号）。
 func u64(v int64) uint64     { return uint64(v) }
 func i64(v uint64) int64     { return int64(v) }

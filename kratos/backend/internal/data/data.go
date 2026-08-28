@@ -1,6 +1,7 @@
 package data
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
@@ -46,4 +47,10 @@ func newRedis(addr string) *redis.Client {
 		addr = "127.0.0.1:6379"
 	}
 	return redis.NewClient(&redis.Options{Addr: addr})
+}
+
+// WriteAudit 追加管理操作审计日志（best-effort，失败不阻断主流程）。
+func WriteAudit(db *gorm.DB, ctx context.Context, adminID int64, action, targetType, targetID, detail string) {
+	uid := adminID
+	db.WithContext(ctx).Create(&AuditLog{UserID: &uid, Action: action, TargetType: targetType, TargetID: targetID, Detail: detail})
 }

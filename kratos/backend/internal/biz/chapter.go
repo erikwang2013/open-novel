@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"gorm.io/gorm"
@@ -126,6 +127,9 @@ func (uc *ChapterUsecase) GetChapterContent(ctx context.Context, chapterID uint6
 	if err := uc.db.WithContext(ctx).First(&ch, chapterID).Error; err != nil {
 		return nil, pkg.ErrChapterNF
 	}
+	if ch.Status == 0 {
+		return nil, pkg.ErrChapterDisabled // 禁用章节正文不可读
+	}
 	key := fmt.Sprintf("chapter:content:%d:%d:%s", ch.BookID, chapterID, lang)
 	payload, err := uc.cache.GetOrLoad(ctx, key, func() (string, error) {
 		var ct data.ChapterContent
@@ -199,6 +203,27 @@ func (uc *ChapterUsecase) RemoveFromBookshelf(ctx context.Context, uid int64, bo
 		return pkg.ErrInvalidArgument
 	}
 	uc.db.Clauses(gormdb.Write).Where("user_id = ? AND book_id = ?", uid, bookID).Delete(&data.Bookshelf{})
+	return nil
+}
+
+// SetChapterStatus 启用/禁用章节（仅管理员；0 禁用 1 启用）；失效该书籍章节列表缓存。
+func (uc *ChapterUsecase) SetChapterStatus(ctx context.Context, adminID int64, id uint64, status uint8) error {
+	if id == 0 || (status != 0 && status != 1) {
+		return pkg.ErrInvalidArgument
+	}
+	var ch data.Chapter
+	if err := uc.db.WithContext(ctx).First(&ch, id).Error; err != nil {
+		return pkg.ErrChapterNF
+	}
+	res := uc.db.Clauses(gormdb.Write).Model(&data.Chapter{}).Where("id = ?", id).Update("status", status)
+	if res.Error != nil {
+		return pkg.ErrChapterDB
+	}
+	if res.RowsAffected == 0 {
+		return pkg.ErrChapterNF
+	}
+	uc.cache.DelPattern(ctx, fmt.Sprintf("chapter:list:%d:*", ch.BookID))
+	data.WriteAudit(uc.db, ctx, adminID, "chapter_status", "chapter", strconv.FormatUint(id, 10), fmt.Sprintf("status=%d", status))
 	return nil
 }
 

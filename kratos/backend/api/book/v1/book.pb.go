@@ -693,6 +693,94 @@ func (x *UpsertBookTranslationReply) GetLang() string {
 	return ""
 }
 
+type UpdateBookStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` // 1 上架 0 下架
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateBookStatusReq) Reset() {
+	*x = UpdateBookStatusReq{}
+	mi := &file_book_v1_book_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateBookStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateBookStatusReq) ProtoMessage() {}
+
+func (x *UpdateBookStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_book_v1_book_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateBookStatusReq.ProtoReflect.Descriptor instead.
+func (*UpdateBookStatusReq) Descriptor() ([]byte, []int) {
+	return file_book_v1_book_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdateBookStatusReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateBookStatusReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type EmptyReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmptyReply) Reset() {
+	*x = EmptyReply{}
+	mi := &file_book_v1_book_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmptyReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyReply) ProtoMessage() {}
+
+func (x *EmptyReply) ProtoReflect() protoreflect.Message {
+	mi := &file_book_v1_book_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyReply.ProtoReflect.Descriptor instead.
+func (*EmptyReply) Descriptor() ([]byte, []int) {
+	return file_book_v1_book_proto_rawDescGZIP(), []int{10}
+}
+
 type ListCategoriesReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -701,7 +789,7 @@ type ListCategoriesReq struct {
 
 func (x *ListCategoriesReq) Reset() {
 	*x = ListCategoriesReq{}
-	mi := &file_book_v1_book_proto_msgTypes[9]
+	mi := &file_book_v1_book_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -713,7 +801,7 @@ func (x *ListCategoriesReq) String() string {
 func (*ListCategoriesReq) ProtoMessage() {}
 
 func (x *ListCategoriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_book_v1_book_proto_msgTypes[9]
+	mi := &file_book_v1_book_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -726,7 +814,7 @@ func (x *ListCategoriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesReq.ProtoReflect.Descriptor instead.
 func (*ListCategoriesReq) Descriptor() ([]byte, []int) {
-	return file_book_v1_book_proto_rawDescGZIP(), []int{9}
+	return file_book_v1_book_proto_rawDescGZIP(), []int{11}
 }
 
 type CategoryReply struct {
@@ -740,7 +828,7 @@ type CategoryReply struct {
 
 func (x *CategoryReply) Reset() {
 	*x = CategoryReply{}
-	mi := &file_book_v1_book_proto_msgTypes[10]
+	mi := &file_book_v1_book_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -752,7 +840,7 @@ func (x *CategoryReply) String() string {
 func (*CategoryReply) ProtoMessage() {}
 
 func (x *CategoryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_book_v1_book_proto_msgTypes[10]
+	mi := &file_book_v1_book_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -765,7 +853,7 @@ func (x *CategoryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CategoryReply.ProtoReflect.Descriptor instead.
 func (*CategoryReply) Descriptor() ([]byte, []int) {
-	return file_book_v1_book_proto_rawDescGZIP(), []int{10}
+	return file_book_v1_book_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *CategoryReply) GetId() int64 {
@@ -798,7 +886,7 @@ type ListCategoriesReply struct {
 
 func (x *ListCategoriesReply) Reset() {
 	*x = ListCategoriesReply{}
-	mi := &file_book_v1_book_proto_msgTypes[11]
+	mi := &file_book_v1_book_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -810,7 +898,7 @@ func (x *ListCategoriesReply) String() string {
 func (*ListCategoriesReply) ProtoMessage() {}
 
 func (x *ListCategoriesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_book_v1_book_proto_msgTypes[11]
+	mi := &file_book_v1_book_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -823,7 +911,7 @@ func (x *ListCategoriesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesReply.ProtoReflect.Descriptor instead.
 func (*ListCategoriesReply) Descriptor() ([]byte, []int) {
-	return file_book_v1_book_proto_rawDescGZIP(), []int{11}
+	return file_book_v1_book_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListCategoriesReply) GetList() []*CategoryReply {
@@ -842,7 +930,7 @@ type ListTagsReq struct {
 
 func (x *ListTagsReq) Reset() {
 	*x = ListTagsReq{}
-	mi := &file_book_v1_book_proto_msgTypes[12]
+	mi := &file_book_v1_book_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -854,7 +942,7 @@ func (x *ListTagsReq) String() string {
 func (*ListTagsReq) ProtoMessage() {}
 
 func (x *ListTagsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_book_v1_book_proto_msgTypes[12]
+	mi := &file_book_v1_book_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -867,7 +955,7 @@ func (x *ListTagsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTagsReq.ProtoReflect.Descriptor instead.
 func (*ListTagsReq) Descriptor() ([]byte, []int) {
-	return file_book_v1_book_proto_rawDescGZIP(), []int{12}
+	return file_book_v1_book_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListTagsReq) GetLang() string {
@@ -888,7 +976,7 @@ type TagReply struct {
 
 func (x *TagReply) Reset() {
 	*x = TagReply{}
-	mi := &file_book_v1_book_proto_msgTypes[13]
+	mi := &file_book_v1_book_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -900,7 +988,7 @@ func (x *TagReply) String() string {
 func (*TagReply) ProtoMessage() {}
 
 func (x *TagReply) ProtoReflect() protoreflect.Message {
-	mi := &file_book_v1_book_proto_msgTypes[13]
+	mi := &file_book_v1_book_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -913,7 +1001,7 @@ func (x *TagReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TagReply.ProtoReflect.Descriptor instead.
 func (*TagReply) Descriptor() ([]byte, []int) {
-	return file_book_v1_book_proto_rawDescGZIP(), []int{13}
+	return file_book_v1_book_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *TagReply) GetId() int64 {
@@ -946,7 +1034,7 @@ type ListTagsReply struct {
 
 func (x *ListTagsReply) Reset() {
 	*x = ListTagsReply{}
-	mi := &file_book_v1_book_proto_msgTypes[14]
+	mi := &file_book_v1_book_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -958,7 +1046,7 @@ func (x *ListTagsReply) String() string {
 func (*ListTagsReply) ProtoMessage() {}
 
 func (x *ListTagsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_book_v1_book_proto_msgTypes[14]
+	mi := &file_book_v1_book_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -971,7 +1059,7 @@ func (x *ListTagsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTagsReply.ProtoReflect.Descriptor instead.
 func (*ListTagsReply) Descriptor() ([]byte, []int) {
-	return file_book_v1_book_proto_rawDescGZIP(), []int{14}
+	return file_book_v1_book_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListTagsReply) GetList() []*TagReply {
@@ -1039,7 +1127,12 @@ const file_book_v1_book_proto_rawDesc = "" +
 	"\x05cover\x18\x05 \x01(\tR\x05cover\"I\n" +
 	"\x1aUpsertBookTranslationReply\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
-	"\x04lang\x18\x02 \x01(\tR\x04lang\"\x13\n" +
+	"\x04lang\x18\x02 \x01(\tR\x04lang\"=\n" +
+	"\x13UpdateBookStatusReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\x05R\x06status\"\f\n" +
+	"\n" +
+	"EmptyReply\"\x13\n" +
 	"\x11ListCategoriesReq\"P\n" +
 	"\rCategoryReply\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
@@ -1054,7 +1147,7 @@ const file_book_v1_book_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
 	"\x04lang\x18\x03 \x01(\tR\x04lang\"6\n" +
 	"\rListTagsReply\x12%\n" +
-	"\x04list\x18\x01 \x03(\v2\x11.book.v1.TagReplyR\x04list2\xb7\x04\n" +
+	"\x04list\x18\x01 \x03(\v2\x11.book.v1.TagReplyR\x04list2\xa1\x05\n" +
 	"\x04Book\x12K\n" +
 	"\aGetBook\x12\x13.book.v1.GetBookReq\x1a\x12.book.v1.BookReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/books/{id}\x12O\n" +
 	"\tListBooks\x12\x15.book.v1.ListBooksReq\x1a\x17.book.v1.ListBooksReply\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
@@ -1063,7 +1156,8 @@ const file_book_v1_book_proto_rawDesc = "" +
 	"CreateBook\x12\x16.book.v1.CreateBookReq\x1a\x18.book.v1.CreateBookReply\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\"\n" +
 	"/api/books\x12\x87\x01\n" +
 	"\x15UpsertBookTranslation\x12!.book.v1.UpsertBookTranslationReq\x1a#.book.v1.UpsertBookTranslationReply\"&\x82\xd3\xe4\x93\x02 :\x01*\x1a\x1b/api/books/{id}/translation\x12c\n" +
-	"\x0eListCategories\x12\x1a.book.v1.ListCategoriesReq\x1a\x1c.book.v1.ListCategoriesReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/categories\x12K\n" +
+	"\x0eListCategories\x12\x1a.book.v1.ListCategoriesReq\x1a\x1c.book.v1.ListCategoriesReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/categories\x12h\n" +
+	"\x10UpdateBookStatus\x12\x1c.book.v1.UpdateBookStatusReq\x1a\x13.book.v1.EmptyReply\"!\x82\xd3\xe4\x93\x02\x1b:\x01*2\x16/api/books/{id}/status\x12K\n" +
 	"\bListTags\x12\x14.book.v1.ListTagsReq\x1a\x16.book.v1.ListTagsReply\"\x11\x82\xd3\xe4\x93\x02\v\x12\t/api/tagsB#Z!open-novel/backend/api/book/v1;v1b\x06proto3"
 
 var (
@@ -1078,7 +1172,7 @@ func file_book_v1_book_proto_rawDescGZIP() []byte {
 	return file_book_v1_book_proto_rawDescData
 }
 
-var file_book_v1_book_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_book_v1_book_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_book_v1_book_proto_goTypes = []any{
 	(*GetBookReq)(nil),                 // 0: book.v1.GetBookReq
 	(*BookReply)(nil),                  // 1: book.v1.BookReply
@@ -1089,32 +1183,36 @@ var file_book_v1_book_proto_goTypes = []any{
 	(*CreateBookReply)(nil),            // 6: book.v1.CreateBookReply
 	(*UpsertBookTranslationReq)(nil),   // 7: book.v1.UpsertBookTranslationReq
 	(*UpsertBookTranslationReply)(nil), // 8: book.v1.UpsertBookTranslationReply
-	(*ListCategoriesReq)(nil),          // 9: book.v1.ListCategoriesReq
-	(*CategoryReply)(nil),              // 10: book.v1.CategoryReply
-	(*ListCategoriesReply)(nil),        // 11: book.v1.ListCategoriesReply
-	(*ListTagsReq)(nil),                // 12: book.v1.ListTagsReq
-	(*TagReply)(nil),                   // 13: book.v1.TagReply
-	(*ListTagsReply)(nil),              // 14: book.v1.ListTagsReply
+	(*UpdateBookStatusReq)(nil),        // 9: book.v1.UpdateBookStatusReq
+	(*EmptyReply)(nil),                 // 10: book.v1.EmptyReply
+	(*ListCategoriesReq)(nil),          // 11: book.v1.ListCategoriesReq
+	(*CategoryReply)(nil),              // 12: book.v1.CategoryReply
+	(*ListCategoriesReply)(nil),        // 13: book.v1.ListCategoriesReply
+	(*ListTagsReq)(nil),                // 14: book.v1.ListTagsReq
+	(*TagReply)(nil),                   // 15: book.v1.TagReply
+	(*ListTagsReply)(nil),              // 16: book.v1.ListTagsReply
 }
 var file_book_v1_book_proto_depIdxs = []int32{
 	1,  // 0: book.v1.ListBooksReply.list:type_name -> book.v1.BookReply
 	5,  // 1: book.v1.CreateBookReq.translations:type_name -> book.v1.TranslationReq
-	10, // 2: book.v1.ListCategoriesReply.list:type_name -> book.v1.CategoryReply
-	13, // 3: book.v1.ListTagsReply.list:type_name -> book.v1.TagReply
+	12, // 2: book.v1.ListCategoriesReply.list:type_name -> book.v1.CategoryReply
+	15, // 3: book.v1.ListTagsReply.list:type_name -> book.v1.TagReply
 	0,  // 4: book.v1.Book.GetBook:input_type -> book.v1.GetBookReq
 	2,  // 5: book.v1.Book.ListBooks:input_type -> book.v1.ListBooksReq
 	4,  // 6: book.v1.Book.CreateBook:input_type -> book.v1.CreateBookReq
 	7,  // 7: book.v1.Book.UpsertBookTranslation:input_type -> book.v1.UpsertBookTranslationReq
-	9,  // 8: book.v1.Book.ListCategories:input_type -> book.v1.ListCategoriesReq
-	12, // 9: book.v1.Book.ListTags:input_type -> book.v1.ListTagsReq
-	1,  // 10: book.v1.Book.GetBook:output_type -> book.v1.BookReply
-	3,  // 11: book.v1.Book.ListBooks:output_type -> book.v1.ListBooksReply
-	6,  // 12: book.v1.Book.CreateBook:output_type -> book.v1.CreateBookReply
-	8,  // 13: book.v1.Book.UpsertBookTranslation:output_type -> book.v1.UpsertBookTranslationReply
-	11, // 14: book.v1.Book.ListCategories:output_type -> book.v1.ListCategoriesReply
-	14, // 15: book.v1.Book.ListTags:output_type -> book.v1.ListTagsReply
-	10, // [10:16] is the sub-list for method output_type
-	4,  // [4:10] is the sub-list for method input_type
+	11, // 8: book.v1.Book.ListCategories:input_type -> book.v1.ListCategoriesReq
+	9,  // 9: book.v1.Book.UpdateBookStatus:input_type -> book.v1.UpdateBookStatusReq
+	14, // 10: book.v1.Book.ListTags:input_type -> book.v1.ListTagsReq
+	1,  // 11: book.v1.Book.GetBook:output_type -> book.v1.BookReply
+	3,  // 12: book.v1.Book.ListBooks:output_type -> book.v1.ListBooksReply
+	6,  // 13: book.v1.Book.CreateBook:output_type -> book.v1.CreateBookReply
+	8,  // 14: book.v1.Book.UpsertBookTranslation:output_type -> book.v1.UpsertBookTranslationReply
+	13, // 15: book.v1.Book.ListCategories:output_type -> book.v1.ListCategoriesReply
+	10, // 16: book.v1.Book.UpdateBookStatus:output_type -> book.v1.EmptyReply
+	16, // 17: book.v1.Book.ListTags:output_type -> book.v1.ListTagsReply
+	11, // [11:18] is the sub-list for method output_type
+	4,  // [4:11] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
 	4,  // [4:4] is the sub-list for extension extendee
 	0,  // [0:4] is the sub-list for field type_name
@@ -1131,7 +1229,7 @@ func file_book_v1_book_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_book_v1_book_proto_rawDesc), len(file_book_v1_book_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -46,10 +46,25 @@ func ClaimsFrom(ctx context.Context) Claims {
 	return Claims{}
 }
 
+// 角色常量（novel_user.role）。
+const (
+	RoleReader = 1
+	RoleAuthor = 2
+	RoleAdmin  = 3
+)
+
 // RequireRole 校验角色下限（1普通/2作者/3管理员/4运营），不足返回 140403。
 func RequireRole(c Claims, min int32) error {
 	if c.Role < min {
 		return ErrPermission
+	}
+	return nil
+}
+
+// RequireAdmin 校验管理员（role==3），否则 180401。
+func RequireAdmin(c Claims) error {
+	if c.Role != RoleAdmin {
+		return ErrAdmin
 	}
 	return nil
 }

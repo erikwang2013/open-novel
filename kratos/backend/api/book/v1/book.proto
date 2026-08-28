@@ -40,6 +40,13 @@ service Book {
       get: "/api/categories"
     };
   }
+  // 书籍上下架（仅管理员；1 上架 0 下架）
+  rpc UpdateBookStatus(UpdateBookStatusReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      patch: "/api/books/{id}/status"
+      body: "*"
+    };
+  }
   // 标签按 lang 过滤
   rpc ListTags(ListTagsReq) returns (ListTagsReply) {
     option (google.api.http) = {
@@ -117,6 +124,13 @@ message UpsertBookTranslationReply {
   int64 book_id = 1;
   string lang = 2;
 }
+
+message UpdateBookStatusReq {
+  int64 id = 1;
+  int32 status = 2; // 1 上架 0 下架
+}
+
+message EmptyReply {}
 
 message ListCategoriesReq {}
 

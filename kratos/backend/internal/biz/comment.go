@@ -5,6 +5,8 @@ package biz
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"gorm.io/gorm"
 	gormdb "gorm.io/plugin/dbresolver"
@@ -60,11 +62,16 @@ func (uc *CommentUsecase) CreateComment(ctx context.Context, uid int64, bookID u
 }
 
 // ListComments 评论列表；chapterIDOpt：nil=全部，0=仅书籍级，>0=指定章节。
-func (uc *CommentUsecase) ListComments(ctx context.Context, bookID uint64, chapterIDOpt *int64, p pkg.Page) ([]CommentItem, int64, error) {
-	if bookID == 0 {
-		return nil, 0, pkg.ErrCommentArg
+// status：0/缺省=1（正常），管理员可传 2 看举报待审；bookID=0 时不过滤书籍（举报列表用）。
+func (uc *CommentUsecase) ListComments(ctx context.Context, bookID uint64, chapterIDOpt *int64, status int32, p pkg.Page) ([]CommentItem, int64, error) {
+	q := uc.db.WithContext(ctx).Model(&data.Comment{})
+	if bookID > 0 {
+		q = q.Where("book_id = ?", bookID)
 	}
-	q := uc.db.WithContext(ctx).Where("book_id = ? AND status = 1", bookID)
+	if status <= 0 {
+		status = 1
+	}
+	q = q.Where("status = ?", status)
 	if chapterIDOpt != nil {
 		if *chapterIDOpt == 0 {
 			q = q.Where("chapter_id IS NULL") // 仅书籍级
@@ -135,6 +142,42 @@ func (uc *CommentUsecase) ReportComment(ctx context.Context, cid uint64) error {
 	if res.RowsAffected == 0 {
 		return pkg.ErrCommentNF
 	}
+	return nil
+}
+
+// SetCommentStatus 评论下架/恢复（仅管理员；0 下架 1 恢复）。
+func (uc *CommentUsecase) SetCommentStatus(ctx context.Context, adminID int64, cid uint64, status uint8) error {
+	if cid == 0 || (status != 0 && status != 1) {
+		return pkg.ErrCommentArg
+	}
+	res := uc.db.Clauses(gormdb.Write).Model(&data.Comment{}).Where("id = ?", cid).Update("status", status)
+	if res.Error != nil {
+		return pkg.ErrCommentDB
+	}
+	if res.RowsAffected == 0 {
+		return pkg.ErrCommentNF
+	}
+	data.WriteAudit(uc.db, ctx, adminID, "comment_status", "comment", strconv.FormatUint(cid, 10), fmt.Sprintf("status=%d", status))
+	return nil
+}
+
+// HandleCommentReport 审核举报（仅管理员）：approved=true 举报属实→下架，false 驳回→恢复。
+func (uc *CommentUsecase) HandleCommentReport(ctx context.Context, adminID int64, cid uint64, approved bool) error {
+	if cid == 0 {
+		return pkg.ErrCommentArg
+	}
+	var c data.Comment
+	if err := uc.db.WithContext(ctx).First(&c, cid).Error; err != nil || c.Status != 2 {
+		return pkg.ErrTargetNF // 仅待审(2)状态可处理
+	}
+	status := uint8(1)
+	if approved {
+		status = 0
+	}
+	if err := uc.db.Clauses(gormdb.Write).Model(&data.Comment{}).Where("id = ?", cid).Update("status", status).Error; err != nil {
+		return pkg.ErrCommentDB
+	}
+	data.WriteAudit(uc.db, ctx, adminID, "comment_report_handle", "comment", strconv.FormatUint(cid, 10), fmt.Sprintf("approved=%v", approved))
 	return nil
 }
 

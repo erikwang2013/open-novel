@@ -22,12 +22,19 @@ func (s *BookService) GetBook(ctx context.Context, req *v1.GetBookReq) (*v1.Book
 	if err != nil {
 		return nil, err
 	}
+	if claims(ctx).Role != pkg.RoleAdmin && it.Status == 0 {
+		return nil, pkg.ErrBookNF // 下架书 C 端不可见
+	}
 	return toBookReply(it), nil
 }
 
 func (s *BookService) ListBooks(ctx context.Context, req *v1.ListBooksReq) (*v1.ListBooksReply, error) {
+	status := req.Status
+	if claims(ctx).Role != pkg.RoleAdmin && status <= 0 {
+		status = 1 // C 端默认只列已上架
+	}
 	p := pkg.ParsePage(req.Page, req.PageSize)
-	items, total, err := s.uc.ListBooks(ctx, p, pickLang(ctx, req.Lang), u64(req.CategoryId), u64(req.TagId), req.Status)
+	items, total, err := s.uc.ListBooks(ctx, p, pickLang(ctx, req.Lang), u64(req.CategoryId), u64(req.TagId), status)
 	if err != nil {
 		return nil, err
 	}
@@ -86,6 +93,17 @@ func (s *BookService) ListCategories(ctx context.Context, req *v1.ListCategories
 		list = append(list, &v1.CategoryReply{Id: i64(c.ID), Name: c.Name, ParentId: i64(c.ParentID)})
 	}
 	return &v1.ListCategoriesReply{List: list}, nil
+}
+
+func (s *BookService) UpdateBookStatus(ctx context.Context, req *v1.UpdateBookStatusReq) (*v1.EmptyReply, error) {
+	c, err := requireAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.uc.SetBookStatus(ctx, c.UID, u64(req.Id), int8(req.Status)); err != nil {
+		return nil, err
+	}
+	return &v1.EmptyReply{}, nil
 }
 
 func (s *BookService) ListTags(ctx context.Context, req *v1.ListTagsReq) (*v1.ListTagsReply, error) {

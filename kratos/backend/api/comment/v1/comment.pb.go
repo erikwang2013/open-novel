@@ -207,6 +207,7 @@ type ListCommentsReq struct {
 	ChapterId     *int64                 `protobuf:"varint,2,opt,name=chapter_id,json=chapterId,proto3,oneof" json:"chapter_id,omitempty"` // 缺省 = 全部；0 = 仅书籍级
 	Page          int32                  `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
 	PageSize      int32                  `protobuf:"varint,4,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Status        int32                  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"` // 默认 1；管理员可传 0/2（举报待审）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -265,6 +266,13 @@ func (x *ListCommentsReq) GetPage() int32 {
 func (x *ListCommentsReq) GetPageSize() int32 {
 	if x != nil {
 		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListCommentsReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
 	}
 	return 0
 }
@@ -469,6 +477,162 @@ func (x *ReportCommentReq) GetId() int64 {
 	return 0
 }
 
+type UpdateCommentStatusReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Status        int32                  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` // 0 下架 1 恢复
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCommentStatusReq) Reset() {
+	*x = UpdateCommentStatusReq{}
+	mi := &file_comment_v1_comment_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCommentStatusReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCommentStatusReq) ProtoMessage() {}
+
+func (x *UpdateCommentStatusReq) ProtoReflect() protoreflect.Message {
+	mi := &file_comment_v1_comment_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCommentStatusReq.ProtoReflect.Descriptor instead.
+func (*UpdateCommentStatusReq) Descriptor() ([]byte, []int) {
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UpdateCommentStatusReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateCommentStatusReq) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type ListCommentReportsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListCommentReportsReq) Reset() {
+	*x = ListCommentReportsReq{}
+	mi := &file_comment_v1_comment_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListCommentReportsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListCommentReportsReq) ProtoMessage() {}
+
+func (x *ListCommentReportsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_comment_v1_comment_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListCommentReportsReq.ProtoReflect.Descriptor instead.
+func (*ListCommentReportsReq) Descriptor() ([]byte, []int) {
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListCommentReportsReq) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListCommentReportsReq) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type HandleCommentReportReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Approved      bool                   `protobuf:"varint,2,opt,name=approved,proto3" json:"approved,omitempty"` // true=举报属实（下架） false=驳回（恢复）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HandleCommentReportReq) Reset() {
+	*x = HandleCommentReportReq{}
+	mi := &file_comment_v1_comment_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HandleCommentReportReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HandleCommentReportReq) ProtoMessage() {}
+
+func (x *HandleCommentReportReq) ProtoReflect() protoreflect.Message {
+	mi := &file_comment_v1_comment_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HandleCommentReportReq.ProtoReflect.Descriptor instead.
+func (*HandleCommentReportReq) Descriptor() ([]byte, []int) {
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *HandleCommentReportReq) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *HandleCommentReportReq) GetApproved() bool {
+	if x != nil {
+		return x.Approved
+	}
+	return false
+}
+
 type EmptyReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -477,7 +641,7 @@ type EmptyReply struct {
 
 func (x *EmptyReply) Reset() {
 	*x = EmptyReply{}
-	mi := &file_comment_v1_comment_proto_msgTypes[7]
+	mi := &file_comment_v1_comment_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -489,7 +653,7 @@ func (x *EmptyReply) String() string {
 func (*EmptyReply) ProtoMessage() {}
 
 func (x *EmptyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_comment_v1_comment_proto_msgTypes[7]
+	mi := &file_comment_v1_comment_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -502,7 +666,7 @@ func (x *EmptyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmptyReply.ProtoReflect.Descriptor instead.
 func (*EmptyReply) Descriptor() ([]byte, []int) {
-	return file_comment_v1_comment_proto_rawDescGZIP(), []int{7}
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{10}
 }
 
 type AddFavoriteReq struct {
@@ -514,7 +678,7 @@ type AddFavoriteReq struct {
 
 func (x *AddFavoriteReq) Reset() {
 	*x = AddFavoriteReq{}
-	mi := &file_comment_v1_comment_proto_msgTypes[8]
+	mi := &file_comment_v1_comment_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -526,7 +690,7 @@ func (x *AddFavoriteReq) String() string {
 func (*AddFavoriteReq) ProtoMessage() {}
 
 func (x *AddFavoriteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_comment_v1_comment_proto_msgTypes[8]
+	mi := &file_comment_v1_comment_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -539,7 +703,7 @@ func (x *AddFavoriteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddFavoriteReq.ProtoReflect.Descriptor instead.
 func (*AddFavoriteReq) Descriptor() ([]byte, []int) {
-	return file_comment_v1_comment_proto_rawDescGZIP(), []int{8}
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *AddFavoriteReq) GetBookId() int64 {
@@ -560,7 +724,7 @@ type FavoriteReply struct {
 
 func (x *FavoriteReply) Reset() {
 	*x = FavoriteReply{}
-	mi := &file_comment_v1_comment_proto_msgTypes[9]
+	mi := &file_comment_v1_comment_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -572,7 +736,7 @@ func (x *FavoriteReply) String() string {
 func (*FavoriteReply) ProtoMessage() {}
 
 func (x *FavoriteReply) ProtoReflect() protoreflect.Message {
-	mi := &file_comment_v1_comment_proto_msgTypes[9]
+	mi := &file_comment_v1_comment_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -585,7 +749,7 @@ func (x *FavoriteReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FavoriteReply.ProtoReflect.Descriptor instead.
 func (*FavoriteReply) Descriptor() ([]byte, []int) {
-	return file_comment_v1_comment_proto_rawDescGZIP(), []int{9}
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *FavoriteReply) GetId() int64 {
@@ -618,7 +782,7 @@ type DelFavoriteReq struct {
 
 func (x *DelFavoriteReq) Reset() {
 	*x = DelFavoriteReq{}
-	mi := &file_comment_v1_comment_proto_msgTypes[10]
+	mi := &file_comment_v1_comment_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -630,7 +794,7 @@ func (x *DelFavoriteReq) String() string {
 func (*DelFavoriteReq) ProtoMessage() {}
 
 func (x *DelFavoriteReq) ProtoReflect() protoreflect.Message {
-	mi := &file_comment_v1_comment_proto_msgTypes[10]
+	mi := &file_comment_v1_comment_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -643,7 +807,7 @@ func (x *DelFavoriteReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DelFavoriteReq.ProtoReflect.Descriptor instead.
 func (*DelFavoriteReq) Descriptor() ([]byte, []int) {
-	return file_comment_v1_comment_proto_rawDescGZIP(), []int{10}
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DelFavoriteReq) GetBookId() int64 {
@@ -663,7 +827,7 @@ type ListFavoritesReq struct {
 
 func (x *ListFavoritesReq) Reset() {
 	*x = ListFavoritesReq{}
-	mi := &file_comment_v1_comment_proto_msgTypes[11]
+	mi := &file_comment_v1_comment_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -675,7 +839,7 @@ func (x *ListFavoritesReq) String() string {
 func (*ListFavoritesReq) ProtoMessage() {}
 
 func (x *ListFavoritesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_comment_v1_comment_proto_msgTypes[11]
+	mi := &file_comment_v1_comment_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -688,7 +852,7 @@ func (x *ListFavoritesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFavoritesReq.ProtoReflect.Descriptor instead.
 func (*ListFavoritesReq) Descriptor() ([]byte, []int) {
-	return file_comment_v1_comment_proto_rawDescGZIP(), []int{11}
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListFavoritesReq) GetPage() int32 {
@@ -717,7 +881,7 @@ type ListFavoritesReply struct {
 
 func (x *ListFavoritesReply) Reset() {
 	*x = ListFavoritesReply{}
-	mi := &file_comment_v1_comment_proto_msgTypes[12]
+	mi := &file_comment_v1_comment_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -729,7 +893,7 @@ func (x *ListFavoritesReply) String() string {
 func (*ListFavoritesReply) ProtoMessage() {}
 
 func (x *ListFavoritesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_comment_v1_comment_proto_msgTypes[12]
+	mi := &file_comment_v1_comment_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -742,7 +906,7 @@ func (x *ListFavoritesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFavoritesReply.ProtoReflect.Descriptor instead.
 func (*ListFavoritesReply) Descriptor() ([]byte, []int) {
-	return file_comment_v1_comment_proto_rawDescGZIP(), []int{12}
+	return file_comment_v1_comment_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListFavoritesReply) GetList() []*FavoriteReply {
@@ -799,13 +963,14 @@ const file_comment_v1_comment_proto_rawDesc = "" +
 	"\x06status\x18\t \x01(\x05R\x06status\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\n" +
-	" \x01(\tR\tcreatedAt\"\x8e\x01\n" +
+	" \x01(\tR\tcreatedAt\"\xa6\x01\n" +
 	"\x0fListCommentsReq\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\"\n" +
 	"\n" +
 	"chapter_id\x18\x02 \x01(\x03H\x00R\tchapterId\x88\x01\x01\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSizeB\r\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\x05R\x06statusB\r\n" +
 	"\v_chapter_id\"\x88\x01\n" +
 	"\x11ListCommentsReply\x12,\n" +
 	"\x04list\x18\x01 \x03(\v2\x18.comment.v1.CommentReplyR\x04list\x12\x14\n" +
@@ -817,7 +982,16 @@ const file_comment_v1_comment_proto_rawDesc = "" +
 	"\x10UnlikeCommentReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\"\n" +
 	"\x10ReportCommentReq\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\f\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"@\n" +
+	"\x16UpdateCommentStatusReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\x05R\x06status\"H\n" +
+	"\x15ListCommentReportsReq\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\"D\n" +
+	"\x16HandleCommentReportReq\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1a\n" +
+	"\bapproved\x18\x02 \x01(\bR\bapproved\"\f\n" +
 	"\n" +
 	"EmptyReply\")\n" +
 	"\x0eAddFavoriteReq\x12\x17\n" +
@@ -835,13 +1009,16 @@ const file_comment_v1_comment_proto_rawDesc = "" +
 	"\x04list\x18\x01 \x03(\v2\x19.comment.v1.FavoriteReplyR\x04list\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04page\x18\x03 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\xc3\x06\n" +
+	"\tpage_size\x18\x04 \x01(\x05R\bpageSize2\xb3\t\n" +
 	"\aComment\x12a\n" +
 	"\rCreateComment\x12\x1c.comment.v1.CreateCommentReq\x1a\x18.comment.v1.CommentReply\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/comments\x12a\n" +
 	"\fListComments\x12\x1b.comment.v1.ListCommentsReq\x1a\x1d.comment.v1.ListCommentsReply\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/api/comments\x12b\n" +
 	"\vLikeComment\x12\x1a.comment.v1.LikeCommentReq\x1a\x16.comment.v1.EmptyReply\"\x1f\x82\xd3\xe4\x93\x02\x19\"\x17/api/comments/{id}/like\x12f\n" +
 	"\rUnlikeComment\x12\x1c.comment.v1.UnlikeCommentReq\x1a\x16.comment.v1.EmptyReply\"\x1f\x82\xd3\xe4\x93\x02\x19*\x17/api/comments/{id}/like\x12h\n" +
-	"\rReportComment\x12\x1c.comment.v1.ReportCommentReq\x1a\x16.comment.v1.EmptyReply\"!\x82\xd3\xe4\x93\x02\x1b\"\x19/api/comments/{id}/report\x12k\n" +
+	"\rReportComment\x12\x1c.comment.v1.ReportCommentReq\x1a\x16.comment.v1.EmptyReply\"!\x82\xd3\xe4\x93\x02\x1b\"\x19/api/comments/{id}/report\x12w\n" +
+	"\x13UpdateCommentStatus\x12\".comment.v1.UpdateCommentStatusReq\x1a\x16.comment.v1.EmptyReply\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\x1a\x19/api/comments/{id}/status\x12u\n" +
+	"\x12ListCommentReports\x12!.comment.v1.ListCommentReportsReq\x1a\x1d.comment.v1.ListCommentsReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/comments/reports\x12~\n" +
+	"\x13HandleCommentReport\x12\".comment.v1.HandleCommentReportReq\x1a\x16.comment.v1.EmptyReply\"+\x82\xd3\xe4\x93\x02%:\x01*\" /api/comments/{id}/report-handle\x12k\n" +
 	"\vAddFavorite\x12\x1a.comment.v1.AddFavoriteReq\x1a\x19.comment.v1.FavoriteReply\"%\x82\xd3\xe4\x93\x02\x1f\"\x1d/api/books/{book_id}/favorite\x12h\n" +
 	"\vDelFavorite\x12\x1a.comment.v1.DelFavoriteReq\x1a\x16.comment.v1.EmptyReply\"%\x82\xd3\xe4\x93\x02\x1f*\x1d/api/books/{book_id}/favorite\x12e\n" +
 	"\rListFavorites\x12\x1c.comment.v1.ListFavoritesReq\x1a\x1e.comment.v1.ListFavoritesReply\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/favoritesB&Z$open-novel/backend/api/comment/v1;v1b\x06proto3"
@@ -858,43 +1035,52 @@ func file_comment_v1_comment_proto_rawDescGZIP() []byte {
 	return file_comment_v1_comment_proto_rawDescData
 }
 
-var file_comment_v1_comment_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_comment_v1_comment_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_comment_v1_comment_proto_goTypes = []any{
-	(*CreateCommentReq)(nil),   // 0: comment.v1.CreateCommentReq
-	(*CommentReply)(nil),       // 1: comment.v1.CommentReply
-	(*ListCommentsReq)(nil),    // 2: comment.v1.ListCommentsReq
-	(*ListCommentsReply)(nil),  // 3: comment.v1.ListCommentsReply
-	(*LikeCommentReq)(nil),     // 4: comment.v1.LikeCommentReq
-	(*UnlikeCommentReq)(nil),   // 5: comment.v1.UnlikeCommentReq
-	(*ReportCommentReq)(nil),   // 6: comment.v1.ReportCommentReq
-	(*EmptyReply)(nil),         // 7: comment.v1.EmptyReply
-	(*AddFavoriteReq)(nil),     // 8: comment.v1.AddFavoriteReq
-	(*FavoriteReply)(nil),      // 9: comment.v1.FavoriteReply
-	(*DelFavoriteReq)(nil),     // 10: comment.v1.DelFavoriteReq
-	(*ListFavoritesReq)(nil),   // 11: comment.v1.ListFavoritesReq
-	(*ListFavoritesReply)(nil), // 12: comment.v1.ListFavoritesReply
+	(*CreateCommentReq)(nil),       // 0: comment.v1.CreateCommentReq
+	(*CommentReply)(nil),           // 1: comment.v1.CommentReply
+	(*ListCommentsReq)(nil),        // 2: comment.v1.ListCommentsReq
+	(*ListCommentsReply)(nil),      // 3: comment.v1.ListCommentsReply
+	(*LikeCommentReq)(nil),         // 4: comment.v1.LikeCommentReq
+	(*UnlikeCommentReq)(nil),       // 5: comment.v1.UnlikeCommentReq
+	(*ReportCommentReq)(nil),       // 6: comment.v1.ReportCommentReq
+	(*UpdateCommentStatusReq)(nil), // 7: comment.v1.UpdateCommentStatusReq
+	(*ListCommentReportsReq)(nil),  // 8: comment.v1.ListCommentReportsReq
+	(*HandleCommentReportReq)(nil), // 9: comment.v1.HandleCommentReportReq
+	(*EmptyReply)(nil),             // 10: comment.v1.EmptyReply
+	(*AddFavoriteReq)(nil),         // 11: comment.v1.AddFavoriteReq
+	(*FavoriteReply)(nil),          // 12: comment.v1.FavoriteReply
+	(*DelFavoriteReq)(nil),         // 13: comment.v1.DelFavoriteReq
+	(*ListFavoritesReq)(nil),       // 14: comment.v1.ListFavoritesReq
+	(*ListFavoritesReply)(nil),     // 15: comment.v1.ListFavoritesReply
 }
 var file_comment_v1_comment_proto_depIdxs = []int32{
 	1,  // 0: comment.v1.ListCommentsReply.list:type_name -> comment.v1.CommentReply
-	9,  // 1: comment.v1.ListFavoritesReply.list:type_name -> comment.v1.FavoriteReply
+	12, // 1: comment.v1.ListFavoritesReply.list:type_name -> comment.v1.FavoriteReply
 	0,  // 2: comment.v1.Comment.CreateComment:input_type -> comment.v1.CreateCommentReq
 	2,  // 3: comment.v1.Comment.ListComments:input_type -> comment.v1.ListCommentsReq
 	4,  // 4: comment.v1.Comment.LikeComment:input_type -> comment.v1.LikeCommentReq
 	5,  // 5: comment.v1.Comment.UnlikeComment:input_type -> comment.v1.UnlikeCommentReq
 	6,  // 6: comment.v1.Comment.ReportComment:input_type -> comment.v1.ReportCommentReq
-	8,  // 7: comment.v1.Comment.AddFavorite:input_type -> comment.v1.AddFavoriteReq
-	10, // 8: comment.v1.Comment.DelFavorite:input_type -> comment.v1.DelFavoriteReq
-	11, // 9: comment.v1.Comment.ListFavorites:input_type -> comment.v1.ListFavoritesReq
-	1,  // 10: comment.v1.Comment.CreateComment:output_type -> comment.v1.CommentReply
-	3,  // 11: comment.v1.Comment.ListComments:output_type -> comment.v1.ListCommentsReply
-	7,  // 12: comment.v1.Comment.LikeComment:output_type -> comment.v1.EmptyReply
-	7,  // 13: comment.v1.Comment.UnlikeComment:output_type -> comment.v1.EmptyReply
-	7,  // 14: comment.v1.Comment.ReportComment:output_type -> comment.v1.EmptyReply
-	9,  // 15: comment.v1.Comment.AddFavorite:output_type -> comment.v1.FavoriteReply
-	7,  // 16: comment.v1.Comment.DelFavorite:output_type -> comment.v1.EmptyReply
-	12, // 17: comment.v1.Comment.ListFavorites:output_type -> comment.v1.ListFavoritesReply
-	10, // [10:18] is the sub-list for method output_type
-	2,  // [2:10] is the sub-list for method input_type
+	7,  // 7: comment.v1.Comment.UpdateCommentStatus:input_type -> comment.v1.UpdateCommentStatusReq
+	8,  // 8: comment.v1.Comment.ListCommentReports:input_type -> comment.v1.ListCommentReportsReq
+	9,  // 9: comment.v1.Comment.HandleCommentReport:input_type -> comment.v1.HandleCommentReportReq
+	11, // 10: comment.v1.Comment.AddFavorite:input_type -> comment.v1.AddFavoriteReq
+	13, // 11: comment.v1.Comment.DelFavorite:input_type -> comment.v1.DelFavoriteReq
+	14, // 12: comment.v1.Comment.ListFavorites:input_type -> comment.v1.ListFavoritesReq
+	1,  // 13: comment.v1.Comment.CreateComment:output_type -> comment.v1.CommentReply
+	3,  // 14: comment.v1.Comment.ListComments:output_type -> comment.v1.ListCommentsReply
+	10, // 15: comment.v1.Comment.LikeComment:output_type -> comment.v1.EmptyReply
+	10, // 16: comment.v1.Comment.UnlikeComment:output_type -> comment.v1.EmptyReply
+	10, // 17: comment.v1.Comment.ReportComment:output_type -> comment.v1.EmptyReply
+	10, // 18: comment.v1.Comment.UpdateCommentStatus:output_type -> comment.v1.EmptyReply
+	3,  // 19: comment.v1.Comment.ListCommentReports:output_type -> comment.v1.ListCommentsReply
+	10, // 20: comment.v1.Comment.HandleCommentReport:output_type -> comment.v1.EmptyReply
+	12, // 21: comment.v1.Comment.AddFavorite:output_type -> comment.v1.FavoriteReply
+	10, // 22: comment.v1.Comment.DelFavorite:output_type -> comment.v1.EmptyReply
+	15, // 23: comment.v1.Comment.ListFavorites:output_type -> comment.v1.ListFavoritesReply
+	13, // [13:24] is the sub-list for method output_type
+	2,  // [2:13] is the sub-list for method input_type
 	2,  // [2:2] is the sub-list for extension type_name
 	2,  // [2:2] is the sub-list for extension extendee
 	0,  // [0:2] is the sub-list for field type_name
@@ -913,7 +1099,7 @@ func file_comment_v1_comment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_comment_v1_comment_proto_rawDesc), len(file_comment_v1_comment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

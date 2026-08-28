@@ -38,6 +38,26 @@ service Comment {
       post: "/api/comments/{id}/report"
     };
   }
+  // 评论状态（仅管理员；0 下架 1 恢复）
+  rpc UpdateCommentStatus(UpdateCommentStatusReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      put: "/api/comments/{id}/status"
+      body: "*"
+    };
+  }
+  // 举报列表（仅管理员；status=2 待审核，分页）
+  rpc ListCommentReports(ListCommentReportsReq) returns (ListCommentsReply) {
+    option (google.api.http) = {
+      get: "/api/comments/reports"
+    };
+  }
+  // 举报处理（仅管理员；approved=true 下架评论，false 驳回恢复）
+  rpc HandleCommentReport(HandleCommentReportReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      post: "/api/comments/{id}/report-handle"
+      body: "*"
+    };
+  }
   rpc AddFavorite(AddFavoriteReq) returns (FavoriteReply) {
     option (google.api.http) = {
       post: "/api/books/{book_id}/favorite"
@@ -79,6 +99,7 @@ message ListCommentsReq {
   optional int64 chapter_id = 2; // 缺省 = 全部；0 = 仅书籍级
   int32 page = 3;
   int32 page_size = 4;
+  int32 status = 5; // 默认 1；管理员可传 0/2（举报待审）
 }
 
 message ListCommentsReply {
@@ -98,6 +119,21 @@ message UnlikeCommentReq {
 
 message ReportCommentReq {
   int64 id = 1;
+}
+
+message UpdateCommentStatusReq {
+  int64 id = 1;
+  int32 status = 2; // 0 下架 1 恢复
+}
+
+message ListCommentReportsReq {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message HandleCommentReportReq {
+  int64 id = 1;
+  bool approved = 2; // true=举报属实（下架） false=驳回（恢复）
 }
 
 message EmptyReply {}

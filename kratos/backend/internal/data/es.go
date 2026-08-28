@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"open-novel/backend/internal/pkg"
 )
 
 // OpenSearch 客户端（从 svc1 移植）：多语言 analyzer、refresh=wait_for 保证同步即一致。
@@ -30,6 +32,10 @@ const indexSettings = `{
         "ja_analyzer": {
           "tokenizer": "kuromoji_tokenizer",
           "filter": ["lowercase", "icu_normalizer", "kuromoji_stemmer"]
+        },
+        "ko_analyzer": {
+          "tokenizer": "nori_tokenizer",
+          "filter": ["lowercase", "icu_normalizer", "nori_stemmer"]
         }
       }
     }
@@ -44,12 +50,15 @@ const indexSettings = `{
       "title_zh": {"type": "text", "analyzer": "multi_lang_analyzer"},
       "title_en": {"type": "text", "analyzer": "multi_lang_analyzer"},
       "title_ja": {"type": "text", "analyzer": "ja_analyzer"},
+      "title_ko": {"type": "text", "analyzer": "ko_analyzer"},
       "summary_zh": {"type": "text", "analyzer": "multi_lang_analyzer"},
       "summary_en": {"type": "text", "analyzer": "multi_lang_analyzer"},
       "summary_ja": {"type": "text", "analyzer": "ja_analyzer"},
+      "summary_ko": {"type": "text", "analyzer": "ko_analyzer"},
       "author_zh": {"type": "text", "analyzer": "multi_lang_analyzer"},
       "author_en": {"type": "text", "analyzer": "multi_lang_analyzer"},
-      "author_ja": {"type": "text", "analyzer": "ja_analyzer"}
+      "author_ja": {"type": "text", "analyzer": "ja_analyzer"},
+      "author_ko": {"type": "text", "analyzer": "ko_analyzer"}
     }
   }
 }`
@@ -64,12 +73,15 @@ type SearchDoc struct {
 	TitleZh   string `json:"title_zh"`
 	TitleEn   string `json:"title_en"`
 	TitleJa   string `json:"title_ja"`
+	TitleKo   string `json:"title_ko"`
 	SummaryZh string `json:"summary_zh"`
 	SummaryEn string `json:"summary_en"`
 	SummaryJa string `json:"summary_ja"`
+	SummaryKo string `json:"summary_ko"`
 	AuthorZh  string `json:"author_zh"`
 	AuthorEn  string `json:"author_en"`
 	AuthorJa  string `json:"author_ja"`
+	AuthorKo  string `json:"author_ko"`
 }
 
 type ES struct {
@@ -133,9 +145,11 @@ func (c *ES) EnsureIndex(ctx context.Context) error {
 
 // langFields 映射请求 lang 到检索字段 + analyzer；未知语言回落 zh 字段。
 func langFields(lang string) (fields []string, analyzer string) {
-	switch lang {
+	switch pkg.NormalizeLang(lang) {
 	case "ja":
 		return []string{"title_ja", "summary_ja", "author_ja"}, "ja_analyzer"
+	case "ko":
+		return []string{"title_ko", "summary_ko", "author_ko"}, "ko_analyzer"
 	case "en":
 		return []string{"title_en", "summary_en", "author_en"}, "multi_lang_analyzer"
 	default:
@@ -162,7 +176,12 @@ func (c *ES) Search(ctx context.Context, q, lang string, from, size int) ([]Sear
 	body := map[string]any{
 		"from": from, "size": size,
 		"query": map[string]any{
-			"multi_match": map[string]any{"query": q, "fields": fields, "analyzer": analyzer},
+			"bool": map[string]any{
+				"must": []any{map[string]any{"multi_match": map[string]any{"query": q, "fields": fields, "analyzer": analyzer}}},
+				// 排除显式下架（status=0）；未同步 status 的旧文档视为上架。
+				// ponytail: 存量数据未回填 status，全量回填后可换 term(status:1)
+				"must_not": []any{map[string]any{"term": map[string]any{"status": 0}}},
+			},
 		},
 	}
 	var resp esSearchResp

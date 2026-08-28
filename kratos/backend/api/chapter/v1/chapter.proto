@@ -55,6 +55,13 @@ service Chapter {
       get: "/api/bookshelf"
     };
   }
+  // 章节启用/禁用（仅管理员；0 禁用 1 启用；禁用章节正文不可读）
+  rpc UpdateChapterStatus(UpdateChapterStatusReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      patch: "/api/chapters/{id}/status"
+      body: "*"
+    };
+  }
 }
 
 message CreateChapterReq {
@@ -136,6 +143,13 @@ message RemoveFromBookshelfReq {
 }
 
 message RemoveFromBookshelfReply {}
+
+message UpdateChapterStatusReq {
+  int64 id = 1;
+  int32 status = 2; // 0 禁用 1 启用
+}
+
+message EmptyReply {}
 
 message ListBookshelfReq {
   int32 page = 1;

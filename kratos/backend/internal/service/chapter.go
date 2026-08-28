@@ -101,6 +101,17 @@ func (s *ChapterService) RemoveFromBookshelf(ctx context.Context, req *v1.Remove
 	return &v1.RemoveFromBookshelfReply{}, nil
 }
 
+func (s *ChapterService) UpdateChapterStatus(ctx context.Context, req *v1.UpdateChapterStatusReq) (*v1.EmptyReply, error) {
+	c, err := requireAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.uc.SetChapterStatus(ctx, c.UID, u64(req.Id), uint8(req.Status)); err != nil {
+		return nil, err
+	}
+	return &v1.EmptyReply{}, nil
+}
+
 func (s *ChapterService) ListBookshelf(ctx context.Context, req *v1.ListBookshelfReq) (*v1.ListBookshelfReply, error) {
 	c, err := auth(ctx)
 	if err != nil {

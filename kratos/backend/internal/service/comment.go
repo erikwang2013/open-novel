@@ -30,8 +30,12 @@ func (s *CommentService) CreateComment(ctx context.Context, req *v1.CreateCommen
 }
 
 func (s *CommentService) ListComments(ctx context.Context, req *v1.ListCommentsReq) (*v1.ListCommentsReply, error) {
+	status := req.Status
+	if claims(ctx).Role != pkg.RoleAdmin {
+		status = 1 // C 端只列正常评论；举报待审（status=2）仅管理员可见
+	}
 	p := pkg.ParsePage(req.Page, req.PageSize)
-	items, total, err := s.uc.ListComments(ctx, u64(req.BookId), req.ChapterId, p)
+	items, total, err := s.uc.ListComments(ctx, u64(req.BookId), req.ChapterId, status, p)
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +73,44 @@ func (s *CommentService) ReportComment(ctx context.Context, req *v1.ReportCommen
 		return nil, err
 	}
 	if err := s.uc.ReportComment(ctx, u64(req.Id)); err != nil {
+		return nil, err
+	}
+	return &v1.EmptyReply{}, nil
+}
+
+func (s *CommentService) UpdateCommentStatus(ctx context.Context, req *v1.UpdateCommentStatusReq) (*v1.EmptyReply, error) {
+	c, err := requireAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.uc.SetCommentStatus(ctx, c.UID, u64(req.Id), uint8(req.Status)); err != nil {
+		return nil, err
+	}
+	return &v1.EmptyReply{}, nil
+}
+
+func (s *CommentService) ListCommentReports(ctx context.Context, req *v1.ListCommentReportsReq) (*v1.ListCommentsReply, error) {
+	if _, err := requireAdmin(ctx); err != nil {
+		return nil, err
+	}
+	p := pkg.ParsePage(req.Page, req.PageSize)
+	items, total, err := s.uc.ListComments(ctx, 0, nil, 2, p)
+	if err != nil {
+		return nil, err
+	}
+	list := make([]*v1.CommentReply, 0, len(items))
+	for _, it := range items {
+		list = append(list, toCommentReply(&it))
+	}
+	return &v1.ListCommentsReply{List: list, Total: total, Page: int32(p.Page), PageSize: int32(p.PageSize)}, nil
+}
+
+func (s *CommentService) HandleCommentReport(ctx context.Context, req *v1.HandleCommentReportReq) (*v1.EmptyReply, error) {
+	c, err := requireAdmin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.uc.HandleCommentReport(ctx, c.UID, u64(req.Id), req.Approved); err != nil {
 		return nil, err
 	}
 	return &v1.EmptyReply{}, nil

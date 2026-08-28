@@ -22,24 +22,33 @@ const _ = http.SupportPackageIsVersion1
 const OperationCommentAddFavorite = "/comment.v1.Comment/AddFavorite"
 const OperationCommentCreateComment = "/comment.v1.Comment/CreateComment"
 const OperationCommentDelFavorite = "/comment.v1.Comment/DelFavorite"
+const OperationCommentHandleCommentReport = "/comment.v1.Comment/HandleCommentReport"
 const OperationCommentLikeComment = "/comment.v1.Comment/LikeComment"
+const OperationCommentListCommentReports = "/comment.v1.Comment/ListCommentReports"
 const OperationCommentListComments = "/comment.v1.Comment/ListComments"
 const OperationCommentListFavorites = "/comment.v1.Comment/ListFavorites"
 const OperationCommentReportComment = "/comment.v1.Comment/ReportComment"
 const OperationCommentUnlikeComment = "/comment.v1.Comment/UnlikeComment"
+const OperationCommentUpdateCommentStatus = "/comment.v1.Comment/UpdateCommentStatus"
 
 type CommentHTTPServer interface {
 	AddFavorite(context.Context, *AddFavoriteReq) (*FavoriteReply, error)
 	// CreateComment 发表评论（内容 ≤2000 字符；chapter_id 缺省 = 书籍级评论）
 	CreateComment(context.Context, *CreateCommentReq) (*CommentReply, error)
 	DelFavorite(context.Context, *DelFavoriteReq) (*EmptyReply, error)
+	// HandleCommentReport 举报处理（仅管理员；approved=true 下架评论，false 驳回恢复）
+	HandleCommentReport(context.Context, *HandleCommentReportReq) (*EmptyReply, error)
 	LikeComment(context.Context, *LikeCommentReq) (*EmptyReply, error)
+	// ListCommentReports 举报列表（仅管理员；status=2 待审核，分页）
+	ListCommentReports(context.Context, *ListCommentReportsReq) (*ListCommentsReply, error)
 	// ListComments 评论列表：chapter_id 缺省 = 全部；0 = 仅书籍级
 	ListComments(context.Context, *ListCommentsReq) (*ListCommentsReply, error)
 	ListFavorites(context.Context, *ListFavoritesReq) (*ListFavoritesReply, error)
 	// ReportComment 举报：置 status=2 待审核
 	ReportComment(context.Context, *ReportCommentReq) (*EmptyReply, error)
 	UnlikeComment(context.Context, *UnlikeCommentReq) (*EmptyReply, error)
+	// UpdateCommentStatus 评论状态（仅管理员；0 下架 1 恢复）
+	UpdateCommentStatus(context.Context, *UpdateCommentStatusReq) (*EmptyReply, error)
 }
 
 func RegisterCommentHTTPServer(s *http.Server, srv CommentHTTPServer) {
@@ -49,6 +58,9 @@ func RegisterCommentHTTPServer(s *http.Server, srv CommentHTTPServer) {
 	r.POST("/api/comments/{id}/like", _Comment_LikeComment0_HTTP_Handler(srv))
 	r.DELETE("/api/comments/{id}/like", _Comment_UnlikeComment0_HTTP_Handler(srv))
 	r.POST("/api/comments/{id}/report", _Comment_ReportComment0_HTTP_Handler(srv))
+	r.PUT("/api/comments/{id}/status", _Comment_UpdateCommentStatus0_HTTP_Handler(srv))
+	r.GET("/api/comments/reports", _Comment_ListCommentReports0_HTTP_Handler(srv))
+	r.POST("/api/comments/{id}/report-handle", _Comment_HandleCommentReport0_HTTP_Handler(srv))
 	r.POST("/api/books/{book_id}/favorite", _Comment_AddFavorite0_HTTP_Handler(srv))
 	r.DELETE("/api/books/{book_id}/favorite", _Comment_DelFavorite0_HTTP_Handler(srv))
 	r.GET("/api/favorites", _Comment_ListFavorites0_HTTP_Handler(srv))
@@ -161,6 +173,75 @@ func _Comment_ReportComment0_HTTP_Handler(srv CommentHTTPServer) func(ctx http.C
 	}
 }
 
+func _Comment_UpdateCommentStatus0_HTTP_Handler(srv CommentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateCommentStatusReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCommentUpdateCommentStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateCommentStatus(ctx, req.(*UpdateCommentStatusReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Comment_ListCommentReports0_HTTP_Handler(srv CommentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListCommentReportsReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCommentListCommentReports)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListCommentReports(ctx, req.(*ListCommentReportsReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListCommentsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Comment_HandleCommentReport0_HTTP_Handler(srv CommentHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in HandleCommentReportReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCommentHandleCommentReport)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.HandleCommentReport(ctx, req.(*HandleCommentReportReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Comment_AddFavorite0_HTTP_Handler(srv CommentHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in AddFavoriteReq
@@ -229,13 +310,19 @@ type CommentHTTPClient interface {
 	// CreateComment 发表评论（内容 ≤2000 字符；chapter_id 缺省 = 书籍级评论）
 	CreateComment(ctx context.Context, req *CreateCommentReq, opts ...http.CallOption) (rsp *CommentReply, err error)
 	DelFavorite(ctx context.Context, req *DelFavoriteReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
+	// HandleCommentReport 举报处理（仅管理员；approved=true 下架评论，false 驳回恢复）
+	HandleCommentReport(ctx context.Context, req *HandleCommentReportReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 	LikeComment(ctx context.Context, req *LikeCommentReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
+	// ListCommentReports 举报列表（仅管理员；status=2 待审核，分页）
+	ListCommentReports(ctx context.Context, req *ListCommentReportsReq, opts ...http.CallOption) (rsp *ListCommentsReply, err error)
 	// ListComments 评论列表：chapter_id 缺省 = 全部；0 = 仅书籍级
 	ListComments(ctx context.Context, req *ListCommentsReq, opts ...http.CallOption) (rsp *ListCommentsReply, err error)
 	ListFavorites(ctx context.Context, req *ListFavoritesReq, opts ...http.CallOption) (rsp *ListFavoritesReply, err error)
 	// ReportComment 举报：置 status=2 待审核
 	ReportComment(ctx context.Context, req *ReportCommentReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 	UnlikeComment(ctx context.Context, req *UnlikeCommentReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
+	// UpdateCommentStatus 评论状态（仅管理员；0 下架 1 恢复）
+	UpdateCommentStatus(ctx context.Context, req *UpdateCommentStatusReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 }
 
 type CommentHTTPClientImpl struct {
@@ -286,6 +373,20 @@ func (c *CommentHTTPClientImpl) DelFavorite(ctx context.Context, in *DelFavorite
 	return &out, nil
 }
 
+// HandleCommentReport 举报处理（仅管理员；approved=true 下架评论，false 驳回恢复）
+func (c *CommentHTTPClientImpl) HandleCommentReport(ctx context.Context, in *HandleCommentReportReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/comments/{id}/report-handle"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCommentHandleCommentReport))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *CommentHTTPClientImpl) LikeComment(ctx context.Context, in *LikeCommentReq, opts ...http.CallOption) (*EmptyReply, error) {
 	var out EmptyReply
 	pattern := "/api/comments/{id}/like"
@@ -293,6 +394,20 @@ func (c *CommentHTTPClientImpl) LikeComment(ctx context.Context, in *LikeComment
 	opts = append(opts, http.Operation(OperationCommentLikeComment))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListCommentReports 举报列表（仅管理员；status=2 待审核，分页）
+func (c *CommentHTTPClientImpl) ListCommentReports(ctx context.Context, in *ListCommentReportsReq, opts ...http.CallOption) (*ListCommentsReply, error) {
+	var out ListCommentsReply
+	pattern := "/api/comments/reports"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationCommentListCommentReports))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -347,6 +462,20 @@ func (c *CommentHTTPClientImpl) UnlikeComment(ctx context.Context, in *UnlikeCom
 	opts = append(opts, http.Operation(OperationCommentUnlikeComment))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateCommentStatus 评论状态（仅管理员；0 下架 1 恢复）
+func (c *CommentHTTPClientImpl) UpdateCommentStatus(ctx context.Context, in *UpdateCommentStatusReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/comments/{id}/status"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationCommentUpdateCommentStatus))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

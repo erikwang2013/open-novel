@@ -24,6 +24,7 @@ const OperationBookGetBook = "/book.v1.Book/GetBook"
 const OperationBookListBooks = "/book.v1.Book/ListBooks"
 const OperationBookListCategories = "/book.v1.Book/ListCategories"
 const OperationBookListTags = "/book.v1.Book/ListTags"
+const OperationBookUpdateBookStatus = "/book.v1.Book/UpdateBookStatus"
 const OperationBookUpsertBookTranslation = "/book.v1.Book/UpsertBookTranslation"
 
 type BookHTTPServer interface {
@@ -36,6 +37,8 @@ type BookHTTPServer interface {
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesReply, error)
 	// ListTags 标签按 lang 过滤
 	ListTags(context.Context, *ListTagsReq) (*ListTagsReply, error)
+	// UpdateBookStatus 书籍上下架（仅管理员；1 上架 0 下架）
+	UpdateBookStatus(context.Context, *UpdateBookStatusReq) (*EmptyReply, error)
 	// UpsertBookTranslation 新增/更新翻译（作者角色；更新后失效对应缓存键）
 	UpsertBookTranslation(context.Context, *UpsertBookTranslationReq) (*UpsertBookTranslationReply, error)
 }
@@ -47,6 +50,7 @@ func RegisterBookHTTPServer(s *http.Server, srv BookHTTPServer) {
 	r.POST("/api/books", _Book_CreateBook0_HTTP_Handler(srv))
 	r.PUT("/api/books/{id}/translation", _Book_UpsertBookTranslation0_HTTP_Handler(srv))
 	r.GET("/api/categories", _Book_ListCategories0_HTTP_Handler(srv))
+	r.PATCH("/api/books/{id}/status", _Book_UpdateBookStatus0_HTTP_Handler(srv))
 	r.GET("/api/tags", _Book_ListTags0_HTTP_Handler(srv))
 }
 
@@ -157,6 +161,31 @@ func _Book_ListCategories0_HTTP_Handler(srv BookHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _Book_UpdateBookStatus0_HTTP_Handler(srv BookHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateBookStatusReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationBookUpdateBookStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateBookStatus(ctx, req.(*UpdateBookStatusReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*EmptyReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Book_ListTags0_HTTP_Handler(srv BookHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in ListTagsReq
@@ -186,6 +215,8 @@ type BookHTTPClient interface {
 	ListCategories(ctx context.Context, req *ListCategoriesReq, opts ...http.CallOption) (rsp *ListCategoriesReply, err error)
 	// ListTags 标签按 lang 过滤
 	ListTags(ctx context.Context, req *ListTagsReq, opts ...http.CallOption) (rsp *ListTagsReply, err error)
+	// UpdateBookStatus 书籍上下架（仅管理员；1 上架 0 下架）
+	UpdateBookStatus(ctx context.Context, req *UpdateBookStatusReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 	// UpsertBookTranslation 新增/更新翻译（作者角色；更新后失效对应缓存键）
 	UpsertBookTranslation(ctx context.Context, req *UpsertBookTranslationReq, opts ...http.CallOption) (rsp *UpsertBookTranslationReply, err error)
 }
@@ -261,6 +292,20 @@ func (c *BookHTTPClientImpl) ListTags(ctx context.Context, in *ListTagsReq, opts
 	opts = append(opts, http.Operation(OperationBookListTags))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// UpdateBookStatus 书籍上下架（仅管理员；1 上架 0 下架）
+func (c *BookHTTPClientImpl) UpdateBookStatus(ctx context.Context, in *UpdateBookStatusReq, opts ...http.CallOption) (*EmptyReply, error) {
+	var out EmptyReply
+	pattern := "/api/books/{id}/status"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationBookUpdateBookStatus))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PATCH", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
