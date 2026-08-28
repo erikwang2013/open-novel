@@ -9,8 +9,6 @@
     <line x1="44" y1="100" x2="120" y2="100"/>
     <line x1="80" y1="100" x2="80" y2="540"/>
     <line x1="80" y1="144" x2="120" y2="144"/>
-    <line x1="80" y1="188" x2="120" y2="188"/>
-    <line x1="80" y1="232" x2="120" y2="232"/>
     <line x1="80" y1="276" x2="120" y2="276"/>
     <line x1="80" y1="320" x2="120" y2="320"/>
     <line x1="80" y1="364" x2="120" y2="364"/>
@@ -21,6 +19,8 @@
     <line x1="100" y1="144" x2="100" y2="232"/>
     <line x1="100" y1="188" x2="140" y2="188"/>
     <line x1="100" y1="232" x2="140" y2="232"/>
+    <line x1="100" y1="276" x2="100" y2="320"/>
+    <line x1="100" y1="320" x2="140" y2="320"/>
   </g>
 
   <!-- 根目录 -->
@@ -36,17 +36,12 @@
   <g>
     <rect x="120" y="262" width="96" height="28" rx="6" fill="#263238"/>
     <text x="168" y="281" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">kratos/</text>
-    <text x="248" y="281" font-size="12" fill="#78909c"># 后端 Go-Kratos 框架源码</text>
-  </g>
-  <g>
-    <rect x="120" y="306" width="96" height="28" rx="6" fill="#263238"/>
-    <text x="168" y="325" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">docs/</text>
-    <text x="248" y="325" font-size="12" fill="#78909c"># 项目文档（规划、架构图、打赏码）</text>
+    <text x="248" y="281" font-size="12" fill="#78909c"># Go-Kratos 框架源码（上游，原样保留）</text>
   </g>
   <g>
     <rect x="120" y="350" width="96" height="28" rx="6" fill="#263238"/>
-    <text x="168" y="369" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">config/</text>
-    <text x="248" y="369" font-size="12" fill="#78909c"># 环境配置（开发 / 测试 / 生产）</text>
+    <text x="168" y="369" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">docs/</text>
+    <text x="248" y="369" font-size="12" fill="#78909c"># 项目文档（规划、架构图、打赏码）</text>
   </g>
   <g>
     <rect x="120" y="394" width="96" height="28" rx="6" fill="#263238"/>
@@ -70,6 +65,11 @@
     <text x="188" y="237" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">harmonyos/</text>
     <text x="268" y="237" font-size="12" fill="#78909c"># HarmonyOS NEXT（ArkTS / ArkUI）</text>
   </g>
+  <g>
+    <rect x="140" y="306" width="96" height="28" rx="6" fill="#263238"/>
+    <text x="188" y="325" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">backend/</text>
+    <text x="268" y="325" font-size="12" fill="#78909c"># 业务后端：cmd/server + api/ + internal/ + sql/</text>
+  </g>
 
   <!-- 文件 -->
   <g>
@@ -83,6 +83,6 @@
     <text x="248" y="545" font-size="12" fill="#78909c"># 项目说明文档</text>
   </g>
 
-  <text x="500" y="610" font-size="12" fill="#78909c" text-anchor="middle">apps/ 多端前端 · kratos/ Go-Kratos 后端 · docs/ 文档与设计 · 全栈工程结构</text>
+  <text x="500" y="610" font-size="12" fill="#78909c" text-anchor="middle">apps/ 多端前端 · kratos/ 框架源码 + kratos/backend 业务 · docs/ 文档与设计 · 全栈工程结构</text>
   <text x="988" y="688" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

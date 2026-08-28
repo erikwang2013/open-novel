@@ -1,0 +1,126 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'Open Novel';
+
+  @override
+  String get login => 'Sign in';
+
+  @override
+  String get register => 'Sign up';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get nickname => 'Nickname';
+
+  @override
+  String get logout => 'Sign out';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get allBooks => 'All Books';
+
+  @override
+  String get mine => 'Me';
+
+  @override
+  String get searchHint => 'Search title / author';
+
+  @override
+  String get recommend => 'Recommended';
+
+  @override
+  String get searchResult => 'Search Results';
+
+  @override
+  String get bookDetail => 'Book Details';
+
+  @override
+  String get chapters => 'Chapters';
+
+  @override
+  String get read => 'Read';
+
+  @override
+  String get prevChapter => 'Prev';
+
+  @override
+  String get nextChapter => 'Next';
+
+  @override
+  String get comments => 'Comments';
+
+  @override
+  String get commentHint => 'Write a comment…';
+
+  @override
+  String get post => 'Post';
+
+  @override
+  String get like => 'Like';
+
+  @override
+  String get loading => 'Loading…';
+
+  @override
+  String get empty => 'Nothing here';
+
+  @override
+  String get emptyComment => 'No comments yet. Be the first!';
+
+  @override
+  String get vip => 'VIP';
+
+  @override
+  String get free => 'Free';
+
+  @override
+  String get loginRequired => 'Please sign in first';
+
+  @override
+  String get errorNetwork => 'Network error, please retry';
+
+  @override
+  String errorServer(Object msg) {
+    return 'Server error: $msg';
+  }
+
+  @override
+  String errorMsg(Object msg) {
+    return '$msg';
+  }
+
+  @override
+  String welcome(Object name) {
+    return 'Welcome, $name';
+  }
+
+  @override
+  String get notLoggedIn => 'Not signed in';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String bookCount(Object count) {
+    return '$count books';
+  }
+}

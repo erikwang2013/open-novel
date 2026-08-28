@@ -103,7 +103,7 @@ See [apps/README.md](../../apps/README.md).
 docker compose up -d
 
 # Backend services (Kratos workspace)
-cd backend && go mod tidy && go run ./cmd/server
+cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # Flutter client
 cd apps/flutter && flutter pub get && flutter run

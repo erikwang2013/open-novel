@@ -103,7 +103,7 @@ apps/
 docker compose up -d
 
 # बैकएंड सेवाएँ (Kratos वर्कस्पेस)
-cd backend && go mod tidy && go run ./cmd/server
+cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # Flutter एंड
 cd apps/flutter && flutter pub get && flutter run

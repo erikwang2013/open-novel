@@ -263,7 +263,7 @@ services:
       - "9200:9200"
 
   kratos-api:
-    build: ./backend
+    build: ./kratos/backend
     depends_on: [mysql, redis, opensearch]
     ports:
       - "8080:8080"

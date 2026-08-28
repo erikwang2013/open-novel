@@ -103,7 +103,7 @@ apps/
 docker compose up -d
 
 # الخدمات الخلفية (مساحة عمل Kratos)
-cd backend && go mod tidy && go run ./cmd/server
+cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # طرف Flutter
 cd apps/flutter && flutter pub get && flutter run

@@ -102,7 +102,7 @@ apps/
 docker compose up -d
 
 # 后端服务（Kratos 工作区）
-cd backend && go mod tidy && go run ./cmd/server
+cd kratos/backend && go mod tidy && go run ./cmd/server
 
 # Flutter 端
 cd apps/flutter && flutter pub get && flutter run

@@ -32,5 +32,7 @@ cd harmonyos && hvigorw assembleHap
 ## 目录约定
 
 - 每个端独立成目录，自带依赖锁文件（`pubspec.lock` / `oh-package-lock.json5`）
-- 多端共用的接口定义（proto）与文档维护在仓库根 `docs/` 与后端目录
-- 各端内部结构说明由各端自己的 README 负责（待补充）
+- 多端共用后端 API（前缀 `/api/v1`），接口定义（proto）维护在 `kratos/backend/api/`
+- 各端内部结构说明由各端自己的 README 负责：
+  - [flutter/README.md](flutter/README.md) — 运行、构建、API_BASE_URL、l10n 使用说明
+  - harmonyos — 详见端内说明（待补充）

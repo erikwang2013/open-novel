@@ -35,23 +35,29 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 <p align="center"><img src="docs/architecture.svg" alt="系统架构图" width="860"/></p>
 
-## 项目全景
+整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + CDN 与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存 + OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api/v1`。
 
-<p align="center"><img src="docs/project.svg" alt="项目全景图" width="860"/></p>
+其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg)。
 
-## 请求周期
+## 目录结构
 
-<p align="center"><img src="docs/request-cycle.svg" alt="请求周期图" width="860"/></p>
-
-## 安全架构
-
-<p align="center"><img src="docs/security.svg" alt="安全架构图" width="860"/></p>
-
-## 项目结构
+```
+open-novel/
+├─ apps/                     # 多端前端
+│  ├─ flutter/               #   Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
+│  └─ harmonyos/             #   HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
+├─ kratos/                   # Go-Kratos 框架源码（上游框架，原样保留，勿改）
+│  └─ backend/               #   本项目业务后端：cmd/server 入口 + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # 项目文档（规划、架构图、i18n README、打赏码）
+├─ scripts/                  # 构建与部署脚本（post-push.sh 自动发布、smoke.sh）
+├─ docker-compose.yml        # 本地依赖栈：MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # 项目协作规范
+└─ README.md                 # 项目说明文档
+```
 
 <p align="center"><img src="docs/structure.svg" alt="项目结构图" width="860"/></p>
 
----
+> 注意：`kratos/` 是 Kratos 框架源码（自带 README / LICENSE），业务代码全部在 `kratos/backend/`。
 
 ## 技术栈
 
@@ -73,17 +79,52 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-详细表设计与读写分离策略见 [docs/novel-project-planning.md](docs/novel-project-planning.md)。
+建表脚本：`kratos/backend/sql/init.sql`（Docker Compose 首次启动自动执行）。详细表设计与读写分离策略见 [docs/novel-project-planning.md](docs/novel-project-planning.md)。
 
-## 多端目录
+## API 前缀
 
+后端 HTTP 接口统一以 `/api/v1` 开头，按领域分组：
+
+| 领域 | 示例路由 | proto 定义 |
+| :--- | :--- | :--- |
+| 用户 | `/api/v1/users` 等 | `kratos/backend/api/user/v1` |
+| 书籍 | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
+| 章节 | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| 评论 | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| 搜索 | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| 推荐 | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+详细路由见各 proto 文件 `option (google.api.http)` 声明。
+
+## 快速开始
+
+```bash
+# 1. 启动依赖栈（MySQL / Redis / OpenSearch，首次启动自动执行 kratos/backend/sql/init.sql 建表）
+docker compose up -d
+
+# 2. 启动后端服务（Kratos 业务目录，HTTP :8000 / gRPC :9000）
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. 启动 Flutter 端（默认连 localhost:8000，无需额外配置）
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
-└─ harmonyos/   # HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
-```
 
-详见 [apps/README.md](apps/README.md)。
+- 依赖栈端口映射：MySQL `3307`、Redis `6380`、OpenSearch `9200`（宿主机 3306/6379 被本机服务占用，见 docker-compose.yml 注释）。
+- 后端地址与密钥在 `kratos/backend/config/` 配置，支持环境变量覆盖（如 `PORT`、`OPENSEARCH_ADDR`）。
+- Flutter 连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`。
+
+详见 [apps/README.md](apps/README.md) 与 [apps/flutter/README.md](apps/flutter/README.md)。
+
+## 发布流程
+
+- **自动**：推送 `main` 后运行 [scripts/post-push.sh](scripts/post-push.sh)（git 推送钩子或手动执行均可）。脚本基于最新 `v*` tag 递增 patch 版本，创建 tag 并推送，再以增量 changelog 创建 GitHub Release；需 `gh` 已认证。首次发布从 `v1.0.0` 起。
+- **手动**：
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## 路线图
 
@@ -94,24 +135,6 @@ apps/
 | Phase 3 | 2 周 | 安全加固（JWT / RBAC / 限流）+ 压力测试 |
 | Phase 4 | 1-2 周 | 全链路联调 + CDN 加速配置 |
 | Phase 5 | 持续 | AI 推荐算法接入、用户行为分析埋点 |
-
-## 本地开发
-
-```bash
-# 1. 启动依赖栈（MySQL / Redis / OpenSearch，首次启动自动执行 backend/sql/init.sql 建 19 表）
-docker compose up -d
-
-# 2. 启动后端服务（Kratos 工作区，gRPC/HTTP 双协议，HTTP :8000 / gRPC :9000）
-cd backend && go mod tidy && go run ./cmd/server
-
-# Flutter 端
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS 端
-cd apps/harmonyos && hvigorw assembleHap
-```
-
----
 
 ## 支持与打赏
 
@@ -157,3 +180,10 @@ cd apps/harmonyos && hvigorw assembleHap
 - 银行名称：THE BANK OF NEW YORK MELLON
 - SWIFT Code：IRVTUS3NXXX
 - 银行地址：THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## License 与联系方式
+
+- **License**：仓库根目录无独立 LICENSE；`kratos/` 为 Kratos 框架上游源码，遵循其 [MIT License](kratos/LICENSE)。业务代码授权方式以项目后续声明为准。
+- **联系方式**：GitHub Issues / PR 交流；捐赠见上方「支持与打赏」。
