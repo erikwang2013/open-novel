@@ -1,0 +1,42 @@
+name: release
+
+# 推送 main 自动发布：基于最新 v* tag 递增 patch 版本，创建 tag 并发布 GitHub Release。
+# HEAD 已有版本 tag 时跳过（幂等）；tag 推送不触发（仅监听 main 分支）。
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create version tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          prev_tag=$(git tag --list 'v*' --sort=-v:refname | head -n1)
+          if [[ -n "$prev_tag" ]] && [[ "$(git rev-list -n1 "$prev_tag")" == "$(git rev-parse HEAD)" ]]; then
+            echo "HEAD 已带版本 tag $prev_tag，跳过"
+            exit 0
+          fi
+          if [[ -n "$prev_tag" ]]; then
+            IFS=. read -r maj min pat <<< "${prev_tag#v}"
+            new_tag="v$maj.$min.$((pat + 1))"
+            range="$prev_tag..HEAD"
+          else
+            new_tag=v1.0.0
+            range=""
+          fi
+          git tag -a "$new_tag" -m "release $new_tag"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$new_tag"
+          notes=$(mktemp)
+          git log --oneline --no-merges $range >"$notes"
+          gh release create "$new_tag" --title "$new_tag" --notes-file "$notes"
+          echo "release: created $new_tag"

@@ -117,7 +117,8 @@ cd apps/flutter && flutter pub get && flutter run -d chrome
 
 ## 发布流程
 
-- **自动**：推送 `main` 后运行 [scripts/post-push.sh](scripts/post-push.sh)（git 推送钩子或手动执行均可）。脚本基于最新 `v*` tag 递增 patch 版本，创建 tag 并推送，再以增量 changelog 创建 GitHub Release；需 `gh` 已认证。首次发布从 `v1.0.0` 起。
+- **自动**：推送 `main` 后 GitHub Actions（[.github/workflows/release.yml](.github/workflows/release.yml)）自动基于最新 `v*` tag 递增 patch 版本，创建 tag 并推送，再以增量 changelog 创建 GitHub Release；HEAD 已带版本 tag 时跳过。首次发布从 `v1.0.0` 起。
+- **手动兜底**：运行 [scripts/post-push.sh](scripts/post-push.sh)（需 `gh` 已认证）：`echo "x y refs/heads/main z" | scripts/post-push.sh`。
 - **手动**：
 
   ```bash
