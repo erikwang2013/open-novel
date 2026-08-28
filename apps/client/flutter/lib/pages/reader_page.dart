@@ -344,34 +344,42 @@ class _ReaderPageState extends State<ReaderPage> {
         ],
       );
     }
-    return Column(
-      children: [
-        Expanded(child: body),
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: FilledButton.tonal(
-                    onPressed: idx > 0 ? () => _goto(idx - 1) : null,
-                    child: Text(l10n.prevChapter),
-                  ),
+    // 宽屏居中限宽 820，保持适宜行宽（移动端宽度 < 820 时约束不生效，零回归）。
+    // ponytail: 未做左章节目录右正文的桌面布局，宽屏阅读器仅限行宽；需要时再拆列。
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 820),
+        child: Column(
+          children: [
+            Expanded(child: body),
+            SafeArea(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: idx > 0 ? () => _goto(idx - 1) : null,
+                        child: Text(l10n.prevChapter),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: FilledButton.tonal(
+                        onPressed: idx >= 0 && idx < widget.chapters.length - 1
+                            ? () => _goto(idx + 1)
+                            : null,
+                        child: Text(l10n.nextChapter),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: FilledButton.tonal(
-                    onPressed: idx >= 0 && idx < widget.chapters.length - 1
-                        ? () => _goto(idx + 1)
-                        : null,
-                    child: Text(l10n.nextChapter),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

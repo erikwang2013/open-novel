@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
@@ -38,8 +39,7 @@ class ApiClient {
           } catch (_) {
             // 刷新失败走下方统一错误
           }
-          _accessToken = null;
-          _refreshToken = null;
+          logout();
         }
         h.next(e);
       },
@@ -49,11 +49,22 @@ class ApiClient {
   static final ApiClient instance = ApiClient._();
   late final Dio _dio;
 
+  static const _kAccessToken = 'access_token';
+  static const _kRefreshToken = 'refresh_token';
+
   String? _accessToken;
   String? _refreshToken;
   User? currentUser;
 
   bool get loggedIn => _accessToken != null;
+
+  /// main() 启动时调用一次，从 shared_preferences 恢复 token，免重登（T-C-18）。
+  /// key 无前缀与 HarmonyOS 端（open_novel prefs）隔离，与管理端 admin_ 前缀也互不影响。
+  Future<void> init() async {
+    final p = await SharedPreferences.getInstance();
+    _accessToken = p.getString(_kAccessToken);
+    _refreshToken = p.getString(_kRefreshToken);
+  }
 
   Future<LoginResult> login(String username, String password) async {
     final r = await _dio.post('/api/users/login',
@@ -83,6 +94,11 @@ class ApiClient {
     _accessToken = r.accessToken;
     _refreshToken = r.refreshToken;
     currentUser = r.user;
+    // fire-and-forget 写入：与 T-A-17 管理端一致，写入失败不阻塞请求
+    SharedPreferences.getInstance().then((p) {
+      p.setString(_kAccessToken, r.accessToken);
+      p.setString(_kRefreshToken, r.refreshToken);
+    });
     return r;
   }
 
@@ -90,6 +106,10 @@ class ApiClient {
     _accessToken = null;
     _refreshToken = null;
     currentUser = null;
+    SharedPreferences.getInstance().then((p) {
+      p.remove(_kAccessToken);
+      p.remove(_kRefreshToken);
+    });
   }
 
   /// 统一错误文案：优先取后端 {code,message,detail} 的 message。
@@ -148,11 +168,29 @@ class ApiClient {
     return _parseList<SearchDoc>(r.data, SearchDoc.fromJson);
   }
 
-  Future<List<Chapter>> listChapters(String bookId,
+  Future<(List<Chapter>, int)> listChapters(String bookId,
       {int page = 1, int pageSize = 100, String lang = 'zh'}) async {
     final r = await _dio.get('/api/books/$bookId/chapters',
         queryParameters: {'page': page, 'page_size': pageSize, 'lang': lang});
-    return _parseList<Chapter>(r.data, Chapter.fromJson);
+    final d = r.data as Map<String, dynamic>;
+    return (_parseList<Chapter>(d, Chapter.fromJson), asInt(d['total']));
+  }
+
+  /// 分页拉取书籍全部章节：后端返回 total，按 total 循环分页拉全（T-C-16）。
+  /// page_size 沿用后端上限 100；total 缺失/为 0 时以「返回不足一页」兜底退出。
+  Future<List<Chapter>> fetchAllChapters(String bookId,
+      {String lang = 'zh'}) async {
+    const pageSize = 100;
+    final all = <Chapter>[];
+    var page = 1;
+    while (true) {
+      final (part, total) = await listChapters(bookId,
+          page: page, pageSize: pageSize, lang: lang);
+      all.addAll(part);
+      if (all.length >= total || part.length < pageSize) break;
+      page++;
+    }
+    return all;
   }
 
   Future<ChapterContent> getChapterContent(String chapterId,

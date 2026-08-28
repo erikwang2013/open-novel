@@ -25,6 +25,7 @@ import {
   SearchDoc,
   User,
   VipStatus,
+  asInt,
   asStr
 } from '../models/Models';
 
@@ -107,9 +108,22 @@ export class ApiClient {
   }
 
   async listChapters(bookId: string): Promise<Chapter[]> {
-    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(
-      `/api/books/${bookId}/chapters?page=1&page_size=5000&lang=${ApiClient.LANG}`); // ponytail: 单书章节超 5000 需分页加载
-    return this.parseList(obj, Chapter.fromJson);
+    // 后端返回 total，按 total 循环分页拉全（T-C-17）；page_size 沿用后端上限 100。
+    const chapters: Chapter[] = [];
+    let page = 1;
+    while (true) {
+      const obj = await this.get<Record<string, Object>>(
+        `/api/books/${bookId}/chapters?page=${page}&page_size=100&lang=${ApiClient.LANG}`);
+      const listObj = obj as Record<string, Array<Record<string, Object>> | undefined>;
+      const part = this.parseList(listObj, Chapter.fromJson);
+      chapters.push(...part);
+      const total = asInt(obj['total']);
+      if (chapters.length >= total || part.length < 100) {
+        break;
+      }
+      page++;
+    }
+    return chapters;
   }
 
   async getChapterContent(chapterId: string): Promise<ChapterContent> {

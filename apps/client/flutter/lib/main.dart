@@ -16,6 +16,7 @@ final ValueNotifier<String> localeNotifier = ValueNotifier('zh');
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ReaderSettings.init();
+  await ApiClient.instance.init(); // 恢复持久化登录态（T-C-18）
   runApp(const OpenNovelApp());
 }
 
@@ -86,29 +87,67 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      body: IndexedStack(
-        index: _index,
-        children: const [HomeTab(), BooksTab(), MineTab()],
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: [
-          NavigationDestination(
-              icon: const Icon(Icons.home_outlined),
-              selectedIcon: const Icon(Icons.home),
-              label: l10n.home),
-          NavigationDestination(
-              icon: const Icon(Icons.menu_book_outlined),
-              selectedIcon: const Icon(Icons.menu_book),
-              label: l10n.allBooks),
-          NavigationDestination(
-              icon: const Icon(Icons.person_outline),
-              selectedIcon: const Icon(Icons.person),
-              label: l10n.mine),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, c) {
+        if (c.maxWidth >= 900) {
+          // 宽屏（>=900）：左侧导航栏，内容区同 IndexedStack（T-C-20）
+          return Row(
+            children: [
+              NavigationRail(
+                selectedIndex: _index,
+                onDestinationSelected: (i) => setState(() => _index = i),
+                labelType: NavigationRailLabelType.all,
+                destinations: [
+                  NavigationRailDestination(
+                      icon: const Icon(Icons.home_outlined),
+                      selectedIcon: const Icon(Icons.home),
+                      label: Text(l10n.home)),
+                  NavigationRailDestination(
+                      icon: const Icon(Icons.menu_book_outlined),
+                      selectedIcon: const Icon(Icons.menu_book),
+                      label: Text(l10n.allBooks)),
+                  NavigationRailDestination(
+                      icon: const Icon(Icons.person_outline),
+                      selectedIcon: const Icon(Icons.person),
+                      label: Text(l10n.mine)),
+                ],
+              ),
+              const VerticalDivider(width: 1),
+              Expanded(
+                child: IndexedStack(
+                  index: _index,
+                  children: const [HomeTab(), BooksTab(), MineTab()],
+                ),
+              ),
+            ],
+          );
+        }
+        // 移动端：底部导航 + 全屏页（原布局，不得回归）
+        return Scaffold(
+          body: IndexedStack(
+            index: _index,
+            children: const [HomeTab(), BooksTab(), MineTab()],
+          ),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _index,
+            onDestinationSelected: (i) => setState(() => _index = i),
+            destinations: [
+              NavigationDestination(
+                  icon: const Icon(Icons.home_outlined),
+                  selectedIcon: const Icon(Icons.home),
+                  label: l10n.home),
+              NavigationDestination(
+                  icon: const Icon(Icons.menu_book_outlined),
+                  selectedIcon: const Icon(Icons.menu_book),
+                  label: l10n.allBooks),
+              NavigationDestination(
+                  icon: const Icon(Icons.person_outline),
+                  selectedIcon: const Icon(Icons.person),
+                  label: l10n.mine),
+            ],
+          ),
+        );
+      },
     );
   }
 }

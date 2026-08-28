@@ -152,50 +152,83 @@ class _BooksTabState extends State<BooksTab> {
     if (books == null) return const Center(child: CircularProgressIndicator());
     if (books.isEmpty) return Center(child: Text(l10n.empty));
     final topCats = _categories.where((c) => c.parentId == 0).toList();
-    return RefreshIndicator(
-      onRefresh: _loadBooks,
-      child: ListView(
-        padding: const EdgeInsets.all(8),
-        children: [
-          if (topCats.isNotEmpty)
-            SizedBox(
-              height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _catChip(l10n.all, null),
-                  for (final c in topCats) _catChip(c.name, c.id),
-                ],
+    final header = <Widget>[
+      if (topCats.isNotEmpty)
+        SizedBox(
+          height: 40,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _catChip(l10n.all, null),
+              for (final c in topCats) _catChip(c.name, c.id),
+            ],
+          ),
+        ),
+      if (_hot.isNotEmpty) ...[
+        Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 4),
+          child: Text(l10n.hotSearch,
+              style: Theme.of(context).textTheme.titleSmall),
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: [
+            for (final d in _hot)
+              ActionChip(
+                label: Text(d.title(langCode(localeNotifier.value))),
+                onPressed: () => _search(d.title(langCode(localeNotifier.value))),
               ),
-            ),
-          if (_hot.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 4),
-              child: Text(l10n.hotSearch,
-                  style: Theme.of(context).textTheme.titleSmall),
-            ),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                for (final d in _hot)
-                  ActionChip(
-                    label: Text(d.title(langCode(localeNotifier.value))),
-                    onPressed: () => _search(d.title(langCode(localeNotifier.value))),
+          ],
+        ),
+      ],
+      const SizedBox(height: 8),
+    ];
+    Widget bookCard(Book b) => BookCard(
+          bookId: b.id,
+          title: b.title,
+          author: b.author,
+          summary: b.summary,
+          vip: b.isVip == 1,
+        );
+    return LayoutBuilder(
+      builder: (context, c) {
+        if (c.maxWidth >= 900) {
+          // 宽屏（>=900）：分类/热搜头部 + 多列网格（T-C-20）
+          return RefreshIndicator(
+            onRefresh: _loadBooks,
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(child: Column(children: header)),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 280,
+                      mainAxisExtent: 130,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                    ),
+                    delegate: SliverChildBuilderDelegate(
+                      (_, i) => bookCard(books[i]),
+                      childCount: books.length,
+                    ),
                   ),
+                ),
               ],
             ),
-          ],
-          const SizedBox(height: 8),
-          ...books.map((b) => BookCard(
-                bookId: b.id,
-                title: b.title,
-                author: b.author,
-                summary: b.summary,
-                vip: b.isVip == 1,
-              )),
-        ],
-      ),
+          );
+        }
+        // 移动端：单列列表（原布局，不得回归）
+        return RefreshIndicator(
+          onRefresh: _loadBooks,
+          child: ListView(
+            padding: const EdgeInsets.all(8),
+            children: [...header, ...books.map(bookCard)],
+          ),
+        );
+      },
     );
   }
 

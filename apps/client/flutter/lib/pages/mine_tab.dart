@@ -78,7 +78,7 @@ class _MineTabState extends State<MineTab> {
     final api = ApiClient.instance;
     for (final s in shelf) {
       try {
-        final chapters = await _fetchAllChapters(s.bookId);
+        final chapters = await api.fetchAllChapters(s.bookId);
         _chapters[s.bookId] = chapters;
         final p = await api.getProgress(s.bookId);
         if (p != null && p.chapterId.isNotEmpty) {
@@ -90,19 +90,6 @@ class _MineTabState extends State<MineTab> {
         // 进度 / 章节失败静默
       }
     }
-  }
-
-  /// 分页拉取全部章节（后端 page_size 上限 100）。
-  /// ponytail: 最多 5 页（500 章），超出则「阅读」跳转会缺章节；需要时按 total 循环。
-  Future<List<Chapter>> _fetchAllChapters(String bookId) async {
-    final api = ApiClient.instance;
-    final all = <Chapter>[];
-    for (var page = 1; page <= 5; page++) {
-      final part = await api.listChapters(bookId, page: page, pageSize: 100);
-      all.addAll(part);
-      if (part.length < 100) break;
-    }
-    return all;
   }
 
   @override

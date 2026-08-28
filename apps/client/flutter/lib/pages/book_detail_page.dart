@@ -105,7 +105,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
       final lang = langCode(localeNotifier.value);
       final book = await ApiClient.instance.getBook(widget.bookId, lang: lang);
       final chapters =
-          await ApiClient.instance.listChapters(widget.bookId, lang: lang);
+          await ApiClient.instance.fetchAllChapters(widget.bookId, lang: lang);
       setState(() {
         _book = book;
         _chapters = chapters;
@@ -164,68 +164,119 @@ class _BookDetailPageState extends State<BookDetailPage> {
     if (book == null || chapters == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    final info = _bookInfo(context, book);
+    return LayoutBuilder(
+      builder: (context, c) {
+        if (c.maxWidth < 900) {
+          // 移动端：维持原单列滚动布局（T-C-20 不得回归）
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              info,
+              const SizedBox(height: 20),
+              Text(l10n.chapters, style: _chapterTitleStyle(context)),
+              const SizedBox(height: 8),
+              if (chapters.isEmpty)
+                Center(child: Text(l10n.empty))
+              else
+                ...chapters.map((ch) => _chapterTile(context, ch)),
+            ],
+          );
+        }
+        // 宽屏（>=900）：左书籍信息、右章节列表（T-C-20）
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: 96,
-              height: 128,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
+            SizedBox(
+              width: 320,
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [info],
               ),
-              child: Icon(Icons.menu_book,
-                  size: 48, color: Theme.of(context).colorScheme.primary),
             ),
-            const SizedBox(width: 16),
+            const VerticalDivider(width: 1),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(book.title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  Text(book.author,
-                      style: Theme.of(context).textTheme.bodyMedium),
-                  const SizedBox(height: 8),
-                  Text(book.summary,
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child:
+                        Text(l10n.chapters, style: _chapterTitleStyle(context)),
+                  ),
+                  Expanded(
+                    child: chapters.isEmpty
+                        ? Center(child: Text(l10n.empty))
+                        : ListView.builder(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            itemCount: chapters.length,
+                            itemBuilder: (_, i) =>
+                                _chapterTile(context, chapters[i]),
+                          ),
+                  ),
                 ],
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  TextStyle? _chapterTitleStyle(BuildContext context) => Theme.of(context)
+      .textTheme
+      .titleMedium
+      ?.copyWith(fontWeight: FontWeight.bold);
+
+  Widget _bookInfo(BuildContext context, Book book) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 96,
+          height: 128,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(Icons.menu_book,
+              size: 48, color: Theme.of(context).colorScheme.primary),
         ),
-        const SizedBox(height: 20),
-        Text(l10n.chapters,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        if (chapters.isEmpty)
-          Center(child: Text(l10n.empty))
-        else
-          ...chapters.map((c) => ListTile(
-                dense: true,
-                leading: Text('${c.chapterNo}',
-                    style: Theme.of(context).textTheme.bodySmall),
-                title: Text(c.title,
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                trailing: c.isVip == 1 ? Text(l10n.vip) : null,
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => ReaderPage(
-                      chapter: c, chapters: chapters, bookId: widget.bookId),
-                )),
-              )),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(book.title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text(book.author, style: Theme.of(context).textTheme.bodyMedium),
+              const SizedBox(height: 8),
+              Text(book.summary,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _chapterTile(BuildContext context, Chapter ch) {
+    return ListTile(
+      dense: true,
+      leading:
+          Text('${ch.chapterNo}', style: Theme.of(context).textTheme.bodySmall),
+      title: Text(ch.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+      trailing: ch.isVip == 1 ? Text(AppLocalizations.of(context)!.vip) : null,
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => ReaderPage(
+            chapter: ch, chapters: _chapters!, bookId: widget.bookId),
+      )),
     );
   }
 }

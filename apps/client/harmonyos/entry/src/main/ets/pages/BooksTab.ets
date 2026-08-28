@@ -17,6 +17,7 @@ export struct BooksTab {
   @State keyword: string = '';
   @State page: number = 1;
   @State hasMore: boolean = true;
+  @State isWide: boolean = false; // 平板/折叠屏宽屏（T-C-21），>=900vp 时列表分多列
 
   aboutToAppear(): void {
     this.loadBooks();
@@ -215,6 +216,7 @@ export struct BooksTab {
             })
           }, (d: SearchDoc) => d.bookId)
         }
+        .lanes(this.isWide ? 2 : 1)
         .layoutWeight(1)
         .padding({ left: 12, right: 12, top: 8, bottom: 8 })
       } else if (this.keyword !== '') {
@@ -259,6 +261,7 @@ export struct BooksTab {
               })
             }, (b: Book) => b.id)
           }
+          .lanes(this.isWide ? 2 : 1)
           .layoutWeight(1)
           .padding({ left: 12, right: 12, top: 8, bottom: 8 })
           .onReachEnd(() => {
@@ -270,5 +273,8 @@ export struct BooksTab {
     }
     .width('100%')
     .height('100%')
+    .onAreaChange((oldV: Area, newV: Area) => {
+      this.isWide = Number(newV.width) >= 900;
+    })
   }
 }
