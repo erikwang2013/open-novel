@@ -33,6 +33,9 @@
     { "name": "vip", "value": "VIP" },
     { "name": "nextChapter", "value": "下一章" },
     { "name": "prevChapter", "value": "上一章" },
-    { "name": "errorMsg", "value": "%s" }
+    { "name": "errorMsg", "value": "%s" },
+    { "name": "comments", "value": "评论" },
+    { "name": "commentHint", "value": "写评论…" },
+    { "name": "post", "value": "发布" }
   ]
 }

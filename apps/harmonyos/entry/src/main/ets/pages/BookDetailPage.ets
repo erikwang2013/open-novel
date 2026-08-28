@@ -64,6 +64,16 @@ struct BookDetailPage {
     }
   }
 
+  private openComments(): void {
+    router.pushUrl({
+      url: 'pages/CommentsPage',
+      params: {
+        'bookId': this.bookId,
+        'chapterId': ''
+      }
+    });
+  }
+
   private openReader(index: number): void {
     router.pushUrl({
       url: 'pages/ReaderPage',
@@ -108,6 +118,14 @@ struct BookDetailPage {
               .fontSize(20)
               .fontWeight(FontWeight.Bold)
               .layoutWeight(1)
+            Button($r('app.string.comments'))
+              .fontSize(13)
+              .height(32)
+              .backgroundColor('#F0F0F0')
+              .fontColor('#333333')
+              .onClick(() => {
+                this.openComments();
+              })
             Button(this.isFavorite ? '取消收藏' : '收藏')
               .fontSize(13)
               .height(32)

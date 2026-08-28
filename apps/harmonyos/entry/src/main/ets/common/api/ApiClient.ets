@@ -12,6 +12,7 @@ import {
   BookshelfItem,
   Chapter,
   ChapterContent,
+  Comment,
   FavoriteItem,
   LoginResult,
   Progress,
@@ -143,6 +144,27 @@ export class ApiClient {
   async updateProgress(bookId: string, chapterId: string, position: number): Promise<void> {
     const body: Record<string, Object> = { 'book_id': bookId, 'chapter_id': chapterId, 'position': position };
     await this.put<Record<string, Object>>('/api/progress', body);
+  }
+
+  async listComments(bookId: string, page: number = 1, pageSize: number = 20, chapterId: string = ''): Promise<Comment[]> {
+    let q = `book_id=${encodeURIComponent(bookId)}&page=${page}&page_size=${pageSize}`;
+    if (chapterId !== '') {
+      q += `&chapter_id=${encodeURIComponent(chapterId)}`;
+    }
+    const obj = await this.get<Record<string, Array<Record<string, Object>> | undefined>>(`/api/comments?${q}`);
+    return this.parseList(obj, Comment.fromJson);
+  }
+
+  async postComment(bookId: string, content: string, chapterId: string = ''): Promise<void> {
+    const body: Record<string, Object> = { 'book_id': bookId, 'content': content };
+    if (chapterId !== '') {
+      body['chapter_id'] = chapterId;
+    }
+    await this.post<Record<string, Object>>('/api/comments', body);
+  }
+
+  async likeComment(id: string): Promise<void> {
+    await this.post<Record<string, Object>>(`/api/comments/${id}/like`, {});
   }
 
   async logout(): Promise<void> {

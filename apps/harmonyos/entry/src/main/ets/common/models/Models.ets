@@ -183,6 +183,22 @@ export class Progress {
   }
 }
 
+export class Comment {
+  id: string = '';
+  content: string = '';
+  likeCount: number = 0;
+  createdAt: string = '';
+
+  static fromJson(j: Record<string, Object>): Comment {
+    const c = new Comment();
+    c.id = asStr(j['id']);
+    c.content = asStr(j['content']);
+    c.likeCount = asInt(j['likeCount']);
+    c.createdAt = asStr(j['createdAt']);
+    return c;
+  }
+}
+
 /// OpenSearch 搜索结果文档：按 lang 取对应语言字段（同 Flutter 实现）。
 export class SearchDoc {
   bookId: string = '';
