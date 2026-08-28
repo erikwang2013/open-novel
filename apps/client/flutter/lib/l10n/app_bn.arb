@@ -35,5 +35,16 @@
   "welcome": "স্বাগতম, {name}",
   "notLoggedIn": "লগ ইন করা হয়নি",
   "retry": "আবার চেষ্টা করুন",
-  "bookCount": "{count}টি বই"
+  "bookCount": "{count}টি বই",
+  "settings": "পড়ার সেটিংস",
+  "theme": "থিম",
+  "themeSystem": "সিস্টেম অনুসারে",
+  "themeLight": "হালকা",
+  "themeDark": "গাঢ়",
+  "fontSize": "ফন্ট সাইজ",
+  "lineHeight": "লাইন স্পেসিং",
+  "pageMode": "পৃষ্ঠা মোড",
+  "scrollMode": "উপর-নিচে স্ক্রল",
+  "pagedMode": "বাম-ডান পাতা",
+  "offline": "অফলাইন ক্যাশে"
 }

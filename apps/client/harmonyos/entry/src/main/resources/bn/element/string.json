@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "মন্তব্য" },
     { "name": "commentHint", "value": "মন্তব্য লিখুন…" },
-    { "name": "post", "value": "পোস্ট করুন" }
+    { "name": "post", "value": "পোস্ট করুন" },
+    { "name": "settings", "value": "সেটিংস" },
+    { "name": "theme", "value": "থিম" },
+    { "name": "themeSystem", "value": "সিস্টেম অনুসারে" },
+    { "name": "themeLight", "value": "হালকা" },
+    { "name": "themeDark", "value": "গাঢ়" },
+    { "name": "fontSize", "value": "ফন্ট সাইজ" },
+    { "name": "lineHeight", "value": "লাইন স্পেসিং" },
+    { "name": "pageMode", "value": "পৃষ্ঠা মোড" },
+    { "name": "scrollMode", "value": "উপর-নিচে স্ক্রল" },
+    { "name": "pagedMode", "value": "বাম-ডান পাতা" },
+    { "name": "offline", "value": "অফলাইন ক্যাশে" }
   ]
 }

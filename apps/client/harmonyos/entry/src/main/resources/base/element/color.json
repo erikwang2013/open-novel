@@ -3,6 +3,30 @@
     {
       "name": "start_window_background",
       "value": "#FFFFFF"
+    },
+    {
+      "name": "reader_bg",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "reader_text",
+      "value": "#333333"
+    },
+    {
+      "name": "reader_bg_light",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "reader_text_light",
+      "value": "#333333"
+    },
+    {
+      "name": "reader_bg_dark",
+      "value": "#121212"
+    },
+    {
+      "name": "reader_text_dark",
+      "value": "#B0B0B0"
     }
   ]
 }

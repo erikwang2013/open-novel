@@ -35,5 +35,16 @@
   "welcome": "欢迎，{name}",
   "notLoggedIn": "未登录",
   "retry": "重试",
-  "bookCount": "共 {count} 本"
+  "bookCount": "共 {count} 本",
+  "settings": "阅读设置",
+  "theme": "主题",
+  "themeSystem": "跟随系统",
+  "themeLight": "浅色",
+  "themeDark": "深色",
+  "fontSize": "字号",
+  "lineHeight": "行距",
+  "pageMode": "翻页方式",
+  "scrollMode": "上下滚动",
+  "pagedMode": "左右翻页",
+  "offline": "离线缓存"
 }

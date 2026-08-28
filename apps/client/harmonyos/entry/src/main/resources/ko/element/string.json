@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "댓글" },
     { "name": "commentHint", "value": "댓글을 남겨보세요…" },
-    { "name": "post", "value": "등록" }
+    { "name": "post", "value": "등록" },
+    { "name": "settings", "value": "설정" },
+    { "name": "theme", "value": "테마" },
+    { "name": "themeSystem", "value": "시스템 따르기" },
+    { "name": "themeLight", "value": "라이트" },
+    { "name": "themeDark", "value": "다크" },
+    { "name": "fontSize", "value": "글자 크기" },
+    { "name": "lineHeight", "value": "줄 간격" },
+    { "name": "pageMode", "value": "페이지 모드" },
+    { "name": "scrollMode", "value": "상하 스크롤" },
+    { "name": "pagedMode", "value": "좌우 페이지 넘김" },
+    { "name": "offline", "value": "오프라인 캐시" }
   ]
 }

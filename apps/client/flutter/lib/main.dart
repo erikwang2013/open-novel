@@ -8,11 +8,14 @@ import 'pages/books_tab.dart';
 import 'pages/home_tab.dart';
 import 'pages/login_page.dart';
 import 'pages/mine_tab.dart';
+import 'reader_settings.dart';
 
 /// 全局语言切换（zh / en），随 MaterialApp 重建生效。
 final ValueNotifier<String> localeNotifier = ValueNotifier('zh');
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ReaderSettings.init();
   runApp(const OpenNovelApp());
 }
 
@@ -24,12 +27,22 @@ class OpenNovelApp extends StatelessWidget {
     return ValueListenableBuilder<String>(
       valueListenable: localeNotifier,
       builder: (context, locale, _) {
-        return MaterialApp(
-          title: 'Open Novel',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-            useMaterial3: true,
-          ),
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: ReaderSettings.themeMode,
+          builder: (context, mode, _) => MaterialApp(
+            title: 'Open Novel',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+              useMaterial3: true,
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: Colors.indigo,
+                brightness: Brightness.dark,
+              ),
+              useMaterial3: true,
+            ),
+            themeMode: mode,
           locale: Locale(locale),
           supportedLocales: const [
             Locale('zh'),
@@ -52,7 +65,8 @@ class OpenNovelApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: const MainShell(),
+            home: const MainShell(),
+          ),
         );
       },
     );

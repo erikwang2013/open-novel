@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   dio: ^5.11.0
   intl: ^0.20.2
+  shared_preferences: ^2.5.0
+  flutter_cache_manager: ^3.4.0
 
 dev_dependencies:
   flutter_test:

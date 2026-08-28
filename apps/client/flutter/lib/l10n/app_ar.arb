@@ -35,5 +35,16 @@
   "welcome": "مرحبًا، {name}",
   "notLoggedIn": "غير مسجل الدخول",
   "retry": "إعادة المحاولة",
-  "bookCount": "{count} كتب"
+  "bookCount": "{count} كتب",
+  "settings": "إعدادات القراءة",
+  "theme": "السمة",
+  "themeSystem": "تبعا للنظام",
+  "themeLight": "فاتح",
+  "themeDark": "داكن",
+  "fontSize": "حجم الخط",
+  "lineHeight": "تباعد الأسطر",
+  "pageMode": "وضع الصفحات",
+  "scrollMode": "تمرير عمودي",
+  "pagedMode": "تقليب الصفحات",
+  "offline": "ذاكرة تخزين دون اتصال"
 }

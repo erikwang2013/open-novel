@@ -35,5 +35,16 @@
   "welcome": "환영합니다, {name}",
   "notLoggedIn": "로그인되지 않음",
   "retry": "다시 시도",
-  "bookCount": "총 {count}권"
+  "bookCount": "총 {count}권",
+  "settings": "읽기 설정",
+  "theme": "테마",
+  "themeSystem": "시스템 따르기",
+  "themeLight": "라이트",
+  "themeDark": "다크",
+  "fontSize": "글자 크기",
+  "lineHeight": "줄 간격",
+  "pageMode": "페이지 모드",
+  "scrollMode": "상하 스크롤",
+  "pagedMode": "좌우 페이지 넘김",
+  "offline": "오프라인 캐시"
 }

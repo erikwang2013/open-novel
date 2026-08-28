@@ -59,11 +59,23 @@ class ChapterContent {
   final String lang;
   final String content;
 
+  /// 本次内容是否来自本地缓存（离线命中）。
+  final bool fromCache;
+
+  ChapterContent({
+    required this.id,
+    required this.chapterId,
+    required this.lang,
+    required this.content,
+    this.fromCache = false,
+  });
+
   ChapterContent.fromJson(Map<String, dynamic> j)
       : id = asStr(j['id']),
         chapterId = asStr(j['chapterId']),
         lang = asStr(j['lang']),
-        content = asStr(j['content']);
+        content = asStr(j['content']),
+        fromCache = false;
 }
 
 class Comment {

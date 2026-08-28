@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "Комментарии" },
     { "name": "commentHint", "value": "Напишите комментарий…" },
-    { "name": "post", "value": "Опубликовать" }
+    { "name": "post", "value": "Опубликовать" },
+    { "name": "settings", "value": "Настройки" },
+    { "name": "theme", "value": "Тема" },
+    { "name": "themeSystem", "value": "Как в системе" },
+    { "name": "themeLight", "value": "Светлая" },
+    { "name": "themeDark", "value": "Тёмная" },
+    { "name": "fontSize", "value": "Размер шрифта" },
+    { "name": "lineHeight", "value": "Межстрочный интервал" },
+    { "name": "pageMode", "value": "Режим страниц" },
+    { "name": "scrollMode", "value": "Вертикальная прокрутка" },
+    { "name": "pagedMode", "value": "Перелистывание" },
+    { "name": "offline", "value": "Офлайн-кэш" }
   ]
 }

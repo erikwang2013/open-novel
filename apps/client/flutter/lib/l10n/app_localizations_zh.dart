@@ -123,4 +123,37 @@ class AppLocalizationsZh extends AppLocalizations {
   String bookCount(num count) {
     return '共 $count 本';
   }
+
+  @override
+  String get settings => '阅读设置';
+
+  @override
+  String get theme => '主题';
+
+  @override
+  String get themeSystem => '跟随系统';
+
+  @override
+  String get themeLight => '浅色';
+
+  @override
+  String get themeDark => '深色';
+
+  @override
+  String get fontSize => '字号';
+
+  @override
+  String get lineHeight => '行距';
+
+  @override
+  String get pageMode => '翻页方式';
+
+  @override
+  String get scrollMode => '上下滚动';
+
+  @override
+  String get pagedMode => '左右翻页';
+
+  @override
+  String get offline => '离线缓存';
 }

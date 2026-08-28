@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "评论" },
     { "name": "commentHint", "value": "写评论…" },
-    { "name": "post", "value": "发布" }
+    { "name": "post", "value": "发布" },
+    { "name": "settings", "value": "设置" },
+    { "name": "theme", "value": "主题" },
+    { "name": "themeSystem", "value": "跟随系统" },
+    { "name": "themeLight", "value": "浅色" },
+    { "name": "themeDark", "value": "深色" },
+    { "name": "fontSize", "value": "字号" },
+    { "name": "lineHeight", "value": "行距" },
+    { "name": "pageMode", "value": "翻页方式" },
+    { "name": "scrollMode", "value": "上下滚动" },
+    { "name": "pagedMode", "value": "左右翻页" },
+    { "name": "offline", "value": "离线缓存" }
   ]
 }

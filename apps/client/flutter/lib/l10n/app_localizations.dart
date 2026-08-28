@@ -335,6 +335,72 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'共 {count} 本'**
   String bookCount(num count);
+
+  /// No description provided for @settings.
+  ///
+  /// In zh, this message translates to:
+  /// **'阅读设置'**
+  String get settings;
+
+  /// No description provided for @theme.
+  ///
+  /// In zh, this message translates to:
+  /// **'主题'**
+  String get theme;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In zh, this message translates to:
+  /// **'跟随系统'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In zh, this message translates to:
+  /// **'浅色'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In zh, this message translates to:
+  /// **'深色'**
+  String get themeDark;
+
+  /// No description provided for @fontSize.
+  ///
+  /// In zh, this message translates to:
+  /// **'字号'**
+  String get fontSize;
+
+  /// No description provided for @lineHeight.
+  ///
+  /// In zh, this message translates to:
+  /// **'行距'**
+  String get lineHeight;
+
+  /// No description provided for @pageMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'翻页方式'**
+  String get pageMode;
+
+  /// No description provided for @scrollMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'上下滚动'**
+  String get scrollMode;
+
+  /// No description provided for @pagedMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'左右翻页'**
+  String get pagedMode;
+
+  /// No description provided for @offline.
+  ///
+  /// In zh, this message translates to:
+  /// **'离线缓存'**
+  String get offline;
 }
 
 class _AppLocalizationsDelegate

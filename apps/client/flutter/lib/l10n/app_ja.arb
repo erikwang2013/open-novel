@@ -35,5 +35,16 @@
   "welcome": "ようこそ、{name}",
   "notLoggedIn": "未ログイン",
   "retry": "再試行",
-  "bookCount": "全{count}冊"
+  "bookCount": "全{count}冊",
+  "settings": "読書設定",
+  "theme": "テーマ",
+  "themeSystem": "システムに従う",
+  "themeLight": "ライト",
+  "themeDark": "ダーク",
+  "fontSize": "文字サイズ",
+  "lineHeight": "行間",
+  "pageMode": "ページモード",
+  "scrollMode": "上下スクロール",
+  "pagedMode": "左右ページめくり",
+  "offline": "オフラインキャッシュ"
 }

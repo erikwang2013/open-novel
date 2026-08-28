@@ -123,4 +123,37 @@ class AppLocalizationsAr extends AppLocalizations {
   String bookCount(num count) {
     return '$count كتب';
   }
+
+  @override
+  String get settings => 'إعدادات القراءة';
+
+  @override
+  String get theme => 'السمة';
+
+  @override
+  String get themeSystem => 'تبعا للنظام';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
+
+  @override
+  String get fontSize => 'حجم الخط';
+
+  @override
+  String get lineHeight => 'تباعد الأسطر';
+
+  @override
+  String get pageMode => 'وضع الصفحات';
+
+  @override
+  String get scrollMode => 'تمرير عمودي';
+
+  @override
+  String get pagedMode => 'تقليب الصفحات';
+
+  @override
+  String get offline => 'ذاكرة تخزين دون اتصال';
 }

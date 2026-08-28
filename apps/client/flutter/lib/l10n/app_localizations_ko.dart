@@ -123,4 +123,37 @@ class AppLocalizationsKo extends AppLocalizations {
   String bookCount(num count) {
     return '총 $count권';
   }
+
+  @override
+  String get settings => '읽기 설정';
+
+  @override
+  String get theme => '테마';
+
+  @override
+  String get themeSystem => '시스템 따르기';
+
+  @override
+  String get themeLight => '라이트';
+
+  @override
+  String get themeDark => '다크';
+
+  @override
+  String get fontSize => '글자 크기';
+
+  @override
+  String get lineHeight => '줄 간격';
+
+  @override
+  String get pageMode => '페이지 모드';
+
+  @override
+  String get scrollMode => '상하 스크롤';
+
+  @override
+  String get pagedMode => '좌우 페이지 넘김';
+
+  @override
+  String get offline => '오프라인 캐시';
 }

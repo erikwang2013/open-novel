@@ -35,5 +35,16 @@
   "welcome": "Selamat datang, {name}",
   "notLoggedIn": "Belum masuk",
   "retry": "Coba lagi",
-  "bookCount": "{count} buku"
+  "bookCount": "{count} buku",
+  "settings": "Pengaturan baca",
+  "theme": "Tema",
+  "themeSystem": "Ikuti sistem",
+  "themeLight": "Terang",
+  "themeDark": "Gelap",
+  "fontSize": "Ukuran font",
+  "lineHeight": "Spasi baris",
+  "pageMode": "Mode halaman",
+  "scrollMode": "Gulir vertikal",
+  "pagedMode": "Balik halaman",
+  "offline": "Cache offline"
 }

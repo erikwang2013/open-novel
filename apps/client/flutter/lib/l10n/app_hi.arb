@@ -35,5 +35,16 @@
   "welcome": "स्वागत है, {name}",
   "notLoggedIn": "लॉग इन नहीं किया गया",
   "retry": "पुनः प्रयास करें",
-  "bookCount": "{count} पुस्तकें"
+  "bookCount": "{count} पुस्तकें",
+  "settings": "पढ़ने की सेटिंग",
+  "theme": "थीम",
+  "themeSystem": "सिस्टम के अनुसार",
+  "themeLight": "हल्का",
+  "themeDark": "गहरा",
+  "fontSize": "फ़ॉन्ट आकार",
+  "lineHeight": "पंक्ति अंतर",
+  "pageMode": "पृष्ठ मोड",
+  "scrollMode": "ऊपर-नीचे स्क्रॉल",
+  "pagedMode": "बाएँ-दाएँ पेज",
+  "offline": "ऑफ़लाइन कैश"
 }

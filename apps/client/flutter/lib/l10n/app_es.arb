@@ -35,5 +35,16 @@
   "welcome": "Bienvenido, {name}",
   "notLoggedIn": "Sin iniciar sesión",
   "retry": "Reintentar",
-  "bookCount": "{count} libros"
+  "bookCount": "{count} libros",
+  "settings": "Ajustes de lectura",
+  "theme": "Tema",
+  "themeSystem": "Seguir sistema",
+  "themeLight": "Claro",
+  "themeDark": "Oscuro",
+  "fontSize": "Tamaño de fuente",
+  "lineHeight": "Interlineado",
+  "pageMode": "Modo de página",
+  "scrollMode": "Desplazamiento vertical",
+  "pagedMode": "Pasar página",
+  "offline": "Caché sin conexión"
 }

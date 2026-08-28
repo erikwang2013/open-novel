@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "التعليقات" },
     { "name": "commentHint", "value": "اكتب تعليقًا…" },
-    { "name": "post", "value": "نشر" }
+    { "name": "post", "value": "نشر" },
+    { "name": "settings", "value": "الإعدادات" },
+    { "name": "theme", "value": "السمة" },
+    { "name": "themeSystem", "value": "تبعا للنظام" },
+    { "name": "themeLight", "value": "فاتح" },
+    { "name": "themeDark", "value": "داكن" },
+    { "name": "fontSize", "value": "حجم الخط" },
+    { "name": "lineHeight", "value": "تباعد الأسطر" },
+    { "name": "pageMode", "value": "وضع الصفحات" },
+    { "name": "scrollMode", "value": "تمرير عمودي" },
+    { "name": "pagedMode", "value": "تقليب الصفحات" },
+    { "name": "offline", "value": "ذاكرة تخزين دون اتصال" }
   ]
 }

@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "Comentários" },
     { "name": "commentHint", "value": "Escreva um comentário…" },
-    { "name": "post", "value": "Publicar" }
+    { "name": "post", "value": "Publicar" },
+    { "name": "settings", "value": "Configurações" },
+    { "name": "theme", "value": "Tema" },
+    { "name": "themeSystem", "value": "Seguir sistema" },
+    { "name": "themeLight", "value": "Claro" },
+    { "name": "themeDark", "value": "Escuro" },
+    { "name": "fontSize", "value": "Tamanho da fonte" },
+    { "name": "lineHeight", "value": "Espaçamento" },
+    { "name": "pageMode", "value": "Modo de página" },
+    { "name": "scrollMode", "value": "Rolagem vertical" },
+    { "name": "pagedMode", "value": "Virar página" },
+    { "name": "offline", "value": "Cache offline" }
   ]
 }

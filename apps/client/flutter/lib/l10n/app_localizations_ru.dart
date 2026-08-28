@@ -130,4 +130,37 @@ class AppLocalizationsRu extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get settings => 'Настройки чтения';
+
+  @override
+  String get theme => 'Тема';
+
+  @override
+  String get themeSystem => 'Как в системе';
+
+  @override
+  String get themeLight => 'Светлая';
+
+  @override
+  String get themeDark => 'Тёмная';
+
+  @override
+  String get fontSize => 'Размер шрифта';
+
+  @override
+  String get lineHeight => 'Межстрочный интервал';
+
+  @override
+  String get pageMode => 'Режим страниц';
+
+  @override
+  String get scrollMode => 'Вертикальная прокрутка';
+
+  @override
+  String get pagedMode => 'Перелистывание';
+
+  @override
+  String get offline => 'Офлайн-кэш';
 }

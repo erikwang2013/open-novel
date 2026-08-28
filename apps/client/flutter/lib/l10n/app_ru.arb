@@ -35,5 +35,16 @@
   "welcome": "Добро пожаловать, {name}",
   "notLoggedIn": "Вы не вошли",
   "retry": "Повторить",
-  "bookCount": "{count, plural, =1{1 книга} few{{count} книги} other{{count} книг}}"
+  "bookCount": "{count, plural, =1{1 книга} few{{count} книги} other{{count} книг}}",
+  "settings": "Настройки чтения",
+  "theme": "Тема",
+  "themeSystem": "Как в системе",
+  "themeLight": "Светлая",
+  "themeDark": "Тёмная",
+  "fontSize": "Размер шрифта",
+  "lineHeight": "Межстрочный интервал",
+  "pageMode": "Режим страниц",
+  "scrollMode": "Вертикальная прокрутка",
+  "pagedMode": "Перелистывание",
+  "offline": "Офлайн-кэш"
 }

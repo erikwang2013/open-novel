@@ -35,5 +35,16 @@
   "welcome": "Welcome, {name}",
   "notLoggedIn": "Not signed in",
   "retry": "Retry",
-  "bookCount": "{count} books"
+  "bookCount": "{count} books",
+  "settings": "Reading settings",
+  "theme": "Theme",
+  "themeSystem": "Follow system",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "fontSize": "Font size",
+  "lineHeight": "Line height",
+  "pageMode": "Page mode",
+  "scrollMode": "Vertical scroll",
+  "pagedMode": "Page flip",
+  "offline": "Offline cache"
 }

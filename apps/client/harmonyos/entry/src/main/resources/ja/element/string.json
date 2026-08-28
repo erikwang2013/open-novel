@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "コメント" },
     { "name": "commentHint", "value": "コメントを書く…" },
-    { "name": "post", "value": "投稿" }
+    { "name": "post", "value": "投稿" },
+    { "name": "settings", "value": "設定" },
+    { "name": "theme", "value": "テーマ" },
+    { "name": "themeSystem", "value": "システムに従う" },
+    { "name": "themeLight", "value": "ライト" },
+    { "name": "themeDark", "value": "ダーク" },
+    { "name": "fontSize", "value": "文字サイズ" },
+    { "name": "lineHeight", "value": "行間" },
+    { "name": "pageMode", "value": "ページモード" },
+    { "name": "scrollMode", "value": "上下スクロール" },
+    { "name": "pagedMode", "value": "左右ページめくり" },
+    { "name": "offline", "value": "オフラインキャッシュ" }
   ]
 }

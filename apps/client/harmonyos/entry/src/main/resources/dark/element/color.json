@@ -1,0 +1,12 @@
+{
+  "color": [
+    {
+      "name": "reader_bg",
+      "value": "#121212"
+    },
+    {
+      "name": "reader_text",
+      "value": "#B0B0B0"
+    }
+  ]
+}

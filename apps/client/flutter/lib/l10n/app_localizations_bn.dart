@@ -123,4 +123,37 @@ class AppLocalizationsBn extends AppLocalizations {
   String bookCount(num count) {
     return '$countটি বই';
   }
+
+  @override
+  String get settings => 'পড়ার সেটিংস';
+
+  @override
+  String get theme => 'থিম';
+
+  @override
+  String get themeSystem => 'সিস্টেম অনুসারে';
+
+  @override
+  String get themeLight => 'হালকা';
+
+  @override
+  String get themeDark => 'গাঢ়';
+
+  @override
+  String get fontSize => 'ফন্ট সাইজ';
+
+  @override
+  String get lineHeight => 'লাইন স্পেসিং';
+
+  @override
+  String get pageMode => 'পৃষ্ঠা মোড';
+
+  @override
+  String get scrollMode => 'উপর-নিচে স্ক্রল';
+
+  @override
+  String get pagedMode => 'বাম-ডান পাতা';
+
+  @override
+  String get offline => 'অফলাইন ক্যাশে';
 }

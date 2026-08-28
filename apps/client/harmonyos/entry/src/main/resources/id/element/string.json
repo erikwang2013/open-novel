@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "Komentar" },
     { "name": "commentHint", "value": "Tulis komentar…" },
-    { "name": "post", "value": "Kirim" }
+    { "name": "post", "value": "Kirim" },
+    { "name": "settings", "value": "Pengaturan" },
+    { "name": "theme", "value": "Tema" },
+    { "name": "themeSystem", "value": "Ikuti sistem" },
+    { "name": "themeLight", "value": "Terang" },
+    { "name": "themeDark", "value": "Gelap" },
+    { "name": "fontSize", "value": "Ukuran font" },
+    { "name": "lineHeight", "value": "Spasi baris" },
+    { "name": "pageMode", "value": "Mode halaman" },
+    { "name": "scrollMode", "value": "Gulir vertikal" },
+    { "name": "pagedMode", "value": "Balik halaman" },
+    { "name": "offline", "value": "Cache offline" }
   ]
 }

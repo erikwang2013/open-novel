@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import '../models/models.dart';
 
@@ -148,6 +152,39 @@ class ApiClient {
     final r = await _dio.get('/api/chapters/$chapterId/content',
         queryParameters: {'lang': lang});
     return ChapterContent.fromJson(r.data as Map<String, dynamic>);
+  }
+
+  /// 章节正文（带本地缓存，T-C-10）：在线成功写缓存，网络失败读缓存，离线可读。
+  /// 缓存键 novel://chapter/{id}?lang=，淘汰用 flutter_cache_manager 默认策略
+  /// （LRU，最多 200 个对象、7 天过期）。离线且未命中缓存时抛错。
+  Future<ChapterContent> getChapterContentCached(String chapterId,
+      {String lang = 'zh'}) async {
+    final cacheUrl = 'https://novel.invalid/chapter/$chapterId?lang=$lang';
+    final cm = DefaultCacheManager();
+    try {
+      final c = await getChapterContent(chapterId, lang: lang);
+      try {
+        final tmp = File(
+            '${Directory.systemTemp.path}/novel_ch_$chapterId.json');
+        await tmp.writeAsString(
+            jsonEncode({'content': c.content, 'lang': c.lang}));
+        await cm.putFile(cacheUrl, tmp.readAsBytesSync(),
+            maxAge: const Duration(days: 7));
+      } catch (_) {
+        // 写缓存失败不影响在线阅读
+      }
+      return c;
+    } catch (e) {
+      final f = await cm.getSingleFile(cacheUrl); // 离线未命中时在此抛错
+      final j = jsonDecode(await f.readAsString()) as Map<String, dynamic>;
+      return ChapterContent(
+        id: '',
+        chapterId: chapterId,
+        lang: asStr(j['lang']),
+        content: asStr(j['content']),
+        fromCache: true,
+      );
+    }
   }
 
   Future<List<Comment>> listComments(String bookId,

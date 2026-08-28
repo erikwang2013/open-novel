@@ -36,6 +36,17 @@
     { "name": "errorMsg", "value": "%s" },
     { "name": "comments", "value": "टिप्पणियाँ" },
     { "name": "commentHint", "value": "टिप्पणी लिखें…" },
-    { "name": "post", "value": "पोस्ट करें" }
+    { "name": "post", "value": "पोस्ट करें" },
+    { "name": "settings", "value": "सेटिंग्स" },
+    { "name": "theme", "value": "थीम" },
+    { "name": "themeSystem", "value": "सिस्टम के अनुसार" },
+    { "name": "themeLight", "value": "हल्का" },
+    { "name": "themeDark", "value": "गहरा" },
+    { "name": "fontSize", "value": "फ़ॉन्ट आकार" },
+    { "name": "lineHeight", "value": "पंक्ति अंतर" },
+    { "name": "pageMode", "value": "पृष्ठ मोड" },
+    { "name": "scrollMode", "value": "ऊपर-नीचे स्क्रॉल" },
+    { "name": "pagedMode", "value": "बाएँ-दाएँ पेज" },
+    { "name": "offline", "value": "ऑफ़लाइन कैश" }
   ]
 }
