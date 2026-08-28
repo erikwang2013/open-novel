@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/models.dart';
 
@@ -33,8 +34,7 @@ class ApiClient {
           } catch (_) {
             // 刷新失败走下方统一错误
           }
-          _accessToken = null;
-          _refreshToken = null;
+          logout();
         }
         h.next(e);
       },
@@ -44,11 +44,21 @@ class ApiClient {
   static final ApiClient instance = ApiClient._();
   late final Dio _dio;
 
+  static const _kAccessToken = 'admin_access_token';
+  static const _kRefreshToken = 'admin_refresh_token';
+
   String? _accessToken;
   String? _refreshToken;
   AdminUser? currentUser;
 
   bool get loggedIn => _accessToken != null;
+
+  /// main() 启动时调用一次，从 shared_preferences 恢复 token，免重登。
+  Future<void> init() async {
+    final p = await SharedPreferences.getInstance();
+    _accessToken = p.getString(_kAccessToken);
+    _refreshToken = p.getString(_kRefreshToken);
+  }
 
   Future<LoginResult> login(String username, String password) async {
     final r = await _dio.post('/api/users/login',
@@ -346,6 +356,10 @@ class ApiClient {
     _accessToken = r.accessToken;
     _refreshToken = r.refreshToken;
     currentUser = r.user;
+    SharedPreferences.getInstance().then((p) {
+      p.setString(_kAccessToken, r.accessToken);
+      p.setString(_kRefreshToken, r.refreshToken);
+    });
     return r;
   }
 
@@ -353,6 +367,10 @@ class ApiClient {
     _accessToken = null;
     _refreshToken = null;
     currentUser = null;
+    SharedPreferences.getInstance().then((p) {
+      p.remove(_kAccessToken);
+      p.remove(_kRefreshToken);
+    });
   }
 
   /// 统一错误文案：优先取后端 {code,message,detail} 的 message；网络类返回 'network'。
