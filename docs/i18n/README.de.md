@@ -22,7 +22,7 @@ Open Novel ist eine globale mehrsprachige Roman-Plattform mit cloudnativer Mikro
 
 ## Funktionen
 
-<p align="center"><img src="images/de/features.svg" alt="Diagramm der Funktionsarchitektur" width="860"/></p>
+<p align="center"><img src="../features.svg" alt="Diagramm der Funktionsarchitektur" width="860"/></p>
 
 - **Benutzerkonto**: Registrierung/Login (JWT), persönliches Bücherregal, Synchronisierung des Lesefortschritts über Geräte hinweg, mehrsprachiges Profil
 - **Leseerlebnis**: kapitelweises Lesen, Schriftart- und Schriftgrößenwechsel, helles/dunkles Design, Offline-Cache, Blätteranimationen
@@ -33,25 +33,31 @@ Open Novel ist eine globale mehrsprachige Roman-Plattform mit cloudnativer Mikro
 
 ## Systemarchitektur
 
-<p align="center"><img src="images/de/architecture.svg" alt="Diagramm der Systemarchitektur" width="860"/></p>
+<p align="center"><img src="../architecture.svg" alt="Diagramm der Systemarchitektur" width="860"/></p>
 
-## Projektübersicht (Diagramm)
+Die Gesamtarchitektur ist eine Go-Kratos-Mikroservice-Architektur: Die Flutter- / HarmonyOS-Clients interagieren über Nginx + CDN mit dem API-Gateway; das Gateway routet domänenbasiert zu Backend-Diensten wie Benutzer, Bücher, Kapitel, Kommentare, Suche und Empfehlungen. Die Datenschicht besteht aus MySQL-Master-Replica (Lese-/Schreibtrennung) + Redis-Cache + OpenSearch-Suchindex. Die Dienste kommunizieren über gRPC; die externen HTTP-Schnittstellen verwenden einheitlich das Präfix `/api/v1`.
 
-<p align="center"><img src="images/de/project.svg" alt="Gesamtansicht des Projekts" width="860"/></p>
+Weitere Diagramme: Projektübersicht [../project.svg](../project.svg) · Anfragezyklus [../request-cycle.svg](../request-cycle.svg) · Sicherheitsarchitektur [../security.svg](../security.svg) · Projektstruktur [../structure.svg](../structure.svg).
 
-## Anfragezyklus
+## Verzeichnisstruktur
 
-<p align="center"><img src="images/de/request-cycle.svg" alt="Diagramm des Anfragezyklus" width="860"/></p>
+```
+open-novel/
+├─ apps/                     # Multiplattform-Frontends
+│  ├─ flutter/               #   Flutter auf allen Plattformen (Web / Desktop / Mobile), i18n-Mehrsprachigkeit
+│  └─ harmonyos/             #   HarmonyOS-NEXT-Native-App (ArkTS / ArkUI)
+├─ kratos/                   # Go-Kratos-Framework-Quellcode (Upstream-Framework, unverändert übernommen, nicht ändern)
+│  └─ backend/               #   Projekt-Backend: cmd/server-Einstieg + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # Projektdokumentation (Planung, Architekturdiagramme, i18n-READMEs, Spenden-QR-Codes)
+├─ scripts/                  # Build- und Deployment-Skripte (post-push.sh für automatische Releases, smoke.sh)
+├─ docker-compose.yml        # Lokaler Abhängigkeits-Stack: MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # Projekt-Kooperationsrichtlinien
+└─ README.md                 # Projektdokumentation
+```
 
-## Sicherheitsarchitektur
+<p align="center"><img src="../structure.svg" alt="Diagramm der Projektstruktur" width="860"/></p>
 
-<p align="center"><img src="images/de/security.svg" alt="Diagramm der Sicherheitsarchitektur" width="860"/></p>
-
-## Projektstruktur
-
-<p align="center"><img src="images/de/structure.svg" alt="Diagramm der Projektstruktur" width="860"/></p>
-
----
+> Hinweis: `kratos/` ist der Quellcode des Kratos-Frameworks (mit eigenem README / LICENSE); der gesamte Geschäftscode befindet sich in `kratos/backend/`.
 
 ## Technologie-Stack
 
@@ -73,17 +79,52 @@ Open Novel ist eine globale mehrsprachige Roman-Plattform mit cloudnativer Mikro
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Detailliertes Tabellendesign und die Strategie zur Lese-/Schreibtrennung finden Sie in [docs/novel-project-planning.md](../novel-project-planning.md).
+Tabellen-Skript: `kratos/backend/sql/init.sql` (wird beim ersten Start von Docker Compose automatisch ausgeführt). Detailliertes Tabellendesign und die Strategie zur Lese-/Schreibtrennung finden Sie in [docs/novel-project-planning.md](../novel-project-planning.md).
 
-## Verzeichnisse der Client-Apps
+## API-Präfix
 
+Die HTTP-Schnittstellen des Backends beginnen einheitlich mit `/api/v1` und sind nach Domänen gruppiert:
+
+| Domäne | Beispielrouten | proto-Definition |
+| :--- | :--- | :--- |
+| Benutzer | `/api/v1/users` usw. | `kratos/backend/api/user/v1` |
+| Bücher | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
+| Kapitel | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| Kommentare | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| Suche | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| Empfehlungen | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+Detaillierte Routen finden Sie in den Deklarationen `option (google.api.http)` der jeweiligen proto-Dateien.
+
+## Schnellstart
+
+```bash
+# 1. Abhängigkeits-Stack starten (MySQL / Redis / OpenSearch; führt beim ersten Start automatisch kratos/backend/sql/init.sql aus)
+docker compose up -d
+
+# 2. Backend-Dienst starten (Kratos-Geschäftsverzeichnis, HTTP :8000 / gRPC :9000)
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. Flutter-Frontend starten (verbindet sich standardmäßig mit localhost:8000, keine weitere Konfiguration nötig)
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
-└─ harmonyos/   # HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
-```
 
-Siehe [apps/README.md](../../apps/README.md).
+- Port-Zuordnung des Abhängigkeits-Stacks: MySQL `3307`、Redis `6380`、OpenSearch `9200` (die Host-Ports 3306/6379 sind durch lokale Dienste belegt, siehe Kommentar in docker-compose.yml).
+- Backend-Adresse und Schlüssel werden in `kratos/backend/config/` konfiguriert und unterstützen Überschreibung über Umgebungsvariablen (z. B. `PORT`, `OPENSEARCH_ADDR`).
+- Flutter mit anderem Backend verbinden: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
+
+Siehe [apps/README.md](../../apps/README.md) und [apps/flutter/README.md](../../apps/flutter/README.md).
+
+## Release-Prozess
+
+- **Automatisch**: Nach dem Push auf `main` wird [scripts/post-push.sh](../../scripts/post-push.sh) ausgeführt (als Git-Push-Hook oder manuell). Das Skript erhöht ausgehend vom neuesten `v*`-Tag die Patch-Version, erstellt und pusht einen Tag und erstellt anschließend mit einem inkrementellen Changelog ein GitHub Release; hierfür muss `gh` authentifiziert sein. Das erste Release startet bei `v1.0.0`.
+- **Manuell**:
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## Roadmap
 
@@ -94,24 +135,6 @@ Siehe [apps/README.md](../../apps/README.md).
 | Phase 3 | 2 Wochen | Sicherheitshärtung (JWT / RBAC / Ratenbegrenzung) + Stresstests |
 | Phase 4 | 1-2 Wochen | End-to-End-Integration aller Komponenten + Konfiguration der CDN-Beschleunigung |
 | Phase 5 | laufend | Integration von KI-Empfehlungsalgorithmen, Tracking zur Analyse des Nutzerverhaltens |
-
-## Lokale Entwicklung
-
-```bash
-# 启动依赖（MySQL / Redis / OpenSearch）
-docker compose up -d
-
-# 后端服务（Kratos 工作区）
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# Flutter 端
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS 端
-cd apps/harmonyos && hvigorw assembleHap
-```
-
----
 
 ## Unterstützung und Spenden
 
@@ -157,3 +180,10 @@ Wenn Ihnen dieses Projekt hilft, unterstützen Sie es gern mit **Star** und **Fo
 - Bankname: THE BANK OF NEW YORK MELLON
 - SWIFT Code: IRVTUS3NXXX
 - Bankadresse: THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## Lizenz und Kontakt
+
+- **Lizenz**: Im Repository-Stammverzeichnis gibt es keine eigenständige LICENSE-Datei; `kratos/` ist der Upstream-Quellcode des Kratos-Frameworks und folgt dessen [MIT-Lizenz](../../kratos/LICENSE). Die Lizenzierung des Geschäftscodes wird durch spätere Bekanntmachungen des Projekts festgelegt.
+- **Kontakt**: Kommunikation über GitHub Issues / PR; Spenden siehe oben unter „Unterstützung und Spenden“.

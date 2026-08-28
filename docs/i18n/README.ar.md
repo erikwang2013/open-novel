@@ -20,7 +20,6 @@ Open Novel منصة عالمية للروايات متعددة اللغات بم
 - **التخزين**: MySQL 8 (فصل القراءة والكتابة بين الرئيسي والتابع) + Redis (الذاكرة المؤقتة السريعة / الجلسات) + OpenSearch (بحث متعدد اللغات)
 - **التشغيل**: نشر بضغطة واحدة عبر Docker Compose، مراقبة عبر Prometheus + Grafana، تكامل مستمر عبر GitHub Actions
 
-
 ## الميزات
 
 <p align="center"><img src="images/ar/features.svg" alt="مخطط معمارية الميزات" width="860"/></p>
@@ -36,23 +35,29 @@ Open Novel منصة عالمية للروايات متعددة اللغات بم
 
 <p align="center"><img src="images/ar/architecture.svg" alt="مخطط معمارية النظام" width="860"/></p>
 
-## نظرة عامة على المشروع
+النظام بأكمله مبني على معمارية الخدمات المصغرة Go-Kratos: تتفاعل تطبيقات Flutter / HarmonyOS مع بوابة API عبر Nginx + CDN؛ وتقوم البوابة بتوجيه الطلبات حسب المجالات إلى الخدمات الخلفية مثل المستخدمين والكتب والفصول والتعليقات والبحث والتوصيات؛ وطبقة البيانات هي MySQL رئيسي/تابع (فصل القراءة والكتابة) + ذاكرة Redis المؤقتة + فهرس بحث OpenSearch. التواصل بين الخدمات يتم عبر gRPC، وجميع واجهات HTTP الخارجية لها البادئة الموحدة `/api/v1`.
 
-<p align="center"><img src="images/ar/project.svg" alt="مخطط نظرة عامة على المشروع" width="860"/></p>
+مخططات التصميم الأخرى: نظرة عامة على المشروع [../project.svg](../project.svg) · دورة الطلب [../request-cycle.svg](../request-cycle.svg) · المعمارية الأمنية [../security.svg](../security.svg) · هيكل المشروع [../structure.svg](../structure.svg).
 
-## دورة الطلب
+## هيكل الدليل
 
-<p align="center"><img src="images/ar/request-cycle.svg" alt="مخطط دورة الطلب" width="860"/></p>
-
-## المعمارية الأمنية
-
-<p align="center"><img src="images/ar/security.svg" alt="مخطط المعمارية الأمنية" width="860"/></p>
-
-## هيكل المشروع
+```
+open-novel/
+├─ apps/                     # واجهات أمامية متعددة المنصات
+│  ├─ flutter/               #   Flutter لجميع المنصات (Web / Desktop / Mobile)، تعدد لغات i18n
+│  └─ harmonyos/             #   تطبيق HarmonyOS NEXT الأصلي (ArkTS / ArkUI)
+├─ kratos/                   # كود مصدر إطار Go-Kratos (الإطار المصدر، يُحفظ كما هو، لا يُعدَّل)
+│  └─ backend/               #   الواجهة الخلفية لأعمال هذا المشروع: نقطة دخول cmd/server + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # وثائق المشروع (التخطيط، مخططات المعمارية، README i18n، رموز التبرع)
+├─ scripts/                  # سكربتات البناء والنشر (الإصدار التلقائي post-push.sh، smoke.sh)
+├─ docker-compose.yml        # مجموعة التبعيات المحلية: MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # قواعد التعاون في المشروع
+└─ README.md                 # وثيقة شرح المشروع
+```
 
 <p align="center"><img src="images/ar/structure.svg" alt="مخطط هيكل المشروع" width="860"/></p>
 
----
+> ملاحظة: `kratos/` هو كود مصدر إطار Kratos (يتضمن README / LICENSE خاصًا به)، وجميع أكواد الأعمال موجودة في `kratos/backend/`.
 
 ## التقنيات المستخدمة
 
@@ -74,17 +79,52 @@ Open Novel منصة عالمية للروايات متعددة اللغات بم
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-تفاصيل تصميم الجداول واستراتيجية فصل القراءة والكتابة موجودة في [docs/novel-project-planning.md](../novel-project-planning.md).
+سكربت إنشاء الجداول: `kratos/backend/sql/init.sql` (يُنفَّذ تلقائيًا عند أول تشغيل لـ Docker Compose). تفاصيل تصميم الجداول واستراتيجية فصل القراءة والكتابة موجودة في [docs/novel-project-planning.md](../novel-project-planning.md).
 
-## مجلدات التطبيقات المتعددة
+## بادئة API
 
+جميع واجهات HTTP الخلفية تبدأ بـ `/api/v1`، وتُقسم حسب المجالات:
+
+| المجال | أمثلة على المسارات | تعريف proto |
+| :--- | :--- | :--- |
+| المستخدمون | `/api/v1/users` وغيرها | `kratos/backend/api/user/v1` |
+| الكتب | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
+| الفصول | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| التعليقات | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| البحث | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| التوصيات | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+تفاصيل المسارات موجودة في إعلانات `option (google.api.http)` داخل كل ملف proto.
+
+## البدء السريع
+
+```bash
+# 1. تشغيل مجموعة التبعيات (MySQL / Redis / OpenSearch؛ ينشئ kratos/backend/sql/init.sql الجداول تلقائيًا عند أول تشغيل)
+docker compose up -d
+
+# 2. تشغيل الخدمة الخلفية (دليل أعمال Kratos، HTTP :8000 / gRPC :9000)
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. تشغيل تطبيق Flutter (يتصل بـ localhost:8000 افتراضيًا، دون إعدادات إضافية)
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter لجميع المنصات (Web / Desktop / Mobile)، تعدد لغات i18n
-└─ harmonyos/   # تطبيق HarmonyOS NEXT الأصلي (ArkTS / ArkUI)
-```
 
-انظر [apps/README.md](../../apps/README.md) لمزيد من التفاصيل.
+- تعيين منافذ مجموعة التبعيات: MySQL `3307` و Redis `6380` و OpenSearch `9200` (المنفذان 3306/6379 على المضيف مستخدمان من خدمات محلية، انظر تعليقات docker-compose.yml).
+- عنوان الخادم والمفاتيح تُكوَّن في `kratos/backend/config/`، ويمكن تجاوزها بمتغيرات البيئة (مثل `PORT` و `OPENSEARCH_ADDR`).
+- للاتصال بخادم آخر من Flutter: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
+
+انظر [apps/README.md](../../apps/README.md) و [apps/flutter/README.md](../../apps/flutter/README.md) لمزيد من التفاصيل.
+
+## عملية الإصدار
+
+- **تلقائي**: بعد دفع `main`، شغّل [scripts/post-push.sh](../../scripts/post-push.sh) (عبر خطاف git push أو يدويًا). يرفع السكربت رقم الإصدار patch استنادًا إلى أحدث وسم `v*`، وينشئ الوسم ويدفعه، ثم ينشئ إصدار GitHub مع سجل تغييرات تدريجي؛ يتطلب مصادقة `gh`. أول إصدار يبدأ من `v1.0.0`.
+- **يدوي**:
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## خارطة الطريق
 
@@ -95,22 +135,6 @@ apps/
 | Phase 3 | أسبوعان | تقوية الأمان (JWT / RBAC / تحديد المعدل) + اختبارات الضغط |
 | Phase 4 | 1-2 أسبوع | اختبار التكامل الشامل عبر المسار الكامل + إعداد تسريع CDN |
 | Phase 5 | مستمر | دمج خوارزمية التوصيات AI، تتبع تحليلات سلوك المستخدم |
-
-## التطوير المحلي
-
-```bash
-# تشغيل التبعيات (MySQL / Redis / OpenSearch)
-docker compose up -d
-
-# الخدمات الخلفية (مساحة عمل Kratos)
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# طرف Flutter
-cd apps/flutter && flutter pub get && flutter run
-
-# طرف HarmonyOS
-cd apps/harmonyos && hvigorw assembleHap
-```
 
 ---
 
@@ -158,3 +182,10 @@ cd apps/harmonyos && hvigorw assembleHap
 - اسم البنك: THE BANK OF NEW YORK MELLON
 - رمز SWIFT: IRVTUS3NXXX
 - عنوان البنك: THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## الترخيص وطرق التواصل
+
+- **الترخيص**: لا يوجد LICENSE مستقل في جذر المستودع؛ `kratos/` هو كود المصدر الأعلى لإطار Kratos، ويخضع لـ [MIT License](../../kratos/LICENSE). ترخيص كود الأعمال يتبع إعلان المشروع لاحقًا.
+- **طرق التواصل**: عبر GitHub Issues / PR؛ للتبرعات انظر «الدعم والتبرعات» أعلاه.

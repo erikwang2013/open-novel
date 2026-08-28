@@ -20,10 +20,9 @@ Open Novel একটি ক্লাউড-নেটিভ মাইক্রো
 - **স্টোরেজ**: MySQL 8 (মাস্টার-স্লেভ রিড-রাইট সেপারেশন) + Redis (হট ক্যাশ / সেশন) + OpenSearch (বহুভাষিক সার্চ)
 - **অপারেশন**: Docker Compose এক-ক্লিক ডিপ্লয়মেন্ট, Prometheus + Grafana মনিটরিং, GitHub Actions কন্টিনিউয়াস ইন্টিগ্রেশন
 
-
 ## বৈশিষ্ট্যসমূহ
 
-<p align="center"><img src="images/features.svg" alt="ফিচার আর্কিটেকচার ডায়াগ্রাম" width="860"/></p>
+<p align="center"><img src="images/bn/features.svg" alt="ফিচার আর্কিটেকচার ডায়াগ্রাম" width="860"/></p>
 
 - **ব্যবহারকারী সেন্টার**: রেজিস্ট্রেশন/লগইন (JWT), ব্যক্তিগত বুকশেলফ, ডিভাইস জুড়ে পড়ার অগ্রগতি সিঙ্ক, বহুভাষিক প্রোফাইল
 - **পড়ার অভিজ্ঞতা**: অধ্যায়ভিত্তিক পড়া, ফন্ট ও সাইজ পরিবর্তন, হালকা/গাঢ় থিম, অফলাইন ক্যাশ, পেজ-ফ্লিপ অ্যানিমেশন
@@ -34,25 +33,31 @@ Open Novel একটি ক্লাউড-নেটিভ মাইক্রো
 
 ## সিস্টেম আর্কিটেকচার
 
-<p align="center"><img src="images/architecture.svg" alt="সিস্টেম আর্কিটেকচার ডায়াগ্রাম" width="860"/></p>
+<p align="center"><img src="images/bn/architecture.svg" alt="সিস্টেম আর্কিটেকচার ডায়াগ্রাম" width="860"/></p>
 
-## প্রকল্পের সার্বিক চিত্র
+পুরো সিস্টেমটি Go-Kratos মাইক্রোসার্ভিস আর্কিটেকচারের উপর ভিত্তি করে তৈরি: Flutter / HarmonyOS ক্লায়েন্ট Nginx + CDN এর মাধ্যমে API গেটওয়ের সাথে ইন্টারঅ্যাক্ট করে; গেটওয়ে ডোমেইন অনুযায়ী ব্যবহারকারী, বই, অধ্যায়, মন্তব্য, সার্চ, রিকমেন্ডেশন ইত্যাদি ব্যাকএন্ড সার্ভিসে রাউট করে; ডেটা লেয়ার হলো MySQL মাস্টার-স্লেভ (রিড-রাইট সেপারেশন) + Redis ক্যাশ + OpenSearch সার্চ ইনডেক্স। সার্ভিসগুলোর মধ্যে gRPC কমিউনিকেশন হয়, বাহ্যিক HTTP ইন্টারফেসের ইউনিফাইড প্রিফিক্স `/api/v1`।
 
-<p align="center"><img src="images/project.svg" alt="প্রকল্পের সার্বিক চিত্র ডায়াগ্রাম" width="860"/></p>
+অন্যান্য ডিজাইন ডায়াগ্রাম: প্রকল্পের সার্বিক চিত্র [../project.svg](../project.svg) · রিকোয়েস্ট সাইকেল [../request-cycle.svg](../request-cycle.svg) · নিরাপত্তা আর্কিটেকচার [../security.svg](../security.svg) · প্রকল্প কাঠামো [../structure.svg](../structure.svg)।
 
-## রিকোয়েস্ট সাইকেল
+## ডিরেক্টরি স্ট্রাকচার
 
-<p align="center"><img src="images/request-cycle.svg" alt="রিকোয়েস্ট সাইকেল ডায়াগ্রাম" width="860"/></p>
+```
+open-novel/
+├─ apps/                     # মাল্টি-এন্ড ফ্রন্টএন্ড
+│  ├─ flutter/               #   Flutter সর্ব-প্ল্যাটফর্ম (Web / Desktop / Mobile), i18n বহুভাষিক
+│  └─ harmonyos/             #   HarmonyOS NEXT নেটিভ অ্যাপ (ArkTS / ArkUI)
+├─ kratos/                   # Go-Kratos ফ্রেমওয়ার্ক সোর্স কোড (আপস্ট্রিম ফ্রেমওয়ার্ক, অপরিবর্তিত রাখুন, বদলাবেন না)
+│  └─ backend/               #   এই প্রজেক্টের বিজনেস ব্যাকএন্ড: cmd/server এন্ট্রি + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # প্রজেক্ট ডকুমেন্টেশন (প্ল্যানিং, আর্কিটেকচার ডায়াগ্রাম, i18n README, দান কোড)
+├─ scripts/                  # বিল্ড ও ডিপ্লয় স্ক্রিপ্ট (post-push.sh অটো রিলিজ, smoke.sh)
+├─ docker-compose.yml        # লোকাল ডিপেন্ডেন্সি স্ট্যাক: MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # প্রজেক্ট সহযোগিতার নিয়মাবলি
+└─ README.md                 # প্রজেক্ট ডকুমেন্টেশন
+```
 
-## নিরাপত্তা আর্কিটেকচার
+<p align="center"><img src="images/bn/structure.svg" alt="প্রকল্প কাঠামো ডায়াগ্রাম" width="860"/></p>
 
-<p align="center"><img src="images/security.svg" alt="নিরাপত্তা আর্কিটেকচার ডায়াগ্রাম" width="860"/></p>
-
-## প্রকল্প কাঠামো
-
-<p align="center"><img src="images/structure.svg" alt="প্রকল্প কাঠামো ডায়াগ্রাম" width="860"/></p>
-
----
+> নোট: `kratos/` হলো Kratos ফ্রেমওয়ার্কের সোর্স কোড (এর সাথে README / LICENSE আছে), সব বিজনেস কোড `kratos/backend/`-এ অবস্থিত।
 
 ## টেকনোলজি স্ট্যাক
 
@@ -74,17 +79,52 @@ Open Novel একটি ক্লাউড-নেটিভ মাইক্রো
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-বিস্তারিত টেবিল ডিজাইন ও রিড-রাইট সেপারেশন কৌশলের জন্য [docs/novel-project-planning.md](../novel-project-planning.md) দেখুন।
+টেবিল তৈরির স্ক্রিপ্ট: `kratos/backend/sql/init.sql` (Docker Compose প্রথমবার চালু হলে স্বয়ংক্রিয়ভাবে চলে)। বিস্তারিত টেবিল ডিজাইন ও রিড-রাইট সেপারেশন কৌশলের জন্য [docs/novel-project-planning.md](../novel-project-planning.md) দেখুন।
 
-## মাল্টি-এন্ড ডিরেক্টরি
+## API প্রিফিক্স
 
+ব্যাকএন্ডের সব HTTP ইন্টারফেস `/api/v1` দিয়ে শুরু হয়, ডোমেইন অনুযায়ী গ্রুপ করা:
+
+| ডোমেইন | উদাহরণ রুট | proto ডেফিনিশন |
+| :--- | :--- | :--- |
+| ব্যবহারকারী | `/api/v1/users` ইত্যাদি | `kratos/backend/api/user/v1` |
+| বই | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
+| অধ্যায় | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| মন্তব্য | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| সার্চ | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| রিকমেন্ডেশন | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+বিস্তারিত রুটের জন্য প্রতিটি proto ফাইলের `option (google.api.http)` ঘোষণা দেখুন।
+
+## দ্রুত শুরু
+
+```bash
+# 1. ডিপেন্ডেন্সি স্ট্যাক চালু করুন (MySQL / Redis / OpenSearch; প্রথমবার চালু হলে kratos/backend/sql/init.sql স্বয়ংক্রিয়ভাবে টেবিল তৈরি করে)
+docker compose up -d
+
+# 2. ব্যাকএন্ড সার্ভিস চালু করুন (Kratos বিজনেস ডিরেক্টরি, HTTP :8000 / gRPC :9000)
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. Flutter এন্ড চালু করুন (ডিফল্টভাবে localhost:8000-এর সাথে সংযুক্ত হয়, অতিরিক্ত কনফিগারেশনের প্রয়োজন নেই)
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter সর্ব-প্ল্যাটফর্ম (Web / Desktop / Mobile), i18n বহুভাষিক
-└─ harmonyos/   # HarmonyOS NEXT নেটিভ অ্যাপ (ArkTS / ArkUI)
-```
 
-বিস্তারিত জানতে দেখুন [apps/README.md](../../apps/README.md)।
+- ডিপেন্ডেন্সি স্ট্যাক পোর্ট ম্যাপিং: MySQL `3307`, Redis `6380`, OpenSearch `9200` (হোস্টের 3306/6379 লোকাল সার্ভিস ব্যবহার করে, docker-compose.yml-এর কমেন্ট দেখুন)।
+- ব্যাকএন্ড ঠিকানা ও কী `kratos/backend/config/`-এ কনফিগার করা হয়, এনভায়রনমেন্ট ভেরিয়েবল (যেমন `PORT`, `OPENSEARCH_ADDR`) দিয়ে ওভাররাইড করা যায়।
+- অন্য ব্যাকএন্ডের সাথে Flutter সংযোগ: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`।
+
+বিস্তারিত জানতে দেখুন [apps/README.md](../../apps/README.md) এবং [apps/flutter/README.md](../../apps/flutter/README.md)।
+
+## রিলিজ প্রক্রিয়া
+
+- **স্বয়ংক্রিয়**: `main` পুশ করার পর [scripts/post-push.sh](../../scripts/post-push.sh) চালান (git পুশ হুক বা ম্যানুয়ালি)। স্ক্রিপ্ট সর্বশেষ `v*` ট্যাগের ভিত্তিতে patch ভার্সন বাড়ায়, ট্যাগ তৈরি করে পুশ করে, তারপর ইনক্রিমেন্টাল changelog দিয়ে GitHub Release তৈরি করে; `gh` অথেনটিকেটেড থাকা প্রয়োজন। প্রথম রিলিজ `v1.0.0` থেকে শুরু হয়।
+- **ম্যানুয়াল**:
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## রোডম্যাপ
 
@@ -95,22 +135,6 @@ apps/
 | Phase 3 | ২ সপ্তাহ | সিকিউরিটি হার্ডেনিং (JWT / RBAC / রেট লিমিটিং) + স্ট্রেস টেস্ট |
 | Phase 4 | ১-২ সপ্তাহ | ফুল-পাইপলাইন ইন্টিগ্রেশন টেস্ট + CDN এক্সিলারেশন কনফিগারেশন |
 | Phase 5 | চলমান | AI রিকমেন্ডেশন অ্যালগরিদম ইন্টিগ্রেশন, ইউজার বিহেভিয়ার অ্যানালিটিক্স ট্র্যাকিং |
-
-## লোকাল ডেভেলপমেন্ট
-
-```bash
-# ডিপেন্ডেন্সি চালু করুন (MySQL / Redis / OpenSearch)
-docker compose up -d
-
-# ব্যাকএন্ড সার্ভিস (Kratos ওয়ার্কস্পেস)
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# Flutter এন্ড
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS এন্ড
-cd apps/harmonyos && hvigorw assembleHap
-```
 
 ---
 
@@ -158,3 +182,10 @@ cd apps/harmonyos && hvigorw assembleHap
 - ব্যাংকের নাম: THE BANK OF NEW YORK MELLON
 - SWIFT কোড: IRVTUS3NXXX
 - ব্যাংকের ঠিকানা: THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## লাইসেন্স ও যোগাযোগ
+
+- **লাইসেন্স**: রিপোজিটরি রুটে আলাদা কোনো LICENSE নেই; `kratos/` হলো Kratos ফ্রেমওয়ার্কের আপস্ট্রিম সোর্স কোড, যা এর [MIT License](../../kratos/LICENSE) অনুসরণ করে। বিজনেস কোডের লাইসেন্স প্রকল্পের পরবর্তী ঘোষণা অনুযায়ী হবে।
+- **যোগাযোগ**: GitHub Issues / PR-এর মাধ্যমে; দানের জন্য উপরে «সাপোর্ট ও দান» দেখুন।

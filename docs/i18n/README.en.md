@@ -36,6 +36,10 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 
 <p align="center"><img src="images/en/architecture.svg" alt="System architecture diagram" width="860"/></p>
 
+Overall Go-Kratos microservice architecture: Flutter / HarmonyOS clients interact with the API gateway via Nginx + CDN; the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api/v1` prefix.
+
+Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · request cycle [docs/request-cycle.svg](../../docs/request-cycle.svg) · security architecture [docs/security.svg](../../docs/security.svg) · project structure [docs/structure.svg](../../docs/structure.svg).
+
 ## Project Panorama
 
 <p align="center"><img src="images/en/project.svg" alt="Project panorama diagram" width="860"/></p>
@@ -48,11 +52,27 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 
 <p align="center"><img src="images/en/security.svg" alt="Security architecture diagram" width="860"/></p>
 
-## Project Structure
+---
+
+## Directory Structure
+
+```
+open-novel/
+├─ apps/                     # Multi-client frontends
+│  ├─ flutter/               #   Flutter all-platform (Web / Desktop / Mobile), i18n multilingual
+│  └─ harmonyos/             #   HarmonyOS NEXT native app (ArkTS / ArkUI)
+├─ kratos/                   # Go-Kratos framework source (upstream framework, keep as-is, do not modify)
+│  └─ backend/               #   Business backend of this project: cmd/server entry + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # Project documentation (planning, architecture diagrams, i18n READMEs, reward QR codes)
+├─ scripts/                  # Build and deployment scripts (post-push.sh auto release, smoke.sh)
+├─ docker-compose.yml        # Local dependency stack: MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # Project collaboration conventions
+└─ README.md                 # Project documentation
+```
 
 <p align="center"><img src="images/en/structure.svg" alt="Project structure diagram" width="860"/></p>
 
----
+> Note: `kratos/` is the Kratos framework source (with its own README / LICENSE); all business code lives in `kratos/backend/`.
 
 ## Tech Stack
 
@@ -74,17 +94,52 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-For detailed table design and the read/write separation strategy, see [docs/novel-project-planning.md](../novel-project-planning.md).
+Table creation script: `kratos/backend/sql/init.sql` (automatically executed on the first Docker Compose startup). For detailed table design and the read/write separation strategy, see [docs/novel-project-planning.md](../novel-project-planning.md).
 
-## Multi-Client Directories
+## API Prefix
 
+Backend HTTP APIs uniformly start with `/api/v1`, grouped by domain:
+
+| Domain | Example routes | proto definition |
+| :--- | :--- | :--- |
+| User | `/api/v1/users`, etc. | `kratos/backend/api/user/v1` |
+| Book | `/api/v1/books`, `/api/v1/books/{id}`, `/api/v1/categories`, `/api/v1/tags` | `kratos/backend/api/book/v1` |
+| Chapter | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| Comment | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| Search | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| Recommendation | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+For detailed routes, see the `option (google.api.http)` declarations in each proto file.
+
+## Quick Start
+
+```bash
+# 1. Start the dependency stack (MySQL / Redis / OpenSearch; the first startup automatically executes kratos/backend/sql/init.sql to create tables)
+docker compose up -d
+
+# 2. Start the backend service (Kratos business directory, HTTP :8000 / gRPC :9000)
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. Start the Flutter client (defaults to localhost:8000, no extra configuration needed)
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter all-platform (Web / Desktop / Mobile), i18n multilingual
-└─ harmonyos/   # HarmonyOS NEXT native app (ArkTS / ArkUI)
-```
 
-See [apps/README.md](../../apps/README.md).
+- Dependency stack port mapping: MySQL `3307`, Redis `6380`, OpenSearch `9200` (host ports 3306/6379 are occupied by local services, see docker-compose.yml comments).
+- Backend address and secrets are configured in `kratos/backend/config/`, with environment variable overrides (e.g. `PORT`, `OPENSEARCH_ADDR`).
+- To connect Flutter to another backend: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
+
+See [apps/README.md](../../apps/README.md) and [apps/flutter/README.md](../../apps/flutter/README.md).
+
+## Release Process
+
+- **Automatic**: after pushing `main`, run [scripts/post-push.sh](../../scripts/post-push.sh) (either as a git push hook or manually). The script bumps the patch version based on the latest `v*` tag, creates and pushes the tag, then creates a GitHub Release with an incremental changelog; `gh` must be authenticated. The first release starts from `v1.0.0`.
+- **Manual**:
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## Roadmap
 
@@ -95,24 +150,6 @@ See [apps/README.md](../../apps/README.md).
 | Phase 3 | 2 weeks | Security hardening (JWT / RBAC / rate limiting) + stress testing |
 | Phase 4 | 1-2 weeks | Full-link integration testing + CDN acceleration configuration |
 | Phase 5 | Ongoing | AI recommendation algorithms, user behavior analytics tracking |
-
-## Local Development
-
-```bash
-# Start dependencies (MySQL / Redis / OpenSearch)
-docker compose up -d
-
-# Backend services (Kratos workspace)
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# Flutter client
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS client
-cd apps/harmonyos && hvigorw assembleHap
-```
-
----
 
 ## Support and Donations
 
@@ -158,3 +195,10 @@ If this project has helped you, feel free to **Star** and **Fork** it; you are a
 - Bank Name: THE BANK OF NEW YORK MELLON
 - SWIFT Code: IRVTUS3NXXX
 - Bank Address: THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## License and Contact
+
+- **License**: there is no standalone LICENSE at the repository root; `kratos/` is the upstream Kratos framework source, governed by its [MIT License](../../kratos/LICENSE). The licensing of the business code is subject to subsequent project announcements.
+- **Contact**: communicate via GitHub Issues / PRs; donations see "Support and Donations" above.

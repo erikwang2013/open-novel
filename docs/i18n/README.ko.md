@@ -35,6 +35,10 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 
 <p align="center"><img src="images/ko/architecture.svg" alt="시스템 아키텍처 다이어그램" width="860"/></p>
 
+전체는 Go-Kratos 마이크로서비스 아키텍처입니다. Flutter / HarmonyOS 클라이언트는 Nginx + CDN을 거쳐 API 게이트웨이와 상호작용하며, 게이트웨이는 도메인별로 사용자, 도서, 챕터, 댓글, 검색, 추천 등의 백엔드 서비스로 라우팅합니다. 데이터 계층은 MySQL 마스터-슬레이브(읽기/쓰기 분리) + Redis 캐시 + OpenSearch 검색 인덱스입니다. 서비스 간 gRPC 통신, 외부 HTTP 인터페이스는 통일 접두사 `/api/v1`을 사용합니다.
+
+기타 설계도: 프로젝트 전체 구조 [docs/project.svg](../../docs/project.svg) · 요청 주기 [docs/request-cycle.svg](../../docs/request-cycle.svg) · 보안 아키텍처 [docs/security.svg](../../docs/security.svg) · 프로젝트 구조 [docs/structure.svg](../../docs/structure.svg).
+
 ## 프로젝트 전체 구조
 
 <p align="center"><img src="images/ko/project.svg" alt="프로젝트 전체 구조 다이어그램" width="860"/></p>
@@ -47,11 +51,27 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 
 <p align="center"><img src="images/ko/security.svg" alt="보안 아키텍처 다이어그램" width="860"/></p>
 
-## 프로젝트 구조
+---
+
+## 디렉터리 구조
+
+```
+open-novel/
+├─ apps/                     # 멀티 클라이언트 프런트엔드
+│  ├─ flutter/               #   Flutter 올 플랫폼(Web / Desktop / Mobile), i18n 다국어 지원
+│  └─ harmonyos/             #   HarmonyOS NEXT 네이티브 앱(ArkTS / ArkUI)
+├─ kratos/                   # Go-Kratos 프레임워크 소스(업스트림 프레임워크, 원본 유지, 수정 금지)
+│  └─ backend/               #   본 프로젝트의 비즈니스 백엔드: cmd/server 엔트리 + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # 프로젝트 문서(기획, 아키텍처 다이어그램, i18n README, 후원 QR 코드)
+├─ scripts/                  # 빌드·배포 스크립트(post-push.sh 자동 릴리스, smoke.sh)
+├─ docker-compose.yml        # 로컬 의존 스택: MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # 프로젝트 협업 규칙
+└─ README.md                 # 프로젝트 설명 문서
+```
 
 <p align="center"><img src="images/ko/structure.svg" alt="프로젝트 구조 다이어그램" width="860"/></p>
 
----
+> 참고: `kratos/`는 Kratos 프레임워크 소스 코드(README / LICENSE 포함)이며, 비즈니스 코드는 전부 `kratos/backend/`에 있습니다.
 
 ## 기술 스택
 
@@ -73,17 +93,52 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-자세한 테이블 설계 및 읽기/쓰기 분리 전략은 [docs/novel-project-planning.md](../novel-project-planning.md)를 참조하세요.
+테이블 생성 스크립트: `kratos/backend/sql/init.sql`(Docker Compose 최초 시작 시 자동 실행). 자세한 테이블 설계 및 읽기/쓰기 분리 전략은 [docs/novel-project-planning.md](../novel-project-planning.md)를 참조하세요.
 
-## 멀티 클라이언트 디렉터리
+## API 접두사
 
+백엔드 HTTP 인터페이스는 모두 `/api/v1`로 시작하며 도메인별로 그룹화됩니다:
+
+| 도메인 | 예시 라우트 | proto 정의 |
+| :--- | :--- | :--- |
+| 사용자 | `/api/v1/users` 등 | `kratos/backend/api/user/v1` |
+| 도서 | `/api/v1/books`, `/api/v1/books/{id}`, `/api/v1/categories`, `/api/v1/tags` | `kratos/backend/api/book/v1` |
+| 챕터 | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| 댓글 | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| 검색 | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| 추천 | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+자세한 라우트는 각 proto 파일의 `option (google.api.http)` 선언을 참조하세요.
+
+## 빠른 시작
+
+```bash
+# 1. 의존 스택 시작(MySQL / Redis / OpenSearch, 최초 시작 시 kratos/backend/sql/init.sql 자동 실행으로 테이블 생성)
+docker compose up -d
+
+# 2. 백엔드 서비스 시작(Kratos 비즈니스 디렉터리, HTTP :8000 / gRPC :9000)
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. Flutter 클라이언트 시작(기본적으로 localhost:8000에 연결, 추가 설정 불필요)
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter 올 플랫폼(Web / Desktop / Mobile), i18n 다국어 지원
-└─ harmonyos/   # HarmonyOS NEXT 네이티브 앱(ArkTS / ArkUI)
-```
 
-자세한 내용은 [apps/README.md](../../apps/README.md)를 참조하세요.
+- 의존 스택 포트 매핑: MySQL `3307`, Redis `6380`, OpenSearch `9200`(호스트 3306/6379는 로컬 서비스가 사용 중, docker-compose.yml 주석 참조).
+- 백엔드 주소와 시크릿은 `kratos/backend/config/`에서 설정하며 환경 변수로 덮어쓰기 가능(예: `PORT`, `OPENSEARCH_ADDR`).
+- Flutter를 다른 백엔드에 연결하려면: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
+
+자세한 내용은 [apps/README.md](../../apps/README.md)와 [apps/flutter/README.md](../../apps/flutter/README.md)를 참조하세요.
+
+## 릴리스 프로세스
+
+- **자동**: `main` 푸시 후 [scripts/post-push.sh](../../scripts/post-push.sh) 실행(git 푸시 훅 또는 수동 실행 모두 가능). 스크립트는 최신 `v*` 태그 기준으로 patch 버전을 증가시키고 태그를 생성·푸시한 뒤 증분 체인지로그로 GitHub Release를 생성합니다. `gh` 인증이 필요합니다. 첫 릴리스는 `v1.0.0`부터 시작합니다.
+- **수동**:
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## 로드맵
 
@@ -94,24 +149,6 @@ apps/
 | Phase 3 | 2주 | 보안 강화(JWT / RBAC / 속도 제한) + 스트레스 테스트 |
 | Phase 4 | 1~2주 | 전체 연동 테스트 + CDN 가속 설정 |
 | Phase 5 | 지속 | AI 추천 알고리즘 도입, 사용자 행동 분석 트래킹 |
-
-## 로컬 개발
-
-```bash
-# 의존 서비스 시작(MySQL / Redis / OpenSearch)
-docker compose up -d
-
-# 백엔드 서비스(Kratos 워크스페이스)
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# Flutter 클라이언트
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS 클라이언트
-cd apps/harmonyos && hvigorw assembleHap
-```
-
----
 
 ## 후원 및 기부
 
@@ -157,3 +194,10 @@ cd apps/harmonyos && hvigorw assembleHap
 - 은행명: THE BANK OF NEW YORK MELLON
 - SWIFT Code: IRVTUS3NXXX
 - 은행 주소: THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## License 및 연락처
+
+- **License**: 저장소 루트에 독립된 LICENSE가 없습니다. `kratos/`는 Kratos 프레임워크의 업스트림 소스이며 해당 [MIT License](../../kratos/LICENSE)를 따릅니다. 비즈니스 코드의 라이선스 방식은 추후 프로젝트 발표에 따릅니다.
+- **연락처**: GitHub Issues / PR로 소통할 수 있습니다. 기부는 위의 '후원 및 기부'를 참조하세요.

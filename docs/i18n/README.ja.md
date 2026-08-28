@@ -36,6 +36,10 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 
 <p align="center"><img src="images/ja/architecture.svg" alt="システムアーキテクチャ図" width="860"/></p>
 
+全体は Go-Kratos マイクロサービスアーキテクチャです。Flutter / HarmonyOS クライアントは Nginx + CDN を経由して API ゲートウェイとやり取りし、ゲートウェイはドメインごとにユーザー、書籍、チャプター、コメント、検索、レコメンドなどのバックエンドサービスへルーティングします。データ層は MySQL マスタースレーブ（読み書き分離）+ Redis キャッシュ + OpenSearch 検索インデックスです。サービス間は gRPC で通信し、外部向け HTTP インターフェースは統一プレフィックス `/api/v1` を使用します。
+
+その他の設計図：プロジェクト全景 [docs/project.svg](../../docs/project.svg) · リクエストサイクル [docs/request-cycle.svg](../../docs/request-cycle.svg) · セキュリティアーキテクチャ [docs/security.svg](../../docs/security.svg) · プロジェクト構成 [docs/structure.svg](../../docs/structure.svg)。
+
 ## プロジェクト全景
 
 <p align="center"><img src="images/ja/project.svg" alt="プロジェクト全体像図" width="860"/></p>
@@ -48,11 +52,27 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 
 <p align="center"><img src="images/ja/security.svg" alt="セキュリティアーキテクチャ図" width="860"/></p>
 
-## プロジェクト構成
+---
+
+## ディレクトリ構成
+
+```
+open-novel/
+├─ apps/                     # マルチクライアントフロントエンド
+│  ├─ flutter/               #   Flutter オールプラットフォーム（Web / Desktop / Mobile）、i18n 多言語対応
+│  └─ harmonyos/             #   HarmonyOS NEXT ネイティブアプリ（ArkTS / ArkUI）
+├─ kratos/                   # Go-Kratos フレームワークソース（上流フレームワーク、そのまま保持、変更禁止）
+│  └─ backend/               #   本プロジェクトの業務バックエンド：cmd/server エントリ + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # プロジェクトドキュメント（計画、アーキテクチャ図、i18n README、寄付用 QR コード）
+├─ scripts/                  # ビルド・デプロイスクリプト（post-push.sh 自動リリース、smoke.sh）
+├─ docker-compose.yml        # ローカル依存スタック：MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # プロジェクト協力規範
+└─ README.md                 # プロジェクト説明ドキュメント
+```
 
 <p align="center"><img src="images/ja/structure.svg" alt="プロジェクト構成図" width="860"/></p>
 
----
+> 注意：`kratos/` は Kratos フレームワークのソースコード（README / LICENSE 付属）です。業務コードはすべて `kratos/backend/` にあります。
 
 ## 技術スタック
 
@@ -74,17 +94,52 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-詳細なテーブル設計と読み書き分離戦略については [docs/novel-project-planning.md](../novel-project-planning.md) を参照してください。
+テーブル作成スクリプト：`kratos/backend/sql/init.sql`（Docker Compose 初回起動時に自動実行）。詳細なテーブル設計と読み書き分離戦略については [docs/novel-project-planning.md](../novel-project-planning.md) を参照してください。
 
-## マルチクライアントディレクトリ
+## API プレフィックス
 
+バックエンドの HTTP インターフェースはすべて `/api/v1` で始まり、ドメインごとにグループ化されています：
+
+| ドメイン | サンプルルート | proto 定義 |
+| :--- | :--- | :--- |
+| ユーザー | `/api/v1/users` など | `kratos/backend/api/user/v1` |
+| 書籍 | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
+| チャプター | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| コメント | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| 検索 | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| レコメンド | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+詳細なルートについては、各 proto ファイルの `option (google.api.http)` 宣言を参照してください。
+
+## クイックスタート
+
+```bash
+# 1. 依存スタックを起動（MySQL / Redis / OpenSearch、初回起動時に kratos/backend/sql/init.sql を自動実行してテーブル作成）
+docker compose up -d
+
+# 2. バックエンドサービスを起動（Kratos 業務ディレクトリ、HTTP :8000 / gRPC :9000）
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. Flutter クライアントを起動（デフォルトで localhost:8000 に接続、追加設定不要）
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter オールプラットフォーム（Web / Desktop / Mobile）、i18n 多言語対応
-└─ harmonyos/   # HarmonyOS NEXT ネイティブアプリ（ArkTS / ArkUI）
-```
 
-詳細は [apps/README.md](../../apps/README.md) を参照してください。
+- 依存スタックのポートマッピング：MySQL `3307`、Redis `6380`、OpenSearch `9200`（ホストの 3306/6379 はローカルサービスが使用中のため、docker-compose.yml のコメント参照）。
+- バックエンドのアドレスとシークレットは `kratos/backend/config/` で設定し、環境変数による上書きに対応（例：`PORT`、`OPENSEARCH_ADDR`）。
+- Flutter を別のバックエンドに接続する場合：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`。
+
+詳細は [apps/README.md](../../apps/README.md) と [apps/flutter/README.md](../../apps/flutter/README.md) を参照してください。
+
+## リリースフロー
+
+- **自動**：`main` をプッシュした後、[scripts/post-push.sh](../../scripts/post-push.sh) を実行（git プッシュフックまたは手動実行のどちらでも可）。スクリプトは最新の `v*` タグに基づいて patch バージョンをインクリメントし、タグを作成してプッシュした後、増分チェンジログ付きで GitHub Release を作成します。`gh` の認証が必要です。初回リリースは `v1.0.0` から始まります。
+- **手動**：
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## ロードマップ
 
@@ -95,24 +150,6 @@ apps/
 | Phase 3 | 2 週間 | セキュリティ強化（JWT / RBAC / レート制限）+ ストレステスト |
 | Phase 4 | 1〜2 週間 | 全リンク結合テスト + CDN 高速化設定 |
 | Phase 5 | 継続 | AI レコメンドアルゴリズム導入、ユーザー行動分析トラッキング |
-
-## ローカル開発
-
-```bash
-# 依存サービスを起動（MySQL / Redis / OpenSearch）
-docker compose up -d
-
-# バックエンドサービス（Kratos ワークスペース）
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# Flutter クライアント
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS クライアント
-cd apps/harmonyos && hvigorw assembleHap
-```
-
----
 
 ## サポートと寄付
 
@@ -158,3 +195,10 @@ cd apps/harmonyos && hvigorw assembleHap
 - 銀行名：THE BANK OF NEW YORK MELLON
 - SWIFT Code：IRVTUS3NXXX
 - 銀行所在地：THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## License と連絡先
+
+- **License**：リポジトリのルートには独立した LICENSE はありません。`kratos/` は Kratos フレームワークの上流ソースであり、その [MIT License](../../kratos/LICENSE) に従います。業務コードのライセンス方式は今後のプロジェクト発表に委ねられます。
+- **連絡先**：GitHub Issues / PR で交流できます。寄付は上記「サポートと寄付」をご覧ください。

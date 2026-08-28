@@ -35,6 +35,10 @@ Open Novel — это глобальная мультиязычная платф
 
 <p align="center"><img src="images/ru/architecture.svg" alt="Схема системной архитектуры" width="860"/></p>
 
+В целом это микросервисная архитектура Go-Kratos: клиенты Flutter / HarmonyOS взаимодействуют с API-шлюзом через Nginx + CDN; шлюз маршрутизирует по доменам к бэкенд-сервисам — пользователи, книги, главы, комментарии, поиск, рекомендации и т. д.; уровень данных — MySQL мастер-реплика (разделение чтения и записи) + кэш Redis + поисковый индекс OpenSearch. Сервисы общаются по gRPC, внешние HTTP-интерфейсы используют единый префикс `/api/v1`.
+
+Остальные схемы: общая схема проекта [docs/project.svg](../../docs/project.svg) · цикл запросов [docs/request-cycle.svg](../../docs/request-cycle.svg) · архитектура безопасности [docs/security.svg](../../docs/security.svg) · структура проекта [docs/structure.svg](../../docs/structure.svg).
+
 ## Общая схема проекта
 
 <p align="center"><img src="images/ru/project.svg" alt="Общая схема проекта" width="860"/></p>
@@ -47,11 +51,27 @@ Open Novel — это глобальная мультиязычная платф
 
 <p align="center"><img src="images/ru/security.svg" alt="Схема архитектуры безопасности" width="860"/></p>
 
-## Структура проекта
+---
+
+## Структура каталогов
+
+```
+open-novel/
+├─ apps/                     # Мультиплатформенные фронтенды
+│  ├─ flutter/               #   Flutter на всех платформах (Web / Desktop / Mobile), i18n мультиязычность
+│  └─ harmonyos/             #   Нативное приложение HarmonyOS NEXT (ArkTS / ArkUI)
+├─ kratos/                   # Исходный код фреймворка Go-Kratos (вышестоящий фреймворк, сохранять как есть, не изменять)
+│  └─ backend/               #   Бизнес-бэкенд проекта: точка входа cmd/server + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # Документация проекта (планирование, схемы архитектуры, i18n README, QR-коды для донатов)
+├─ scripts/                  # Скрипты сборки и развёртывания (авторелиз post-push.sh, smoke.sh)
+├─ docker-compose.yml        # Локальный стек зависимостей: MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # Правила совместной работы над проектом
+└─ README.md                 # Документация проекта
+```
 
 <p align="center"><img src="images/ru/structure.svg" alt="Схема структуры проекта" width="860"/></p>
 
----
+> Примечание: `kratos/` — это исходный код фреймворка Kratos (со своим README / LICENSE); весь бизнес-код находится в `kratos/backend/`.
 
 ## Технологический стек
 
@@ -73,17 +93,52 @@ Open Novel — это глобальная мультиязычная платф
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Подробное описание структуры таблиц и стратегии разделения чтения и записи см. в [docs/novel-project-planning.md](../novel-project-planning.md).
+Скрипт создания таблиц: `kratos/backend/sql/init.sql` (автоматически выполняется при первом запуске Docker Compose). Подробное описание структуры таблиц и стратегии разделения чтения и записи см. в [docs/novel-project-planning.md](../novel-project-planning.md).
 
-## Каталог клиентских приложений
+## Префикс API
 
+Все HTTP-интерфейсы бэкенда начинаются с `/api/v1` и сгруппированы по доменам:
+
+| Домен | Примеры маршрутов | Определение proto |
+| :--- | :--- | :--- |
+| Пользователи | `/api/v1/users` и т. д. | `kratos/backend/api/user/v1` |
+| Книги | `/api/v1/books`, `/api/v1/books/{id}`, `/api/v1/categories`, `/api/v1/tags` | `kratos/backend/api/book/v1` |
+| Главы | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| Комментарии | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| Поиск | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| Рекомендации | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+Подробные маршруты — в объявлениях `option (google.api.http)` в каждом proto-файле.
+
+## Быстрый старт
+
+```bash
+# 1. Запустите стек зависимостей (MySQL / Redis / OpenSearch; при первом запуске автоматически выполняется kratos/backend/sql/init.sql для создания таблиц)
+docker compose up -d
+
+# 2. Запустите бэкенд-сервис (бизнес-каталог Kratos, HTTP :8000 / gRPC :9000)
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. Запустите клиент Flutter (по умолчанию подключается к localhost:8000, дополнительная настройка не требуется)
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
-└─ harmonyos/   # HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
-```
 
-Подробности — в [apps/README.md](../../apps/README.md).
+- Проброс портов стека зависимостей: MySQL `3307`, Redis `6380`, OpenSearch `9200` (порты хоста 3306/6379 заняты локальными сервисами, см. комментарии в docker-compose.yml).
+- Адрес бэкенда и секреты настраиваются в `kratos/backend/config/`, поддерживается переопределение через переменные окружения (например, `PORT`, `OPENSEARCH_ADDR`).
+- Для подключения Flutter к другому бэкенду: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
+
+Подробности — в [apps/README.md](../../apps/README.md) и [apps/flutter/README.md](../../apps/flutter/README.md).
+
+## Процесс релиза
+
+- **Автоматически**: после пуша в `main` запускается [scripts/post-push.sh](../../scripts/post-push.sh) (либо как git push-хук, либо вручную). Скрипт увеличивает patch-версию на основе последнего тега `v*`, создаёт и пушит тег, затем создаёт GitHub Release с инкрементальным changelog; требуется авторизованный `gh`. Первый релиз начинается с `v1.0.0`.
+- **Вручную**:
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## Дорожная карта
 
@@ -94,24 +149,6 @@ apps/
 | Phase 3 | 2 недели | Усиление безопасности (JWT / RBAC / ограничение частоты запросов) + нагрузочное тестирование |
 | Phase 4 | 1-2 недели | Сквозная интеграция всех звеньев + настройка ускорения CDN |
 | Phase 5 | постоянно | Внедрение AI-алгоритмов рекомендаций, сбор данных аналитики поведения пользователей |
-
-## Локальная разработка
-
-```bash
-# 启动依赖（MySQL / Redis / OpenSearch）
-docker compose up -d
-
-# 后端服务（Kratos 工作区）
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# Flutter 端
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS 端
-cd apps/harmonyos && hvigorw assembleHap
-```
-
----
 
 ## Поддержка и благодарность
 
@@ -157,3 +194,10 @@ cd apps/harmonyos && hvigorw assembleHap
 - Название банка: THE BANK OF NEW YORK MELLON
 - SWIFT Code: IRVTUS3NXXX
 - Адрес банка: THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## Лицензия и контакты
+
+- **Лицензия**: в корне репозитория нет отдельного LICENSE; `kratos/` — это вышестоящий исходный код фреймворка Kratos, который распространяется по его [MIT License](../../kratos/LICENSE). Способ лицензирования бизнес-кода будет объявлен в последующих публикациях проекта.
+- **Контакты**: общение через GitHub Issues / PR; донаты — см. раздел «Поддержка и благодарность» выше.

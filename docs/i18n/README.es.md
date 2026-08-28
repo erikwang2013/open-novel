@@ -20,10 +20,9 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 - **Almacenamiento**: MySQL 8 (maestro-esclavo con separación de lectura/escritura) + Redis (caché de datos calientes / sesiones) + OpenSearch (búsqueda multilingüe)
 - **Operaciones**: despliegue con un clic mediante Docker Compose, monitoreo con Prometheus + Grafana, integración continua con GitHub Actions
 
-
 ## Funcionalidades
 
-<p align="center"><img src="images/es/features.svg" alt="Diagrama de la arquitectura de funcionalidades" width="860"/></p>
+<p align="center"><img src="../features.svg" alt="Diagrama de la arquitectura de funcionalidades" width="860"/></p>
 
 - **Centro de usuarios**: registro e inicio de sesión (JWT), estantería personal, sincronización del progreso de lectura entre dispositivos, perfiles multilingües
 - **Experiencia de lectura**: lectura por capítulos, cambio de fuente y tamaño, temas claro/oscuro, caché sin conexión, animaciones de paso de página
@@ -34,36 +33,42 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 
 ## Arquitectura del sistema
 
-<p align="center"><img src="images/es/architecture.svg" alt="Diagrama de la arquitectura del sistema" width="860"/></p>
+<p align="center"><img src="../architecture.svg" alt="Diagrama de la arquitectura del sistema" width="860"/></p>
 
-## Panorama del proyecto
+La arquitectura general es una arquitectura de microservicios Go-Kratos: los clientes Flutter / HarmonyOS interactúan con la puerta de enlace de API a través de Nginx + CDN; la puerta de enlace enruta por dominio hacia los servicios backend de usuarios, libros, capítulos, comentarios, búsqueda y recomendaciones. La capa de datos está compuesta por MySQL maestro-esclavo (separación de lectura/escritura) + caché Redis + índice de búsqueda OpenSearch. Los servicios se comunican mediante gRPC; las interfaces HTTP externas usan uniformemente el prefijo `/api/v1`.
 
-<p align="center"><img src="images/es/project.svg" alt="Diagrama del panorama del proyecto" width="860"/></p>
+Otros diagramas: panorama del proyecto [../project.svg](../project.svg) · ciclo de solicitudes [../request-cycle.svg](../request-cycle.svg) · arquitectura de seguridad [../security.svg](../security.svg) · estructura del proyecto [../structure.svg](../structure.svg).
 
-## Ciclo de solicitudes
+## Estructura de directorios
 
-<p align="center"><img src="images/es/request-cycle.svg" alt="Diagrama del ciclo de solicitudes" width="860"/></p>
+```
+open-novel/
+├─ apps/                     # Frontends multiplataforma
+│  ├─ flutter/               #   Flutter multiplataforma (Web / Desktop / Mobile), i18n multilingüe
+│  └─ harmonyos/             #   Aplicación nativa HarmonyOS NEXT (ArkTS / ArkUI)
+├─ kratos/                   # Código fuente del framework Go-Kratos (framework ascendente, conservado tal cual, no modificar)
+│  └─ backend/               #   Backend de negocio del proyecto: entrada cmd/server + api/ + internal/ + sql/ + opensearch/
+├─ docs/                     # Documentación del proyecto (planificación, diagramas de arquitectura, README i18n, códigos de donación)
+├─ scripts/                  # Scripts de compilación y despliegue (post-push.sh para releases automáticas, smoke.sh)
+├─ docker-compose.yml        # Pila de dependencias local: MySQL 8 + Redis 7 + OpenSearch 2
+├─ CLAUDE.md                 # Normas de colaboración del proyecto
+└─ README.md                 # Documentación del proyecto
+```
 
-## Arquitectura de seguridad
+<p align="center"><img src="../structure.svg" alt="Diagrama de la estructura del proyecto" width="860"/></p>
 
-<p align="center"><img src="images/es/security.svg" alt="Diagrama de la arquitectura de seguridad" width="860"/></p>
-
-## Estructura del proyecto
-
-<p align="center"><img src="images/es/structure.svg" alt="Diagrama de la estructura del proyecto" width="860"/></p>
-
----
+> Nota: `kratos/` es el código fuente del framework Kratos (con su propio README / LICENSE); todo el código de negocio se encuentra en `kratos/backend/`.
 
 ## Pila tecnológica
 
 | Capa | Tecnología |
 | :--- | :--- |
-| Cliente | Flutter（Web / Desktop / Mobile）、HarmonyOS NEXT（ArkTS / ArkUI） |
-| Puerta de enlace | Nginx + CDN、Go-Kratos API Gateway（protocolo dual gRPC / HTTP） |
-| Servidor | Go 1.22+、Kratos v2、protobuf / gRPC |
-| Almacenamiento | MySQL 8.0（maestro-esclavo）、Redis 7.x（Cluster）、OpenSearch 2.x |
-| Observabilidad | Prometheus、Grafana、ELK、trazado de cadenas con OpenTelemetry |
-| Operaciones | Docker Compose、GitHub Actions CI/CD |
+| Cliente | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
+| Puerta de enlace | Nginx + CDN, Go-Kratos API Gateway (protocolo dual gRPC / HTTP) |
+| Servidor | Go 1.22+, Kratos v2, protobuf / gRPC |
+| Almacenamiento | MySQL 8.0 (maestro-esclavo), Redis 7.x (Cluster), OpenSearch 2.x |
+| Observabilidad | Prometheus, Grafana, ELK, trazado de cadenas con OpenTelemetry |
+| Operaciones | Docker Compose, GitHub Actions CI/CD |
 
 ## Base de datos
 
@@ -74,17 +79,52 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Consulta el diseño detallado de las tablas y la estrategia de separación de lectura/escritura en [docs/novel-project-planning.md](../novel-project-planning.md).
+Script de creación de tablas: `kratos/backend/sql/init.sql` (se ejecuta automáticamente en el primer inicio de Docker Compose). Consulta el diseño detallado de las tablas y la estrategia de separación de lectura/escritura en [docs/novel-project-planning.md](../novel-project-planning.md).
 
-## Directorios multiplataforma
+## Prefijo de API
 
+Las interfaces HTTP del backend comienzan uniformemente con `/api/v1` y se agrupan por dominio:
+
+| Dominio | Rutas de ejemplo | Definición proto |
+| :--- | :--- | :--- |
+| Usuarios | `/api/v1/users` etc. | `kratos/backend/api/user/v1` |
+| Libros | `/api/v1/books`、`/api/v1/books/{id}`、`/api/v1/categories`、`/api/v1/tags` | `kratos/backend/api/book/v1` |
+| Capítulos | `/api/v1/...` | `kratos/backend/api/chapter/v1` |
+| Comentarios | `/api/v1/...` | `kratos/backend/api/comment/v1` |
+| Búsqueda | `/api/v1/...` | `kratos/backend/api/search/v1` |
+| Recomendaciones | `/api/v1/...` | `kratos/backend/api/recommendation/v1` |
+
+Las rutas detalladas se encuentran en las declaraciones `option (google.api.http)` de cada archivo proto.
+
+## Inicio rápido
+
+```bash
+# 1. Iniciar la pila de dependencias (MySQL / Redis / OpenSearch; ejecuta automáticamente kratos/backend/sql/init.sql en el primer inicio)
+docker compose up -d
+
+# 2. Iniciar el backend (directorio de negocio de Kratos, HTTP :8000 / gRPC :9000)
+cd kratos/backend && go mod tidy && go run ./cmd/server
+
+# 3. Iniciar el frontend Flutter (se conecta por defecto a localhost:8000, sin configuración adicional)
+cd apps/flutter && flutter pub get && flutter run -d chrome
 ```
-apps/
-├─ flutter/     # Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
-└─ harmonyos/   # HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
-```
 
-Consulta [apps/README.md](../../apps/README.md) para más detalles.
+- Mapeo de puertos de la pila de dependencias: MySQL `3307`、Redis `6380`、OpenSearch `9200` (los puertos 3306/6379 del host están ocupados por servicios locales, ver el comentario en docker-compose.yml).
+- La dirección y las claves del backend se configuran en `kratos/backend/config/`, con soporte de anulación mediante variables de entorno (p. ej. `PORT`, `OPENSEARCH_ADDR`).
+- Conectar Flutter a otro backend: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
+
+Consulta [apps/README.md](../../apps/README.md) y [apps/flutter/README.md](../../apps/flutter/README.md).
+
+## Proceso de lanzamiento
+
+- **Automático**: tras hacer push a `main`, se ejecuta [scripts/post-push.sh](../../scripts/post-push.sh) (mediante un hook de push de git o manualmente). El script incrementa la versión patch a partir de la última etiqueta `v*`, crea y empuja una etiqueta, y luego crea una Release de GitHub con un changelog incremental; requiere `gh` autenticado. El primer lanzamiento comienza en `v1.0.0`.
+- **Manual**:
+
+  ```bash
+  git tag -a v1.0.1 -m "release v1.0.1"
+  git push origin v1.0.1
+  gh release create v1.0.1 --generate-notes
+  ```
 
 ## Hoja de ruta
 
@@ -95,24 +135,6 @@ Consulta [apps/README.md](../../apps/README.md) para más detalles.
 | Phase 3 | 2 semanas | Refuerzo de seguridad (JWT / RBAC / limitación de tasa) + pruebas de carga |
 | Phase 4 | 1-2 semanas | Depuración integral del flujo completo + configuración de aceleración CDN |
 | Phase 5 | Continuo | Integración de algoritmos de recomendación con IA, seguimiento de análisis de comportamiento de usuarios |
-
-## Desarrollo local
-
-```bash
-# 启动依赖（MySQL / Redis / OpenSearch）
-docker compose up -d
-
-# 后端服务（Kratos 工作区）
-cd kratos/backend && go mod tidy && go run ./cmd/server
-
-# Flutter 端
-cd apps/flutter && flutter pub get && flutter run
-
-# HarmonyOS 端
-cd apps/harmonyos && hvigorw assembleHap
-```
-
----
 
 ## Apoyo y donaciones
 
@@ -158,3 +180,10 @@ Si este proyecto te resulta útil, eres bienvenido a apoyarlo con un **Star** o 
 - Nombre del banco: THE BANK OF NEW YORK MELLON
 - SWIFT Code: IRVTUS3NXXX
 - Dirección del banco: THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
+
+---
+
+## Licencia y contacto
+
+- **Licencia**: no hay una licencia independiente en la raíz del repositorio; `kratos/` es el código fuente ascendente del framework Kratos, regido por su [licencia MIT](../../kratos/LICENSE). La licencia del código de negocio se determinará en anuncios posteriores del proyecto.
+- **Contacto**: comunicación mediante Issues / PR de GitHub; donaciones, ver la sección «Apoyo y donaciones» más arriba.
