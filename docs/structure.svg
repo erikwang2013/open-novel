@@ -41,12 +41,12 @@
   <g>
     <rect x="120" y="350" width="96" height="28" rx="6" fill="#263238"/>
     <text x="168" y="369" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">docs/</text>
-    <text x="248" y="369" font-size="12" fill="#78909c"># 项目文档（规划、架构图、打赏码）</text>
+    <text x="248" y="369" font-size="12" fill="#78909c"># 项目文档（规划、架构图、i18n README、打赏码）</text>
   </g>
   <g>
     <rect x="120" y="394" width="96" height="28" rx="6" fill="#263238"/>
     <text x="168" y="413" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">scripts/</text>
-    <text x="248" y="413" font-size="12" fill="#78909c"># 构建与部署脚本</text>
+    <text x="248" y="413" font-size="12" fill="#78909c"># 构建与部署脚本（post-push.sh 自动发布、smoke.sh）</text>
   </g>
   <g>
     <rect x="120" y="438" width="96" height="28" rx="6" fill="#263238"/>
@@ -68,7 +68,7 @@
   <g>
     <rect x="140" y="306" width="96" height="28" rx="6" fill="#263238"/>
     <text x="188" y="325" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">backend/</text>
-    <text x="268" y="325" font-size="12" fill="#78909c"># 业务后端：cmd/server + api/ + internal/ + sql/</text>
+    <text x="268" y="325" font-size="12" fill="#78909c"># 业务后端：cmd/server + api/ + internal/ + sql/ + opensearch/</text>
   </g>
 
   <!-- 文件 -->

@@ -23,7 +23,8 @@
 ├─ Book Service（书籍 / 章节 / 多语言翻译）
 ├─ Comment Service（评论 / 点赞 / 收藏）
 ├─ Recommendation Service（推荐引擎接口）
-└─ Payment Service（支付 / 会员订单）
+├─ Payment Service（支付 / 会员订单 / VIP 激活）
+└─ Admin Service（仪表盘统计 / 分类标签 / RBAC）
 
 [存储层]
 ├─ MySQL（主从 + 读写分离）— 业务数据，库名 novel，表前缀 novel_
@@ -66,9 +67,13 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 | `novel_reading_progress` | 阅读进度表（book_id + chapter_id + user_id） |
 | `novel_search_log` | 搜索日志表 |
 | `novel_recommend_log` | 推荐日志表 |
-| `novel_payment_order` | 支付订单表 |
-| `novel_vip_order` | 会员订单表 |
+| `novel_payment_provider` | 支付渠道表（code/lang/region/enabled/sort，config 密钥 AES-GCM 加密） |
+| `novel_payment_order` | 支付订单表（order_no/user_id/amount/currency/provider/status/tx_id/paid_at） |
+| `novel_vip_order` | 会员订单表（套餐 / 时长 / 到期） |
+| `novel_vip_plan` | VIP 套餐表（时长 / 价格 / 币种 / 标签；支付流程 DB 套餐优先，回退内置默认） |
 | `novel_audit_log` | 审计日志表（登录 / 管理操作 / 支付） |
+
+> `novel_user` 表含 `vip_expires_at` 字段：支付成功后续期（可叠加）。
 
 示例 DDL（关键索引与约束）：
 
@@ -142,7 +147,16 @@ index_settings:
 
 按用户语言路由对应 analyzer，同一文档以多字段（zh / en / ja...）存储便于分语种搜索。
 
-### 4. Flutter 多语言与多端适配（要点）
+### 4. 支付与 VIP 模块（2026-08 已实现，T-P-01~18）
+
+- **Provider 抽象**：`CreateCheckout / Verify / VerifyWebhook` 接口 + 注册表；一期实现 Stripe（stripe-go v81 Checkout Session + ConstructEvent 验签）与 NOWPayments（USDT，HMAC-SHA512 IPN 验签）。
+- **下单 / 查单**：幂等（同 user+套餐未支付订单复用）、15 分钟超时自动关闭、回调金额=订单金额强校验、webhook 幂等 settle；金额一律整数分。
+- **VIP 激活**：支付成功 → `novel_user.vip_expires_at` 续期（可叠加）；客户端按 `chapter.isVip` + `/api/payments/vip-status` 判断展示 VIP 引导，后端不拦截正文。
+- **语言路由**：`GET /api/payments/methods?lang=` 按 enabled / lang / region / sort 返回支付方式；DB 套餐表优先于内置默认。
+- **管理端**：流水查询与统计、支付方式 CRUD + 启停（密钥 AES-GCM 加密存储）、VIP 套餐 CRUD，全部 requireAdmin。
+- **安全**：回调验签、金额防篡改、幂等 settle、审计日志、日志脱敏。
+
+### 5. Flutter 多语言与多端适配（要点）
 
 - **i18n**：`flutter_localizations` + `intl`，资源为 `assets/i18n/<lang>.arb`，运行时按 locale 动态加载并切换主题/字体。
 - **HTTP**：`dio` 统一封装，自动携带 `Accept-Language` 与 JWT。
@@ -227,9 +241,10 @@ httpSrv := http.NewServer(
 
 **防护目标与手段**：
 
-- **认证授权**：JWT（短时 access + RefreshToken 轮换）；RBAC 角色权限（普通用户 / 作者 / 管理员 / 运营）。
+- **认证授权**：JWT（短时 access + RefreshToken 轮换）；RBAC 角色权限（普通用户 / 作者 / 管理员，service 层 `requireAdmin` 校验 role=3）。
 - **Web 攻击面**：SQL 注入 → 全部参数化查询 / ORM；XSS → 输出转义 + CSP 响应头；CSRF → 网关校验 `Origin/Referer` + SameSite Cookie，写操作走 Authorization Header。
-- **敏感数据**：密码 bcrypt/argon2 哈希存储；手机号等字段 AES 加密；密钥托管 KMS。
+- **支付安全**：渠道回调验签（Stripe `ConstructEvent` 签名 / NOWPayments HMAC-SHA512）、回调金额=订单金额强校验、webhook 幂等 settle、支付回调限流 30/min。
+- **敏感数据**：密码 bcrypt/argon2 哈希存储；支付渠道密钥（config）AES-GCM 加密存储，不入库明文。
 - **传输安全**：全链路 HTTPS/TLS（Nginx 终结）。
 - **审计日志**：管理操作、登录、支付写审计表（`novel_audit_log`），留存可追溯。
 
@@ -284,13 +299,15 @@ services:
 
 ## 八、项目阶段规划与资源估算
 
-| 阶段 | 周期 | 任务重点 | 负责人角色 |
+| 阶段 | 周期 | 任务重点 | 状态 |
 | :--- | :--- | :--- | :--- |
-| **Phase 1** | 2-3 周 | Kratos 基础服务 + MySQL 主从 / Redis / OpenSearch 集成，数据库建表 | 后端开发（Go） |
-| **Phase 2** | 3-4 周 | Flutter 多语言 ARB + 多端布局；HarmonyOS 基础壳工程 | 前端开发（Flutter / ArkTS） |
-| **Phase 3** | 2 周 | 安全体系落地（JWT / 限流 / 校验 / 追踪）+ 压力测试 | 安全工程师 |
-| **Phase 4** | 1-2 周 | 全链路联调 + CDN（CloudFront / 阿里云 OSS）+ 监控告警 | 运维工程师 |
-| **Phase 5** | 持续迭代 | AI 推荐、用户行为埋点分析、搜索优化 | 数据工程师 |
+| **Phase 1** | 2-3 周 | Kratos 基础服务 + MySQL 主从 / Redis / OpenSearch 集成，数据库建表 | ✅ 已完成 |
+| **Phase 2** | 3-4 周 | Flutter 多语言 ARB + 多端布局；HarmonyOS 基础壳工程 | ✅ 已完成 |
+| **Phase 3** | 2 周 | 安全体系落地（JWT / 限流 / 校验 / 追踪）+ 压力测试 | ✅ 已完成 |
+| **Phase 4** | 1-2 周 | 全链路联调 + CDN（CloudFront / 阿里云 OSS）+ 监控告警 | ✅ 已完成 |
+| **Phase 5** | 持续迭代 | AI 推荐、用户行为埋点分析、搜索优化 | ⏳ 进行中 |
+| **商业化** | 2026-08 | 管理后台（审核/用户/统计/配置）、支付与 VIP（Stripe / NOWPayments） | ✅ 已完成（T-A-01~16 / T-C-01~12 / T-P-01~18） |
+| **二期** | 按资质 | 本地支付逐语言、PayPal、多端体验统一（C4） | ⬜ 未开始 |
 
 ### 关键资源清单
 

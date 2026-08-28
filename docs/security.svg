@@ -85,13 +85,13 @@
     </g>
     <g>
       <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">敏感词审核</text>
-      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">评论 / 内容过滤</text>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">支付回调验签</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">Stripe / NOWPayments HMAC</text>
     </g>
     <g>
       <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CSRF 防护</text>
-      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">双提交校验</text>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">金额强校验 · 幂等</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">回调金额 = 订单金额</text>
     </g>
     <g>
       <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
@@ -126,8 +126,8 @@
     </g>
     <g>
       <rect x="420" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="504" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">密钥管理</text>
-      <text x="504" y="559" font-size="10" fill="#78909c" text-anchor="middle">KMS / Vault</text>
+      <text x="504" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">渠道密钥 AES-GCM</text>
+      <text x="504" y="559" font-size="10" fill="#78909c" text-anchor="middle">config 密钥加密存储</text>
     </g>
     <g>
       <rect x="600" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>

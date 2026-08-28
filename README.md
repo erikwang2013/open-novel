@@ -29,7 +29,8 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **书籍内容**：书籍元数据、章节管理、分类标签、连载更新、多语言翻译
 - **互动社区**：评论书评、点赞、收藏、举报审核
 - **搜索发现**：多语言分词搜索、热门榜单、AI 推荐、分类浏览
-- **管理后台**：内容审核、用户管理、数据统计、配置管理
+- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）
+- **支付与会员**：Stripe / NOWPayments（USDT）多渠道支付、VIP 套餐订阅与续期、支付方式多语言路由
 
 ## 系统架构
 
@@ -68,10 +69,10 @@ open-novel/
 
 | 层次 | 技术选型 |
 | :--- | :--- |
-| 客户端 | Flutter（Web / Desktop / Mobile）、HarmonyOS NEXT（ArkTS / ArkUI） |
+| 客户端 | Flutter（Web / Desktop / Mobile，url_launcher / flutter_cache_manager）、HarmonyOS NEXT（ArkTS / ArkUI） |
 | 管理端 | Flutter Web（`apps/admin/`，B 端后台） |
 | 网关 | Nginx + CDN、Go-Kratos API 网关（gRPC / HTTP 双协议） |
-| 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC |
+| 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC、stripe-go（Stripe 支付 SDK） |
 | 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、OpenSearch 2.x |
 | 可观测 | Prometheus、Grafana、ELK、OpenTelemetry 链路追踪 |
 | 运维 | Docker Compose、GitHub Actions CI/CD |
@@ -79,7 +80,7 @@ open-novel/
 ## 数据库
 
 - 数据库名：`novel`
-- 表前缀：`novel_`（如 `novel_user`、`novel_book`、`novel_chapter`、`novel_comment` 等）
+- 表前缀：`novel_`（如 `novel_user`、`novel_book`、`novel_chapter`、`novel_comment`、`novel_payment_order`、`novel_payment_provider`、`novel_vip_order`、`novel_vip_plan`、`novel_audit_log` 等）
 
 ```sql
 CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -99,6 +100,8 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 | 评论 | `/api/...` | `kratos/backend/api/comment/v1` |
 | 搜索 | `/api/...` | `kratos/backend/api/search/v1` |
 | 推荐 | `/api/...` | `kratos/backend/api/recommendation/v1` |
+| 支付 | `/api/payments/...` | `kratos/backend/api/payment/v1` |
+| 管理 | `/api/stats/overview`、`/api/categories`、`/api/tags` | `kratos/backend/api/admin/v1` |
 
 详细路由见各 proto 文件 `option (google.api.http)` 声明。
 
@@ -135,13 +138,14 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 ## 路线图
 
-| 阶段 | 周期 | 任务重点 |
-| :--- | :--- | :--- |
-| Phase 1 | 2-3 周 | Kratos 后端基础服务 + MySQL / Redis / OpenSearch 集成 |
-| Phase 2 | 3-4 周 | Flutter / HarmonyOS 多端前端 + 多语言 ARB 编写 |
-| Phase 3 | 2 周 | 安全加固（JWT / RBAC / 限流）+ 压力测试 |
-| Phase 4 | 1-2 周 | 全链路联调 + CDN 加速配置 |
-| Phase 5 | 持续 | AI 推荐算法接入、用户行为分析埋点 |
+| 阶段 | 周期 | 任务重点 | 状态 |
+| :--- | :--- | :--- | :--- |
+| Phase 1 | 2-3 周 | Kratos 后端基础服务 + MySQL / Redis / OpenSearch 集成 | ✅ 已完成 |
+| Phase 2 | 3-4 周 | Flutter / HarmonyOS 多端前端 + 多语言 ARB 编写 | ✅ 已完成 |
+| Phase 3 | 2 周 | 安全加固（JWT / RBAC / 限流）+ 压力测试 | ✅ 已完成 |
+| Phase 4 | 1-2 周 | 全链路联调 + CDN 加速配置 | ✅ 已完成 |
+| Phase 5 | 持续 | AI 推荐算法接入、用户行为分析埋点 | ⏳ 进行中 |
+| 商业化 | 2026-08 | 管理后台（审核/用户/统计/配置）、多语言与阅读体验、VIP 与支付链（Stripe / NOWPayments） | ✅ 已完成（T-A-01~16 / T-C-01~12 / T-P-01~18） |
 
 ## 支持与打赏
 

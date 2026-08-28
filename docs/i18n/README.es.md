@@ -30,6 +30,7 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 - **Comunidad interactiva**: comentarios y reseñas, me gusta, favoritos, denuncia y moderación
 - **Búsqueda y descubrimiento**: búsqueda con segmentación multilingüe, rankings populares, recomendaciones con IA, navegación por categorías
 - **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos, gestión de configuración
+- **Pagos y VIP**: pagos multicanal a través de Stripe / NOWPayments (USDT), suscripción y renovación de planes VIP, enrutamiento de métodos de pago por idioma
 
 ## Arquitectura del sistema
 

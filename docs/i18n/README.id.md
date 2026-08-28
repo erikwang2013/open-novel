@@ -30,6 +30,7 @@ Open Novel adalah platform novel multibahasa global dengan arsitektur mikroservi
 - **Komunitas interaktif**: komentar dan ulasan, suka, favorit, pelaporan dan moderasi
 - **Pencarian dan penemuan**: pencarian dengan segmentasi multibahasa, peringkat populer, rekomendasi AI, penjelajahan kategori
 - **Panel admin**: moderasi konten, manajemen pengguna, statistik data, manajemen konfigurasi
+- **Pembayaran & VIP**: pembayaran multi-channel melalui Stripe / NOWPayments (USDT), langganan dan perpanjangan paket VIP, perutean metode pembayaran berdasarkan bahasa
 
 ## Arsitektur sistem
 

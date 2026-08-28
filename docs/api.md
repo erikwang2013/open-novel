@@ -41,20 +41,25 @@
 | GET | `/api/books` | 书籍列表（分页 + `lang`） | 无 |
 | GET | `/api/books/{id}` | 书籍详情 | 无 |
 | POST | `/api/books` | 创建书籍 | Bearer（管理） |
+| PUT | `/api/books/{id}/translation` | 创建/更新书籍翻译（多语言标题/简介） | Bearer（管理） |
 | POST | `/api/books/{book_id}/favorite` | 收藏书籍 | Bearer |
 | DELETE | `/api/books/{book_id}/favorite` | 取消收藏 | Bearer |
 | GET | `/api/categories` | 分类列表 | 无 |
-| GET | `/api/tags` | 标签列表 | 无 |
+| GET | `/api/tags` | 标签列表（`lang` 过滤） | 无 |
+
+> 分类/标签写操作（POST / PUT / DELETE）见下方「管理端统计与配置」；GET 列表当前由 book 服务公开路由生效（admin 服务存在同名 GET 路由但被先注册的 book 路由遮蔽，见文末疑点说明）。
 
 ## 章节
 
 | 方法 | 路径 | 说明 | 鉴权 |
 | :--- | :--- | :--- | :--- |
 | GET | `/api/books/{book_id}/chapters` | 章节列表（分页 + `lang`） | 无 |
+| POST | `/api/books/{book_id}/chapters` | 创建章节 | Bearer（管理） |
 | GET | `/api/chapters/{id}/content` | 章节正文（`lang`） | VIP 章节需 Bearer |
 | GET | `/api/progress` | 阅读进度 | Bearer |
+| PUT | `/api/progress` | 保存阅读进度（`position` 支持段落/滚动位置粒度） | Bearer |
 | GET | `/api/bookshelf` | 书架 | Bearer |
-| POST | `/api/bookshelf/{book_id}` | 加入书架 | Bearer |
+| POST | `/api/bookshelf` | 加入书架 `{book_id}` | Bearer |
 | DELETE | `/api/bookshelf/{book_id}` | 移出书架 | Bearer |
 
 ## 评论
@@ -82,6 +87,20 @@
 
 管理错误码：`180401` 无权限 / `180402` 目标不存在 / `180403` 非法状态变更 / `140403` 章节已禁用。
 
+### 管理端统计与配置（T-A-14~16）
+
+仅管理员（role=3）可用；越权返回 `180401`。分类/标签**写操作**（POST / PUT / DELETE）由 admin 服务处理（requireAdmin）；**GET 列表**当前由 book 服务公开路由生效（admin 服务同名 GET 被先注册路由遮蔽，见文末疑点说明）。
+
+| 方法 | 路径 | 说明 | 鉴权 |
+| :--- | :--- | :--- | :--- |
+| GET | `/api/stats/overview` | 仪表盘统计：书籍/用户/评论数、DAU 近似（当日登录 ∪ 当日搜索的去重用户）、热门书籍（复用 `/api/search/hot`）、热门搜索词（搜索日志聚合） | Bearer（管理） |
+| POST | `/api/categories` | 创建分类 `{name, parent_id?, sort_order?}` | Bearer（管理） |
+| PUT | `/api/categories/{id}` | 更新分类（可选字段，仅更新非空项；`status` 0 禁用 1 启用） | Bearer（管理） |
+| DELETE | `/api/categories/{id}` | 删除分类 | Bearer（管理） |
+| POST | `/api/tags` | 创建标签 `{name, lang?}`（缺省 `zh-CN`） | Bearer（管理） |
+| PUT | `/api/tags/{id}` | 更新标签（`name`/`lang`/`status`） | Bearer（管理） |
+| DELETE | `/api/tags/{id}` | 删除标签 | Bearer（管理） |
+
 ## 搜索与推荐
 
 | 方法 | 路径 | 说明 | 鉴权 |
@@ -89,20 +108,37 @@
 | GET | `/api/search` | 搜索 `q` + 分页 + `lang` | 无 |
 | GET | `/api/search/hot` | 热门搜索词 | 无 |
 | POST | `/api/search/index/{book_id}` | 重建单本书搜索索引 | Bearer（管理） |
+| DELETE | `/api/search/index/{book_id}` | 删除单本书搜索索引 | Bearer（管理） |
 | GET | `/api/recommend` | 推荐 `strategy=hot|new` + `page_size` + `lang` | 无 |
 
-## 支付（T-P-03~08）
+## 支付（T-P-01~18 已完成）
 
-业务码段 19xxxx；金额一律整数分（`amount`）。
+业务码段 19xxxx；金额一律整数分（`amount`）。订单状态：`0 待支付 1 已支付 2 失败 3 已关闭`。支付成功 → `novel_user.vip_expires_at` 续期（可叠加）。
 
 | 方法 | 路径 | 说明 | 鉴权 |
 | :--- | :--- | :--- | :--- |
-| POST | `/api/payments/order` | 创建 VIP 订单 `{plan: monthly\|quarterly\|yearly, lang}` → `{order_no, amount, currency, checkout_url, provider}`；同 user+套餐未支付订单幂等复用 | Bearer |
+| POST | `/api/payments/order` | 创建 VIP 订单 `{plan, lang}` → `{order_no, amount, currency, checkout_url, provider}`；同 user+套餐未支付订单幂等复用 | Bearer |
 | GET | `/api/payments/order/{order_no}` | 查订单状态（仅本人；未支付超 15 分钟自动关闭为 3） | Bearer |
+| GET | `/api/payments/plans` | 公开 VIP 套餐列表（仅 status=1，sort 升序；DB 套餐表优先，回退内置默认） | 无 |
+| GET | `/api/payments/vip-status` | 当前用户 VIP 状态 → `{active, vip_expires_at?}` | Bearer |
 | GET | `/api/payments/methods?lang=` | 支付方式列表（enabled 且 lang/region 匹配，sort 升序） | 无 |
-| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe/nowpayments，验签在内部） | 无 |
+| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe / nowpayments，验签在内部；回调金额=订单金额强校验，幂等 settle） | 无 |
 
-订单状态：`0 待支付 1 已支付 2 失败 3 已关闭`。
+### 支付管理（T-P-09~13，全部 requireAdmin → 180401）
+
+| 方法 | 路径 | 说明 | 鉴权 |
+| :--- | :--- | :--- | :--- |
+| GET | `/api/payments/admin/orders` | 订单分页/按用户/方式/状态/时间筛选 | Bearer（管理） |
+| GET | `/api/payments/admin/order-stats` | 流水汇总统计 | Bearer（管理） |
+| GET | `/api/payments/admin/providers` | 支付方式列表（含密钥配置） | Bearer（管理） |
+| POST | `/api/payments/admin/providers` | 创建支付方式（config 密钥 AES-GCM 加密存储） | Bearer（管理） |
+| PUT | `/api/payments/admin/providers/{id}` | 更新支付方式 | Bearer（管理） |
+| DELETE | `/api/payments/admin/providers/{id}` | 删除支付方式 | Bearer（管理） |
+| PATCH | `/api/payments/admin/providers/{id}/toggle` | 启用/停用支付方式 | Bearer（管理） |
+| GET | `/api/payments/admin/plans` | VIP 套餐列表 | Bearer（管理） |
+| POST | `/api/payments/admin/plans` | 创建 VIP 套餐（时长/价格/币种/标签） | Bearer（管理） |
+| PUT | `/api/payments/admin/plans/{id}` | 更新 VIP 套餐 | Bearer（管理） |
+| DELETE | `/api/payments/admin/plans/{id}` | 删除 VIP 套餐 | Bearer（管理） |
 
 错误码：`190401 PAYMENT_CREATE_FAILED`、`190402 ORDER_NOT_FOUND`、`190403 AMOUNT_MISMATCH`、`190404 PAYMENT_PENDING`、`190405 PROVIDER_DISABLED`。
 
@@ -116,6 +152,7 @@
 | `/api/comments`（发布） | 10 次/分钟 |
 | `/api/comments/{id}/report` | 5 次/分钟 |
 | `/api/search` | 10 次/分钟 |
+| `/api/payments/webhook/{provider}` | 30 次/分钟 |
 
 超限返回 `140429 TOO_MANY_REQUESTS`。
 
@@ -126,3 +163,7 @@ curl -H "X-Api-Version: v1" http://localhost:8000/api/books?page=1&page_size=20
 curl -X POST -H "X-Api-Version: v1" -H "Content-Type: application/json" \
   -d '{"username":"demo","password":"demo123"}' http://localhost:8000/api/users/login
 ```
+
+## 已知路由疑点（2026-08-29 核对）
+
+- **GET `/api/categories` 与 GET `/api/tags` 路由重叠**：`book.proto`（公开）与 `admin.proto`（`ListCategories`/`ListTags`，注释标 requireAdmin）注册了相同路径。服务注册顺序为 book 在前（`server.go` 第 61 行）→ admin 在后（第 67 行），Kratos v2.9.2 底层为 gorilla/mux，**先注册路由优先匹配**，故 GET 列表实际由 book 服务公开处理（无需登录）；admin 服务的同名 GET 被遮蔽，其 requireAdmin 不生效。分类/标签的 POST / PUT / DELETE 无冲突，均由 admin 服务 requireAdmin 处理。如需 GET 也走管理鉴权，需删除 book.proto 中的同名 GET 路由或调整注册顺序。

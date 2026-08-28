@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="830" viewBox="0 0 1000 830" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
 
   <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — 功能架构图</text>
   <text x="44" y="54" font-size="12" fill="#78909c">Feature Modules</text>
@@ -12,6 +12,9 @@
     <line x1="610" y1="345" x2="706" y2="166"/>
     <line x1="610" y1="345" x2="706" y2="342"/>
     <line x1="610" y1="345" x2="706" y2="518"/>
+    <polyline points="390,395 334,560 334,628 169,628"/>
+    <polyline points="500,395 500,628"/>
+    <polyline points="610,395 675,560 675,628 831,628"/>
   </g>
 
   <!-- 中心核心卡片 -->
@@ -86,10 +89,41 @@
     <text x="831" y="480" font-size="13" font-weight="700" fill="#546e7a" text-anchor="middle">管理后台</text>
     <text x="831" y="502" font-size="11" fill="#546e7a" text-anchor="middle">内容审核</text>
     <text x="831" y="519" font-size="11" fill="#546e7a" text-anchor="middle">用户管理</text>
-    <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">数据统计</text>
-    <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">配置管理</text>
+    <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">配置管理</text>
   </g>
 
-  <text x="500" y="700" font-size="12" fill="#78909c" text-anchor="middle">核心阅读链路：发现 → 阅读 → 互动 → 进度同步 · 全链路多语言 i18n</text>
-  <text x="988" y="708" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+  <!-- 支付中心 -->
+  <g>
+    <rect x="44" y="628" width="250" height="132" rx="8" fill="#ffffff" stroke="#e53935" stroke-width="2"/>
+    <rect x="149" y="642" width="40" height="4" rx="2" fill="#e53935"/>
+    <text x="169" y="656" font-size="13" font-weight="700" fill="#e53935" text-anchor="middle">支付中心</text>
+    <text x="169" y="678" font-size="11" fill="#546e7a" text-anchor="middle">Stripe · 国际卡 · 本地方式</text>
+    <text x="169" y="695" font-size="11" fill="#546e7a" text-anchor="middle">NOWPayments · USDT</text>
+    <text x="169" y="712" font-size="11" fill="#546e7a" text-anchor="middle">Webhook 验签回调</text>
+    <text x="169" y="729" font-size="11" fill="#546e7a" text-anchor="middle">金额强校验 · 幂等</text>
+  </g>
+
+  <!-- VIP 会员 -->
+  <g>
+    <rect x="375" y="628" width="250" height="132" rx="8" fill="#ffffff" stroke="#3949ab" stroke-width="2"/>
+    <rect x="480" y="642" width="40" height="4" rx="2" fill="#3949ab"/>
+    <text x="500" y="656" font-size="13" font-weight="700" fill="#3949ab" text-anchor="middle">VIP 会员</text>
+    <text x="500" y="678" font-size="11" fill="#546e7a" text-anchor="middle">VIP 套餐订阅</text>
+    <text x="500" y="695" font-size="11" fill="#546e7a" text-anchor="middle">到期续期 · 可叠加</text>
+    <text x="500" y="712" font-size="11" fill="#546e7a" text-anchor="middle">阅读器 VIP 引导</text>
+    <text x="500" y="729" font-size="11" fill="#546e7a" text-anchor="middle">我的-VIP 卡片</text>
+  </g>
+
+  <!-- 数据统计 -->
+  <g>
+    <rect x="706" y="628" width="250" height="132" rx="8" fill="#ffffff" stroke="#26a69a" stroke-width="2"/>
+    <rect x="811" y="642" width="40" height="4" rx="2" fill="#26a69a"/>
+    <text x="831" y="656" font-size="13" font-weight="700" fill="#26a69a" text-anchor="middle">数据统计</text>
+    <text x="831" y="678" font-size="11" fill="#546e7a" text-anchor="middle">运营仪表盘</text>
+    <text x="831" y="695" font-size="11" fill="#546e7a" text-anchor="middle">DAU 近似 · 热门榜单</text>
+    <text x="831" y="712" font-size="11" fill="#546e7a" text-anchor="middle">热门书籍 / 热搜词</text>
+  </g>
+
+  <text x="500" y="810" font-size="12" fill="#78909c" text-anchor="middle">核心阅读链路：发现 → 阅读 → 互动 → 进度同步 · 全链路多语言 i18n · 支付与 VIP 商业化</text>
+  <text x="988" y="818" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

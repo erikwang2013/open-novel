@@ -31,6 +31,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 - **Interactive Community**: Comments and reviews, likes, favorites, reporting and moderation
 - **Search & Discovery**: Multilingual tokenized search, trending rankings, AI recommendations, category browsing
 - **Admin Console**: Content moderation, user management, data statistics, configuration management
+- **Payments & VIP**: Multi-channel payments via Stripe / NOWPayments (USDT), VIP plan subscription and renewal, language-based payment method routing
 
 ## System Architecture
 
