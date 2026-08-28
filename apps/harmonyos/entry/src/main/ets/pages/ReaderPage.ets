@@ -4,7 +4,8 @@ import { ApiClient } from '../common/api/ApiClient';
 import { Chapter, asInt, asStr } from '../common/models/Models';
 
 /// 阅读器：章节正文 + 上一章 / 下一章（GET /api/chapters/{id}/content）。
-/// 章节列表与当前 index 由 BookDetailPage 经 router 参数传入（chapters 为 JSON 字符串）。
+/// 章节列表由 ReaderPage 按 bookId 自行拉取（GET /api/books/{id}/chapters），
+/// BookDetailPage 仅传 bookId 与初始序号，避免 router 传大 JSON 串。
 @Entry
 @Component
 struct ReaderPage {
@@ -13,34 +14,46 @@ struct ReaderPage {
   @State content: string = '';
   @State loading: boolean = true;
   @State errorMsg: string = '';
+  private bookId: string = '';
+  /// 请求序号：上一/下一章连点时只应用最后一次请求的结果，慢响应不覆盖新章节。
+  private loadSeq: number = 0;
 
   aboutToAppear(): void {
     const p = router.getParams() as Record<string, Object>;
+    this.bookId = asStr(p['bookId']);
     this.index = asInt(p['index']);
-    const chaptersStr = asStr(p['chapters']);
-    if (chaptersStr !== '') {
-      const raw = JSON.parse(chaptersStr) as Array<Record<string, Object>>;
-      this.chapters = [];
-      for (let i = 0; i < raw.length; i++) {
-        this.chapters.push(Chapter.fromJson(raw[i]));
-      }
-    }
-    if (this.index >= this.chapters.length) {
-      this.index = 0;
-    }
     this.load();
   }
 
   private async load(): Promise<void> {
-    if (this.chapters.length === 0) {
-      return;
-    }
+    const seq = ++this.loadSeq;
     this.loading = true;
     this.errorMsg = '';
     try {
+      if (this.chapters.length === 0) {
+        const list = await ApiClient.instance.listChapters(this.bookId);
+        if (seq !== this.loadSeq) {
+          return;
+        }
+        if (list.length === 0) {
+          this.errorMsg = 'server';
+          this.loading = false;
+          return;
+        }
+        this.chapters = list;
+        if (this.index >= this.chapters.length) {
+          this.index = 0;
+        }
+      }
       const c = await ApiClient.instance.getChapterContent(this.chapters[this.index].id);
+      if (seq !== this.loadSeq) {
+        return;
+      }
       this.content = c.content;
     } catch (e) {
+      if (seq !== this.loadSeq) {
+        return;
+      }
       this.errorMsg = (e as Error).message;
     }
     this.loading = false;

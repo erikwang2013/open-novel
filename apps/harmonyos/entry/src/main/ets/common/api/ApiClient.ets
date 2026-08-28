@@ -1,10 +1,12 @@
 // API 客户端：@ohos.net.http 封装，Bearer JWT，401 自动刷新（/api/users/refresh）并重放一次。
 // 错误消息优先取后端 {code,message,detail} 的 message，否则返回 'network'（网络错误）或 'server'（服务异常）。
 // 注意：HttpResponse 每请求需 createHttp + destroy，不可复用。
-// BASE_URL 为本地开发地址；Android 模拟器用 http://10.0.2.2:8000，HarmonyOS 模拟器/真机改为宿主局域网 IP。
+// 注意：accessToken/refreshToken 明文存于 preferences。@ohos.security.asset 可做加密存储，
+// 但改动面大（异步迁移全部读写），暂不采用，如有安全要求再升级。
 import http from '@ohos.net.http';
 import preferences from '@ohos.data.preferences';
 import { common } from '@kit.AbilityKit';
+import { Config } from '../Config';
 import {
   Book,
   Chapter,
@@ -25,7 +27,7 @@ interface HttpResult {
 
 export class ApiClient {
   static readonly instance: ApiClient = new ApiClient();
-  static readonly BASE_URL: string = 'http://localhost:8000';
+  static readonly BASE_URL: string = Config.BASE_URL;
   static readonly PREFS_NAME: string = 'open_novel';
   static LANG: string = 'zh';
 
@@ -54,7 +56,7 @@ export class ApiClient {
   async login(username: string, password: string): Promise<LoginResult> {
     const body: Record<string, Object> = { 'username': username, 'password': password };
     const obj = await this.post<Record<string, Object>>('/api/users/login', body);
-    return this.saveSession(LoginResult.fromJson(obj));
+    return await this.saveSession(LoginResult.fromJson(obj));
   }
 
   async register(username: string, password: string, email: string, nickname: string): Promise<LoginResult> {
@@ -65,7 +67,7 @@ export class ApiClient {
       'nickname': nickname
     };
     const obj = await this.post<Record<string, Object>>('/api/users/register', body);
-    return this.saveSession(LoginResult.fromJson(obj));
+    return await this.saveSession(LoginResult.fromJson(obj));
   }
 
   async listBooks(page: number = 1, pageSize: number = 20): Promise<Book[]> {
@@ -102,7 +104,7 @@ export class ApiClient {
     return ChapterContent.fromJson(obj);
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
     this.accessToken = '';
     this.refreshToken = '';
     this.currentUser = null;
@@ -111,7 +113,7 @@ export class ApiClient {
       prefs.deleteSync('access_token');
       prefs.deleteSync('refresh_token');
       prefs.deleteSync('user_json');
-      prefs.flush();
+      await prefs.flush();
     }
   }
 
@@ -133,7 +135,7 @@ export class ApiClient {
       if (await this.doRefresh()) {
         return this.request<T>(method, path, body, 0);
       }
-      this.logout();
+      await this.logout();
     }
     if (resp.code < 200 || resp.code >= 300) {
       throw new Error(resp.message);
@@ -141,7 +143,9 @@ export class ApiClient {
     try {
       return JSON.parse(resp.data) as T;
     } catch (e) {
-      throw new Error('server');
+      // 保留状态码与原始响应体，便于定位后端返回非 JSON（网关错误页等）
+      const raw = resp.data.length > 200 ? `${resp.data.substring(0, 200)}...` : resp.data;
+      throw new Error(`server(${resp.code}): ${raw}`);
     }
   }
 
@@ -189,7 +193,11 @@ export class ApiClient {
       });
       if (resp.responseCode === 200) {
         const obj = JSON.parse(`${resp.result}`) as Record<string, Object>;
-        this.saveSession(LoginResult.fromJson(obj));
+        const r = LoginResult.fromJson(obj);
+        if (r.accessToken === '' || r.refreshToken === '') {
+          return false;
+        }
+        await this.saveSession(r);
         return true;
       }
       return false;
@@ -200,15 +208,15 @@ export class ApiClient {
     }
   }
 
-  private saveSession(r: LoginResult): LoginResult {
+  private async saveSession(r: LoginResult): Promise<LoginResult> {
     this.accessToken = r.accessToken;
     this.refreshToken = r.refreshToken;
     this.currentUser = r.user;
-    this.persist();
+    await this.persist();
     return r;
   }
 
-  private persist(): void {
+  private async persist(): Promise<void> {
     if (this.context === null) {
       return;
     }
@@ -216,7 +224,7 @@ export class ApiClient {
     prefs.putSync('access_token', this.accessToken);
     prefs.putSync('refresh_token', this.refreshToken);
     prefs.putSync('user_json', JSON.stringify(this.currentUser));
-    prefs.flush();
+    await prefs.flush();
   }
 
   private extractMessage(code: number, data: string): string {

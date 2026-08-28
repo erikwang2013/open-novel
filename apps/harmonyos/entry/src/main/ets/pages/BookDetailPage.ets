@@ -42,7 +42,6 @@ struct BookDetailPage {
       url: 'pages/ReaderPage',
       params: {
         'bookId': this.bookId,
-        'chapters': JSON.stringify(this.chapters),
         'index': index
       }
     });
