@@ -195,3 +195,70 @@
 
 **调度**：第一批 T-P-01~08（后端支付底座）→ T-P-09~13（管理端）→ T-P-14~17（客户端），2026-08-29 前已全部提交（✅）；T-P-18 随各批内嵌完成；T-P-19/20 二期已实现（✅，razorpay/komoju/portone/mercadopago/xendit/paypal 后端全部就绪），zh-CN 支付宝/微信需 CN 企业资质未做。
 **前置条件**：Stripe / NOWPayments 商户密钥（沙箱即可开发，当前配置为沙箱、enabled 渠道为空）；zh-CN 支付宝/微信需中国大陆企业资质（或 Adyen 渠道），T-P-19 立项时确认。
+
+---
+
+## 七、可选方向规划（2026-08-29）
+
+定位：主链全部 ✅ 后的增量优化，独立立项、可并行、互不依赖。方向 1/2/3 为可执行级，4/5 为门槛项（只给触发条件 + 方案草图），6 为回归引用。涉及后端均只改 `kratos/backend/`，不碰 `kratos/` 框架源码。
+
+### 7.1 搜索历史 / 搜索建议（方向 1）
+
+**范围**：客户端搜索框本地历史（近 20 条、可清空）+ 输入建议（search_log 聚合热词补全）。客户端为主 + 轻后端。搜索框位于 `apps/client/flutter/lib/pages/books_tab.dart`（搜索页内嵌于该 tab），建议页同文件或独立 `search_suggest.dart`；token 持久化已有先例（shared_preferences），本地历史复用同一存储即可，无需新依赖。
+
+**后端触点（1 个新 API）**：
+- `kratos/backend/api/search/v1/search.proto`：新增 `rpc Suggest(SuggestReq) returns (SuggestReply)`，`get: "/api/search/suggest?q="`，返回 `repeated string keywords`（匹配 `keyword LIKE 'q%'`，按 search_log 聚合 count 降序，LIMIT 10）
+- `kratos/backend/internal/biz/search.go`：参照 `HotKeywords`（已按 `Model(&data.SearchLog{}).Group("keyword")` 聚合 TOP 10，口径已验证），新增 `Suggest` 查询（LIKE 前缀 + count 排序），补 1s 级别 Redis 缓存（key `suggest:{q}`）
+- `kratos/backend/internal/service/search.go`：新增适配层方法（参照 `HotKeywords`，protojson camelCase 自动处理，int64 无涉及）
+
+**实现步骤**：① proto + 重新生成 → ② biz Suggest 查询（复用 HotKeywords 聚合口径）→ ③ service 适配 + 测试（参照 `search_test.go`）→ ④ 客户端本地历史（shared_preferences，输入时写入、按时间倒序去重、上限 20、清空按钮）→ ⑤ 建议接口接入（防抖 200ms，`asStr` 取关键字）。
+
+**工作量**：后端 S（一个查询 + 一个端点）；客户端 S（本地存储 + UI 集成），合计 S~M。
+**风险**：低。Suggest LIKE 前缀查询无索引时可能慢——`novel_search_log.keyword` 量级大后需加索引或换 ES 前缀查询（当前量级可忽略，`ponytail:` 标注：数据量大时在 search_log 加 keyword 前缀索引即可）。
+
+### 7.2 管理端审计日志查询页（方向 2）
+
+**范围**：后端 audit_log 查询 API（requireAdmin）+ 管理端列表页（分页 / 筛选 by admin / action / target / 时间）。
+
+**后端触点**：
+- `kratos/backend/internal/data/models.go`：`AuditLog` 模型已存在（`novel_audit_log`，字段 ID/UserID/Action/TargetType/TargetID/Detail/IP/UserAgent/CreatedAt），无需改表
+- `kratos/backend/api/admin/v1/admin.proto`：新增 `rpc ListAuditLogs(ListAuditLogsReq) returns (ListAuditLogsReply)`，`get: "/api/admin/audit-logs"`，query 参数 `page/page_size/user_id/action/target_type/target_id/start_time/end_time`，返回分页列表（复用 `pkg.Page`）
+- `kratos/backend/internal/biz/admin.go`：新增 `ListAuditLogs`，`WHERE` 条件动态拼接（各字段可选），`ORDER BY created_at DESC`，时间范围用 `>= start_time AND <= end_time`；参照现有管理端 stats 查询口径
+- `kratos/backend/internal/service/admin.go`：requireAdmin 守卫（参照 `GetStats` 已有 `requireAdmin(ctx)` 模式，T-A-14/16 已建立），返回 protojson camelCase + int64 string
+- 写入侧已存在：`kratos/backend/internal/biz/user.go:135` 等（login 等动作写 AuditLog），本方向只做查询
+
+**管理端触点**：`apps/admin/lib/pages/` 新增 `audit_logs_page.dart`（参照 `reports_page.dart` / `orders_page.dart` 的分页表格 + 筛选模式），路由注册在 `apps/admin/lib/pages/home_page.dart`（或对应导航处）。
+
+**实现步骤**：① proto + 生成 → ② biz 查询（条件拼接）→ ③ service 适配 + requireAdmin + 测试 → ④ 管理端页面（分页表 + 筛选表单）→ ⑤ 导航接入。
+
+**工作量**：后端 S；管理端 S（已有页面模板可复制），合计 S~M。
+**风险**：低。条件拼接注意 SQL 注入（全部走 GORM 参数绑定，不拼字符串）；audit_log 无 created_at 索引时按时间筛选会全表扫——量级大后补索引（`ponytail:` 标注）。
+
+### 7.3 ristretto 进程内二级缓存（方向 3）
+
+**范围**：纯后端性能项，超热 key 兜底 Redis。不改业务代码——`data/cache.go` 的 `Cache` 封装（`Get/Set/Del/DelPattern/GetOrLoad`）是唯一读写 Redis 的咽喉，L1 拦截点收敛于此，单文件改动。
+
+**后端触点**：仅 `kratos/backend/internal/data/cache.go`。`Get` 先查 ristretto，未命中回源 Redis 并回填 L1（`GetOrLoad` 同路线）；`Set` 同步写 L1 + Redis；`Del/DelPattern` 双删。ristretto 需新增依赖 `github.com/dgraph-io/ristretto`（当前 `go.mod` 无此依赖）——这是本项目极少见的加依赖场景，属合理例外，但必须确认压测已证明瓶颈（懒人原则：Redis 命中率 >95% 时不值得加）。
+
+**实现步骤**：① 压测确认 Redis 是热点瓶颈 → ② go.mod 加 ristretto + `data.go` 初始化 L1（容量按可用内存配置，如 128MB，TTL 30s 短过期兜底一致性）→ ③ `cache.go` Get/Set/Del 接 L1 → ④ 回归压测对比命中率与 p99。
+
+**工作量**：S（单文件 + 初始化，改动面 <50 行）。
+**风险**：中。L1 数据一致性——短 TTL（30s）兜底，写路径双删避免脏读；内存占用需监控（ristretto 超出容量会逐出，无溢出风险但有命中率下降）。**触发条件**：压测/线上 Redis 读 QPS 达到瓶颈（如 >10k QPS 且热点集中），否则不做。
+
+### 7.4 AI 推荐（方向 4，门槛项）
+
+**触发条件**：`novel_recommend_log` + `novel_search_log` 累积 ≥ 阈值（如单语言 ≥ 10 万条有效行为），且业务侧确认第三方 API 预算。当前推荐为 `recommend.go` 仅 hot/new 策略，AI 属替代策略，不是补丁。
+
+**方案草图（≤10 行）**：① 现有 `recommend.go` 的 `Log()` 已在写 impression 日志（`novel_recommend_log`，含 UserID/BookID/Strategy/RankNo），无需新埋点 → ② 批量导出行为数据 → ③ 第三方（如 OpenAI embeddings 或推荐 SaaS）离线训练/计算 → ④ `recommend.go` 新增 strategy 分支（如 `ai`），按语言路由 + 预热到 Redis → ⑤ `recommendation.proto` 无接口变更，策略参数走现有 `GetRecommendationsReq`；未达标前不接第三方 API（无账单、无数据泄露面）。数据量达标前，hot/new 策略 + 热搜词已够用。
+
+### 7.5 CDN 章节静态化（方向 5，门槛项）
+
+**触发条件**：章节读流量达阈值（如单章日读 > 1 万次或 CDN 成本超过源站 CPU 成本），且章节变更频率低（连载期间不适用——章节每日更新，静态化收益被失效成本抵消）。
+
+**方案草图（≤10 行）**：① 章节内容为纯文本，天然可静态化 → ② 后端生成 HTML/纯文本静态文件推 CDN（或对象存储 + CDN 域名）→ ③ `chapter.proto` 读章节接口加 CDN 回退：CDN 未命中 → 源站 → 回源写 CDN（cache miss 回源模式，不阻塞主流程）→ ④ 章节发布时主动失效 CDN key（发布侧已有更新链路，加一个 invalidate 调用即可）→ ⑤ 需评估：付费章节鉴权与静态化冲突（VIP 章节无法走公开 CDN，只静态化免费章节或加签名 URL）。当前量级下直接做属于过度设计。
+
+### 7.6 人工回归 T-C-23（方向 6）
+
+引用 `docs/tasks.md` 上文 T-C-23（9 项两端手测清单，含搜索、推荐、评论、支付等两端对齐验证），按需执行，无开发工作。
+
+**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 均未触发，仅保留触发条件，不做开发。
