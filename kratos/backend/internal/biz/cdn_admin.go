@@ -148,25 +148,26 @@ func (uc *CdnAdminUsecase) UpdateCdnProvider(ctx context.Context, adminID int64,
 	return &it, nil
 }
 
-// ToggleCdnProvider 启停：enabled 显式置 0/1（灰度回滚手段）。
-func (uc *CdnAdminUsecase) ToggleCdnProvider(ctx context.Context, adminID int64, id uint64, enabled uint8) (*CdnProviderItem, error) {
-	if enabled != 0 && enabled != 1 {
-		return nil, pkg.ErrBadState
-	}
+// ToggleCdnProvider 启停：enabled 翻转（镜像 payment.ToggleProvider，§6 灰度回滚）。
+func (uc *CdnAdminUsecase) ToggleCdnProvider(ctx context.Context, adminID int64, id uint64) (*CdnProviderItem, error) {
 	var r data.CdnProvider
 	if err := uc.db.Clauses(gormdb.Write).WithContext(ctx).First(&r, id).Error; err != nil {
 		return nil, pkg.ErrTargetNF
 	}
+	next := int8(1)
+	if r.Enabled == 1 {
+		next = 0
+	}
 	res := uc.db.Clauses(gormdb.Write).WithContext(ctx).Model(&data.CdnProvider{}).
-		Where("id = ?", id).Update("enabled", enabled)
+		Where("id = ?", id).Update("enabled", next)
 	if res.Error != nil {
 		return nil, pkg.ErrAdminDB
 	}
 	if res.RowsAffected == 0 {
 		return nil, pkg.ErrTargetNF
 	}
-	r.Enabled = int8(enabled)
-	uc.writeAudit(ctx, adminID, "cdn_toggle", &r, "enabled="+strconv.Itoa(int(enabled)))
+	r.Enabled = next
+	uc.writeAudit(ctx, adminID, "cdn_toggle", &r, "enabled="+strconv.Itoa(int(next)))
 	it := toCdnProviderItem(&r)
 	return &it, nil
 }

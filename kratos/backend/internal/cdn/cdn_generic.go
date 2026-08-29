@@ -25,6 +25,7 @@ func NewGeneric(cfg map[string]any) (Provider, error) {
 func (p *genericProvider) Name() string { return "generic" }
 
 func (p *genericProvider) Purge(ctx context.Context, keys []string) error {
+	// 单 key 失败即中止剩余（合批后语义）：上层按厂商整批重试，best-effort 可接受。
 	for _, k := range keys {
 		req, err := http.NewRequestWithContext(ctx, http.MethodPost,
 			strings.ReplaceAll(p.template, "{key}", k), nil)

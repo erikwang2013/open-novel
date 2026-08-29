@@ -129,17 +129,24 @@ func TestCdnAdminToggleDelete(t *testing.T) {
 
 	row, _ := uc.CreateCdnProvider(t.Context(), 1, "aliyun", 1,
 		map[string]string{"access_key_id": "a", "access_key_secret": "s"})
-	got, err := uc.ToggleCdnProvider(t.Context(), 1, row.ID, 0)
+	got, err := uc.ToggleCdnProvider(t.Context(), 1, row.ID)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if got.Enabled != 0 {
-		t.Fatalf("toggle: %+v", got)
+		t.Fatalf("toggle must disable, got %+v", got)
+	}
+	got, err = uc.ToggleCdnProvider(t.Context(), 1, row.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Enabled != 1 {
+		t.Fatalf("toggle must re-enable, got %+v", got)
 	}
 	if err := uc.DeleteCdnProvider(t.Context(), 1, row.ID); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := uc.ToggleCdnProvider(t.Context(), 1, row.ID, 1); err != pkg.ErrTargetNF {
+	if _, err := uc.ToggleCdnProvider(t.Context(), 1, row.ID); err != pkg.ErrTargetNF {
 		t.Fatalf("after delete must be not-found, got %v", err)
 	}
 }

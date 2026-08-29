@@ -52,7 +52,7 @@ func (m *Manager) Purge(ctx context.Context, keys []string) {
 }
 
 // purgeOne 单厂商发送：429/5xx 重试一次（1s 退避），仍失败记 warn。
-// ponytail: 固定 1s 退避 + 单次重试；purge 丢失最坏多缓存 1h（s-maxage 到期），可靠失效需队列，暂不做。
+// ponytail: 固定 1s 退避 + 单次重试；重试不感知 ctx 且整批重跑，best-effort 语义可容忍（旧内容最坏滞留 1h）；可靠失效需队列，暂不做。
 func (m *Manager) purgeOne(ctx context.Context, p Provider, keys []string) {
 	for attempt := 0; attempt < 2; attempt++ {
 		err := p.Purge(ctx, keys)

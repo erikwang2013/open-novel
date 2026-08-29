@@ -81,7 +81,7 @@ func (s *CdnService) ToggleProvider(ctx context.Context, req *cdnv1.ToggleProvid
 	if err != nil {
 		return nil, err
 	}
-	it, err := s.uc.ToggleCdnProvider(ctx, c.UID, u64(req.Id), 1)
+	it, err := s.uc.ToggleCdnProvider(ctx, c.UID, u64(req.Id))
 	if err != nil {
 		return nil, err
 	}

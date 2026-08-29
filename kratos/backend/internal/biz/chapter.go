@@ -239,7 +239,9 @@ func (uc *ChapterUsecase) SetChapterStatus(ctx context.Context, adminID int64, i
 	uc.cache.DelPattern(ctx, fmt.Sprintf("chapter:list:%d:*", ch.BookID))
 	// CDN 失效：状态变更影响所有语言版本，收集 langs 单次多 key 广播（§4.1 合批）
 	var langs []string
-	uc.db.WithContext(ctx).Model(&data.ChapterContent{}).Where("chapter_id = ?", id).Distinct().Pluck("lang", &langs)
+	if err := uc.db.WithContext(ctx).Model(&data.ChapterContent{}).Where("chapter_id = ?", id).Distinct().Pluck("lang", &langs).Error; err != nil {
+		cdnLog.Log(log.LevelWarn, "msg", "cdn purge langs pluck failed", "id", strconv.FormatUint(id, 10), "err", err.Error())
+	}
 	PurgeChaptersAsync(id, langs)
 	data.WriteAudit(uc.db, ctx, adminID, "chapter_status", "chapter", strconv.FormatUint(id, 10), fmt.Sprintf("status=%d", status))
 	return nil

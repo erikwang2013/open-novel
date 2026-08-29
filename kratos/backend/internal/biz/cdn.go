@@ -56,6 +56,7 @@ func InitCdn(d *data.Data, cr *pkg.Crypto) {
 	defer cdnReg.mu.Unlock()
 	cdnReg.db = d.DB
 	cdnReg.cr = cr
+	// 仅启动期在锁内写入一次；管理端热更新/后续路径不触碰 cdnCr，单写者 + 指针读无并发问题。
 	cdnCr = cr // 加密密钥面固定（与支付同 KEY，§3.3）
 	cdnReg.init = true
 	cdnReg.finger = cdnFingerprint(d.DB)
