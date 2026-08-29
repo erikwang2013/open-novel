@@ -79,7 +79,7 @@ func (s *ChapterService) UpdateReadingProgress(ctx context.Context, req *v1.Upda
 	if err != nil {
 		return nil, err
 	}
-	pr, err := s.uc.UpdateProgress(ctx, c.UID, u64(req.BookId), u64(req.ChapterId), req.Position)
+	pr, err := s.uc.UpdateProgress(ctx, c.UID, u64(req.BookId), u64(req.ChapterId), req.Position, langOrDefault(ctx, ""))
 	if err != nil {
 		return nil, err
 	}

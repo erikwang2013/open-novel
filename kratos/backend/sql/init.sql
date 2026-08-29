@@ -248,6 +248,21 @@ CREATE TABLE IF NOT EXISTS novel_recommend_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='推荐日志表';
 
 -- ------------------------------------------------------------
+-- 阅读事件日志表：保存进度时顺带记录，行为分析数据源
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS novel_reading_log (
+  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
+  book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
+  chapter_id BIGINT UNSIGNED NOT NULL COMMENT '章节 ID',
+  lang       CHAR(5)         NOT NULL DEFAULT 'zh-CN' COMMENT '阅读语言',
+  position   INT UNSIGNED    NOT NULL DEFAULT 0 COMMENT '章内位置（字符偏移）',
+  created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_user_time (user_id, created_at),
+  KEY idx_book_time (book_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='阅读事件日志表';
+
+-- ------------------------------------------------------------
 -- 支付订单表：单章/整书购买
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_payment_order (

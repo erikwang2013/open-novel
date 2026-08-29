@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api/api_client.dart';
 import 'audit_logs_page.dart';
+import 'behavior_page.dart';
 import 'books_page.dart';
 import 'categories_page.dart';
 import 'comments_page.dart';
@@ -11,6 +12,7 @@ import 'orders_page.dart';
 import 'plans_page.dart';
 import 'providers_page.dart';
 import 'reports_page.dart';
+import 'translate_page.dart';
 import 'users_page.dart';
 
 /// 主框架：左侧导航 + 内容区，IndexedStack 保持各页状态。
@@ -35,6 +37,8 @@ class _HomePageState extends State<HomePage> {
     '流水账单',
     'VIP套餐',
     '审计日志',
+    '行为分析',
+    '翻译',
   ];
   static const _icons = [
     Icons.dashboard_outlined,
@@ -47,6 +51,8 @@ class _HomePageState extends State<HomePage> {
     Icons.receipt_long_outlined,
     Icons.workspace_premium_outlined,
     Icons.history_outlined,
+    Icons.insights_outlined,
+    Icons.translate,
   ];
 
   static const _pages = [
@@ -60,6 +66,8 @@ class _HomePageState extends State<HomePage> {
     OrdersPage(),
     PlansPage(),
     AuditLogsPage(),
+    BehaviorPage(),
+    TranslatePage(),
   ];
 
   void _logout() {

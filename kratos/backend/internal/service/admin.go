@@ -182,6 +182,38 @@ func (s *AdminService) DeleteTag(ctx context.Context, req *adminv1.DeleteTagReq)
 	return &adminv1.EmptyReply{}, nil
 }
 
+// TranslateBook 翻译书籍标题与简介（requireAdmin），源取书籍原始语言。
+func (s *AdminService) TranslateBook(ctx context.Context, req *adminv1.TranslateBookReq) (*adminv1.TranslateBookReply, error) {
+	if _, err := requireAdmin(ctx); err != nil {
+		return nil, err
+	}
+	t, err := s.uc.TranslateBook(ctx, u64(req.BookId), req.Lang)
+	if err != nil {
+		return nil, err
+	}
+	return &adminv1.TranslateBookReply{BookId: req.BookId, Lang: req.Lang, Title: t.Title, Summary: t.Summary}, nil
+}
+
+// TranslateBookChapters 翻译书籍全部章节（requireAdmin，同步串行，单章失败不中断）。
+func (s *AdminService) TranslateBookChapters(ctx context.Context, req *adminv1.TranslateBookChaptersReq) (*adminv1.TranslateBookChaptersReply, error) {
+	if _, err := requireAdmin(ctx); err != nil {
+		return nil, err
+	}
+	r, err := s.uc.TranslateBookChapters(ctx, u64(req.BookId), req.Lang)
+	if err != nil {
+		return nil, err
+	}
+	failed := make([]int32, len(r.FailedChapters))
+	for i, no := range r.FailedChapters {
+		failed[i] = int32(no)
+	}
+	return &adminv1.TranslateBookChaptersReply{
+		BookId: req.BookId, Lang: req.Lang,
+		Total: int32(r.Total), Succeeded: int32(r.Succeeded), Failed: int32(r.Failed),
+		FailedChapters: failed,
+	}, nil
+}
+
 func toCategoryReply(c *data.Category) *adminv1.CategoryReply {
 	return &adminv1.CategoryReply{
 		Id: i64(c.ID), Name: c.Name, ParentId: i64(c.ParentID),

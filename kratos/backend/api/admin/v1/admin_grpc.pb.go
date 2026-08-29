@@ -22,16 +22,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Admin_GetStats_FullMethodName       = "/admin.v1.Admin/GetStats"
-	Admin_ListAuditLogs_FullMethodName  = "/admin.v1.Admin/ListAuditLogs"
-	Admin_ListCategories_FullMethodName = "/admin.v1.Admin/ListCategories"
-	Admin_CreateCategory_FullMethodName = "/admin.v1.Admin/CreateCategory"
-	Admin_UpdateCategory_FullMethodName = "/admin.v1.Admin/UpdateCategory"
-	Admin_DeleteCategory_FullMethodName = "/admin.v1.Admin/DeleteCategory"
-	Admin_ListTags_FullMethodName       = "/admin.v1.Admin/ListTags"
-	Admin_CreateTag_FullMethodName      = "/admin.v1.Admin/CreateTag"
-	Admin_UpdateTag_FullMethodName      = "/admin.v1.Admin/UpdateTag"
-	Admin_DeleteTag_FullMethodName      = "/admin.v1.Admin/DeleteTag"
+	Admin_GetStats_FullMethodName              = "/admin.v1.Admin/GetStats"
+	Admin_ListAuditLogs_FullMethodName         = "/admin.v1.Admin/ListAuditLogs"
+	Admin_ListCategories_FullMethodName        = "/admin.v1.Admin/ListCategories"
+	Admin_CreateCategory_FullMethodName        = "/admin.v1.Admin/CreateCategory"
+	Admin_UpdateCategory_FullMethodName        = "/admin.v1.Admin/UpdateCategory"
+	Admin_DeleteCategory_FullMethodName        = "/admin.v1.Admin/DeleteCategory"
+	Admin_ListTags_FullMethodName              = "/admin.v1.Admin/ListTags"
+	Admin_CreateTag_FullMethodName             = "/admin.v1.Admin/CreateTag"
+	Admin_UpdateTag_FullMethodName             = "/admin.v1.Admin/UpdateTag"
+	Admin_DeleteTag_FullMethodName             = "/admin.v1.Admin/DeleteTag"
+	Admin_TranslateBook_FullMethodName         = "/admin.v1.Admin/TranslateBook"
+	Admin_TranslateBookChapters_FullMethodName = "/admin.v1.Admin/TranslateBookChapters"
 )
 
 // AdminClient is the client API for Admin service.
@@ -54,6 +56,10 @@ type AdminClient interface {
 	CreateTag(ctx context.Context, in *CreateTagReq, opts ...grpc.CallOption) (*TagReply, error)
 	UpdateTag(ctx context.Context, in *UpdateTagReq, opts ...grpc.CallOption) (*TagReply, error)
 	DeleteTag(ctx context.Context, in *DeleteTagReq, opts ...grpc.CallOption) (*EmptyReply, error)
+	// 翻译书籍标题与简介到指定语言（requireAdmin；源文本取书籍原始语言，DeepL）
+	TranslateBook(ctx context.Context, in *TranslateBookReq, opts ...grpc.CallOption) (*TranslateBookReply, error)
+	// 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
+	TranslateBookChapters(ctx context.Context, in *TranslateBookChaptersReq, opts ...grpc.CallOption) (*TranslateBookChaptersReply, error)
 }
 
 type adminClient struct {
@@ -164,6 +170,26 @@ func (c *adminClient) DeleteTag(ctx context.Context, in *DeleteTagReq, opts ...g
 	return out, nil
 }
 
+func (c *adminClient) TranslateBook(ctx context.Context, in *TranslateBookReq, opts ...grpc.CallOption) (*TranslateBookReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TranslateBookReply)
+	err := c.cc.Invoke(ctx, Admin_TranslateBook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) TranslateBookChapters(ctx context.Context, in *TranslateBookChaptersReq, opts ...grpc.CallOption) (*TranslateBookChaptersReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TranslateBookChaptersReply)
+	err := c.cc.Invoke(ctx, Admin_TranslateBookChapters_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
@@ -184,6 +210,10 @@ type AdminServer interface {
 	CreateTag(context.Context, *CreateTagReq) (*TagReply, error)
 	UpdateTag(context.Context, *UpdateTagReq) (*TagReply, error)
 	DeleteTag(context.Context, *DeleteTagReq) (*EmptyReply, error)
+	// 翻译书籍标题与简介到指定语言（requireAdmin；源文本取书籍原始语言，DeepL）
+	TranslateBook(context.Context, *TranslateBookReq) (*TranslateBookReply, error)
+	// 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
+	TranslateBookChapters(context.Context, *TranslateBookChaptersReq) (*TranslateBookChaptersReply, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -223,6 +253,12 @@ func (UnimplementedAdminServer) UpdateTag(context.Context, *UpdateTagReq) (*TagR
 }
 func (UnimplementedAdminServer) DeleteTag(context.Context, *DeleteTagReq) (*EmptyReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteTag not implemented")
+}
+func (UnimplementedAdminServer) TranslateBook(context.Context, *TranslateBookReq) (*TranslateBookReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method TranslateBook not implemented")
+}
+func (UnimplementedAdminServer) TranslateBookChapters(context.Context, *TranslateBookChaptersReq) (*TranslateBookChaptersReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method TranslateBookChapters not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -425,6 +461,42 @@ func _Admin_DeleteTag_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_TranslateBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TranslateBookReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).TranslateBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_TranslateBook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).TranslateBook(ctx, req.(*TranslateBookReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_TranslateBookChapters_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TranslateBookChaptersReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).TranslateBookChapters(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_TranslateBookChapters_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).TranslateBookChapters(ctx, req.(*TranslateBookChaptersReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -471,6 +543,14 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteTag",
 			Handler:    _Admin_DeleteTag_Handler,
+		},
+		{
+			MethodName: "TranslateBook",
+			Handler:    _Admin_TranslateBook_Handler,
+		},
+		{
+			MethodName: "TranslateBookChapters",
+			Handler:    _Admin_TranslateBookChapters_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

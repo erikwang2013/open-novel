@@ -59,8 +59,8 @@ func TestListAuditLogs(t *testing.T) {
 		t.Fatalf("reader: want 180401, got %v", err)
 	}
 
-	// 无筛选：total >= 3，created_at 倒序
-	all, err := s.ListAuditLogs(adminCtx, &adminv1.ListAuditLogsReq{})
+	// 无筛选：total >= 3，created_at 倒序（PageSize 取上限，保证 fixture 在共享库分页内可见）
+	all, err := s.ListAuditLogs(adminCtx, &adminv1.ListAuditLogsReq{PageSize: 100})
 	if err != nil {
 		t.Fatal(err)
 	}

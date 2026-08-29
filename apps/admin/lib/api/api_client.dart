@@ -89,6 +89,29 @@ class ApiClient {
     _data(await _dio.post('/api/books', data: req));
   }
 
+  // ---------- 翻译 ----------
+
+  /// 翻译书籍标题与简介到目标语言（管理员）。
+  Future<Map<String, dynamic>> translateBook(String bookId, String lang) async {
+    return _data(await _dio.post('/api/admin/translate/book/$bookId',
+        data: {'lang': lang}));
+  }
+
+  /// 翻译书籍全部章节到目标语言（管理员；同步串行，单章失败不中断）。
+  Future<Map<String, dynamic>> translateBookChapters(
+      String bookId, String lang) async {
+    return _data(await _dio.post(
+        '/api/admin/translate/book/$bookId/chapters',
+        data: {'lang': lang}));
+  }
+
+  /// 人工编辑书籍翻译（复用 PUT /api/books/{id}/translation）。
+  Future<void> updateBookTranslation(
+      String id, String lang, String title, String summary) async {
+    _data(await _dio.put('/api/books/$id/translation',
+        data: {'id': id, 'lang': lang, 'title': title, 'summary': summary}));
+  }
+
   // ---------- 章节 ----------
 
   Future<(List<Chapter>, int)> chapters(String bookId,
@@ -182,6 +205,12 @@ class ApiClient {
   /// 仪表盘统计（管理员）。
   Future<StatsData> stats() async {
     return StatsData.fromJson(_data(await _dio.get('/api/stats/overview')));
+  }
+
+  /// 阅读行为统计（管理员）。
+  Future<BehaviorStats> behaviorStats() async {
+    return BehaviorStats.fromJson(
+        _data(await _dio.get('/api/stats/behavior')));
   }
 
   // ---------- 分类 / 标签 ----------

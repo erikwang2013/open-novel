@@ -269,4 +269,22 @@
 
 引用 `docs/tasks.md` 上文 T-C-23（9 项两端手测清单，含搜索、推荐、评论、支付等两端对齐验证），按需执行，无开发工作。
 
-**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已实现（2026-08-29，均配置门控默认关闭，仅启用后才生效）；7.6 人工回归按需执行。
+### 7.7 翻译工作流（管理端机器翻译 + 人工编辑）
+
+**状态**：✅ 已实现（2026-08-29，DeepL API）。管理端「翻译」页：书籍列表 → 目标语言（bn 禁用）→ 「翻译标题与简介」/「翻译全部章节」+ 人工编辑保存（复用 `PUT /api/books/{id}/translation`）。
+
+**后端**：`POST /api/admin/translate/book/{book_id}`（标题+简介，upsert 到 `novel_book_translation`）、`POST /api/admin/translate/book/{book_id}/chapters`（串行逐章，单章失败收集章节号不中断，写入 `novel_chapter_content`），均 requireAdmin。翻译后失效 `book:{id}:{lang}` 与 `chapter:content:{bookId}:*:{lang}` 缓存。
+
+**配置**：`TRANSLATE_API_KEY`（必填，DeepL Auth Key）+ `TRANSLATE_BASE_URL`（可选，默认 `https://api-free.deepl.com`）；未配置 → `180405 TRANSLATE_NOT_CONFIGURED`。语言映射 12 种（bn 孟加拉语 DeepL 不支持 → `180404 TRANSLATE_FAILED`）。源文本取书籍原始语言（`novel_book.lang`），缺省 zh-CN。
+
+**已知局限**：`novel_chapter_content` 无标题列，章节标题不按语言存储；翻译状态为会话内跟踪（书籍详情接口无 translations 字段）。
+
+### 7.8 阅读行为埋点与分析（管理端行为分析页）
+
+**状态**：✅ 已实现（2026-08-29）。`novel_reading_log` 表（阅读事件逐条），保存阅读进度时顺带写入（客户端零改动，失败仅告警不阻塞）。
+
+**后端**：`GET /api/stats/behavior`（requireAdmin）：当日/近 7 天 DISTINCT 阅读用户、近 7 天热门阅读书籍 TOP10（按 lang 本地化书名，无翻译回退主书名）、当日 0-23 时阅读事件分布。时间口径 UTC+8。
+
+**管理端**：「行为分析」页：数字卡（当日/7 天阅读用户）+ 热门书籍 TOP10 表格 + 24 小时横向条形分布（无图表库依赖）。
+
+**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已实现（2026-08-29，均配置门控默认关闭，仅启用后才生效）；7.6 人工回归按需执行；7.7/7.8 已实现（2026-08-29）。

@@ -973,6 +973,262 @@ func (*EmptyReply) Descriptor() ([]byte, []int) {
 	return file_admin_v1_admin_proto_rawDescGZIP(), []int{16}
 }
 
+type TranslateBookReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
+	Lang          string                 `protobuf:"bytes,2,opt,name=lang,proto3" json:"lang,omitempty"` // 目标语言（zh-CN/en/ja/ko/fr/de/es/ru/pt/hi/ar/id；bn 不支持）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TranslateBookReq) Reset() {
+	*x = TranslateBookReq{}
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TranslateBookReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TranslateBookReq) ProtoMessage() {}
+
+func (x *TranslateBookReq) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TranslateBookReq.ProtoReflect.Descriptor instead.
+func (*TranslateBookReq) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *TranslateBookReq) GetBookId() int64 {
+	if x != nil {
+		return x.BookId
+	}
+	return 0
+}
+
+func (x *TranslateBookReq) GetLang() string {
+	if x != nil {
+		return x.Lang
+	}
+	return ""
+}
+
+type TranslateBookReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
+	Lang          string                 `protobuf:"bytes,2,opt,name=lang,proto3" json:"lang,omitempty"`
+	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`     // 翻译后的标题
+	Summary       string                 `protobuf:"bytes,4,opt,name=summary,proto3" json:"summary,omitempty"` // 翻译后的简介
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TranslateBookReply) Reset() {
+	*x = TranslateBookReply{}
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TranslateBookReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TranslateBookReply) ProtoMessage() {}
+
+func (x *TranslateBookReply) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TranslateBookReply.ProtoReflect.Descriptor instead.
+func (*TranslateBookReply) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *TranslateBookReply) GetBookId() int64 {
+	if x != nil {
+		return x.BookId
+	}
+	return 0
+}
+
+func (x *TranslateBookReply) GetLang() string {
+	if x != nil {
+		return x.Lang
+	}
+	return ""
+}
+
+func (x *TranslateBookReply) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *TranslateBookReply) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+type TranslateBookChaptersReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
+	Lang          string                 `protobuf:"bytes,2,opt,name=lang,proto3" json:"lang,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TranslateBookChaptersReq) Reset() {
+	*x = TranslateBookChaptersReq{}
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TranslateBookChaptersReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TranslateBookChaptersReq) ProtoMessage() {}
+
+func (x *TranslateBookChaptersReq) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TranslateBookChaptersReq.ProtoReflect.Descriptor instead.
+func (*TranslateBookChaptersReq) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *TranslateBookChaptersReq) GetBookId() int64 {
+	if x != nil {
+		return x.BookId
+	}
+	return 0
+}
+
+func (x *TranslateBookChaptersReq) GetLang() string {
+	if x != nil {
+		return x.Lang
+	}
+	return ""
+}
+
+type TranslateBookChaptersReply struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	BookId         int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
+	Lang           string                 `protobuf:"bytes,2,opt,name=lang,proto3" json:"lang,omitempty"`
+	Total          int32                  `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
+	Succeeded      int32                  `protobuf:"varint,4,opt,name=succeeded,proto3" json:"succeeded,omitempty"`
+	Failed         int32                  `protobuf:"varint,5,opt,name=failed,proto3" json:"failed,omitempty"`
+	FailedChapters []int32                `protobuf:"varint,6,rep,packed,name=failed_chapters,json=failedChapters,proto3" json:"failed_chapters,omitempty"` // 失败章节号（chapter_no）
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *TranslateBookChaptersReply) Reset() {
+	*x = TranslateBookChaptersReply{}
+	mi := &file_admin_v1_admin_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TranslateBookChaptersReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TranslateBookChaptersReply) ProtoMessage() {}
+
+func (x *TranslateBookChaptersReply) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TranslateBookChaptersReply.ProtoReflect.Descriptor instead.
+func (*TranslateBookChaptersReply) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *TranslateBookChaptersReply) GetBookId() int64 {
+	if x != nil {
+		return x.BookId
+	}
+	return 0
+}
+
+func (x *TranslateBookChaptersReply) GetLang() string {
+	if x != nil {
+		return x.Lang
+	}
+	return ""
+}
+
+func (x *TranslateBookChaptersReply) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *TranslateBookChaptersReply) GetSucceeded() int32 {
+	if x != nil {
+		return x.Succeeded
+	}
+	return 0
+}
+
+func (x *TranslateBookChaptersReply) GetFailed() int32 {
+	if x != nil {
+		return x.Failed
+	}
+	return 0
+}
+
+func (x *TranslateBookChaptersReply) GetFailedChapters() []int32 {
+	if x != nil {
+		return x.FailedChapters
+	}
+	return nil
+}
+
 type ListAuditLogsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
@@ -989,7 +1245,7 @@ type ListAuditLogsReq struct {
 
 func (x *ListAuditLogsReq) Reset() {
 	*x = ListAuditLogsReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	mi := &file_admin_v1_admin_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1001,7 +1257,7 @@ func (x *ListAuditLogsReq) String() string {
 func (*ListAuditLogsReq) ProtoMessage() {}
 
 func (x *ListAuditLogsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	mi := &file_admin_v1_admin_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1014,7 +1270,7 @@ func (x *ListAuditLogsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditLogsReq.ProtoReflect.Descriptor instead.
 func (*ListAuditLogsReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{17}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ListAuditLogsReq) GetPage() int64 {
@@ -1090,7 +1346,7 @@ type AuditLogReply struct {
 
 func (x *AuditLogReply) Reset() {
 	*x = AuditLogReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	mi := &file_admin_v1_admin_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1102,7 +1358,7 @@ func (x *AuditLogReply) String() string {
 func (*AuditLogReply) ProtoMessage() {}
 
 func (x *AuditLogReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	mi := &file_admin_v1_admin_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1115,7 +1371,7 @@ func (x *AuditLogReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuditLogReply.ProtoReflect.Descriptor instead.
 func (*AuditLogReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{18}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *AuditLogReply) GetId() int64 {
@@ -1191,7 +1447,7 @@ type ListAuditLogsReply struct {
 
 func (x *ListAuditLogsReply) Reset() {
 	*x = ListAuditLogsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	mi := &file_admin_v1_admin_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1203,7 +1459,7 @@ func (x *ListAuditLogsReply) String() string {
 func (*ListAuditLogsReply) ProtoMessage() {}
 
 func (x *ListAuditLogsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	mi := &file_admin_v1_admin_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1216,7 +1472,7 @@ func (x *ListAuditLogsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditLogsReply.ProtoReflect.Descriptor instead.
 func (*ListAuditLogsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{19}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListAuditLogsReply) GetList() []*AuditLogReply {
@@ -1313,7 +1569,25 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\fDeleteTagReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\f\n" +
 	"\n" +
-	"EmptyReply\"\xec\x01\n" +
+	"EmptyReply\"?\n" +
+	"\x10TranslateBookReq\x12\x17\n" +
+	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
+	"\x04lang\x18\x02 \x01(\tR\x04lang\"q\n" +
+	"\x12TranslateBookReply\x12\x17\n" +
+	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
+	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
+	"\asummary\x18\x04 \x01(\tR\asummary\"G\n" +
+	"\x18TranslateBookChaptersReq\x12\x17\n" +
+	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
+	"\x04lang\x18\x02 \x01(\tR\x04lang\"\xbe\x01\n" +
+	"\x1aTranslateBookChaptersReply\x12\x17\n" +
+	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
+	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x05R\x05total\x12\x1c\n" +
+	"\tsucceeded\x18\x04 \x01(\x05R\tsucceeded\x12\x16\n" +
+	"\x06failed\x18\x05 \x01(\x05R\x06failed\x12'\n" +
+	"\x0ffailed_chapters\x18\x06 \x03(\x05R\x0efailedChapters\"\xec\x01\n" +
 	"\x10ListAuditLogsReq\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x1b\n" +
 	"\tpage_size\x18\x02 \x01(\x03R\bpageSize\x12\x17\n" +
@@ -1340,7 +1614,7 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\"W\n" +
 	"\x12ListAuditLogsReply\x12+\n" +
 	"\x04list\x18\x01 \x03(\v2\x17.admin.v1.AuditLogReplyR\x04list\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total2\xb2\a\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total2\xca\t\n" +
 	"\x05Admin\x12W\n" +
 	"\bGetStats\x12\x15.admin.v1.GetStatsReq\x1a\x17.admin.v1.GetStatsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/stats/overview\x12h\n" +
 	"\rListAuditLogs\x12\x1a.admin.v1.ListAuditLogsReq\x1a\x1c.admin.v1.ListAuditLogsReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/audit-logs\x12k\n" +
@@ -1351,7 +1625,9 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\bListTags\x12\x15.admin.v1.ListTagsReq\x1a\x17.admin.v1.ListTagsReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/admin/tags\x12M\n" +
 	"\tCreateTag\x12\x16.admin.v1.CreateTagReq\x1a\x12.admin.v1.TagReply\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/api/tags\x12R\n" +
 	"\tUpdateTag\x12\x16.admin.v1.UpdateTagReq\x1a\x12.admin.v1.TagReply\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\x1a\x0e/api/tags/{id}\x12Q\n" +
-	"\tDeleteTag\x12\x16.admin.v1.DeleteTagReq\x1a\x14.admin.v1.EmptyReply\"\x16\x82\xd3\xe4\x93\x02\x10*\x0e/api/tags/{id}B$Z\"open-novel/backend/api/admin/v1;v1b\x06proto3"
+	"\tDeleteTag\x12\x16.admin.v1.DeleteTagReq\x1a\x14.admin.v1.EmptyReply\"\x16\x82\xd3\xe4\x93\x02\x10*\x0e/api/tags/{id}\x12y\n" +
+	"\rTranslateBook\x12\x1a.admin.v1.TranslateBookReq\x1a\x1c.admin.v1.TranslateBookReply\".\x82\xd3\xe4\x93\x02(:\x01*\"#/api/admin/translate/book/{book_id}\x12\x9a\x01\n" +
+	"\x15TranslateBookChapters\x12\".admin.v1.TranslateBookChaptersReq\x1a$.admin.v1.TranslateBookChaptersReply\"7\x82\xd3\xe4\x93\x021:\x01*\",/api/admin/translate/book/{book_id}/chaptersB$Z\"open-novel/backend/api/admin/v1;v1b\x06proto3"
 
 var (
 	file_admin_v1_admin_proto_rawDescOnce sync.Once
@@ -1365,37 +1641,41 @@ func file_admin_v1_admin_proto_rawDescGZIP() []byte {
 	return file_admin_v1_admin_proto_rawDescData
 }
 
-var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_admin_v1_admin_proto_goTypes = []any{
-	(*GetStatsReq)(nil),         // 0: admin.v1.GetStatsReq
-	(*GetStatsReply)(nil),       // 1: admin.v1.GetStatsReply
-	(*HotBook)(nil),             // 2: admin.v1.HotBook
-	(*HotKeyword)(nil),          // 3: admin.v1.HotKeyword
-	(*CategoryReply)(nil),       // 4: admin.v1.CategoryReply
-	(*ListCategoriesReq)(nil),   // 5: admin.v1.ListCategoriesReq
-	(*ListCategoriesReply)(nil), // 6: admin.v1.ListCategoriesReply
-	(*CreateCategoryReq)(nil),   // 7: admin.v1.CreateCategoryReq
-	(*UpdateCategoryReq)(nil),   // 8: admin.v1.UpdateCategoryReq
-	(*DeleteCategoryReq)(nil),   // 9: admin.v1.DeleteCategoryReq
-	(*TagReply)(nil),            // 10: admin.v1.TagReply
-	(*ListTagsReq)(nil),         // 11: admin.v1.ListTagsReq
-	(*ListTagsReply)(nil),       // 12: admin.v1.ListTagsReply
-	(*CreateTagReq)(nil),        // 13: admin.v1.CreateTagReq
-	(*UpdateTagReq)(nil),        // 14: admin.v1.UpdateTagReq
-	(*DeleteTagReq)(nil),        // 15: admin.v1.DeleteTagReq
-	(*EmptyReply)(nil),          // 16: admin.v1.EmptyReply
-	(*ListAuditLogsReq)(nil),    // 17: admin.v1.ListAuditLogsReq
-	(*AuditLogReply)(nil),       // 18: admin.v1.AuditLogReply
-	(*ListAuditLogsReply)(nil),  // 19: admin.v1.ListAuditLogsReply
+	(*GetStatsReq)(nil),                // 0: admin.v1.GetStatsReq
+	(*GetStatsReply)(nil),              // 1: admin.v1.GetStatsReply
+	(*HotBook)(nil),                    // 2: admin.v1.HotBook
+	(*HotKeyword)(nil),                 // 3: admin.v1.HotKeyword
+	(*CategoryReply)(nil),              // 4: admin.v1.CategoryReply
+	(*ListCategoriesReq)(nil),          // 5: admin.v1.ListCategoriesReq
+	(*ListCategoriesReply)(nil),        // 6: admin.v1.ListCategoriesReply
+	(*CreateCategoryReq)(nil),          // 7: admin.v1.CreateCategoryReq
+	(*UpdateCategoryReq)(nil),          // 8: admin.v1.UpdateCategoryReq
+	(*DeleteCategoryReq)(nil),          // 9: admin.v1.DeleteCategoryReq
+	(*TagReply)(nil),                   // 10: admin.v1.TagReply
+	(*ListTagsReq)(nil),                // 11: admin.v1.ListTagsReq
+	(*ListTagsReply)(nil),              // 12: admin.v1.ListTagsReply
+	(*CreateTagReq)(nil),               // 13: admin.v1.CreateTagReq
+	(*UpdateTagReq)(nil),               // 14: admin.v1.UpdateTagReq
+	(*DeleteTagReq)(nil),               // 15: admin.v1.DeleteTagReq
+	(*EmptyReply)(nil),                 // 16: admin.v1.EmptyReply
+	(*TranslateBookReq)(nil),           // 17: admin.v1.TranslateBookReq
+	(*TranslateBookReply)(nil),         // 18: admin.v1.TranslateBookReply
+	(*TranslateBookChaptersReq)(nil),   // 19: admin.v1.TranslateBookChaptersReq
+	(*TranslateBookChaptersReply)(nil), // 20: admin.v1.TranslateBookChaptersReply
+	(*ListAuditLogsReq)(nil),           // 21: admin.v1.ListAuditLogsReq
+	(*AuditLogReply)(nil),              // 22: admin.v1.AuditLogReply
+	(*ListAuditLogsReply)(nil),         // 23: admin.v1.ListAuditLogsReply
 }
 var file_admin_v1_admin_proto_depIdxs = []int32{
 	2,  // 0: admin.v1.GetStatsReply.hot_books:type_name -> admin.v1.HotBook
 	3,  // 1: admin.v1.GetStatsReply.hot_keywords:type_name -> admin.v1.HotKeyword
 	4,  // 2: admin.v1.ListCategoriesReply.list:type_name -> admin.v1.CategoryReply
 	10, // 3: admin.v1.ListTagsReply.list:type_name -> admin.v1.TagReply
-	18, // 4: admin.v1.ListAuditLogsReply.list:type_name -> admin.v1.AuditLogReply
+	22, // 4: admin.v1.ListAuditLogsReply.list:type_name -> admin.v1.AuditLogReply
 	0,  // 5: admin.v1.Admin.GetStats:input_type -> admin.v1.GetStatsReq
-	17, // 6: admin.v1.Admin.ListAuditLogs:input_type -> admin.v1.ListAuditLogsReq
+	21, // 6: admin.v1.Admin.ListAuditLogs:input_type -> admin.v1.ListAuditLogsReq
 	5,  // 7: admin.v1.Admin.ListCategories:input_type -> admin.v1.ListCategoriesReq
 	7,  // 8: admin.v1.Admin.CreateCategory:input_type -> admin.v1.CreateCategoryReq
 	8,  // 9: admin.v1.Admin.UpdateCategory:input_type -> admin.v1.UpdateCategoryReq
@@ -1404,18 +1684,22 @@ var file_admin_v1_admin_proto_depIdxs = []int32{
 	13, // 12: admin.v1.Admin.CreateTag:input_type -> admin.v1.CreateTagReq
 	14, // 13: admin.v1.Admin.UpdateTag:input_type -> admin.v1.UpdateTagReq
 	15, // 14: admin.v1.Admin.DeleteTag:input_type -> admin.v1.DeleteTagReq
-	1,  // 15: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
-	19, // 16: admin.v1.Admin.ListAuditLogs:output_type -> admin.v1.ListAuditLogsReply
-	6,  // 17: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
-	4,  // 18: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
-	4,  // 19: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
-	16, // 20: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
-	12, // 21: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
-	10, // 22: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
-	10, // 23: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
-	16, // 24: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
-	15, // [15:25] is the sub-list for method output_type
-	5,  // [5:15] is the sub-list for method input_type
+	17, // 15: admin.v1.Admin.TranslateBook:input_type -> admin.v1.TranslateBookReq
+	19, // 16: admin.v1.Admin.TranslateBookChapters:input_type -> admin.v1.TranslateBookChaptersReq
+	1,  // 17: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
+	23, // 18: admin.v1.Admin.ListAuditLogs:output_type -> admin.v1.ListAuditLogsReply
+	6,  // 19: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
+	4,  // 20: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
+	4,  // 21: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
+	16, // 22: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
+	12, // 23: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
+	10, // 24: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
+	10, // 25: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
+	16, // 26: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
+	18, // 27: admin.v1.Admin.TranslateBook:output_type -> admin.v1.TranslateBookReply
+	20, // 28: admin.v1.Admin.TranslateBookChapters:output_type -> admin.v1.TranslateBookChaptersReply
+	17, // [17:29] is the sub-list for method output_type
+	5,  // [5:17] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
 	5,  // [5:5] is the sub-list for extension extendee
 	0,  // [0:5] is the sub-list for field type_name
@@ -1434,7 +1718,7 @@ func file_admin_v1_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_v1_admin_proto_rawDesc), len(file_admin_v1_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   20,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

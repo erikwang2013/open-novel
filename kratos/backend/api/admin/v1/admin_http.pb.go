@@ -27,6 +27,8 @@ const OperationAdminGetStats = "/admin.v1.Admin/GetStats"
 const OperationAdminListAuditLogs = "/admin.v1.Admin/ListAuditLogs"
 const OperationAdminListCategories = "/admin.v1.Admin/ListCategories"
 const OperationAdminListTags = "/admin.v1.Admin/ListTags"
+const OperationAdminTranslateBook = "/admin.v1.Admin/TranslateBook"
+const OperationAdminTranslateBookChapters = "/admin.v1.Admin/TranslateBookChapters"
 const OperationAdminUpdateCategory = "/admin.v1.Admin/UpdateCategory"
 const OperationAdminUpdateTag = "/admin.v1.Admin/UpdateTag"
 
@@ -44,6 +46,10 @@ type AdminHTTPServer interface {
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesReply, error)
 	// ListTags 标签列表（requireAdmin）
 	ListTags(context.Context, *ListTagsReq) (*ListTagsReply, error)
+	// TranslateBook 翻译书籍标题与简介到指定语言（requireAdmin；源文本取书籍原始语言，DeepL）
+	TranslateBook(context.Context, *TranslateBookReq) (*TranslateBookReply, error)
+	// TranslateBookChapters 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
+	TranslateBookChapters(context.Context, *TranslateBookChaptersReq) (*TranslateBookChaptersReply, error)
 	// UpdateCategory 更新分类；字段可选，仅更新非空项
 	UpdateCategory(context.Context, *UpdateCategoryReq) (*CategoryReply, error)
 	UpdateTag(context.Context, *UpdateTagReq) (*TagReply, error)
@@ -61,6 +67,8 @@ func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r.POST("/api/tags", _Admin_CreateTag0_HTTP_Handler(srv))
 	r.PUT("/api/tags/{id}", _Admin_UpdateTag0_HTTP_Handler(srv))
 	r.DELETE("/api/tags/{id}", _Admin_DeleteTag0_HTTP_Handler(srv))
+	r.POST("/api/admin/translate/book/{book_id}", _Admin_TranslateBook0_HTTP_Handler(srv))
+	r.POST("/api/admin/translate/book/{book_id}/chapters", _Admin_TranslateBookChapters0_HTTP_Handler(srv))
 }
 
 func _Admin_GetStats0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
@@ -277,6 +285,56 @@ func _Admin_DeleteTag0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) 
 	}
 }
 
+func _Admin_TranslateBook0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in TranslateBookReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminTranslateBook)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TranslateBook(ctx, req.(*TranslateBookReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*TranslateBookReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_TranslateBookChapters0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in TranslateBookChaptersReq
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminTranslateBookChapters)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TranslateBookChapters(ctx, req.(*TranslateBookChaptersReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*TranslateBookChaptersReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AdminHTTPClient interface {
 	CreateCategory(ctx context.Context, req *CreateCategoryReq, opts ...http.CallOption) (rsp *CategoryReply, err error)
 	CreateTag(ctx context.Context, req *CreateTagReq, opts ...http.CallOption) (rsp *TagReply, err error)
@@ -291,6 +349,10 @@ type AdminHTTPClient interface {
 	ListCategories(ctx context.Context, req *ListCategoriesReq, opts ...http.CallOption) (rsp *ListCategoriesReply, err error)
 	// ListTags 标签列表（requireAdmin）
 	ListTags(ctx context.Context, req *ListTagsReq, opts ...http.CallOption) (rsp *ListTagsReply, err error)
+	// TranslateBook 翻译书籍标题与简介到指定语言（requireAdmin；源文本取书籍原始语言，DeepL）
+	TranslateBook(ctx context.Context, req *TranslateBookReq, opts ...http.CallOption) (rsp *TranslateBookReply, err error)
+	// TranslateBookChapters 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
+	TranslateBookChapters(ctx context.Context, req *TranslateBookChaptersReq, opts ...http.CallOption) (rsp *TranslateBookChaptersReply, err error)
 	// UpdateCategory 更新分类；字段可选，仅更新非空项
 	UpdateCategory(ctx context.Context, req *UpdateCategoryReq, opts ...http.CallOption) (rsp *CategoryReply, err error)
 	UpdateTag(ctx context.Context, req *UpdateTagReq, opts ...http.CallOption) (rsp *TagReply, err error)
@@ -407,6 +469,34 @@ func (c *AdminHTTPClientImpl) ListTags(ctx context.Context, in *ListTagsReq, opt
 	opts = append(opts, http.Operation(OperationAdminListTags))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// TranslateBook 翻译书籍标题与简介到指定语言（requireAdmin；源文本取书籍原始语言，DeepL）
+func (c *AdminHTTPClientImpl) TranslateBook(ctx context.Context, in *TranslateBookReq, opts ...http.CallOption) (*TranslateBookReply, error) {
+	var out TranslateBookReply
+	pattern := "/api/admin/translate/book/{book_id}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAdminTranslateBook))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// TranslateBookChapters 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
+func (c *AdminHTTPClientImpl) TranslateBookChapters(ctx context.Context, in *TranslateBookChaptersReq, opts ...http.CallOption) (*TranslateBookChaptersReply, error) {
+	var out TranslateBookChaptersReply
+	pattern := "/api/admin/translate/book/{book_id}/chapters"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAdminTranslateBookChapters))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

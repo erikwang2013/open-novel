@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+// 阅读行为分析服务：逐章阅读事件聚合（requireAdmin）
+// REST 映射 GET /api/stats/behavior
+package behavior.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/behavior/v1;v1";
+
+service Behavior {
+  // 行为统计：热门阅读书籍 / 活跃读者 / 24 小时分布
+  rpc GetBehaviorStats(GetBehaviorStatsReq) returns (GetBehaviorStatsReply) {
+    option (google.api.http) = {
+      get: "/api/stats/behavior"
+    };
+  }
+}
+
+message GetBehaviorStatsReq {
+  string lang = 1; // 书名语言，缺省 zh-CN
+}
+
+message GetBehaviorStatsReply {
+  int64 active_readers = 1; // 当日 DISTINCT 阅读用户数
+  int64 readers_7d = 2; // 近 7 天 DISTINCT 阅读用户数
+  repeated HotReadingBook hot_books = 3; // 近 7 天热门阅读书籍 TOP10
+  repeated int64 hourly_distribution = 4; // 当日 0-23 时阅读事件数，长度恒 24
+}
+
+message HotReadingBook {
+  int64 book_id = 1;
+  string title = 2; // 按 lang 本地化的书名（无翻译回退主书名）
+  int64 count = 3; // 阅读事件数
+}

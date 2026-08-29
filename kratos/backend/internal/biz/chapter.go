@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
 	gormdb "gorm.io/plugin/dbresolver"
 
@@ -170,9 +171,12 @@ func (uc *ChapterUsecase) GetProgress(ctx context.Context, uid int64, bookID uin
 	return &pr, nil
 }
 
-func (uc *ChapterUsecase) UpdateProgress(ctx context.Context, uid int64, bookID uint64, chapterID uint64, position uint32) (*data.ReadingProgress, error) {
+func (uc *ChapterUsecase) UpdateProgress(ctx context.Context, uid int64, bookID uint64, chapterID uint64, position uint32, lang string) (*data.ReadingProgress, error) {
 	if bookID == 0 || chapterID == 0 {
 		return nil, pkg.ErrInvalidArgument
+	}
+	if lang == "" {
+		lang = "zh-CN"
 	}
 	pr := data.ReadingProgress{UserID: uint64(uid), BookID: bookID, ChapterID: chapterID, Position: position}
 	// FORCE_MASTER: 写完进度后立刻可读，避免主从延迟
@@ -186,6 +190,13 @@ func (uc *ChapterUsecase) UpdateProgress(ctx context.Context, uid int64, bookID 
 	})
 	if err != nil {
 		return nil, pkg.ErrChapterDB
+	}
+	// 阅读事件日志：尽力而为，Insert 失败仅记日志不阻塞进度保存。
+	// ponytail: 不建队列/异步，量级与 search_log 同级可接受；若写入延迟成为瓶颈再引入批量。
+	if e := uc.db.Clauses(gormdb.Write).WithContext(ctx).Create(&data.ReadingLog{
+		UserID: uint64(uid), BookID: bookID, ChapterID: chapterID, Lang: lang, Position: position,
+	}).Error; e != nil {
+		cdnLog.Log(log.LevelWarn, "msg", "write reading log failed", "err", e.Error())
 	}
 	return &pr, nil
 }

@@ -8,6 +8,8 @@
 
 > 基于 **Go-Kratos** 微服务架构 + **Flutter / HarmonyOS** 多端前端的全球多语言小说阅读平台，支持 **12+ 种主要语种**，面向全球用户提供阅读、互动、搜索与个性化推荐能力。
 
+<div align="center"><img src="docs/mascot.svg" alt="Open Novel 吉祥物 Novi" width="150"/></div>
+
 ---
 
 ## 项目简介
@@ -29,7 +31,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **书籍内容**：书籍元数据、章节管理、分类标签、连载更新、多语言翻译
 - **互动社区**：评论书评、点赞、收藏、举报审核
 - **搜索发现**：多语言分词搜索、热搜词榜（/api/search/hot-keywords）、搜索建议（/api/search/suggest，本地历史 20 条可清空 + 200ms 防抖）、热门榜单、AI 推荐、分类浏览
-- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）、审计日志查询（/api/admin/audit-logs）
+- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单 / 行为分析 /api/stats/behavior）、配置管理（分类标签）、机器翻译工作流（DeepL，/api/admin/translate/*，管理端「翻译」页 + 人工编辑）、审计日志查询（/api/admin/audit-logs）
 - **支付与会员**：11 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN) / WeChat Pay Global(国际版) / UnionPay(zh-CN)）、VIP 套餐订阅与续期、支付方式多语言路由
 
 ## 系统架构

@@ -212,6 +212,19 @@ type RecommendLog struct {
 
 func (RecommendLog) TableName() string { return "novel_recommend_log" }
 
+// ReadingLog 阅读事件日志：客户端保存进度时顺带记录，行为分析数据源。
+type ReadingLog struct {
+	ID        uint64    `gorm:"primaryKey;column:id"`
+	UserID    uint64    `gorm:"column:user_id"`
+	BookID    uint64    `gorm:"column:book_id"`
+	ChapterID uint64    `gorm:"column:chapter_id"`
+	Lang      string    `gorm:"column:lang"`
+	Position  uint32    `gorm:"column:position"`
+	CreatedAt time.Time `gorm:"column:created_at"`
+}
+
+func (ReadingLog) TableName() string { return "novel_reading_log" }
+
 // 支付相关模型（T-P-01/08）。
 
 type PaymentProvider struct {

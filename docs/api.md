@@ -104,6 +104,18 @@
 | PUT | `/api/tags/{id}` | 更新标签（`name`/`lang`/`status`） | Bearer（管理） |
 | DELETE | `/api/tags/{id}` | 删除标签 | Bearer（管理） |
 
+## 翻译与行为分析（2026-08-29 新增）
+
+仅管理员（role=3）可用；越权返回 `180401`。
+
+| 方法 | 路径 | 说明 | 鉴权 |
+| :--- | :--- | :--- | :--- |
+| POST | `/api/admin/translate/book/{book_id}` | 机器翻译标题+简介到 `{lang}`（DeepL，源取书籍原始语言）→ `{book_id, lang, title, summary}` | Bearer（管理） |
+| POST | `/api/admin/translate/book/{book_id}/chapters` | 机器翻译全部章节正文到 `{lang}`（串行，单章失败不中断）→ `{total, succeeded, failed, failed_chapters}` | Bearer（管理） |
+| GET | `/api/stats/behavior` | 阅读行为统计 `{active_readers, readers_7d, hot_books:[{book_id,title,count}], hourly_distribution[24]}`（当日/7 天阅读用户、热门书籍 TOP10、24 小时分布；UTC+8） | Bearer（管理） |
+
+错误码：`180404 TRANSLATE_FAILED`（DeepL 调用失败或语言不支持如 bn）、`180405 TRANSLATE_NOT_CONFIGURED`（env `TRANSLATE_API_KEY` 未配置）。
+
 ## 搜索与推荐
 
 | 方法 | 路径 | 说明 | 鉴权 |

@@ -284,6 +284,35 @@ class AuditLog {
         createdAt = asStr(j['createdAt']);
 }
 
+/// 阅读行为统计（GET /api/stats/behavior）。
+class BehaviorStats {
+  final int activeReaders; // 当日阅读用户数
+  final int readers7d; // 近 7 天阅读用户数
+  final List<HotReadingBook> hotBooks; // 近 7 天热门阅读书籍 TOP10
+  final List<int> hourly; // 当日 0-23 时阅读事件数，长度 24
+
+  BehaviorStats.fromJson(Map<String, dynamic> j)
+      : activeReaders = asInt(j['activeReaders']),
+        readers7d = asInt(j['readers7d']),
+        hotBooks = ((j['hotBooks'] ?? []) as List)
+            .map((e) => HotReadingBook.fromJson((e as Map).cast<String, dynamic>()))
+            .toList(),
+        hourly = ((j['hourlyDistribution'] ?? []) as List)
+            .map((e) => asInt(e))
+            .toList();
+}
+
+class HotReadingBook {
+  final String bookId;
+  final String title;
+  final int count;
+
+  HotReadingBook.fromJson(Map<String, dynamic> j)
+      : bookId = asStr(j['bookId']),
+        title = asStr(j['title']),
+        count = asInt(j['count']);
+}
+
 /// 评论（CommentReply）。status: 1 正常 0 下架 2 举报待审。
 class Comment {
   final String id;

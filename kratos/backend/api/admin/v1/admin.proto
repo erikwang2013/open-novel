@@ -69,6 +69,20 @@ service Admin {
       delete: "/api/tags/{id}"
     };
   }
+  // 翻译书籍标题与简介到指定语言（requireAdmin；源文本取书籍原始语言，DeepL）
+  rpc TranslateBook(TranslateBookReq) returns (TranslateBookReply) {
+    option (google.api.http) = {
+      post: "/api/admin/translate/book/{book_id}"
+      body: "*"
+    };
+  }
+  // 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
+  rpc TranslateBookChapters(TranslateBookChaptersReq) returns (TranslateBookChaptersReply) {
+    option (google.api.http) = {
+      post: "/api/admin/translate/book/{book_id}/chapters"
+      body: "*"
+    };
+  }
 }
 
 message GetStatsReq {}
@@ -157,6 +171,32 @@ message DeleteTagReq {
 }
 
 message EmptyReply {}
+
+message TranslateBookReq {
+  int64 book_id = 1;
+  string lang = 2; // 目标语言（zh-CN/en/ja/ko/fr/de/es/ru/pt/hi/ar/id；bn 不支持）
+}
+
+message TranslateBookReply {
+  int64 book_id = 1;
+  string lang = 2;
+  string title = 3;   // 翻译后的标题
+  string summary = 4; // 翻译后的简介
+}
+
+message TranslateBookChaptersReq {
+  int64 book_id = 1;
+  string lang = 2;
+}
+
+message TranslateBookChaptersReply {
+  int64 book_id = 1;
+  string lang = 2;
+  int32 total = 3;
+  int32 succeeded = 4;
+  int32 failed = 5;
+  repeated int32 failed_chapters = 6; // 失败章节号（chapter_no）
+}
 
 message ListAuditLogsReq {
   int64 page = 1;

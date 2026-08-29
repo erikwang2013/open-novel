@@ -22,6 +22,7 @@ import (
 	searchv1 "open-novel/backend/api/search/v1"
 	userv1 "open-novel/backend/api/user/v1"
 	adminv1 "open-novel/backend/api/admin/v1"
+	behaviorv1 "open-novel/backend/api/behavior/v1"
 	"open-novel/backend/internal/conf"
 	"open-novel/backend/internal/middleware"
 	"open-novel/backend/internal/pkg"
@@ -40,7 +41,7 @@ var rateLimits = map[string]int{
 func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
-	pay *service.PaymentService, admin *service.AdminService,
+	pay *service.PaymentService, admin *service.AdminService, behavior *service.BehaviorService,
 ) *khttp.Server {
 	opts := []khttp.ServerOption{
 		khttp.Middleware(
@@ -65,13 +66,14 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	recommendationv1.RegisterRecommendationHTTPServer(srv, rec)
 	paymentv1.RegisterPaymentHTTPServer(srv, pay)
 	adminv1.RegisterAdminHTTPServer(srv, admin)
+	behaviorv1.RegisterBehaviorHTTPServer(srv, behavior)
 	return srv
 }
 
 func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
-	pay *service.PaymentService, admin *service.AdminService,
+	pay *service.PaymentService, admin *service.AdminService, behavior *service.BehaviorService,
 ) *grpc.Server {
 	opts := []grpc.ServerOption{
 		grpc.Middleware(
@@ -92,6 +94,7 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	recommendationv1.RegisterRecommendationServer(srv, rec)
 	paymentv1.RegisterPaymentServer(srv, pay)
 	adminv1.RegisterAdminServer(srv, admin)
+	behaviorv1.RegisterBehaviorServer(srv, behavior)
 	return srv
 }
 

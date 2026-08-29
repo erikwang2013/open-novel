@@ -6,6 +6,7 @@ package biz
 import (
 	"context"
 	"errors"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -20,11 +21,16 @@ import (
 
 type AdminUsecase struct {
 	db     *gorm.DB
+	cache  *data.Cache
 	search *SearchUsecase
+	tr     *Translator // DeepL 翻译客户端（env TRANSLATE_API_KEY）
 }
 
 func NewAdminUsecase(d *data.Data, search *SearchUsecase) *AdminUsecase {
-	return &AdminUsecase{db: d.DB, search: search}
+	return &AdminUsecase{
+		db: d.DB, cache: d.Cache, search: search,
+		tr: NewTranslator(os.Getenv("TRANSLATE_BASE_URL"), os.Getenv("TRANSLATE_API_KEY")),
+	}
 }
 
 // Stats 仪表盘统计。

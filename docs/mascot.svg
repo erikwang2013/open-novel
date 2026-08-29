@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title desc">
+  <title id="title">Novi — Open Novel 项目吉祥物</title>
+  <desc id="desc">一只戴眼镜的猫头鹰坐在翻开的书上，头顶三颗语言气泡（文 / A / あ），象征全球多语言小说平台。</desc>
+
+  <!-- 背景 -->
+  <circle cx="256" cy="256" r="240" fill="#FDF3E3"/>
+
+  <!-- 语言气泡 -->
+  <g font-family="'Noto Sans','PingFang SC','Microsoft YaHei',sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="central">
+    <circle cx="132" cy="74" r="30" fill="#E8F1FA"/>
+    <text x="132" y="74" font-size="26" fill="#2E4057">文</text>
+    <circle cx="256" cy="50" r="33" fill="#FBEED7"/>
+    <text x="256" y="50" font-size="28" fill="#2E4057">A</text>
+    <circle cx="380" cy="74" r="30" fill="#F7E7EA"/>
+    <text x="380" y="74" font-size="26" fill="#2E4057">あ</text>
+  </g>
+
+  <!-- 耳羽 -->
+  <path d="M184 132 L168 82 L226 118 Z" fill="#E8923F"/>
+  <path d="M328 132 L344 82 L286 118 Z" fill="#E8923F"/>
+
+  <!-- 头 -->
+  <ellipse cx="256" cy="188" rx="90" ry="82" fill="#F0A04B"/>
+  <!-- 脸部浅色 -->
+  <ellipse cx="256" cy="206" rx="64" ry="56" fill="#FBDCA8"/>
+
+  <!-- 眼睛 -->
+  <circle cx="218" cy="184" r="27" fill="#FFFFFF" stroke="#2E4057" stroke-width="3"/>
+  <circle cx="294" cy="184" r="27" fill="#FFFFFF" stroke="#2E4057" stroke-width="3"/>
+  <circle cx="218" cy="184" r="11" fill="#2E4057"/>
+  <circle cx="294" cy="184" r="11" fill="#2E4057"/>
+  <circle cx="214" cy="180" r="3.5" fill="#FFFFFF"/>
+  <circle cx="290" cy="180" r="3.5" fill="#FFFFFF"/>
+
+  <!-- 眼镜 -->
+  <circle cx="218" cy="184" r="33" fill="none" stroke="#2E4057" stroke-width="7"/>
+  <circle cx="294" cy="184" r="33" fill="none" stroke="#2E4057" stroke-width="7"/>
+  <path d="M251 184 L261 184" stroke="#2E4057" stroke-width="7" stroke-linecap="round"/>
+  <path d="M185 180 L158 171" stroke="#2E4057" stroke-width="7" stroke-linecap="round"/>
+  <path d="M327 180 L354 171" stroke="#2E4057" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- 喙 -->
+  <path d="M256 200 L243 222 Q256 230 269 222 Z" fill="#E2725B"/>
+
+  <!-- 身体 -->
+  <ellipse cx="256" cy="302" rx="78" ry="86" fill="#F0A04B"/>
+  <!-- 翅膀 -->
+  <ellipse cx="174" cy="300" rx="22" ry="48" transform="rotate(-20 174 300)" fill="#D98A35"/>
+  <ellipse cx="338" cy="300" rx="22" ry="48" transform="rotate(20 338 300)" fill="#D98A35"/>
+  <!-- 肚皮 -->
+  <ellipse cx="256" cy="316" rx="50" ry="58" fill="#FDF0D5"/>
+
+  <!-- 脚 -->
+  <ellipse cx="230" cy="394" rx="14" ry="9" fill="#E2725B"/>
+  <ellipse cx="282" cy="394" rx="14" ry="9" fill="#E2725B"/>
+
+  <!-- 翻开书 -->
+  <path d="M106 476 Q 158 442 234 458 L 234 506 Q 160 488 106 504 Z" fill="#2E4057"/>
+  <path d="M406 476 Q 354 442 278 458 L 278 506 Q 352 488 406 504 Z" fill="#2E4057"/>
+  <path d="M118 468 Q 156 434 232 450 L 232 500 Q 160 482 118 500 Z" fill="#FFFFFF"/>
+  <path d="M394 468 Q 356 434 280 450 L 280 500 Q 352 482 394 500 Z" fill="#FFFFFF"/>
+  <path d="M256 456 Q 252 480 256 500" stroke="#C9B8A0" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- 水印 -->
+  <text x="506" y="506" text-anchor="end" font-size="14" font-family="sans-serif" fill="#8A93A3" opacity="0.75">https://erik.xyz</text>
+</svg>

@@ -23,31 +23,31 @@ var (
 	ErrTooMany         = Biz(140429, "TOO_MANY_REQUESTS", "too many requests")
 
 	// User（11xxxx）
-	ErrUserArg     = Biz(110400, "INVALID_ARGUMENT", "invalid argument")
-	ErrCred        = Biz(110401, "BAD_CREDENTIALS", "incorrect username or password")
-	ErrToken       = Biz(110401, "TOKEN_INVALID", "refresh token invalid or expired")
-	ErrClosed      = Biz(110403, "ACCOUNT_DISABLED", "account disabled")
-	ErrUserExists  = Biz(110409, "ACCOUNT_EXISTS", "username or email already exists")
+	ErrUserArg      = Biz(110400, "INVALID_ARGUMENT", "invalid argument")
+	ErrCred         = Biz(110401, "BAD_CREDENTIALS", "incorrect username or password")
+	ErrToken        = Biz(110401, "TOKEN_INVALID", "refresh token invalid or expired")
+	ErrClosed       = Biz(110403, "ACCOUNT_DISABLED", "account disabled")
+	ErrUserExists   = Biz(110409, "ACCOUNT_EXISTS", "username or email already exists")
 	ErrUserInternal = Biz(110500, "INTERNAL", "internal error")
 
 	// Book（12xxxx）
-	ErrBookArg   = Biz(120400, "INVALID_ARGUMENT", "invalid argument")
-	ErrBookNF    = Biz(120404, "BOOK_NOT_FOUND", "book not found")
+	ErrBookArg      = Biz(120400, "INVALID_ARGUMENT", "invalid argument")
+	ErrBookNF       = Biz(120404, "BOOK_NOT_FOUND", "book not found")
 	ErrBookInternal = Biz(120500, "INTERNAL", "internal error")
 
 	// Chapter（14xxxx）
-	ErrChapterCflt   = Biz(140409, "CHAPTER_CONFLICT", "chapter conflict")
-	ErrChapterDB     = Biz(140500, "DB_ERROR", "db error")
-	ErrChapterNF     = Biz(140404, "CHAPTER_NOT_FOUND", "chapter not found")
-	ErrChapterContent = Biz(140404, "CONTENT_NOT_FOUND", "chapter content not found")
+	ErrChapterCflt     = Biz(140409, "CHAPTER_CONFLICT", "chapter conflict")
+	ErrChapterDB       = Biz(140500, "DB_ERROR", "db error")
+	ErrChapterNF       = Biz(140404, "CHAPTER_NOT_FOUND", "chapter not found")
+	ErrChapterContent  = Biz(140404, "CONTENT_NOT_FOUND", "chapter content not found")
 	ErrChapterDisabled = Biz(140403, "CHAPTER_DISABLED", "chapter disabled")
-	ErrNoProgress    = Biz(140404, "NO_PROGRESS", "no progress yet")
+	ErrNoProgress      = Biz(140404, "NO_PROGRESS", "no progress yet")
 
 	// Comment（15xxxx）
-	ErrCommentArg   = Biz(150400, "INVALID_ARGUMENT", "invalid argument")
-	ErrCommentNF    = Biz(150404, "COMMENT_NOT_FOUND", "comment not found")
-	ErrCommentCflt  = Biz(150409, "ALREADY_LIKED_OR_FAVORITED", "already liked or favorited")
-	ErrCommentDB    = Biz(150500, "DB_ERROR", "db error")
+	ErrCommentArg  = Biz(150400, "INVALID_ARGUMENT", "invalid argument")
+	ErrCommentNF   = Biz(150404, "COMMENT_NOT_FOUND", "comment not found")
+	ErrCommentCflt = Biz(150409, "ALREADY_LIKED_OR_FAVORITED", "already liked or favorited")
+	ErrCommentDB   = Biz(150500, "DB_ERROR", "db error")
 
 	// Search（16xxxx）
 	ErrSearchArg = Biz(160400, "INVALID_ARGUMENT", "invalid argument")
@@ -58,10 +58,12 @@ var (
 	ErrRecommend    = Biz(170500, "RECOMMEND_FAILED", "recommend failed")
 
 	// Admin（18xxxx）
-	ErrAdmin    = Biz(180401, "NO_PERMISSION", "admin permission required")
-	ErrTargetNF = Biz(180402, "TARGET_NOT_FOUND", "target not found")
-	ErrBadState = Biz(180403, "INVALID_STATE", "invalid state transition")
-	ErrAdminDB  = Biz(180500, "INTERNAL", "internal error")
+	ErrAdmin           = Biz(180401, "NO_PERMISSION", "admin permission required")
+	ErrTargetNF        = Biz(180402, "TARGET_NOT_FOUND", "target not found")
+	ErrBadState        = Biz(180403, "INVALID_STATE", "invalid state transition")
+	ErrTranslateFailed = Biz(180404, "TRANSLATE_FAILED", "translate failed")
+	ErrTranslateNotCfg = Biz(180405, "TRANSLATE_NOT_CONFIGURED", "translate api key not configured (env TRANSLATE_API_KEY)")
+	ErrAdminDB         = Biz(180500, "INTERNAL", "internal error")
 
 	// Payment（19xxxx）
 	ErrPayCreate  = Biz(190401, "PAYMENT_CREATE_FAILED", "payment creation failed")
