@@ -237,12 +237,10 @@ func (uc *ChapterUsecase) SetChapterStatus(ctx context.Context, adminID int64, i
 		return pkg.ErrChapterNF
 	}
 	uc.cache.DelPattern(ctx, fmt.Sprintf("chapter:list:%d:*", ch.BookID))
-	// CDN 失效：状态变更影响所有语言版本，逐 lang purge（未启用或未配端点时为空操作）
+	// CDN 失效：状态变更影响所有语言版本，收集 langs 单次多 key 广播（§4.1 合批）
 	var langs []string
 	uc.db.WithContext(ctx).Model(&data.ChapterContent{}).Where("chapter_id = ?", id).Distinct().Pluck("lang", &langs)
-	for _, l := range langs {
-		PurgeChapterAsync(id, l)
-	}
+	PurgeChaptersAsync(id, langs)
 	data.WriteAudit(uc.db, ctx, adminID, "chapter_status", "chapter", strconv.FormatUint(id, 10), fmt.Sprintf("status=%d", status))
 	return nil
 }
