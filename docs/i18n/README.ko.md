@@ -30,7 +30,7 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 - **소통 커뮤니티**: 댓글·서평, 좋아요, 즐겨찾기, 신고·검수
 - **검색 및 발견**: 다국어 형태소 분석 검색, 인기 키워드 랭킹, 검색 제안(클라이언트 로컬 히스토리 20개 + 200ms 디바운스 제안), AI 추천, 카테고리 탐색
 - **관리 백엔드**: 콘텐츠 검수, 사용자 관리, 데이터 통계, 설정 관리, 감사 로그 조회 페이지(페이징 + 다중 조건 필터)
-- **결제 및 VIP**: 9개 결제 프로바이더(Stripe, NOWPayments(USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay) 다중 채널 결제, VIP 플랜 구독 및 갱신, 언어별 결제 수단 라우팅(WeChat Pay 미연동, 가맹점 자격 필요)
+- **결제 및 VIP**: 10개 결제 프로바이더(Stripe, NOWPayments(USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global) 다중 채널 결제, VIP 플랜 구독 및 갱신, 언어별 결제 수단 라우팅(WeChat Pay Global 연동, 국내 WeChat Pay 미연동, 중국 가맹점 자격 필요)
 
 ## 시스템 아키텍처
 

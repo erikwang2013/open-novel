@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="830" viewBox="0 0 1000 830" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
 
   <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — Diagrama de funcionalidades</text>
   <text x="44" y="54" font-size="12" fill="#78909c">Feature Modules</text>
@@ -12,6 +12,7 @@
     <line x1="610" y1="345" x2="706" y2="166"/>
     <line x1="610" y1="345" x2="706" y2="342"/>
     <line x1="610" y1="345" x2="706" y2="518"/>
+    <polyline points="390,395 334,560 334,628 169,628"/>
   </g>
 
   <!-- Cartao central -->
@@ -92,6 +93,15 @@
     <text x="831" y="570" font-size="11" fill="#546e7a" text-anchor="middle">Estatísticas de dados / Logs de auditoria</text>
   </g>
 
-  <text x="500" y="700" font-size="12" fill="#78909c" text-anchor="middle">Fluxo de leitura: Descobrir → Ler → Interagir → Sincronizar · i18n em toda a cadeia</text>
-  <text x="988" y="708" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+  <!-- Central de Pagamentos -->
+  <g>
+    <rect x="44" y="628" width="250" height="132" rx="8" fill="#ffffff" stroke="#e53935" stroke-width="2"/>
+    <rect x="149" y="642" width="40" height="4" rx="2" fill="#e53935"/>
+    <text x="169" y="656" font-size="13" font-weight="700" fill="#e53935" text-anchor="middle">Central de Pagamentos</text>
+    <text x="169" y="678" font-size="11" fill="#546e7a" text-anchor="middle">Stripe / PayPal / Alipay · 10 canais</text>
+    <text x="169" y="695" font-size="11" fill="#546e7a" text-anchor="middle">NOWPayments · USDT · 5 canais locais</text>
+  </g>
+
+  <text x="500" y="810" font-size="12" fill="#78909c" text-anchor="middle">Fluxo de leitura: Descobrir → Ler → Interagir → Sincronizar · i18n em toda a cadeia</text>
+  <text x="988" y="818" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

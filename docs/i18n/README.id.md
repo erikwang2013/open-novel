@@ -30,7 +30,7 @@ Open Novel adalah platform novel multibahasa global dengan arsitektur mikroservi
 - **Komunitas interaktif**: komentar dan ulasan, suka, favorit, pelaporan dan moderasi
 - **Pencarian dan penemuan**: pencarian dengan segmentasi multibahasa, peringkat kata kunci populer, saran pencarian (riwayat lokal klien 20 entri + saran dengan debounce 200 ms), rekomendasi AI, penjelajahan kategori
 - **Panel admin**: moderasi konten, manajemen pengguna, statistik data, manajemen konfigurasi, halaman kueri log audit (paginasi + filter multikondisi)
-- **Pembayaran & VIP**: pembayaran multi-channel melalui 9 penyedia (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay), langganan dan perpanjangan paket VIP, perutean metode pembayaran berdasarkan bahasa (WeChat Pay belum terintegrasi, memerlukan kualifikasi merchant)
+- **Pembayaran & VIP**: pembayaran multi-channel melalui 10 penyedia (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global), langganan dan perpanjangan paket VIP, perutean metode pembayaran berdasarkan bahasa (WeChat Pay Global terintegrasi; WeChat Pay domestik belum terintegrasi, memerlukan kualifikasi merchant Tiongkok)
 
 ## Arsitektur sistem
 
