@@ -31,7 +31,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 - **Interactive Community**: Comments and reviews, likes, favorites, reporting and moderation
 - **Search & Discovery**: Multilingual tokenized search, hot keyword rankings, search suggestions (client-side local history of 20 entries + 200 ms debounced suggestions), AI recommendations, category browsing
 - **Admin Console**: Content moderation, user management, data statistics, configuration management, audit log query page (pagination + multi-condition filtering)
-- **Payments & VIP**: Multi-channel payments via 10 providers (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global), VIP plan subscription and renewal, language-based payment method routing (WeChat Pay Global integrated; domestic WeChat Pay not integrated, requires CN merchant qualification)
+- **Payments & VIP**: Multi-channel payments via 11 providers (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), VIP plan subscription and renewal, language-based payment method routing (WeChat Pay Global integrated; domestic WeChat Pay not integrated, requires CN merchant qualification)
 
 ## System Architecture
 

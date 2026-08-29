@@ -31,7 +31,7 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 - **交流コミュニティ**：コメント・書評、いいね、お気に入り、通報・審査
 - **検索・発見**：多言語形態素解析検索、ホットキーワードランキング、検索サジェスト（クライアント側ローカル履歴 20 件 + 200ms デバウンスのサジェスト）、AI レコメンド、カテゴリ閲覧
 - **管理バックエンド**：コンテンツ審査、ユーザー管理、データ統計、設定管理、監査ログ照会ページ（ページング + 複数条件フィルタリング）
-- **決済とVIP**：10 つの決済プロバイダー（Stripe、NOWPayments（USDT）、Razorpay、KOMOJU、PortOne、Mercado Pago、Xendit、PayPal、Alipay、WeChat Pay Global）による多チャネル決済、VIPプラン購読と更新、言語別の決済手段ルーティング（WeChat Pay Global は接続済み、国内の WeChat Pay は未接続、中国の加盟店資格が必要）
+- **決済とVIP**：11 つの決済プロバイダー（Stripe、NOWPayments（USDT）、Razorpay、KOMOJU、PortOne、Mercado Pago、Xendit、PayPal、Alipay、WeChat Pay Global、UnionPay）による多チャネル決済、VIPプラン購読と更新、言語別の決済手段ルーティング（WeChat Pay Global は接続済み、国内の WeChat Pay は未接続、中国の加盟店資格が必要）
 
 ## システムアーキテクチャ
 

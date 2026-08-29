@@ -30,7 +30,7 @@
 | 评论 | 列表 / 发布 / 点赞 / 取消点赞 / 举报 / 举报列表与处理（管理）/ 收藏 | ✅ |
 | 搜索 | 搜索 / 热搜词榜（/api/search/hot-keywords）/ 搜索建议（/api/search/suggest）/ 索引同步 / 索引删除 | ✅ |
 | 推荐 | recommend（strategy=hot / new） | ✅ |
-| 支付 | 下单 / 查单 / 公开套餐 / VIP 状态 / 方式列表 / Webhook（10 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global）/ 管理端流水·方式·套餐 | ✅ |
+| 支付 | 下单 / 查单 / 公开套餐 / VIP 状态 / 方式列表 / Webhook（11 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global / UnionPay-RSA）/ 管理端流水·方式·套餐 | ✅ |
 | 管理 | 仪表盘统计（GET /api/stats/overview）/ 分类标签 CRUD / 审计日志查询（GET /api/admin/audit-logs，分页 + user_id/action/target_type/target_id/时间范围筛选） | ✅ |
 
 基础设施：JWT + Refresh 轮换（Redis GETDEL 防重放）、可选鉴权中间件 + requireAdmin（RBAC，role=3）、按路径限流（登录 10/min、评论发布 10/min、举报 5/min、搜索 10/min、支付回调 30/min）、业务错误码（11xxxx 用户 / 12xxxx 书籍 / 14xxxx 章节 / 15xxxx 评论 / 16xxxx 搜索 / 17xxxx 推荐 / 18xxxx 管理 / 19xxxx 支付，HTTP 200 + `{code,reason,message}`）、Redis 缓存（5min±30s 抖动 / 空值防穿透 / SETNX 单飞）+ ristretto 进程内 L1 二级缓存（128MB / 30s TTL / 写路径双删）、读写分离（FORCE_MASTER）、OpenSearch 多语言索引（zh/en/ja kuromoji / ko nori）、API 版本协商、支付渠道密钥 AES-GCM 加密存储、回调验签（Stripe / NOWPayments HMAC / Alipay RSA2 / WeChat Pay Global 平台公钥 + AES-GCM 解密）+ 金额强校验 + 幂等 settle。
@@ -146,7 +146,7 @@
 | Admin API 领域 | `api/admin/v1`：统计（/api/stats/overview）、分类/标签 CRUD；admin 错误码段（18xxxx） | ✅ 已完成 |
 | RBAC | requireAdmin（role=3 检查，service 层 helper），替换前端 role==3 硬编码 | ✅ 已完成 |
 | 审计 | 管理操作 / 审核操作 / 用户状态变更写 `novel_audit_log`；查询页 GET /api/admin/audit-logs（分页 + user_id/action/target_type/target_id/时间范围筛选） | ✅ 已完成 |
-| VIP / 支付 | `novel_payment_provider`（config AES-GCM 加密）/ `novel_payment_order` / `novel_vip_order` / `novel_vip_plan` 表 + Provider 抽象（10 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global）+ Webhook 验签 + 幂等 settle + 15min 超时关闭 + VIP 叠加续期；后台控制展示与流水 | ✅ 已完成（T-P-01~21） |
+| VIP / 支付 | `novel_payment_provider`（config AES-GCM 加密）/ `novel_payment_order` / `novel_vip_order` / `novel_vip_plan` 表 + Provider 抽象（11 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global / UnionPay-RSA）+ Webhook 验签 + 幂等 settle + 15min 超时关闭 + VIP 叠加续期；后台控制展示与流水 | ✅ 已完成（T-P-01~22） |
 | AI 推荐 | 基于阅读/搜索行为埋点（`novel_search_log` 已有）的启发式画像推荐（`strategy=ai`，候选 <5 回退 hot）；数据达标后换第三方模型 | ✅ 已实现（2026-08-29，配置门控） |
 | 本地二级缓存 | ristretto 进程内 L1（128MB / 30s TTL / 写路径双删），Redis 之上 | ✅ 已完成 |
 
@@ -161,7 +161,7 @@
 | M3 用户管理 | 1 周 | 管理端用户模块 + admin API + 审计 | ✅ 已完成 |
 | C2 阅读体验 | 1-2 周 | 字号/主题/翻页/离线缓存/进度精确化 | ✅ 已完成 |
 | M4/M5 统计配置 | 1 周 | 仪表盘、分类/标签管理 | ✅ 已完成 |
-| 支付链路 | 2-3 周 | Provider 底座 + 10 渠道（Stripe / NOWPayments-USDT / PayPal / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay / WeChat Pay Global）+ 语言路由 + 后台流水 + 客户端 VIP（T-P-01~21） | ✅ 已完成 |
+| 支付链路 | 2-3 周 | Provider 底座 + 11 渠道（Stripe / NOWPayments-USDT / PayPal / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay / WeChat Pay Global / UnionPay）+ 语言路由 + 后台流水 + 客户端 VIP（T-P-01~22） | ✅ 已完成 |
 | C3 社区发现 | 1 周 | 评论增强、分类 Tab、热搜词榜、搜索建议（T-C-13~15） | ✅ 已完成 |
 | 多端统一 / 收尾 | 1-2 周 | 分页统一、token 持久化、桌面布局（T-C-16~23、T-A-17） | ✅ 已完成 |
 | 二期支付 | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal（T-P-19~20） | ✅ 已完成 |

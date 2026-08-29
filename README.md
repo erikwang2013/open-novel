@@ -30,7 +30,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **互动社区**：评论书评、点赞、收藏、举报审核
 - **搜索发现**：多语言分词搜索、热搜词榜（/api/search/hot-keywords）、搜索建议（/api/search/suggest，本地历史 20 条可清空 + 200ms 防抖）、热门榜单、AI 推荐、分类浏览
 - **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）、审计日志查询（/api/admin/audit-logs）
-- **支付与会员**：10 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN) / WeChat Pay Global(国际版)）、VIP 套餐订阅与续期、支付方式多语言路由
+- **支付与会员**：11 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN) / WeChat Pay Global(国际版) / UnionPay(zh-CN)）、VIP 套餐订阅与续期、支付方式多语言路由
 
 ## 系统架构
 
@@ -145,7 +145,7 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 | Phase 3 | 2 周 | 安全加固（JWT / RBAC / 限流）+ 压力测试 | ✅ 已完成 |
 | Phase 4 | 1-2 周 | 全链路联调 + CDN 加速配置 | ✅ 已完成 |
 | Phase 5 | 持续 | AI 推荐算法接入、用户行为分析埋点 | ⏳ 进行中 |
-| 商业化 | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、多语言与阅读体验、VIP 与支付链（10 渠道，支付宝 / 微信支付国际版 2026-08-29 接入） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~21） |
+| 商业化 | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、多语言与阅读体验、VIP 与支付链（11 渠道，支付宝 / 微信支付国际版 / 银联 2026-08-29 接入） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~22） |
 
 ## 支持与打赏
 

@@ -30,7 +30,7 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 - **Comunidad interactiva**: comentarios y reseñas, me gusta, favoritos, denuncia y moderación
 - **Búsqueda y descubrimiento**: búsqueda con segmentación multilingüe, ranking de palabras clave populares, sugerencias de búsqueda (historial local del cliente de 20 entradas + sugerencias con debounce de 200 ms), recomendaciones con IA, navegación por categorías
 - **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos, gestión de configuración, página de consulta de registros de auditoría (paginación + filtros multicondición)
-- **Pagos y VIP**: pagos multicanal a través de 10 proveedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global), suscripción y renovación de planes VIP, enrutamiento de métodos de pago por idioma (WeChat Pay Global integrado; WeChat Pay nacional no integrado, requiere cualificación de comerciante en China)
+- **Pagos y VIP**: pagos multicanal a través de 11 proveedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), suscripción y renovación de planes VIP, enrutamiento de métodos de pago por idioma (WeChat Pay Global integrado; WeChat Pay nacional no integrado, requiere cualificación de comerciante en China)
 
 ## Arquitectura del sistema
 

@@ -27,6 +27,7 @@
 | 支付 | T-P-18 | 安全与合规（回调验签 / 金额校验 / 幂等 / 审计，随各批内嵌） | 新增需求 | ✅ 已完成 |
 | 支付 | T-P-19~20 | 本地支付补强 / PayPal（二期） | 新增需求 | ✅ 已完成（国内微信支付需 CN 资质除外） |
 | 支付 | T-P-21 | 微信支付国际版 wechatpay_global | 新增需求 | ✅ 已完成（2026-08-29，HK API v3） |
+| 支付 | T-P-22 | 银联在线支付 unionpay | 新增需求 | ✅ 已完成（2026-08-29，UPOP 网关 RSA-SHA256） |
 
 ## 二、管理端链（T-A-01~17）
 
@@ -194,8 +195,9 @@
 | T-P-19 | 本地支付补强（二期） | 按语言：hi→Razorpay、ja→KOMOJU、ko→PortOne、pt-BR→Mercado Pago、id/th/vn→Xendit、zh-CN→支付宝/微信（需 CN 资质） | T-P-03 后逐语言 |
 | T-P-20 | PayPal 接入（备选） | Stripe 未覆盖市场兜底 | T-P-03 |
 | T-P-21 | 微信支付国际版（wechatpay_global） | HK API v3 H5 支付；WECHATPAY2 请求签名 + 平台公钥 RSA-SHA256 验签 + apiv3_key AES-GCM 解密 resource；全球可用不需 CN 资质 | T-P-03 |
+| T-P-22 | 银联在线支付（unionpay） | UPOP 网关支付 5.1（zh-CN）；字典序 RSA-SHA256 签名验签（notify 表单，应答 success）；base_url 沙箱覆盖；需银联商户资质 | T-P-03 |
 
-**调度**：第一批 T-P-01~08（后端支付底座）→ T-P-09~13（管理端）→ T-P-14~17（客户端），2026-08-29 前已全部提交（✅）；T-P-18 随各批内嵌完成；T-P-19/20 二期已实现（✅，razorpay/komoju/portone/mercadopago/xendit/paypal 后端全部就绪）；T-P-21 微信支付国际版 2026-08-29 已实现（✅，wechatpay_global，请求签名/平台公钥验签/AES-GCM 解密均有单测）；zh-CN 支付宝/微信需 CN 企业资质未做。
+**调度**：第一批 T-P-01~08（后端支付底座）→ T-P-09~13（管理端）→ T-P-14~17（客户端），2026-08-29 前已全部提交（✅）；T-P-18 随各批内嵌完成；T-P-19/20 二期已实现（✅，razorpay/komoju/portone/mercadopago/xendit/paypal 后端全部就绪）；T-P-21 微信支付国际版 2026-08-29 已实现（✅，wechatpay_global，请求签名/平台公钥验签/AES-GCM 解密均有单测）；T-P-22 银联 UPOP 2026-08-29 已实现（✅，unionpay，字典序 RSA-SHA256 验签有单测）；zh-CN 支付宝/微信/银联需 CN 企业资质，上线前配真实商户密钥联调。
 **前置条件**：Stripe / NOWPayments 商户密钥（沙箱即可开发，当前配置为沙箱、enabled 渠道为空）；zh-CN 支付宝/微信需中国大陆企业资质（或 Adyen 渠道），T-P-19 立项时确认。
 
 ---

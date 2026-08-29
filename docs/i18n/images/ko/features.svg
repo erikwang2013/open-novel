@@ -98,7 +98,7 @@
     <rect x="44" y="628" width="250" height="132" rx="8" fill="#ffffff" stroke="#e53935" stroke-width="2"/>
     <rect x="149" y="642" width="40" height="4" rx="2" fill="#e53935"/>
     <text x="169" y="656" font-size="13" font-weight="700" fill="#e53935" text-anchor="middle">결제 센터</text>
-    <text x="169" y="678" font-size="11" fill="#546e7a" text-anchor="middle">Stripe / PayPal / Alipay · 10개 채널</text>
+    <text x="169" y="678" font-size="11" fill="#546e7a" text-anchor="middle">Stripe / PayPal / Alipay · 11개 채널</text>
     <text x="169" y="695" font-size="11" fill="#546e7a" text-anchor="middle">NOWPayments · USDT · 로컬 5개 채널</text>
   </g>
 

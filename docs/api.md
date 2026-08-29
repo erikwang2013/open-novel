@@ -127,7 +127,7 @@
 | GET | `/api/payments/plans` | 公开 VIP 套餐列表（仅 status=1，sort 升序；DB 套餐表优先，回退内置默认） | 无 |
 | GET | `/api/payments/vip-status` | 当前用户 VIP 状态 → `{active, vip_expires_at?}` | Bearer |
 | GET | `/api/payments/methods?lang=` | 支付方式列表（enabled 且 lang/region 匹配，sort 升序） | 无 |
-| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe / nowpayments / razorpay / komoju / portone / mercadopago / xendit / paypal，验签在内部；回调金额=订单金额强校验，幂等 settle） | 无 |
+| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe / nowpayments / razorpay / komoju / portone / mercadopago / xendit / paypal / alipay / wechatpay_global / unionpay，验签在内部；回调金额=订单金额强校验，幂等 settle） | 无 |
 
 ### 渠道与 config 键（T-P-19~20）
 
@@ -145,6 +145,7 @@ provider 行由 admin「支付方式」页创建，config 键 AES-GCM 加密存�
 | paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | 官方 verify-webhook-signature API 验签（复用 OAuth access_token） |
 | alipay | zh-CN | `app_id` `merchant_private_key` `alipay_public_key` `notify_url`（可选 `base_url` 沙箱） | 表单 notify RSA2 验签（沙箱可测） |
 | wechatpay_global | *（国际版） | `app_id` `mch_id` `merchant_serial_no` `merchant_private_key` `platform_public_key` `apiv3_key` `notify_url`（可选 `base_url` 区域/沙箱覆盖） | 平台公钥 RSA-SHA256 验签 + apiv3_key AES-GCM 解密 resource |
+| unionpay | zh-CN | `mer_id` `sign_cert_id` `merchant_private_key` `unionpay_public_key` `notify_url`（可选 `front_url` `base_url` 沙箱覆盖） | 字典序 RSA-SHA256 签名验签（notify 表单，应答 `success`） |
 
 zh-CN 支付宝已实现（沙箱可配置）；微信支付国际版（wechatpay_global，HK API v3 H5）已实现（2026-08-29，商户申请后配置 4 个密钥 + apiv3_key + 真实 notify_url 即可用）；国内微信支付需企业商户号，未实现。
 
