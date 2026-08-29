@@ -8,6 +8,8 @@
 
 > Platform membaca novel multibahasa global berbasis arsitektur mikroservis **Go-Kratos** dengan frontend multi-platform **Flutter / HarmonyOS**, mendukung **lebih dari 12 bahasa utama**, dan dirancang untuk memberikan kemampuan membaca, interaksi, pencarian, dan rekomendasi personal kepada pengguna di seluruh dunia.
 
+<div align="center"><img src="../mascot.svg" alt="Maskot Open Novel, Novi" width="150"/></div>
+
 ---
 
 ## Pengenalan proyek
@@ -29,7 +31,7 @@ Open Novel adalah platform novel multibahasa global dengan arsitektur mikroservi
 - **Konten buku**: metadata buku, manajemen bab, tag kategori, pembaruan berseri, terjemahan multibahasa
 - **Komunitas interaktif**: komentar dan ulasan, suka, favorit, pelaporan dan moderasi
 - **Pencarian dan penemuan**: pencarian dengan segmentasi multibahasa, peringkat kata kunci populer, saran pencarian (riwayat lokal klien 20 entri + saran dengan debounce 200 ms), rekomendasi AI, penjelajahan kategori
-- **Panel admin**: moderasi konten, manajemen pengguna, statistik data, manajemen konfigurasi, halaman kueri log audit (paginasi + filter multikondisi)
+- **Panel admin**: moderasi konten, manajemen pengguna, statistik data (dasbor / DAU / peringkat / analisis perilaku /api/stats/behavior), manajemen konfigurasi (tag kategori), alur kerja terjemahan mesin (DeepL, /api/admin/translate/*, halaman «Terjemahan» di admin + penyuntingan manual), kueri log audit (/api/admin/audit-logs)
 - **Pembayaran & VIP**: pembayaran multi-channel melalui 11 penyedia (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), langganan dan perpanjangan paket VIP, perutean metode pembayaran berdasarkan bahasa (WeChat Pay Global terintegrasi; WeChat Pay domestik belum terintegrasi, memerlukan kualifikasi merchant Tiongkok)
 
 ## Arsitektur sistem

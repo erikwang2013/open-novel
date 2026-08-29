@@ -61,6 +61,16 @@ class _LoginPageState extends State<LoginPage> {
             shrinkWrap: true,
             padding: const EdgeInsets.all(24),
             children: [
+              Center(
+                  child:
+                      Image.asset('assets/mascot.png', width: 140, height: 140)),
+              const SizedBox(height: 8),
+              const Center(
+                child: Text('Open Novel 管理后台',
+                    style: TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 24),
               TextField(
                 controller: _username,
                 decoration: const InputDecoration(

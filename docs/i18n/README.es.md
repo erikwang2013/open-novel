@@ -8,6 +8,8 @@
 
 > Plataforma global de novelas multilingüe basada en la arquitectura de microservicios **Go-Kratos** con frontends multiplataforma **Flutter / HarmonyOS**, compatible con **más de 12 idiomas principales**, y diseñada para ofrecer a usuarios de todo el mundo lectura, interacción, búsqueda y recomendaciones personalizadas.
 
+<div align="center"><img src="../mascot.svg" alt="Mascota de Open Novel, Novi" width="150"/></div>
+
 ---
 
 ## Introducción del proyecto
@@ -29,7 +31,7 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 - **Contenido de libros**: metadatos de libros, gestión de capítulos, etiquetas de categorías, actualizaciones por entregas, traducción multilingüe
 - **Comunidad interactiva**: comentarios y reseñas, me gusta, favoritos, denuncia y moderación
 - **Búsqueda y descubrimiento**: búsqueda con segmentación multilingüe, ranking de palabras clave populares, sugerencias de búsqueda (historial local del cliente de 20 entradas + sugerencias con debounce de 200 ms), recomendaciones con IA, navegación por categorías
-- **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos, gestión de configuración, página de consulta de registros de auditoría (paginación + filtros multicondición)
+- **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos (panel / DAU / rankings / análisis de comportamiento /api/stats/behavior), gestión de configuración (etiquetas de categoría), flujo de traducción automática (DeepL, /api/admin/translate/*, página de «Traducción» en el panel + edición manual), consulta de registros de auditoría (/api/admin/audit-logs)
 - **Pagos y VIP**: pagos multicanal a través de 11 proveedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), suscripción y renovación de planes VIP, enrutamiento de métodos de pago por idioma (WeChat Pay Global integrado; WeChat Pay nacional no integrado, requiere cualificación de comerciante en China)
 
 ## Arquitectura del sistema

@@ -8,6 +8,8 @@
 
 > Plataforma global de leitura de romances multilíngue baseada na arquitetura de microsserviços **Go-Kratos** com frontends multiplataforma **Flutter / HarmonyOS**, compatível com **mais de 12 idiomas principais**, oferecendo a usuários do mundo todo leitura, interação, busca e recomendações personalizadas.
 
+<div align="center"><img src="../mascot.svg" alt="Mascote do Open Novel, Novi" width="150"/></div>
+
 ---
 
 ## Introdução do projeto
@@ -29,7 +31,7 @@ Open Novel é uma plataforma global de romances multilíngue com arquitetura de 
 - **Conteúdo do livro**: metadados de livros, gestão de capítulos, tags de categorias, atualizações seriadas, tradução multilíngue
 - **Comunidade interativa**: comentários e resenhas, curtidas, favoritos, denúncia e moderação
 - **Busca e descoberta**: busca com segmentação multilíngue, ranking de palavras-chave populares, sugestões de busca (histórico local do cliente de 20 entradas + sugestões com debounce de 200 ms), recomendações com IA, navegação por categorias
-- **Painel administrativo**: moderação de conteúdo, gestão de usuários, estatísticas de dados, gestão de configurações, página de consulta de logs de auditoria (paginação + filtros multicondicionais)
+- **Painel administrativo**: moderação de conteúdo, gestão de usuários, estatísticas de dados (painel / DAU / rankings / análise de comportamento /api/stats/behavior), gestão de configurações (tags de categoria), fluxo de tradução automática (DeepL, /api/admin/translate/*, página «Tradução» no painel + edição manual), consulta de logs de auditoria (/api/admin/audit-logs)
 - **Pagamentos e VIP**: pagamentos multicanal via 11 provedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), assinatura e renovação de planos VIP, roteamento de métodos de pagamento por idioma (WeChat Pay Global integrado; WeChat Pay nacional não integrado, exige qualificação de comerciante na China)
 
 ## Arquitetura do sistema

@@ -8,6 +8,8 @@
 
 > Eine globale mehrsprachige Plattform für Online-Romane auf Basis der **Go-Kratos**-Mikroservicearchitektur mit **Flutter / HarmonyOS**-Multiplattform-Frontends, die **12+ Hauptsprachen** unterstützt und Nutzern weltweit Lesen, Interaktion, Suche und personalisierte Empfehlungen bietet.
 
+<div align="center"><img src="../mascot.svg" alt="Open-Novel-Maskottchen Novi" width="150"/></div>
+
 ---
 
 ## Projektübersicht
@@ -29,7 +31,7 @@ Open Novel ist eine globale mehrsprachige Roman-Plattform mit cloudnativer Mikro
 - **Buchinhalte**: Buch-Metadaten, Kapitelverwaltung, Kategorien und Tags, Updates laufender Serien, mehrsprachige Übersetzungen
 - **Interaktive Community**: Kommentare und Rezensionen, Likes, Favoriten, Meldung und Moderation
 - **Suche & Entdecken**: mehrsprachige Tokensuche, Ranking heißer Suchbegriffe, Suchvorschläge (lokale Client-Historie mit 20 Einträgen + Vorschläge mit 200 ms Debounce), KI-Empfehlungen, Stöbern nach Kategorien
-- **Admin-Backend**: Inhaltsmoderation, Benutzerverwaltung, Statistiken, Konfigurationsverwaltung, Abfrageseite für Audit-Logs (Seitennummerierung + Filterung nach mehreren Bedingungen)
+- **Admin-Backend**: Inhaltsmoderation, Benutzerverwaltung, Statistiken (Dashboard / DAU / Ranglisten / Verhaltensanalyse /api/stats/behavior), Konfigurationsverwaltung (Kategorietags), Workflow für maschinelle Übersetzung (DeepL, /api/admin/translate/*, „Übersetzung“-Seite im Admin + manuelle Bearbeitung), Abfrage von Audit-Logs (/api/admin/audit-logs)
 - **Zahlungen & VIP**: Mehrkanal-Zahlungen über 11 Anbieter (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), VIP-Abo und Verlängerung, sprachbasiertes Zahlungsmethoden-Routing (WeChat Pay Global angebunden; inländisches WeChat Pay nicht angebunden, erfordert chinesische Händlerqualifikation)
 
 ## Systemarchitektur

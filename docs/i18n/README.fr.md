@@ -8,6 +8,8 @@
 
 > Plateforme mondiale de lecture de romans multilingues, basée sur une architecture microservices **Go-Kratos** et des fronts multiplateformes **Flutter / HarmonyOS**, prenant en charge **12+ langues principales** et offrant aux utilisateurs du monde entier lecture, interaction, recherche et recommandations personnalisées.
 
+<div align="center"><img src="../mascot.svg" alt="Mascotte Novi d'Open Novel" width="150"/></div>
+
 ---
 
 ## Présentation du projet
@@ -29,7 +31,7 @@ Open Novel est une plateforme mondiale de romans multilingues en architecture cl
 - **Contenu des livres** : métadonnées des livres, gestion des chapitres, catégories et tags, mises à jour des séries, traductions multilingues
 - **Communauté interactive** : commentaires et critiques, likes, favoris, signalement et modération
 - **Recherche et découverte** : recherche multilingue par segmentation, classement des mots-clés populaires, suggestions de recherche (historique local côté client de 20 entrées + suggestions avec debounce de 200 ms), recommandations IA, navigation par catégories
-- **Panneau d'administration** : modération du contenu, gestion des utilisateurs, statistiques, gestion de la configuration, page de consultation des journaux d'audit (pagination + filtres multi-critères)
+- **Panneau d'administration** : modération du contenu, gestion des utilisateurs, statistiques (tableau de bord / DAU / classements / analyse comportementale /api/stats/behavior), gestion de la configuration (tags de catégorie), flux de traduction automatique (DeepL, /api/admin/translate/*, page « Traduction » côté admin + édition manuelle), consultation des journaux d'audit (/api/admin/audit-logs)
 - **Paiements & VIP** : paiements multicanal via 11 prestataires (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), abonnement et renouvellement des plans VIP, routage des moyens de paiement par langue (WeChat Pay Global intégré ; WeChat Pay national non intégré, nécessite un statut de commerçant en Chine)
 
 ## Architecture système

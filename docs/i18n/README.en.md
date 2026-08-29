@@ -8,6 +8,8 @@
 
 > A global multilingual novel reading platform built on the **Go-Kratos** microservice architecture with **Flutter / HarmonyOS** multi-client frontends, supporting **12+ major languages** and delivering reading, interaction, search and personalized recommendation capabilities to users worldwide.
 
+<div align="center"><img src="../mascot.svg" alt="Open Novel mascot Novi" width="150"/></div>
+
 ---
 
 ## Project Overview
@@ -30,7 +32,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 - **Book Content**: Book metadata, chapter management, category tags, serialized updates, multilingual translation
 - **Interactive Community**: Comments and reviews, likes, favorites, reporting and moderation
 - **Search & Discovery**: Multilingual tokenized search, hot keyword rankings, search suggestions (client-side local history of 20 entries + 200 ms debounced suggestions), AI recommendations, category browsing
-- **Admin Console**: Content moderation, user management, data statistics, configuration management, audit log query page (pagination + multi-condition filtering)
+- **Admin Console**: Content moderation, user management, data statistics (dashboard / DAU / rankings / behavior analytics /api/stats/behavior), configuration management (category tags), machine translation workflow (DeepL, /api/admin/translate/*, admin "Translation" page + manual editing), audit log query (/api/admin/audit-logs)
 - **Payments & VIP**: Multi-channel payments via 11 providers (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), VIP plan subscription and renewal, language-based payment method routing (WeChat Pay Global integrated; domestic WeChat Pay not integrated, requires CN merchant qualification)
 
 ## System Architecture
