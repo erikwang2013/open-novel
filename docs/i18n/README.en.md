@@ -32,14 +32,14 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 - **Book Content**: Book metadata, chapter management, category tags, serialized updates, multilingual translation
 - **Interactive Community**: Comments and reviews, likes, favorites, reporting and moderation
 - **Search & Discovery**: Multilingual tokenized search, hot keyword rankings, search suggestions (client-side local history of 20 entries + 200 ms debounced suggestions), AI recommendations, category browsing
-- **Admin Console**: Content moderation, user management, data statistics (dashboard / DAU / rankings / behavior analytics /api/stats/behavior), configuration management (category tags), machine translation workflow (DeepL, /api/admin/translate/*, admin "Translation" page + manual editing), audit log query (/api/admin/audit-logs)
+- **Admin Console**: Content moderation, user management, data statistics (dashboard / DAU / rankings / behavior analytics /api/stats/behavior), configuration management (category tags), machine translation workflow (DeepL, /api/admin/translate/*, admin "Translation" page + manual editing), audit log query (/api/admin/audit-logs), CDN provider management (multi-vendor configuration / enable-disable / ordering, instant effect via hot reload)
 - **Payments & VIP**: Multi-channel payments via 11 providers (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), VIP plan subscription and renewal, language-based payment method routing (WeChat Pay Global integrated; domestic WeChat Pay not integrated, requires CN merchant qualification)
 
 ## System Architecture
 
 <p align="center"><img src="images/en/architecture.svg" alt="System architecture diagram" width="860"/></p>
 
-Overall Go-Kratos microservice architecture: Flutter / HarmonyOS clients interact with the API gateway via Nginx + CDN; the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api` prefix.
+Overall Go-Kratos microservice architecture: Flutter / HarmonyOS clients interact with the API gateway via Nginx + a multi-vendor CDN (Cloudflare / CloudFront on the global route, Aliyun / Tencent Cloud on the China route; admin-configurable, config changes apply instantly via hot reload); the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api` prefix.
 
 Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · request cycle [docs/request-cycle.svg](../../docs/request-cycle.svg) · security architecture [docs/security.svg](../../docs/security.svg) · project structure [docs/structure.svg](../../docs/structure.svg).
 
@@ -82,7 +82,7 @@ open-novel/
 | Layer | Technology |
 | :--- | :--- |
 | Client | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
-| Gateway | Nginx + CDN, Go-Kratos API Gateway (gRPC / HTTP dual protocol) |
+| Gateway | Nginx + multi-vendor CDN (Cloudflare / CloudFront / Aliyun / Tencent Cloud), Go-Kratos API Gateway (gRPC / HTTP dual protocol) |
 | Server | Go 1.22+, Kratos v2, protobuf / gRPC |
 | Storage | MySQL 8.0 (master-slave), Redis 7.x (Cluster), OpenSearch 2.x, ristretto in-process L1 cache on top of Redis (30 s TTL) |
 | Observability | Prometheus, Grafana, ELK, OpenTelemetry tracing |

@@ -31,14 +31,14 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 - **도서 콘텐츠**: 도서 메타데이터, 챕터 관리, 카테고리 태그, 연재 업데이트, 다국어 번역
 - **소통 커뮤니티**: 댓글·서평, 좋아요, 즐겨찾기, 신고·검수
 - **검색 및 발견**: 다국어 형태소 분석 검색, 인기 키워드 랭킹, 검색 제안(클라이언트 로컬 히스토리 20개 + 200ms 디바운스 제안), AI 추천, 카테고리 탐색
-- **관리 백엔드**: 콘텐츠 검수, 사용자 관리, 데이터 통계(대시보드 / DAU / 랭킹 / 행동 분석 /api/stats/behavior), 설정 관리(카테고리 태그), 기계 번역 워크플로우(DeepL, /api/admin/translate/*, 관리자 '번역' 페이지 + 수동 편집), 감사 로그 조회(/api/admin/audit-logs)
+- **관리 백엔드**: 콘텐츠 검수, 사용자 관리, 데이터 통계(대시보드 / DAU / 랭킹 / 행동 분석 /api/stats/behavior), 설정 관리(카테고리 태그), 기계 번역 워크플로우(DeepL, /api/admin/translate/*, 관리자 '번역' 페이지 + 수동 편집), 감사 로그 조회(/api/admin/audit-logs), CDN 벤더 관리(멀티 벤더 설정 / 활성·비활성 / 정렬, 핫 리로드로 즉시 반영)
 - **결제 및 VIP**: 11개 결제 프로바이더(Stripe, NOWPayments(USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay) 다중 채널 결제, VIP 플랜 구독 및 갱신, 언어별 결제 수단 라우팅(WeChat Pay Global 연동, 국내 WeChat Pay 미연동, 중국 가맹점 자격 필요)
 
 ## 시스템 아키텍처
 
 <p align="center"><img src="images/ko/architecture.svg" alt="시스템 아키텍처 다이어그램" width="860"/></p>
 
-전체는 Go-Kratos 마이크로서비스 아키텍처입니다. Flutter / HarmonyOS 클라이언트는 Nginx + CDN을 거쳐 API 게이트웨이와 상호작용하며, 게이트웨이는 도메인별로 사용자, 도서, 챕터, 댓글, 검색, 추천 등의 백엔드 서비스로 라우팅합니다. 데이터 계층은 MySQL 마스터-슬레이브(읽기/쓰기 분리) + Redis 캐시 + OpenSearch 검색 인덱스입니다. 서비스 간 gRPC 통신, 외부 HTTP 인터페이스는 통일 접두사 `/api`을 사용합니다.
+전체는 Go-Kratos 마이크로서비스 아키텍처입니다. Flutter / HarmonyOS 클라이언트는 Nginx + 멀티 벤더 CDN(Cloudflare / CloudFront는 글로벌 라인, Aliyun / Tencent Cloud는 중국 라인. 관리자에서 설정 가능, 구성 핑거프린트 핫 리로드로 즉시 반영)을 거쳐 API 게이트웨이와 상호작용하며, 게이트웨이는 도메인별로 사용자, 도서, 챕터, 댓글, 검색, 추천 등의 백엔드 서비스로 라우팅합니다. 데이터 계층은 MySQL 마스터-슬레이브(읽기/쓰기 분리) + Redis 캐시 + OpenSearch 검색 인덱스입니다. 서비스 간 gRPC 통신, 외부 HTTP 인터페이스는 통일 접두사 `/api`을 사용합니다.
 
 기타 설계도: 프로젝트 전체 구조 [docs/project.svg](../../docs/project.svg) · 요청 주기 [docs/request-cycle.svg](../../docs/request-cycle.svg) · 보안 아키텍처 [docs/security.svg](../../docs/security.svg) · 프로젝트 구조 [docs/structure.svg](../../docs/structure.svg).
 
@@ -81,7 +81,7 @@ open-novel/
 | 계층 | 기술 선정 |
 | :--- | :--- |
 | 클라이언트 | Flutter(Web / Desktop / Mobile), HarmonyOS NEXT(ArkTS / ArkUI) |
-| 게이트웨이 | Nginx + CDN, Go-Kratos API 게이트웨이(gRPC / HTTP 듀얼 프로토콜) |
+| 게이트웨이 | Nginx + 멀티 벤더 CDN(Cloudflare / CloudFront / Aliyun / Tencent Cloud), Go-Kratos API 게이트웨이(gRPC / HTTP 듀얼 프로토콜) |
 | 서버 | Go 1.22+, Kratos v2, protobuf / gRPC |
 | 스토리지 | MySQL 8.0(마스터-슬레이브), Redis 7.x(Cluster), OpenSearch 2.x, Redis 위의 ristretto 프로세스 내 L1 캐시(30초 TTL) |
 | 관측성 | Prometheus, Grafana, ELK, OpenTelemetry 링크 추적 |

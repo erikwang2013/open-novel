@@ -259,9 +259,9 @@
 
 ### 7.5 CDN 章节静态化（方向 5，门槛项）
 
-**状态**：✅ 已实现（2026-08-29，`CDN_BASE_URL`/`CDN_PURGE_URL` 门控默认关闭；免费章节 `Cache-Control: public, s-maxage=3600`，VIP `no-store`；章节创建/状态变更 fire-and-forget purge，key 约定 `chapter/{id}?lang={lang}`）。
+**状态**：✅ 已实现（2026-08-29，多厂商广播）。免费章节 `Cache-Control: public, s-maxage=3600`，VIP `no-store`；章节创建/状态变更 fire-and-forget purge 广播到全部启用厂商，key 约定 `chapter/{id}?lang={lang}`。4 厂商 adapter（Cloudflare / AWS CloudFront 全球线 + 阿里云 / 腾讯云中国线），配置存 `novel_cdn_provider` 表（AES-GCM 加密，复用 PAYMENT_ENCRYPT_KEY），管理端可增删改/启停/排序，指纹热更新即时生效无需重启（`internal/cdn` + `biz/cdn_admin.go` + 管理端 `cdn_providers_page.dart`）。
 
-**触发条件**：章节读流量达阈值（如单章日读 > 1 万次或 CDN 成本超过源站 CPU 成本），且章节变更频率低（连载期间不适用——章节每日更新，静态化收益被失效成本抵消）。
+**上线注意事项**：① 灰度时序：先全球线（Cloudflare → CloudFront），ICP 备案通过后加阿里云 / 腾讯云；② 区域分流在 DNS 层（GeoDNS 双线），中国线厂商需 ICP 备案；③ 各厂商需配置回源白名单（仅允许 CDN 节点 IP 回源，避免绕过静态化直连源站）；④ generic 兼容路径灰度完成后退役。
 
 **方案草图（≤10 行）**：① 章节内容为纯文本，天然可静态化 → ② 后端生成 HTML/纯文本静态文件推 CDN（或对象存储 + CDN 域名）→ ③ `chapter.proto` 读章节接口加 CDN 回退：CDN 未命中 → 源站 → 回源写 CDN（cache miss 回源模式，不阻塞主流程）→ ④ 章节发布时主动失效 CDN key（发布侧已有更新链路，加一个 invalidate 调用即可）→ ⑤ 需评估：付费章节鉴权与静态化冲突（VIP 章节无法走公开 CDN，只静态化免费章节或加签名 URL）。当前量级下直接做属于过度设计。
 

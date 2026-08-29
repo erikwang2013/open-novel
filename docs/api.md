@@ -179,6 +179,27 @@ zh-CN 支付宝已实现（沙箱可配置）；微信支付国际版（wechatpa
 
 错误码：`190401 PAYMENT_CREATE_FAILED`、`190402 ORDER_NOT_FOUND`、`190403 AMOUNT_MISMATCH`、`190404 PAYMENT_PENDING`、`190405 PROVIDER_DISABLED`。
 
+### CDN 厂商管理（2026-08-29 新增，全部 requireAdmin → 180401）
+
+配置存 `novel_cdn_provider` 表：config 明文提交、AES-GCM 加密落库（复用 PAYMENT_ENCRYPT_KEY），密钥绝不回显（仅返回 `config_configured` 标志）；指纹热更新即时生效，无需重启。区域分流在 DNS 层（GeoDNS 双线）：Cloudflare / AWS CloudFront 为全球线，阿里云 / 腾讯云为中国线（需 ICP 备案）。
+
+| 方法 | 路径 | 说明 | 鉴权 |
+| :--- | :--- | :--- | :--- |
+| GET | `/api/cdn/admin/providers` | 厂商列表（含禁用，sort 升序）→ `{list: [{id, code, enabled, sort, config_configured, created_at, updated_at}], total}` | Bearer（管理） |
+| POST | `/api/cdn/admin/providers` | 创建厂商 `{code, sort?, config}`；code ∈ cloudflare / cloudfront / aliyun / tencent；enabled 固定为 1 | Bearer（管理） |
+| PUT | `/api/cdn/admin/providers/{id}` | 更新厂商 `{sort?, enabled?, config}`；config 传入字段重加密合并，空值保留原值 | Bearer（管理） |
+| DELETE | `/api/cdn/admin/providers/{id}` | 删除厂商（先禁用再删） | Bearer（管理） |
+| PATCH | `/api/cdn/admin/providers/{id}/toggle` | 启停厂商（enabled=0 即摘除，灰度回滚手段） | Bearer（管理） |
+
+### 厂商与 config 键
+
+| 厂商码 | 线路 | config 键 |
+| :--- | :--- | :--- |
+| cloudflare | 全球 | `zone_id` `api_token` `batch_size` |
+| cloudfront | 全球 | `access_key_id` `secret_access_key` `distribution_id` `batch_size` |
+| aliyun | 中国（ICP 备案） | `access_key_id` `access_key_secret` `batch_size` `rate_limit_qps` |
+| tencent | 中国（ICP 备案） | `secret_id` `secret_key` `batch_size` `rate_limit_qps` |
+
 ## 限流
 
 按 IP 固定窗口（`X-Forwarded-For`）：

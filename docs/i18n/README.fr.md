@@ -31,14 +31,14 @@ Open Novel est une plateforme mondiale de romans multilingues en architecture cl
 - **Contenu des livres** : métadonnées des livres, gestion des chapitres, catégories et tags, mises à jour des séries, traductions multilingues
 - **Communauté interactive** : commentaires et critiques, likes, favoris, signalement et modération
 - **Recherche et découverte** : recherche multilingue par segmentation, classement des mots-clés populaires, suggestions de recherche (historique local côté client de 20 entrées + suggestions avec debounce de 200 ms), recommandations IA, navigation par catégories
-- **Panneau d'administration** : modération du contenu, gestion des utilisateurs, statistiques (tableau de bord / DAU / classements / analyse comportementale /api/stats/behavior), gestion de la configuration (tags de catégorie), flux de traduction automatique (DeepL, /api/admin/translate/*, page « Traduction » côté admin + édition manuelle), consultation des journaux d'audit (/api/admin/audit-logs)
+- **Panneau d'administration** : modération du contenu, gestion des utilisateurs, statistiques (tableau de bord / DAU / classements / analyse comportementale /api/stats/behavior), gestion de la configuration (tags de catégorie), flux de traduction automatique (DeepL, /api/admin/translate/*, page « Traduction » côté admin + édition manuelle), consultation des journaux d'audit (/api/admin/audit-logs), gestion des fournisseurs CDN (configuration multivendeur / activation-désactivation / tri, application immédiate par rechargement à chaud)
 - **Paiements & VIP** : paiements multicanal via 11 prestataires (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), abonnement et renouvellement des plans VIP, routage des moyens de paiement par langue (WeChat Pay Global intégré ; WeChat Pay national non intégré, nécessite un statut de commerçant en Chine)
 
 ## Architecture système
 
 <p align="center"><img src="../architecture.svg" alt="Schéma de l'architecture système" width="860"/></p>
 
-L'architecture globale est une architecture microservices Go-Kratos : les clients Flutter / HarmonyOS interagissent avec la passerelle API via Nginx + CDN ; la passerelle route par domaine vers les services backend — utilisateurs, livres, chapitres, commentaires, recherche, recommandations, etc. La couche de données comprend MySQL maître-réplica (séparation lecture/écriture) + cache Redis + index de recherche OpenSearch. Les services communiquent en gRPC ; les interfaces HTTP externes utilisent uniformément le préfixe `/api`.
+L'architecture globale est une architecture microservices Go-Kratos : les clients Flutter / HarmonyOS interagissent avec la passerelle API via Nginx + un CDN multivendeur (Cloudflare / CloudFront pour la ligne mondiale, Aliyun / Tencent Cloud pour la ligne Chine ; configurable côté admin, rechargement à chaud de l'empreinte de configuration appliqué instantanément) ; la passerelle route par domaine vers les services backend — utilisateurs, livres, chapitres, commentaires, recherche, recommandations, etc. La couche de données comprend MySQL maître-réplica (séparation lecture/écriture) + cache Redis + index de recherche OpenSearch. Les services communiquent en gRPC ; les interfaces HTTP externes utilisent uniformément le préfixe `/api`.
 
 Autres schémas : vue d'ensemble du projet [../project.svg](../project.svg) · cycle de requête [../request-cycle.svg](../request-cycle.svg) · architecture de sécurité [../security.svg](../security.svg) · structure du projet [../structure.svg](../structure.svg).
 
@@ -79,7 +79,7 @@ open-novel/
 | Niveau | Technologies |
 | :--- | :--- |
 | Client | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
-| Passerelle | Nginx + CDN, passerelle API Go-Kratos (double protocole gRPC / HTTP) |
+| Passerelle | Nginx + CDN multivendeur (Cloudflare / CloudFront / Aliyun / Tencent Cloud), passerelle API Go-Kratos (double protocole gRPC / HTTP) |
 | Serveur | Go 1.22+, Kratos v2, protobuf / gRPC |
 | Stockage | MySQL 8.0 (maître-réplica), Redis 7.x (Cluster), OpenSearch 2.x, cache L1 en mémoire ristretto au-dessus de Redis (TTL 30 s) |
 | Observabilité | Prometheus, Grafana, ELK, traçage OpenTelemetry |

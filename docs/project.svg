@@ -45,6 +45,7 @@
     <text x="755" y="232" font-size="11" fill="#546e7a">Prometheus + Grafana</text>
     <text x="755" y="254" font-size="11" fill="#546e7a">GitHub Actions CI/CD</text>
     <text x="755" y="276" font-size="11" fill="#546e7a">ELK 日志分析</text>
+    <text x="755" y="294" font-size="11" fill="#546e7a">多厂商 CDN 全站加速（4 家）</text>
   </g>
 
   <!-- 路线图标题 -->
@@ -94,6 +95,6 @@
   <text x="706" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 已完成</text>
   <text x="899" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 已完成</text>
 
-  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">里程碑：基础 · 多端 · 安全已交付，商业化（VIP / 支付 / 管理后台）已完成 · AI 推荐与 CDN 静态化已实现（配置门控） · 技术栈 Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
+  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">里程碑：基础 · 多端 · 安全已交付，商业化（VIP / 支付 / 管理后台）已完成 · AI 推荐已实现 · 多厂商 CDN 全站加速已上线（Cloudflare / CloudFront / 阿里云 / 腾讯云，管理端可配置） · 技术栈 Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
   <text x="988" y="628" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

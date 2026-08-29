@@ -31,14 +31,14 @@ Open Novel é uma plataforma global de romances multilíngue com arquitetura de 
 - **Conteúdo do livro**: metadados de livros, gestão de capítulos, tags de categorias, atualizações seriadas, tradução multilíngue
 - **Comunidade interativa**: comentários e resenhas, curtidas, favoritos, denúncia e moderação
 - **Busca e descoberta**: busca com segmentação multilíngue, ranking de palavras-chave populares, sugestões de busca (histórico local do cliente de 20 entradas + sugestões com debounce de 200 ms), recomendações com IA, navegação por categorias
-- **Painel administrativo**: moderação de conteúdo, gestão de usuários, estatísticas de dados (painel / DAU / rankings / análise de comportamento /api/stats/behavior), gestão de configurações (tags de categoria), fluxo de tradução automática (DeepL, /api/admin/translate/*, página «Tradução» no painel + edição manual), consulta de logs de auditoria (/api/admin/audit-logs)
+- **Painel administrativo**: moderação de conteúdo, gestão de usuários, estatísticas de dados (painel / DAU / rankings / análise de comportamento /api/stats/behavior), gestão de configurações (tags de categoria), fluxo de tradução automática (DeepL, /api/admin/translate/*, página «Tradução» no painel + edição manual), consulta de logs de auditoria (/api/admin/audit-logs), gestão de provedores CDN (configuração multivendor / ativar-desativar / ordenação, recarga a quente com efeito imediato)
 - **Pagamentos e VIP**: pagamentos multicanal via 11 provedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), assinatura e renovação de planos VIP, roteamento de métodos de pagamento por idioma (WeChat Pay Global integrado; WeChat Pay nacional não integrado, exige qualificação de comerciante na China)
 
 ## Arquitetura do sistema
 
 <p align="center"><img src="../architecture.svg" alt="Diagrama da arquitetura do sistema" width="860"/></p>
 
-A arquitetura geral é uma arquitetura de microsserviços Go-Kratos: os clientes Flutter / HarmonyOS interagem com o gateway de API via Nginx + CDN; o gateway roteia por domínio para os serviços de backend — usuários, livros, capítulos, comentários, busca e recomendações. A camada de dados consiste em MySQL mestre-escravo (separação de leitura/escrita) + cache Redis + índice de busca OpenSearch. Os serviços se comunicam via gRPC; as interfaces HTTP externas usam uniformemente o prefixo `/api`.
+A arquitetura geral é uma arquitetura de microsserviços Go-Kratos: os clientes Flutter / HarmonyOS interagem com o gateway de API via Nginx + uma CDN multivendor (Cloudflare / CloudFront para a linha global, Aliyun / Tencent Cloud para a linha da China; configurável no painel, recarga a quente da impressão digital de configuração com efeito imediato); o gateway roteia por domínio para os serviços de backend — usuários, livros, capítulos, comentários, busca e recomendações. A camada de dados consiste em MySQL mestre-escravo (separação de leitura/escrita) + cache Redis + índice de busca OpenSearch. Os serviços se comunicam via gRPC; as interfaces HTTP externas usam uniformemente o prefixo `/api`.
 
 Outros diagramas: visão geral do projeto [../project.svg](../project.svg) · ciclo de solicitações [../request-cycle.svg](../request-cycle.svg) · arquitetura de segurança [../security.svg](../security.svg) · estrutura do projeto [../structure.svg](../structure.svg).
 
@@ -79,7 +79,7 @@ open-novel/
 | Camada | Tecnologia |
 | :--- | :--- |
 | Cliente | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
-| Porta de entrada | Nginx + CDN, Go-Kratos API Gateway (protocolo duplo gRPC / HTTP) |
+| Porta de entrada | Nginx + CDN multivendor (Cloudflare / CloudFront / Aliyun / Tencent Cloud), Go-Kratos API Gateway (protocolo duplo gRPC / HTTP) |
 | Servidor | Go 1.22+, Kratos v2, protobuf / gRPC |
 | Armazenamento | MySQL 8.0 (mestre-escravo), Redis 7.x (Cluster), OpenSearch 2.x, cache L1 em processo ristretto sobre Redis (TTL de 30 s) |
 | Observabilidade | Prometheus, Grafana, ELK, rastreamento de cadeia OpenTelemetry |

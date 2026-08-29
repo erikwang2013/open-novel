@@ -31,14 +31,14 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 - **Contenido de libros**: metadatos de libros, gestión de capítulos, etiquetas de categorías, actualizaciones por entregas, traducción multilingüe
 - **Comunidad interactiva**: comentarios y reseñas, me gusta, favoritos, denuncia y moderación
 - **Búsqueda y descubrimiento**: búsqueda con segmentación multilingüe, ranking de palabras clave populares, sugerencias de búsqueda (historial local del cliente de 20 entradas + sugerencias con debounce de 200 ms), recomendaciones con IA, navegación por categorías
-- **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos (panel / DAU / rankings / análisis de comportamiento /api/stats/behavior), gestión de configuración (etiquetas de categoría), flujo de traducción automática (DeepL, /api/admin/translate/*, página de «Traducción» en el panel + edición manual), consulta de registros de auditoría (/api/admin/audit-logs)
+- **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos (panel / DAU / rankings / análisis de comportamiento /api/stats/behavior), gestión de configuración (etiquetas de categoría), flujo de traducción automática (DeepL, /api/admin/translate/*, página de «Traducción» en el panel + edición manual), consulta de registros de auditoría (/api/admin/audit-logs), gestión de proveedores CDN (configuración multivendor / activar-desactivar / ordenación, recarga en caliente de efecto inmediato)
 - **Pagos y VIP**: pagos multicanal a través de 11 proveedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), suscripción y renovación de planes VIP, enrutamiento de métodos de pago por idioma (WeChat Pay Global integrado; WeChat Pay nacional no integrado, requiere cualificación de comerciante en China)
 
 ## Arquitectura del sistema
 
 <p align="center"><img src="../architecture.svg" alt="Diagrama de la arquitectura del sistema" width="860"/></p>
 
-La arquitectura general es una arquitectura de microservicios Go-Kratos: los clientes Flutter / HarmonyOS interactúan con la puerta de enlace de API a través de Nginx + CDN; la puerta de enlace enruta por dominio hacia los servicios backend de usuarios, libros, capítulos, comentarios, búsqueda y recomendaciones. La capa de datos está compuesta por MySQL maestro-esclavo (separación de lectura/escritura) + caché Redis + índice de búsqueda OpenSearch. Los servicios se comunican mediante gRPC; las interfaces HTTP externas usan uniformemente el prefijo `/api`.
+La arquitectura general es una arquitectura de microservicios Go-Kratos: los clientes Flutter / HarmonyOS interactúan con la puerta de enlace de API a través de Nginx + una CDN multivendor (Cloudflare / CloudFront para la línea global, Aliyun / Tencent Cloud para la línea de China; configurable desde el panel, recarga en caliente de la huella de configuración con efecto inmediato); la puerta de enlace enruta por dominio hacia los servicios backend de usuarios, libros, capítulos, comentarios, búsqueda y recomendaciones. La capa de datos está compuesta por MySQL maestro-esclavo (separación de lectura/escritura) + caché Redis + índice de búsqueda OpenSearch. Los servicios se comunican mediante gRPC; las interfaces HTTP externas usan uniformemente el prefijo `/api`.
 
 Otros diagramas: panorama del proyecto [../project.svg](../project.svg) · ciclo de solicitudes [../request-cycle.svg](../request-cycle.svg) · arquitectura de seguridad [../security.svg](../security.svg) · estructura del proyecto [../structure.svg](../structure.svg).
 
@@ -79,7 +79,7 @@ open-novel/
 | Capa | Tecnología |
 | :--- | :--- |
 | Cliente | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
-| Puerta de enlace | Nginx + CDN, Go-Kratos API Gateway (protocolo dual gRPC / HTTP) |
+| Puerta de enlace | Nginx + CDN multivendor (Cloudflare / CloudFront / Aliyun / Tencent Cloud), Go-Kratos API Gateway (protocolo dual gRPC / HTTP) |
 | Servidor | Go 1.22+, Kratos v2, protobuf / gRPC |
 | Almacenamiento | MySQL 8.0 (maestro-esclavo), Redis 7.x (Cluster), OpenSearch 2.x, caché L1 en proceso ristretto sobre Redis (TTL de 30 s) |
 | Observabilidad | Prometheus, Grafana, ELK, trazado de cadenas con OpenTelemetry |

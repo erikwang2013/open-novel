@@ -31,14 +31,14 @@ Open Novel adalah platform novel multibahasa global dengan arsitektur mikroservi
 - **Konten buku**: metadata buku, manajemen bab, tag kategori, pembaruan berseri, terjemahan multibahasa
 - **Komunitas interaktif**: komentar dan ulasan, suka, favorit, pelaporan dan moderasi
 - **Pencarian dan penemuan**: pencarian dengan segmentasi multibahasa, peringkat kata kunci populer, saran pencarian (riwayat lokal klien 20 entri + saran dengan debounce 200 ms), rekomendasi AI, penjelajahan kategori
-- **Panel admin**: moderasi konten, manajemen pengguna, statistik data (dasbor / DAU / peringkat / analisis perilaku /api/stats/behavior), manajemen konfigurasi (tag kategori), alur kerja terjemahan mesin (DeepL, /api/admin/translate/*, halaman «Terjemahan» di admin + penyuntingan manual), kueri log audit (/api/admin/audit-logs)
+- **Panel admin**: moderasi konten, manajemen pengguna, statistik data (dasbor / DAU / peringkat / analisis perilaku /api/stats/behavior), manajemen konfigurasi (tag kategori), alur kerja terjemahan mesin (DeepL, /api/admin/translate/*, halaman «Terjemahan» di admin + penyuntingan manual), kueri log audit (/api/admin/audit-logs), manajemen penyedia CDN (konfigurasi multi-vendor / aktif-nonaktif / urutan, hot reload berlaku seketika)
 - **Pembayaran & VIP**: pembayaran multi-channel melalui 11 penyedia (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), langganan dan perpanjangan paket VIP, perutean metode pembayaran berdasarkan bahasa (WeChat Pay Global terintegrasi; WeChat Pay domestik belum terintegrasi, memerlukan kualifikasi merchant Tiongkok)
 
 ## Arsitektur sistem
 
 <p align="center"><img src="images/id/architecture.svg" alt="Diagram arsitektur sistem" width="860"/></p>
 
-Seluruh sistem dibangun di atas arsitektur mikroservis Go-Kratos: klien Flutter / HarmonyOS berinteraksi dengan API gateway melalui Nginx + CDN; gateway merutekan per domain ke layanan backend seperti pengguna, buku, bab, komentar, pencarian, dan rekomendasi; lapisan data adalah MySQL master-slave (pemisahan baca/tulis) + cache Redis + indeks pencarian OpenSearch. Komunikasi antar layanan menggunakan gRPC, dan seluruh antarmuka HTTP eksternal memiliki prefiks terpadu `/api`.
+Seluruh sistem dibangun di atas arsitektur mikroservis Go-Kratos: klien Flutter / HarmonyOS berinteraksi dengan API gateway melalui Nginx + CDN multi-vendor (Cloudflare / CloudFront untuk jalur global, Aliyun / Tencent Cloud untuk jalur China; dapat dikonfigurasi di admin, hot reload sidik jari konfigurasi berlaku seketika); gateway merutekan per domain ke layanan backend seperti pengguna, buku, bab, komentar, pencarian, dan rekomendasi; lapisan data adalah MySQL master-slave (pemisahan baca/tulis) + cache Redis + indeks pencarian OpenSearch. Komunikasi antar layanan menggunakan gRPC, dan seluruh antarmuka HTTP eksternal memiliki prefiks terpadu `/api`.
 
 Diagram desain lainnya: gambaran umum proyek [../project.svg](../project.svg) · siklus permintaan [../request-cycle.svg](../request-cycle.svg) · arsitektur keamanan [../security.svg](../security.svg) · struktur proyek [../structure.svg](../structure.svg).
 
@@ -79,7 +79,7 @@ open-novel/
 | Lapisan | Teknologi |
 | :--- | :--- |
 | Klien | Flutter（Web / Desktop / Mobile）、HarmonyOS NEXT（ArkTS / ArkUI） |
-| Gateway | Nginx + CDN、Go-Kratos API Gateway（protokol ganda gRPC / HTTP） |
+| Gateway | Nginx + CDN multi-vendor（Cloudflare / CloudFront / Aliyun / Tencent Cloud）、Go-Kratos API Gateway（protokol ganda gRPC / HTTP） |
 | Server | Go 1.22+、Kratos v2、protobuf / gRPC |
 | Penyimpanan | MySQL 8.0（master-slave）、Redis 7.x（Cluster）、OpenSearch 2.x、cache L1 dalam proses ristretto di atas Redis（TTL 30 detik） |
 | Observabilitas | Prometheus、Grafana、ELK、penelusuran rantai OpenTelemetry |

@@ -32,6 +32,7 @@
 | 推荐 | recommend（strategy=hot / new） | ✅ |
 | 支付 | 下单 / 查单 / 公开套餐 / VIP 状态 / 方式列表 / Webhook（11 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global / UnionPay-RSA）/ 管理端流水·方式·套餐 | ✅ |
 | 管理 | 仪表盘统计（GET /api/stats/overview）/ 分类标签 CRUD / 审计日志查询（GET /api/admin/audit-logs，分页 + user_id/action/target_type/target_id/时间范围筛选） | ✅ |
+| CDN | 多厂商 CDN 加速（章节静态化）：Cloudflare / AWS CloudFront 全球线 + 阿里云 / 腾讯云中国线，`internal/cdn` Provider 抽象 + 5 adapter（含 generic 兼容路径）、purge 广播（key `chapter/{id}?lang={lang}`）、DB 配置 + 管理端 CRUD（/api/cdn/admin/providers*）/ 热更新 | ✅ 已完成（2026-08-29，T-7.5） |
 
 基础设施：JWT + Refresh 轮换（Redis GETDEL 防重放）、可选鉴权中间件 + requireAdmin（RBAC，role=3）、按路径限流（登录 10/min、评论发布 10/min、举报 5/min、搜索 10/min、支付回调 30/min）、业务错误码（11xxxx 用户 / 12xxxx 书籍 / 14xxxx 章节 / 15xxxx 评论 / 16xxxx 搜索 / 17xxxx 推荐 / 18xxxx 管理 / 19xxxx 支付，HTTP 200 + `{code,reason,message}`）、Redis 缓存（5min±30s 抖动 / 空值防穿透 / SETNX 单飞）+ ristretto 进程内 L1 二级缓存（128MB / 30s TTL / 写路径双删）、读写分离（FORCE_MASTER）、OpenSearch 多语言索引（zh/en/ja kuromoji / ko nori）、API 版本协商、支付渠道密钥 AES-GCM 加密存储、回调验签（Stripe / NOWPayments HMAC / Alipay RSA2 / WeChat Pay Global 平台公钥 + AES-GCM 解密）+ 金额强校验 + 幂等 settle。
 
@@ -166,7 +167,7 @@
 | 多端统一 / 收尾 | 1-2 周 | 分页统一、token 持久化、桌面布局（T-C-16~23、T-A-17） | ✅ 已完成 |
 | 二期支付 | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal（T-P-19~20） | ✅ 已完成 |
 
-**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4/7.5 已实现（2026-08-29，均配置门控默认关闭），仅剩 T-C-23 人工回归按需执行。
+**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4/7.5 已实现（2026-08-29，7.5 多厂商 CDN 完成，7.4 AI 推荐配置门控默认关闭），仅剩 T-C-23 人工回归按需执行。
 
 ---
 

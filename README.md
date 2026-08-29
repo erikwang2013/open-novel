@@ -31,14 +31,14 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **书籍内容**：书籍元数据、章节管理、分类标签、连载更新、多语言翻译
 - **互动社区**：评论书评、点赞、收藏、举报审核
 - **搜索发现**：多语言分词搜索、热搜词榜（/api/search/hot-keywords）、搜索建议（/api/search/suggest，本地历史 20 条可清空 + 200ms 防抖）、热门榜单、AI 推荐、分类浏览
-- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单 / 行为分析 /api/stats/behavior）、配置管理（分类标签）、机器翻译工作流（DeepL，/api/admin/translate/*，管理端「翻译」页 + 人工编辑）、审计日志查询（/api/admin/audit-logs）
+- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单 / 行为分析 /api/stats/behavior）、配置管理（分类标签）、机器翻译工作流（DeepL，/api/admin/translate/*，管理端「翻译」页 + 人工编辑）、审计日志查询（/api/admin/audit-logs）、CDN 厂商管理（多厂商配置 / 启停 / 排序，指纹热更新即时生效）
 - **支付与会员**：11 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN) / WeChat Pay Global(国际版) / UnionPay(zh-CN)）、VIP 套餐订阅与续期、支付方式多语言路由
 
 ## 系统架构
 
 <p align="center"><img src="docs/architecture.svg" alt="系统架构图" width="860"/></p>
 
-整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + CDN 与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
+整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + 多厂商 CDN（Cloudflare / CloudFront 全球线，阿里云 / 腾讯云中国线；管理端可配置、指纹热更新即时生效）与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
 
 其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg)。
 
@@ -73,7 +73,7 @@ open-novel/
 | :--- | :--- |
 | 客户端 | Flutter（Web / Desktop / Mobile，url_launcher / flutter_cache_manager）、HarmonyOS NEXT（ArkTS / ArkUI） |
 | 管理端 | Flutter Web（`apps/admin/`，B 端后台） |
-| 网关 | Nginx + CDN、Go-Kratos API 网关（gRPC / HTTP 双协议） |
+| 网关 | Nginx + 多厂商 CDN（Cloudflare / CloudFront / 阿里云 / 腾讯云）、Go-Kratos API 网关（gRPC / HTTP 双协议） |
 | 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC、stripe-go（Stripe 支付 SDK） |
 | 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、ristretto（进程内 L1 二级缓存，128MB / 30s TTL）、OpenSearch 2.x |
 | 可观测 | Prometheus、Grafana、ELK、OpenTelemetry 链路追踪 |

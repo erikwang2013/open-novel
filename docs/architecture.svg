@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="864" viewBox="0 0 1000 864" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
@@ -34,135 +34,166 @@
     </g>
   </g>
 
-  <line x1="500" y1="172" x2="500" y2="196" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="172" x2="500" y2="198" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- ============ 网关层 ============ -->
   <g>
-    <rect x="30" y="200" width="940" height="92" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
-    <rect x="46" y="212" width="86" height="24" rx="6" fill="#5e35b1"/>
-    <text x="89" y="228" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">网关层</text>
-    <text x="140" y="228" font-size="11" fill="#4527a0">GATEWAY</text>
+    <rect x="30" y="204" width="940" height="140" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+    <rect x="46" y="216" width="86" height="24" rx="6" fill="#5e35b1"/>
+    <text x="89" y="232" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">网关层</text>
+    <text x="140" y="232" font-size="11" fill="#4527a0">GATEWAY · INGRESS</text>
 
+    <!-- CDN 子层：GeoDNS 双线 + 4 厂商 -->
+    <rect x="46" y="250" width="560" height="84" rx="8" fill="#d1c4e9" stroke="#5e35b1" stroke-width="1.5"/>
+    <text x="58" y="266" font-size="11" fill="#4527a0">CDN 层 · GeoDNS 双线分流（CNAME）</text>
     <g>
-      <rect x="46" y="248" width="440" height="34" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="266" y="270" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Nginx + CDN · 静态资源 / 负载均衡 / 反向代理</text>
+      <rect x="56" y="272" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="187" y="291" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Cloudflare · 海外线</text>
     </g>
     <g>
-      <rect x="510" y="248" width="440" height="34" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="730" y="270" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Go-Kratos API 网关 · gRPC / HTTP 双协议</text>
+      <rect x="334" y="272" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="465" y="291" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">AWS CloudFront · 海外线</text>
     </g>
+    <g>
+      <rect x="56" y="306" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="187" y="325" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">阿里云 CDN · 中国线</text>
+    </g>
+    <g>
+      <rect x="334" y="306" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="465" y="325" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">腾讯云 CDN · 中国线</text>
+    </g>
+
+    <!-- 源站：Nginx → Go-Kratos -->
+    <g>
+      <rect x="630" y="250" width="340" height="30" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="800" y="269" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Nginx 源站 · 回源 IP 白名单</text>
+    </g>
+    <g>
+      <rect x="630" y="312" width="340" height="30" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="800" y="331" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Go-Kratos API 网关 · gRPC / HTTP 双协议</text>
+    </g>
+    <line x1="608" y1="269" x2="628" y2="269" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="800" y1="280" x2="800" y2="310" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
   </g>
 
-  <line x1="500" y1="296" x2="500" y2="320" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="348" x2="500" y2="374" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- ============ 服务层 ============ -->
   <g>
-    <rect x="30" y="324" width="940" height="184" rx="12" fill="#e0f2f1" stroke="#00897b" stroke-width="1.5"/>
-    <rect x="46" y="336" width="86" height="24" rx="6" fill="#00897b"/>
-    <text x="89" y="352" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">服务层</text>
-    <text x="140" y="352" font-size="11" fill="#00695c">SERVICE</text>
+    <rect x="30" y="380" width="940" height="200" rx="12" fill="#e0f2f1" stroke="#00897b" stroke-width="1.5"/>
+    <rect x="46" y="392" width="86" height="24" rx="6" fill="#00897b"/>
+    <text x="89" y="408" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">服务层</text>
+    <text x="140" y="408" font-size="11" fill="#00695c">SERVICE</text>
 
     <g>
-      <rect x="46" y="372" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="196" y="389" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">用户服务 User Service</text>
-      <text x="196" y="404" font-size="10" fill="#78909c" text-anchor="middle">注册登录 · 多语言资料 · 会员</text>
+      <rect x="46" y="416" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="196" y="433" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">用户服务 User Service</text>
+      <text x="196" y="448" font-size="10" fill="#78909c" text-anchor="middle">注册登录 · 多语言资料 · 会员</text>
     </g>
     <g>
-      <rect x="362" y="372" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="512" y="389" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">书籍服务 Book Service</text>
-      <text x="512" y="404" font-size="10" fill="#78909c" text-anchor="middle">元数据 · 分类标签 · 多语言</text>
+      <rect x="362" y="416" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="512" y="433" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">书籍服务 Book Service</text>
+      <text x="512" y="448" font-size="10" fill="#78909c" text-anchor="middle">元数据 · 分类标签 · 多语言</text>
     </g>
     <g>
-      <rect x="678" y="372" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="828" y="389" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">章节服务 Chapter Service</text>
-      <text x="828" y="404" font-size="10" fill="#78909c" text-anchor="middle">分章内容 · 阅读进度 · 分页</text>
+      <rect x="678" y="416" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="828" y="433" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">章节服务 Chapter Service</text>
+      <text x="828" y="448" font-size="10" fill="#78909c" text-anchor="middle">分章内容 · 阅读进度 · 分页</text>
     </g>
     <g>
-      <rect x="46" y="420" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="196" y="437" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">评论服务 Comment Service</text>
-      <text x="196" y="452" font-size="10" fill="#78909c" text-anchor="middle">书评 · 点赞 · 举报审核</text>
+      <rect x="46" y="464" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="196" y="481" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">评论服务 Comment Service</text>
+      <text x="196" y="496" font-size="10" fill="#78909c" text-anchor="middle">书评 · 点赞 · 举报审核</text>
     </g>
     <g>
-      <rect x="362" y="420" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="512" y="437" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">搜索服务 Search Service</text>
-      <text x="512" y="452" font-size="10" fill="#78909c" text-anchor="middle">OpenSearch 多语言分词检索</text>
+      <rect x="362" y="464" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="512" y="481" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">搜索服务 Search Service</text>
+      <text x="512" y="496" font-size="10" fill="#78909c" text-anchor="middle">OpenSearch 多语言分词检索</text>
     </g>
     <g>
-      <rect x="678" y="420" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="828" y="437" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">推荐服务 Recommendation Service</text>
-      <text x="828" y="452" font-size="10" fill="#78909c" text-anchor="middle">AI 推荐 · 用户行为分析</text>
+      <rect x="678" y="464" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="828" y="481" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">推荐服务 Recommendation Service</text>
+      <text x="828" y="496" font-size="10" fill="#78909c" text-anchor="middle">AI 推荐 · 用户行为分析</text>
     </g>
     <g>
-      <rect x="46" y="468" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="196" y="485" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">支付服务 Payment Service</text>
-      <text x="196" y="500" font-size="10" fill="#78909c" text-anchor="middle">下单查单 · 渠道回调验签 · VIP 激活</text>
+      <rect x="46" y="512" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="196" y="529" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">支付服务 Payment Service</text>
+      <text x="196" y="544" font-size="10" fill="#78909c" text-anchor="middle">下单查单 · 渠道回调验签 · VIP 激活</text>
     </g>
     <g>
-      <rect x="362" y="468" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="512" y="485" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">管理服务 Admin Service</text>
-      <text x="512" y="500" font-size="10" fill="#78909c" text-anchor="middle">统计 · 分类标签 · RBAC</text>
+      <rect x="362" y="512" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="512" y="529" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">管理服务 Admin Service</text>
+      <text x="512" y="544" font-size="10" fill="#78909c" text-anchor="middle">统计 · 分类标签 · RBAC · CDN 配置</text>
+    </g>
+    <!-- 失效编排：internal/cdn Manager → 各厂商 purge API -->
+    <g>
+      <rect x="678" y="512" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+      <text x="828" y="529" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">CDN 失效编排 internal/cdn</text>
+      <text x="828" y="544" font-size="10" fill="#78909c" text-anchor="middle">Manager 广播 4 厂商 purge API</text>
     </g>
   </g>
 
-  <line x1="500" y1="512" x2="500" y2="536" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="584" x2="500" y2="610" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- ============ 存储层 ============ -->
   <g>
-    <rect x="30" y="540" width="940" height="92" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
-    <rect x="46" y="508" width="86" height="24" rx="6" fill="#fb8c00"/>
-    <text x="89" y="524" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">存储层</text>
-    <text x="140" y="524" font-size="11" fill="#e65100">STORAGE</text>
+    <rect x="46" y="584" width="86" height="24" rx="6" fill="#fb8c00"/>
+    <text x="89" y="600" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">存储层</text>
+    <text x="140" y="600" font-size="11" fill="#e65100">STORAGE</text>
+
+    <rect x="30" y="612" width="940" height="92" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
 
     <g>
-      <rect x="46" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="150" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">MySQL 8 · 主从读写分离</text>
-      <text x="150" y="573" font-size="10" fill="#78909c" text-anchor="middle">库名 novel · 表前缀 novel_</text>
+      <rect x="46" y="616" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="150" y="631" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">MySQL 8 · 主从读写分离</text>
+      <text x="150" y="645" font-size="10" fill="#78909c" text-anchor="middle">库名 novel · 表前缀 novel_</text>
     </g>
     <g>
-      <rect x="270" y="544" width="208" height="54" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="374" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Redis Cluster</text>
-      <text x="374" y="573" font-size="10" fill="#78909c" text-anchor="middle">热点缓存 · 会话 · 限流计数</text>
-      <text x="374" y="589" font-size="10" fill="#78909c" text-anchor="middle">L1 进程内 ristretto · 30s TTL</text>
+      <rect x="270" y="616" width="208" height="54" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="374" y="631" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Redis Cluster</text>
+      <text x="374" y="645" font-size="10" fill="#78909c" text-anchor="middle">热点缓存 · 会话 · 限流计数</text>
+      <text x="374" y="661" font-size="10" fill="#78909c" text-anchor="middle">L1 进程内 ristretto · 30s TTL</text>
     </g>
     <g>
-      <rect x="494" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="598" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">OpenSearch 2.x</text>
-      <text x="598" y="573" font-size="10" fill="#78909c" text-anchor="middle">多语言分词器 · 搜索索引</text>
+      <rect x="494" y="616" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="598" y="631" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">OpenSearch 2.x</text>
+      <text x="598" y="645" font-size="10" fill="#78909c" text-anchor="middle">多语言分词器 · 搜索索引</text>
     </g>
     <g>
-      <rect x="718" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="822" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">对象存储 OSS</text>
-      <text x="822" y="573" font-size="10" fill="#78909c" text-anchor="middle">封面 / 素材 / 静态资源</text>
+      <rect x="718" y="616" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="822" y="631" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">novel_cdn_provider</text>
+      <text x="822" y="645" font-size="10" fill="#78909c" text-anchor="middle">CDN 厂商配置 · AES-GCM 加密</text>
     </g>
   </g>
 
-  <line x1="500" y1="636" x2="500" y2="660" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="708" x2="500" y2="734" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- ============ 运维层 ============ -->
   <g>
-    <rect x="30" y="664" width="940" height="92" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
-    <rect x="46" y="632" width="86" height="24" rx="6" fill="#d81b60"/>
-    <text x="89" y="648" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">运维层</text>
-    <text x="140" y="648" font-size="11" fill="#880e4f">OPS</text>
+    <rect x="46" y="708" width="86" height="24" rx="6" fill="#d81b60"/>
+    <text x="89" y="724" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">运维层</text>
+    <text x="140" y="724" font-size="11" fill="#880e4f">OPS</text>
+
+    <rect x="30" y="736" width="940" height="92" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
 
     <g>
-      <rect x="46" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="150" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Prometheus + Grafana</text>
+      <rect x="46" y="740" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="150" y="762" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Prometheus + Grafana</text>
     </g>
     <g>
-      <rect x="270" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="374" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">ELK 日志聚合分析</text>
+      <rect x="270" y="740" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="374" y="762" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">ELK 日志聚合分析</text>
     </g>
     <g>
-      <rect x="494" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="598" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">CI/CD · GitHub Actions</text>
+      <rect x="494" y="740" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="598" y="762" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">CI/CD · GitHub Actions</text>
     </g>
     <g>
-      <rect x="718" y="668" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="822" y="690" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">配置中心 · 密钥管理</text>
+      <rect x="718" y="740" width="208" height="34" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="822" y="762" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">配置中心 · 密钥管理</text>
     </g>
   </g>
 
-  <text x="500" y="784" font-size="12" fill="#78909c" text-anchor="middle">全链路：多语言 i18n · JWT 认证 · 限流熔断 · 支付验签 · 链路追踪 · 可观测性</text>
-  <text x="988" y="792" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+  <text x="500" y="852" font-size="12" fill="#78909c" text-anchor="middle">全链路：多语言 i18n · JWT 认证 · 限流熔断 · 支付验签 · 链路追踪 · 可观测性</text>
+  <text x="988" y="858" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

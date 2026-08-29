@@ -32,14 +32,14 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 - **書籍コンテンツ**：書籍メタデータ、章管理、カテゴリタグ、連載更新、多言語翻訳
 - **交流コミュニティ**：コメント・書評、いいね、お気に入り、通報・審査
 - **検索・発見**：多言語形態素解析検索、ホットキーワードランキング、検索サジェスト（クライアント側ローカル履歴 20 件 + 200ms デバウンスのサジェスト）、AI レコメンド、カテゴリ閲覧
-- **管理バックエンド**：コンテンツ審査、ユーザー管理、データ統計（ダッシュボード / DAU / ランキング / 行動分析 /api/stats/behavior）、設定管理（カテゴリタグ）、機械翻訳ワークフロー（DeepL、/api/admin/translate/*、管理側「翻訳」ページ + 手動編集）、監査ログ照会（/api/admin/audit-logs）
+- **管理バックエンド**：コンテンツ審査、ユーザー管理、データ統計（ダッシュボード / DAU / ランキング / 行動分析 /api/stats/behavior）、設定管理（カテゴリタグ）、機械翻訳ワークフロー（DeepL、/api/admin/translate/*、管理側「翻訳」ページ + 手動編集）、監査ログ照会（/api/admin/audit-logs）、CDN ベンダー管理（マルチベンダー設定 / 有効無効 / 並び順、ホットリロードで即時反映）
 - **決済とVIP**：11 つの決済プロバイダー（Stripe、NOWPayments（USDT）、Razorpay、KOMOJU、PortOne、Mercado Pago、Xendit、PayPal、Alipay、WeChat Pay Global、UnionPay）による多チャネル決済、VIPプラン購読と更新、言語別の決済手段ルーティング（WeChat Pay Global は接続済み、国内の WeChat Pay は未接続、中国の加盟店資格が必要）
 
 ## システムアーキテクチャ
 
 <p align="center"><img src="images/ja/architecture.svg" alt="システムアーキテクチャ図" width="860"/></p>
 
-全体は Go-Kratos マイクロサービスアーキテクチャです。Flutter / HarmonyOS クライアントは Nginx + CDN を経由して API ゲートウェイとやり取りし、ゲートウェイはドメインごとにユーザー、書籍、チャプター、コメント、検索、レコメンドなどのバックエンドサービスへルーティングします。データ層は MySQL マスタースレーブ（読み書き分離）+ Redis キャッシュ + OpenSearch 検索インデックスです。サービス間は gRPC で通信し、外部向け HTTP インターフェースは統一プレフィックス `/api` を使用します。
+全体は Go-Kratos マイクロサービスアーキテクチャです。Flutter / HarmonyOS クライアントは Nginx + マルチベンダー CDN（Cloudflare / CloudFront はグローバル回線、阿里云 / 腾讯云は中国回線。管理側で設定可能、設定フィンガープリントのホットリロードで即時反映）を経由して API ゲートウェイとやり取りし、ゲートウェイはドメインごとにユーザー、書籍、チャプター、コメント、検索、レコメンドなどのバックエンドサービスへルーティングします。データ層は MySQL マスタースレーブ（読み書き分離）+ Redis キャッシュ + OpenSearch 検索インデックスです。サービス間は gRPC で通信し、外部向け HTTP インターフェースは統一プレフィックス `/api` を使用します。
 
 その他の設計図：プロジェクト全景 [docs/project.svg](../../docs/project.svg) · リクエストサイクル [docs/request-cycle.svg](../../docs/request-cycle.svg) · セキュリティアーキテクチャ [docs/security.svg](../../docs/security.svg) · プロジェクト構成 [docs/structure.svg](../../docs/structure.svg)。
 
@@ -82,7 +82,7 @@ open-novel/
 | レイヤー | 技術選定 |
 | :--- | :--- |
 | クライアント | Flutter（Web / Desktop / Mobile）、HarmonyOS NEXT（ArkTS / ArkUI） |
-| ゲートウェイ | Nginx + CDN、Go-Kratos API ゲートウェイ（gRPC / HTTP デュアルプロトコル） |
+| ゲートウェイ | Nginx + マルチベンダー CDN（Cloudflare / CloudFront / 阿里云 / 腾讯云）、Go-Kratos API ゲートウェイ（gRPC / HTTP デュアルプロトコル） |
 | サーバーサイド | Go 1.22+、Kratos v2、protobuf / gRPC |
 | ストレージ | MySQL 8.0（マスタースレーブ）、Redis 7.x（Cluster）、OpenSearch 2.x、Redis の上層の ristretto プロセス内 L1 キャッシュ（30 秒 TTL） |
 | 可観測性 | Prometheus、Grafana、ELK、OpenTelemetry リンクトレーシング |
