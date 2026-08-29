@@ -52,15 +52,16 @@ type PaymentProvider interface {
 type providerFactory func(cfg map[string]any, pay *conf.Payment) (PaymentProvider, error)
 
 var providerFactories = map[string]providerFactory{
-	"stripe":       newStripeProvider,
-	"np_usdt":      newNPProvider,
-	"razorpay":     newRazorpayProvider,
-	"komoju":       newKomojuProvider,
-	"portone":      newPortOneProvider,
-	"mercadopago":  newMercadoPagoProvider,
-	"xendit":       newXenditProvider,
-	"paypal":       newPayPalProvider,
-	"alipay":       newAlipayProvider,
+	"stripe":           newStripeProvider,
+	"np_usdt":          newNPProvider,
+	"razorpay":         newRazorpayProvider,
+	"komoju":           newKomojuProvider,
+	"portone":          newPortOneProvider,
+	"mercadopago":      newMercadoPagoProvider,
+	"xendit":           newXenditProvider,
+	"paypal":           newPayPalProvider,
+	"alipay":           newAlipayProvider,
+	"wechatpay_global": newWeChatPayGlobalProvider,
 }
 
 // webhookAlias 把 webhook 路径参数（stripe/nowpayments）归一为渠道码。
@@ -148,7 +149,7 @@ func (pc *PaymentUsecase) CreateOrder(ctx context.Context, uid uint64, plan, lan
 	}
 	if !reuse {
 		o = data.PaymentOrder{
-			OrderNo:  newOrderNo(), UserID: uid,
+			OrderNo: newOrderNo(), UserID: uid,
 			Amount: float64(amountCents) / 100, Currency: currency,
 			Provider: row.Code, Status: 0,
 		}

@@ -108,6 +108,7 @@ func (s *PaymentService) Webhook(ctx context.Context, req *paymentv1.WebhookReq)
 			"PayPal-Auth-Algo", "PayPal-Cert-Url",
 			"PayPal-Transmission-Id", "PayPal-Transmission-Time",
 			"PayPal-Transmission-Sig", "PayPal-Webhook-Id",
+			"Wechatpay-Timestamp", "Wechatpay-Nonce", "Wechatpay-Signature", "Wechatpay-Serial",
 		} {
 			headers[name] = h.Get(name)
 		}
