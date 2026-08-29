@@ -6,6 +6,7 @@ replace github.com/go-kratos/kratos/v2 => ..
 
 require (
 	github.com/dgraph-io/ristretto v0.2.0
+	github.com/erikwang2013/security-go v1.0.16
 	github.com/go-kratos/kratos/v2 v2.9.2
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
