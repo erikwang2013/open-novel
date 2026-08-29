@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+// CDN 厂商管理：多厂商失效配置 CRUD（管理端，requireAdmin）。
+// 配置明文 JSON 键名受 §3.3 表约束；config 加密存储，绝不回显明文（仅 config_configured 标志）。
+
+package cdn.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "open-novel/backend/api/cdn/v1;v1";
+
+service Cdn {
+  // 厂商列表（含禁用），sort 升序
+  rpc ListProviders(ListProvidersReq) returns (ListProvidersReply) {
+    option (google.api.http) = {
+      get: "/api/cdn/admin/providers"
+    };
+  }
+  // 新建厂商：code ∈ cloudflare/cloudfront/aliyun/tencent；enabled 固定为 1
+  rpc CreateProvider(CreateProviderReq) returns (ProviderReply) {
+    option (google.api.http) = {
+      post: "/api/cdn/admin/providers"
+      body: "*"
+    };
+  }
+  // 更新厂商；config 传入字段重加密合并，空值保留原值
+  rpc UpdateProvider(UpdateProviderReq) returns (ProviderReply) {
+    option (google.api.http) = {
+      put: "/api/cdn/admin/providers/{id}"
+      body: "*"
+    };
+  }
+  // 删除厂商（先禁用再删）
+  rpc DeleteProvider(DeleteProviderReq) returns (EmptyReply) {
+    option (google.api.http) = {
+      delete: "/api/cdn/admin/providers/{id}"
+    };
+  }
+  // 启停厂商（灰度回滚手段：enabled=0 即摘除）
+  rpc ToggleProvider(ToggleProviderReq) returns (ProviderReply) {
+    option (google.api.http) = {
+      patch: "/api/cdn/admin/providers/{id}/toggle"
+    };
+  }
+}
+
+message ListProvidersReq {}
+
+message ProviderReply {
+  int64 id = 1;
+  string code = 2;                 // cloudflare/cloudfront/aliyun/tencent
+  int32 enabled = 3;               // 0禁用 1启用
+  int32 sort = 4;                  // 广播顺序（升序）
+  bool config_configured = 5;      // 密钥是否已配置（绝不返回明文）
+  string created_at = 6;           // RFC3339
+  string updated_at = 7;           // RFC3339
+}
+
+message ListProvidersReply {
+  repeated ProviderReply list = 1;
+  int64 total = 2;
+}
+
+message CreateProviderReq {
+  string code = 1;                 // 渠道码
+  int32 sort = 2;
+  map<string, string> config = 3;  // 明文键受 §3.3 表约束，加密存储
+}
+
+message UpdateProviderReq {
+  int64 id = 1;
+  optional int32 sort = 2;
+  optional int32 enabled = 3;      // 0禁用 1启用
+  map<string, string> config = 4;  // 传入字段重加密合并；空值保留原值
+}
+
+message DeleteProviderReq {
+  int64 id = 1;
+}
+
+message ToggleProviderReq {
+  int64 id = 1;
+}
+
+message EmptyReply {}
