@@ -38,7 +38,7 @@ func TestNewTencentValidate(t *testing.T) {
 func TestTencentPurgeHeaders(t *testing.T) {
 	var got struct {
 		Action, Version, Timestamp, Auth, CT string
-		Urls                                []string
+		Urls                                []string `json:"Urls"`
 	}
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		got.Action = r.Header.Get("X-TC-Action")
@@ -46,7 +46,9 @@ func TestTencentPurgeHeaders(t *testing.T) {
 		got.Timestamp = r.Header.Get("X-TC-Timestamp")
 		got.Auth = r.Header.Get("Authorization")
 		got.CT = r.Header.Get("Content-Type")
-		_ = json.NewDecoder(r.Body).Decode(&got.Urls)
+		if err := json.NewDecoder(r.Body).Decode(&got); err != nil {
+			t.Errorf("decode body: %v", err)
+		}
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(`{}`))
 	}))
