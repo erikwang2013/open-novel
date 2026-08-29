@@ -212,7 +212,7 @@ message GetBookRequest {
 
 ## 六、安全体系
 
-采用 Kratos 官方中间件组合，无第三方安全插件依赖：
+采用 Kratos 官方中间件 + `security-go` 攻击检测库组合：
 
 | 中间件 | 职责 |
 | :--- | :--- |
@@ -221,6 +221,7 @@ message GetBookRequest {
 | `middleware/recovery` | 全局 panic 恢复，防止单点故障拖垮进程 |
 | `middleware/validate` | protovalidate 入参校验（信任边界） |
 | `middleware/tracing` | OpenTelemetry 链路追踪 |
+| `internal/middleware/security` | security-go 攻击检测（27 检测器：注入/协议/数据/文件），High/Critical 拦截，IP 黑名单自动封禁 |
 
 ```go
 import (
@@ -242,7 +243,7 @@ httpSrv := http.NewServer(
 **防护目标与手段**：
 
 - **认证授权**：JWT（短时 access + RefreshToken 轮换）；RBAC 角色权限（普通用户 / 作者 / 管理员，service 层 `requireAdmin` 校验 role=3）。
-- **Web 攻击面**：SQL 注入 → 全部参数化查询 / ORM；XSS → 输出转义 + CSP 响应头；CSRF → 网关校验 `Origin/Referer` + SameSite Cookie，写操作走 Authorization Header。
+- **Web 攻击面**：所有 HTTP 请求经 `security-go` 实时扫描（URL/Query/Headers/Cookies），命中高危载荷（SQL/XSS/命令注入等 27 检测器）直接拦截；SQL 注入 → 全部参数化查询 / ORM；XSS → 输出转义 + CSP 响应头；CSRF → 网关校验 `Origin/Referer` + SameSite Cookie，写操作走 Authorization Header。
 - **支付安全**：渠道回调验签（Stripe `ConstructEvent` 签名 / NOWPayments HMAC-SHA512 / Alipay RSA2）、回调金额=订单金额强校验、webhook 幂等 settle、支付回调限流 30/min。
 - **敏感数据**：密码 bcrypt/argon2 哈希存储；支付渠道密钥（config）AES-GCM 加密存储，不入库明文。
 - **传输安全**：全链路 HTTPS/TLS（Nginx 终结）。

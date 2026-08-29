@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="756" viewBox="0 0 1000 756" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
@@ -42,7 +42,7 @@
 
   <!-- एक्सेस सुरक्षा -->
   <g>
-    <rect x="44" y="212" width="912" height="112" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
+    <rect x="44" y="212" width="912" height="168" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
     <rect x="60" y="224" width="86" height="24" rx="6" fill="#5e35b1"/>
     <text x="103" y="240" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">एक्सेस सुरक्षा</text>
     <text x="154" y="240" font-size="11" fill="#4527a0">ACCESS</text>
@@ -67,105 +67,117 @@
       <text x="848" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">पैरामीटर सत्यापन (protovalidate)</text>
       <text x="848" y="295" font-size="10" fill="#78909c" text-anchor="middle">प्रोटोकॉल-स्तरीय सत्यापन</text>
     </g>
+    <g>
+      <rect x="60" y="328" width="440" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="280" y="347" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">अटैक डिटेक्शन security-go</text>
+      <text x="280" y="359" font-size="10" fill="#78909c" text-anchor="middle">27 डिटेक्टर · इंजेक्शन / प्रोटोकॉल / डेटा / फ़ाइल</text>
+      <text x="280" y="371" font-size="10" fill="#78909c" text-anchor="middle">High / Critical ब्लॉक · Low / Medium सिर्फ़ लॉग</text>
+    </g>
+    <g>
+      <rect x="516" y="328" width="440" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+      <text x="736" y="352" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">IP ब्लैकलिस्ट प्रतिबंध</text>
+      <text x="736" y="366" font-size="10" fill="#78909c" text-anchor="middle">60 सेकंड में 5 अटैक → 15 मिनट बैन</text>
+    </g>
+
   </g>
 
-  <line x1="500" y1="328" x2="500" y2="340" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="384" x2="500" y2="396" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- बिज़नेस सुरक्षा -->
   <g>
-    <rect x="44" y="344" width="912" height="112" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
-    <rect x="60" y="356" width="86" height="24" rx="6" fill="#fb8c00"/>
-    <text x="103" y="372" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">बिज़नेस सुरक्षा</text>
-    <text x="154" y="372" font-size="11" fill="#e65100">BUSINESS</text>
+    <rect x="44" y="400" width="912" height="112" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
+    <rect x="60" y="412" width="86" height="24" rx="6" fill="#fb8c00"/>
+    <text x="103" y="428" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">बिज़नेस सुरक्षा</text>
+    <text x="154" y="428" font-size="11" fill="#e65100">BUSINESS</text>
 
     <g>
-      <rect x="60" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="144" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">RBAC अनुमतियाँ</text>
-      <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">रोल-आधारित एक्सेस कंट्रोल</text>
+      <rect x="60" y="448" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="144" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">RBAC अनुमतियाँ</text>
+      <text x="144" y="483" font-size="10" fill="#78909c" text-anchor="middle">रोल-आधारित एक्सेस कंट्रोल</text>
     </g>
     <g>
-      <rect x="240" y="392" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">भुगतान कॉलबैक सत्यापन</text>
-      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">HMAC / टोकन · IPN री-चेक</text>
-    <text x="324" y="443" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay / WeChat RSA</text>
+      <rect x="240" y="448" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">भुगतान कॉलबैक सत्यापन</text>
+      <text x="324" y="483" font-size="10" fill="#78909c" text-anchor="middle">HMAC / टोकन · IPN री-चेक</text>
+    <text x="324" y="499" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay / WeChat RSA</text>
     </g>
     <g>
-      <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">राशि जाँच · आइडेम्पोटेंसी</text>
-      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">कॉलबैक राशि = ऑर्डर राशि</text>
+      <rect x="420" y="448" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="504" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">राशि जाँच · आइडेम्पोटेंसी</text>
+      <text x="504" y="483" font-size="10" fill="#78909c" text-anchor="middle">कॉलबैक राशि = ऑर्डर राशि</text>
     </g>
     <g>
-      <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="684" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">XSS फ़िल्टरिंग</text>
-      <text x="684" y="427" font-size="10" fill="#78909c" text-anchor="middle">आउटपुट एस्केपिंग</text>
+      <rect x="600" y="448" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="684" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">XSS फ़िल्टरिंग</text>
+      <text x="684" y="483" font-size="10" fill="#78909c" text-anchor="middle">आउटपुट एस्केपिंग</text>
     </g>
     <g>
-      <rect x="780" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="864" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">SQL इंजेक्शन सुरक्षा</text>
-      <text x="864" y="427" font-size="10" fill="#78909c" text-anchor="middle">पैरामीटराइज़्ड क्वेरी</text>
+      <rect x="780" y="448" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="864" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">SQL इंजेक्शन सुरक्षा</text>
+      <text x="864" y="483" font-size="10" fill="#78909c" text-anchor="middle">पैरामीटराइज़्ड क्वेरी</text>
     </g>
   </g>
 
-  <line x1="500" y1="460" x2="500" y2="472" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="516" x2="500" y2="528" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- डेटा सुरक्षा -->
   <g>
-    <rect x="44" y="476" width="912" height="112" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
-    <rect x="60" y="488" width="86" height="24" rx="6" fill="#d81b60"/>
-    <text x="103" y="504" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">डेटा सुरक्षा</text>
-    <text x="154" y="504" font-size="11" fill="#880e4f">DATA</text>
+    <rect x="44" y="532" width="912" height="112" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
+    <rect x="60" y="544" width="86" height="24" rx="6" fill="#d81b60"/>
+    <text x="103" y="560" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">डेटा सुरक्षा</text>
+    <text x="154" y="560" font-size="11" fill="#880e4f">DATA</text>
 
     <g>
-      <rect x="60" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="144" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">सेंसिटिव फ़ील्ड AES एन्क्रिप्शन</text>
-      <text x="144" y="559" font-size="10" fill="#78909c" text-anchor="middle">स्टोरेज एन्क्रिप्शन</text>
+      <rect x="60" y="580" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="144" y="599" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">सेंसिटिव फ़ील्ड AES एन्क्रिप्शन</text>
+      <text x="144" y="615" font-size="10" fill="#78909c" text-anchor="middle">स्टोरेज एन्क्रिप्शन</text>
     </g>
     <g>
-      <rect x="240" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="324" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">पासवर्ड हैशिंग</text>
-      <text x="324" y="559" font-size="10" fill="#78909c" text-anchor="middle">bcrypt / argon2</text>
+      <rect x="240" y="580" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="324" y="599" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">पासवर्ड हैशिंग</text>
+      <text x="324" y="615" font-size="10" fill="#78909c" text-anchor="middle">bcrypt / argon2</text>
     </g>
     <g>
-      <rect x="420" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="504" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">की प्रबंधन</text>
-      <text x="504" y="559" font-size="10" fill="#78909c" text-anchor="middle">KMS / Vault</text>
+      <rect x="420" y="580" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="504" y="599" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">की प्रबंधन</text>
+      <text x="504" y="615" font-size="10" fill="#78909c" text-anchor="middle">KMS / Vault</text>
     </g>
     <g>
-      <rect x="600" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="684" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">DB मास्टर-स्लेव एन्क्रिप्शन</text>
-      <text x="684" y="559" font-size="10" fill="#78909c" text-anchor="middle">रेप्लिकेशन एन्क्रिप्शन</text>
+      <rect x="600" y="580" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="684" y="599" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">DB मास्टर-स्लेव एन्क्रिप्शन</text>
+      <text x="684" y="615" font-size="10" fill="#78909c" text-anchor="middle">रेप्लिकेशन एन्क्रिप्शन</text>
     </g>
     <g>
-      <rect x="780" y="524" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
-      <text x="864" y="543" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">लॉग मास्किंग</text>
-      <text x="864" y="559" font-size="10" fill="#78909c" text-anchor="middle">सेंसिटिव डेटा छुपाएँ</text>
+      <rect x="780" y="580" width="168" height="44" rx="8" fill="#ffffff" stroke="#d81b60" stroke-width="2"/>
+      <text x="864" y="599" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">लॉग मास्किंग</text>
+      <text x="864" y="615" font-size="10" fill="#78909c" text-anchor="middle">सेंसिटिव डेटा छुपाएँ</text>
     </g>
   </g>
 
-  <line x1="500" y1="592" x2="500" y2="604" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="500" y1="648" x2="500" y2="660" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- ऑप्स सुरक्षा -->
   <g>
-    <rect x="44" y="608" width="912" height="76" rx="12" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>
-    <rect x="60" y="620" width="86" height="24" rx="6" fill="#37474f"/>
-    <text x="103" y="636" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">ऑप्स सुरक्षा</text>
-    <text x="154" y="636" font-size="11" fill="#455a64">OPS</text>
+    <rect x="44" y="664" width="912" height="76" rx="12" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>
+    <rect x="60" y="676" width="86" height="24" rx="6" fill="#37474f"/>
+    <text x="103" y="692" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">ऑप्स सुरक्षा</text>
+    <text x="154" y="692" font-size="11" fill="#455a64">OPS</text>
 
     <g>
-      <rect x="258" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
-      <text x="358" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">ऑडिट लॉग</text>
+      <rect x="258" y="676" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="358" y="698" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">ऑडिट लॉग</text>
     </g>
     <g>
-      <rect x="482" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
-      <text x="582" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">केनरी रिलीज़</text>
+      <rect x="482" y="676" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="582" y="698" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">केनरी रिलीज़</text>
     </g>
     <g>
-      <rect x="706" y="620" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
-      <text x="806" y="642" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">भेद्यता स्कैनिंग</text>
+      <rect x="706" y="676" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
+      <text x="806" y="698" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">भेद्यता स्कैनिंग</text>
     </g>
-    <text x="806" y="664" font-size="10" fill="#78909c" text-anchor="middle">golangci-lint / govulncheck</text>
+    <text x="806" y="720" font-size="10" fill="#78909c" text-anchor="middle">golangci-lint / govulncheck</text>
   </g>
 
-  <text x="500" y="688" font-size="12" fill="#78909c" text-anchor="middle">डिफेंस-इन-डेप्थ: ट्रांसमिशन → एक्सेस → बिज़नेस → डेटा → ऑप्स · परत-दर-परत सुरक्षा</text>
-  <text x="988" y="688" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+  <text x="500" y="744" font-size="12" fill="#78909c" text-anchor="middle">डिफेंस-इन-डेप्थ: ट्रांसमिशन → एक्सेस → बिज़नेस → डेटा → ऑप्स · परत-दर-परत सुरक्षा</text>
+  <text x="988" y="744" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>
