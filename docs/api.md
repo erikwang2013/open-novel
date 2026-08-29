@@ -144,8 +144,9 @@ provider 行由 admin「支付方式」页创建，config 键 AES-GCM 加密存�
 | xendit | id / th / vn | `api_key` `callback_token` | X-CALLBACK-TOKEN 比对 |
 | paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | 官方 verify-webhook-signature API 验签（复用 OAuth access_token） |
 | alipay | zh-CN | `app_id` `merchant_private_key` `alipay_public_key` `notify_url`（可选 `base_url` 沙箱） | 表单 notify RSA2 验签（沙箱可测） |
+| wechatpay_global | *（国际版） | `app_id` `mch_id` `merchant_serial_no` `merchant_private_key` `platform_public_key` `apiv3_key` `notify_url`（可选 `base_url` 区域/沙箱覆盖） | 平台公钥 RSA-SHA256 验签 + apiv3_key AES-GCM 解密 resource |
 
-zh-CN 支付宝已实现（沙箱可配置）；微信支付需企业商户号，未实现。
+zh-CN 支付宝已实现（沙箱可配置）；微信支付国际版（wechatpay_global，HK API v3 H5）已实现（2026-08-29，商户申请后配置 4 个密钥 + apiv3_key + 真实 notify_url 即可用）；国内微信支付需企业商户号，未实现。
 
 ### 支付管理（T-P-09~13，全部 requireAdmin → 180401）
 

@@ -149,7 +149,7 @@ index_settings:
 
 ### 4. 支付与 VIP 模块（2026-08 已实现，T-P-01~20）
 
-- **Provider 抽象**：`CreateCheckout / Verify / VerifyWebhook` 接口 + 注册表；已接入 9 个渠道——Stripe（stripe-go v81 Checkout Session + ConstructEvent 验签）、PayPal、NOWPayments（USDT，HMAC-SHA512 IPN 验签）、Razorpay(hi)、KOMOJU(ja)、PortOne(ko)、Mercado Pago(pt-BR)、Xendit(id/th/vn)、Alipay（zh-CN，RSA2 验签，2026-08-29 接入，沙箱可用）；微信支付未接入（需中国大陆商户资质）。
+- **Provider 抽象**：`CreateCheckout / Verify / VerifyWebhook` 接口 + 注册表；已接入 10 个渠道——Stripe（stripe-go v81 Checkout Session + ConstructEvent 验签）、PayPal、NOWPayments（USDT，HMAC-SHA512 IPN 验签）、Razorpay(hi)、KOMOJU(ja)、PortOne(ko)、Mercado Pago(pt-BR)、Xendit(id/th/vn)、Alipay（zh-CN，RSA2 验签，2026-08-29 接入，沙箱可用）、WeChat Pay Global（国际版，HK API v3 H5，WECHATPAY2 请求签名 + 平台公钥 RSA-SHA256 验签 + apiv3_key AES-GCM 解密 resource，2026-08-29 接入）；国内微信支付未接入（需中国大陆商户资质）。
 - **下单 / 查单**：幂等（同 user+套餐未支付订单复用）、15 分钟超时自动关闭、回调金额=订单金额强校验、webhook 幂等 settle；金额一律整数分。
 - **VIP 激活**：支付成功 → `novel_user.vip_expires_at` 续期（可叠加）；客户端按 `chapter.isVip` + `/api/payments/vip-status` 判断展示 VIP 引导，后端不拦截正文。
 - **语言路由**：`GET /api/payments/methods?lang=` 按 enabled / lang / region / sort 返回支付方式；DB 套餐表优先于内置默认。
@@ -306,8 +306,8 @@ services:
 | **Phase 3** | 2 周 | 安全体系落地（JWT / 限流 / 校验 / 追踪）+ 压力测试 | ✅ 已完成 |
 | **Phase 4** | 1-2 周 | 全链路联调 + CDN（CloudFront / 阿里云 OSS）+ 监控告警 | ✅ 已完成 |
 | **Phase 5** | 持续迭代 | AI 推荐、用户行为埋点分析、搜索优化 | ⏳ 进行中 |
-| **商业化** | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、支付与 VIP（9 渠道） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~20） |
-| **二期** | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal、多端体验统一（C4） | ✅ 已完成（微信支付未接入，需大陆商户资质） |
+| **商业化** | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、支付与 VIP（10 渠道） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~21） |
+| **二期** | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal、微信支付国际版（WeChat Pay Global）、多端体验统一（C4） | ✅ 已完成（国内微信支付未接入，需大陆商户资质） |
 
 ### 关键资源清单
 
