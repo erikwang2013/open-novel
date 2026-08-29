@@ -62,6 +62,7 @@ var providerFactories = map[string]providerFactory{
 	"paypal":           newPayPalProvider,
 	"alipay":           newAlipayProvider,
 	"wechatpay_global": newWeChatPayGlobalProvider,
+	"unionpay":         newUnionPayProvider,
 }
 
 // webhookAlias 把 webhook 路径参数（stripe/nowpayments）归一为渠道码。
