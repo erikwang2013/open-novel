@@ -375,3 +375,18 @@ CREATE TABLE IF NOT EXISTS novel_audit_log (
   KEY idx_action (action),
   KEY idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='审计日志表';
+
+-- ------------------------------------------------------------
+-- CDN 厂商表：多厂商 CDN 失效配置（config 列 AES-GCM 加密 JSON）
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS novel_cdn_provider (
+  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  code       VARCHAR(32)    NOT NULL COMMENT 'cloudflare/cloudfront/aliyun/tencent',
+  enabled    TINYINT        NOT NULL DEFAULT 0 COMMENT '0禁用 1启用',
+  sort       INT            NOT NULL DEFAULT 0 COMMENT '广播顺序（升序）',
+  config     TEXT           NULL COMMENT 'AES-GCM 加密 JSON（凭据/批量/限速）',
+  created_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uk_code (code),
+  KEY idx_enabled_sort (enabled, sort)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='CDN 厂商表';

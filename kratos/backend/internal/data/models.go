@@ -241,6 +241,19 @@ type PaymentProvider struct {
 
 func (PaymentProvider) TableName() string { return "novel_payment_provider" }
 
+// CDN 厂商模型（多厂商接入 §3.3）：config 列 AES-GCM 加密 JSON，镜像 PaymentProvider（无 lang/region）。
+type CdnProvider struct {
+	ID        uint64    `gorm:"primaryKey;column:id"`
+	Code      string    `gorm:"column:code"`
+	Enabled   int8      `gorm:"column:enabled"`
+	Sort      int       `gorm:"column:sort"`
+	Config    string    `gorm:"column:config"` // AES-GCM 加密 JSON
+	CreatedAt time.Time `gorm:"column:created_at"`
+	UpdatedAt time.Time `gorm:"column:updated_at"`
+}
+
+func (CdnProvider) TableName() string { return "novel_cdn_provider" }
+
 type PaymentOrder struct {
 	ID        uint64     `gorm:"primaryKey;column:id"`
 	OrderNo   string     `gorm:"column:order_no"`

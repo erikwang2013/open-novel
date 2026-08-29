@@ -11,6 +11,7 @@ package biz
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -18,10 +19,55 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+
+	"open-novel/backend/internal/pkg"
 )
 
 // cdnLog 与 cmd 入口同一 stdout logger；purge 为 best-effort，无需注入依赖。
 var cdnLog = log.NewStdLogger(os.Stdout)
+
+// cdnCrypto 加密器单例（密钥来自 InitCdn 注入的 cr；测试经 InitCdn 后可用）。
+// ponytail: 管理端/门面共用同一密钥面（复用 PAYMENT_ENCRYPT_KEY，§3.3），不新增密钥。
+var cdnCr *pkg.Crypto
+
+// encryptConfig 明文配置 JSON 加密；空配置返回空串（未配置）。
+func encryptConfig(cfg map[string]string) (string, error) {
+	cr, err := cdnCrypto()
+	if err != nil {
+		return "", err
+	}
+	if len(cfg) == 0 {
+		return "", nil
+	}
+	b, err := json.Marshal(cfg)
+	if err != nil {
+		return "", err
+	}
+	return cr.Encrypt(string(b))
+}
+
+// decryptConfig 密文 → 明文配置（空串返回空 map）。
+func decryptConfig(enc string, cr *pkg.Crypto) (map[string]any, error) {
+	if enc == "" {
+		return map[string]any{}, nil
+	}
+	plain, err := cr.Decrypt(enc)
+	if err != nil {
+		return nil, err
+	}
+	var cfg map[string]any
+	if err := json.Unmarshal([]byte(plain), &cfg); err != nil {
+		return nil, err
+	}
+	return cfg, nil
+}
+
+func cdnCrypto() (*pkg.Crypto, error) {
+	if cdnCr != nil {
+		return cdnCr, nil
+	}
+	return pkg.NewCrypto("dev-encrypt-key-change-me") // 测试默认密钥，与 config.yaml 一致
+}
 
 // CdnEnabled CDN_BASE_URL 非空 = 设置缓存头 + 参与失效；空 = 完全禁用。
 func CdnEnabled() bool { return os.Getenv("CDN_BASE_URL") != "" }
