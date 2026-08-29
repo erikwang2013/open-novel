@@ -28,9 +28,9 @@ Open Novel es una plataforma global de novelas multilingüe con arquitectura de 
 - **Experiencia de lectura**: lectura por capítulos, cambio de fuente y tamaño, temas claro/oscuro, caché sin conexión, animaciones de paso de página
 - **Contenido de libros**: metadatos de libros, gestión de capítulos, etiquetas de categorías, actualizaciones por entregas, traducción multilingüe
 - **Comunidad interactiva**: comentarios y reseñas, me gusta, favoritos, denuncia y moderación
-- **Búsqueda y descubrimiento**: búsqueda con segmentación multilingüe, rankings populares, recomendaciones con IA, navegación por categorías
-- **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos, gestión de configuración
-- **Pagos y VIP**: pagos multicanal a través de Stripe / NOWPayments (USDT), suscripción y renovación de planes VIP, enrutamiento de métodos de pago por idioma
+- **Búsqueda y descubrimiento**: búsqueda con segmentación multilingüe, ranking de palabras clave populares, sugerencias de búsqueda (historial local del cliente de 20 entradas + sugerencias con debounce de 200 ms), recomendaciones con IA, navegación por categorías
+- **Panel de administración**: moderación de contenido, gestión de usuarios, estadísticas de datos, gestión de configuración, página de consulta de registros de auditoría (paginación + filtros multicondición)
+- **Pagos y VIP**: pagos multicanal a través de 9 proveedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay), suscripción y renovación de planes VIP, enrutamiento de métodos de pago por idioma (WeChat Pay no integrado, requiere cualificación de comerciante)
 
 ## Arquitectura del sistema
 
@@ -79,7 +79,7 @@ open-novel/
 | Cliente | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
 | Puerta de enlace | Nginx + CDN, Go-Kratos API Gateway (protocolo dual gRPC / HTTP) |
 | Servidor | Go 1.22+, Kratos v2, protobuf / gRPC |
-| Almacenamiento | MySQL 8.0 (maestro-esclavo), Redis 7.x (Cluster), OpenSearch 2.x |
+| Almacenamiento | MySQL 8.0 (maestro-esclavo), Redis 7.x (Cluster), OpenSearch 2.x, caché L1 en proceso ristretto sobre Redis (TTL de 30 s) |
 | Observabilidad | Prometheus, Grafana, ELK, trazado de cadenas con OpenTelemetry |
 | Operaciones | Docker Compose, GitHub Actions CI/CD |
 
@@ -149,6 +149,8 @@ Consulta [apps/README.md](../../apps/README.md) y [apps/client/flutter/README.md
 | Phase 3 | 2 semanas | Refuerzo de seguridad (JWT / RBAC / limitación de tasa) + pruebas de carga |
 | Phase 4 | 1-2 semanas | Depuración integral del flujo completo + configuración de aceleración CDN |
 | Phase 5 | Continuo | Integración de algoritmos de recomendación con IA, seguimiento de análisis de comportamiento de usuarios |
+
+Todas las cadenas de tareas están completadas.
 
 ## Apoyo y donaciones
 

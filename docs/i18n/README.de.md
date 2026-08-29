@@ -28,9 +28,9 @@ Open Novel ist eine globale mehrsprachige Roman-Plattform mit cloudnativer Mikro
 - **Leseerlebnis**: kapitelweises Lesen, Schriftart- und Schriftgrößenwechsel, helles/dunkles Design, Offline-Cache, Blätteranimationen
 - **Buchinhalte**: Buch-Metadaten, Kapitelverwaltung, Kategorien und Tags, Updates laufender Serien, mehrsprachige Übersetzungen
 - **Interaktive Community**: Kommentare und Rezensionen, Likes, Favoriten, Meldung und Moderation
-- **Suche & Entdecken**: mehrsprachige Tokensuche, Top-Charts, KI-Empfehlungen, Stöbern nach Kategorien
-- **Admin-Backend**: Inhaltsmoderation, Benutzerverwaltung, Statistiken, Konfigurationsverwaltung
-- **Zahlungen & VIP**: Mehrkanal-Zahlungen über Stripe / NOWPayments (USDT), VIP-Abo und Verlängerung, sprachbasierte Zahlungsmethoden-Routing
+- **Suche & Entdecken**: mehrsprachige Tokensuche, Ranking heißer Suchbegriffe, Suchvorschläge (lokale Client-Historie mit 20 Einträgen + Vorschläge mit 200 ms Debounce), KI-Empfehlungen, Stöbern nach Kategorien
+- **Admin-Backend**: Inhaltsmoderation, Benutzerverwaltung, Statistiken, Konfigurationsverwaltung, Abfrageseite für Audit-Logs (Seitennummerierung + Filterung nach mehreren Bedingungen)
+- **Zahlungen & VIP**: Mehrkanal-Zahlungen über 9 Anbieter (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay), VIP-Abo und Verlängerung, sprachbasiertes Zahlungsmethoden-Routing (WeChat Pay nicht angebunden, erfordert Händlerqualifikation)
 
 ## Systemarchitektur
 
@@ -79,7 +79,7 @@ open-novel/
 | Client | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
 | Gateway | Nginx + CDN, Go-Kratos-API-Gateway (Doppelprotokoll gRPC / HTTP) |
 | Server | Go 1.22+, Kratos v2, protobuf / gRPC |
-| Speicher | MySQL 8.0 (Master-Replica), Redis 7.x (Cluster), OpenSearch 2.x |
+| Speicher | MySQL 8.0 (Master-Replica), Redis 7.x (Cluster), OpenSearch 2.x, In-Prozess-L1-Cache ristretto über Redis (30 s TTL) |
 | Observability | Prometheus, Grafana, ELK, OpenTelemetry-Tracing |
 | Betrieb | Docker Compose, GitHub Actions CI/CD |
 
@@ -149,6 +149,8 @@ Siehe [apps/README.md](../../apps/README.md) und [apps/client/flutter/README.md]
 | Phase 3 | 2 Wochen | Sicherheitshärtung (JWT / RBAC / Ratenbegrenzung) + Stresstests |
 | Phase 4 | 1-2 Wochen | End-to-End-Integration aller Komponenten + Konfiguration der CDN-Beschleunigung |
 | Phase 5 | laufend | Integration von KI-Empfehlungsalgorithmen, Tracking zur Analyse des Nutzerverhaltens |
+
+Alle Aufgabenketten sind abgeschlossen.
 
 ## Unterstützung und Spenden
 

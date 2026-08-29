@@ -28,9 +28,9 @@ Open Novel est une plateforme mondiale de romans multilingues en architecture cl
 - **Expérience de lecture** : lecture par chapitres, changement de police et de taille, thème clair/sombre, cache hors ligne, animation de tournage de page
 - **Contenu des livres** : métadonnées des livres, gestion des chapitres, catégories et tags, mises à jour des séries, traductions multilingues
 - **Communauté interactive** : commentaires et critiques, likes, favoris, signalement et modération
-- **Recherche et découverte** : recherche multilingue par segmentation, classements populaires, recommandations IA, navigation par catégories
-- **Panneau d'administration** : modération du contenu, gestion des utilisateurs, statistiques, gestion de la configuration
-- **Paiements & VIP** : paiements multicanal via Stripe / NOWPayments (USDT), abonnement et renouvellement des plans VIP, routage des moyens de paiement par langue
+- **Recherche et découverte** : recherche multilingue par segmentation, classement des mots-clés populaires, suggestions de recherche (historique local côté client de 20 entrées + suggestions avec debounce de 200 ms), recommandations IA, navigation par catégories
+- **Panneau d'administration** : modération du contenu, gestion des utilisateurs, statistiques, gestion de la configuration, page de consultation des journaux d'audit (pagination + filtres multi-critères)
+- **Paiements & VIP** : paiements multicanal via 9 prestataires (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay), abonnement et renouvellement des plans VIP, routage des moyens de paiement par langue (WeChat Pay non intégré, nécessite un statut de commerçant)
 
 ## Architecture système
 
@@ -79,7 +79,7 @@ open-novel/
 | Client | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
 | Passerelle | Nginx + CDN, passerelle API Go-Kratos (double protocole gRPC / HTTP) |
 | Serveur | Go 1.22+, Kratos v2, protobuf / gRPC |
-| Stockage | MySQL 8.0 (maître-réplica), Redis 7.x (Cluster), OpenSearch 2.x |
+| Stockage | MySQL 8.0 (maître-réplica), Redis 7.x (Cluster), OpenSearch 2.x, cache L1 en mémoire ristretto au-dessus de Redis (TTL 30 s) |
 | Observabilité | Prometheus, Grafana, ELK, traçage OpenTelemetry |
 | Exploitation | Docker Compose, CI/CD GitHub Actions |
 
@@ -149,6 +149,8 @@ Voir [apps/README.md](../../apps/README.md) et [apps/client/flutter/README.md](.
 | Phase 3 | 2 semaines | Durcissement de la sécurité (JWT / RBAC / limitation de débit) + tests de charge |
 | Phase 4 | 1-2 semaines | Intégration de bout en bout + configuration de l'accélération CDN |
 | Phase 5 | en continu | Intégration des algorithmes de recommandation IA, instrumentation d'analyse du comportement utilisateur |
+
+Toutes les chaînes de tâches sont terminées.
 
 ## Soutien et dons
 

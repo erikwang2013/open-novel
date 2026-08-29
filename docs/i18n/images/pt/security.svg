@@ -84,14 +84,15 @@
       <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">Controle de acesso por papéis</text>
     </g>
     <g>
-      <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Moderação de palavras sensíveis</text>
-      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">Filtro de comentários / conteúdo</text>
+      <rect x="240" y="392" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Verificação de pagamento</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">HMAC / token · Reconsulta IPN</text>
+    <text x="324" y="443" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay RSA2</text>
     </g>
     <g>
       <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Proteção CSRF</text>
-      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">Validação de duplo envio</text>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Valor + Idempotência</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">Valor do callback = valor do pedido</text>
     </g>
     <g>
       <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>

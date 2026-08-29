@@ -84,14 +84,15 @@
       <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">التحكم بالصلاحيات حسب الدور</text>
     </g>
     <g>
-      <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">مراجعة الكلمات الحساسة</text>
-      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">تصفية التعليقات / المحتوى</text>
+      <rect x="240" y="392" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">التحقق من توقيع الدفع</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">HMAC / رمز · إعادة استعلام IPN</text>
+    <text x="324" y="443" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay RSA2</text>
     </g>
     <g>
       <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">حماية CSRF</text>
-      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">تحقق الإرسال المزدوج</text>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">تحقق المبلغ · Idempotency</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">مبلغ الاستدعاء = مبلغ الطلب</text>
     </g>
     <g>
       <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>

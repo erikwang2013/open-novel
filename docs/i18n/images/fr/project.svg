@@ -87,6 +87,11 @@
     <text x="899" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">en continu</text>
   </g>
 
-  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">Jalon : MVP en 12 semaines · Stack Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
+  <text x="129" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ Terminé</text>
+  <text x="321" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ Terminé</text>
+  <text x="514" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ Terminé</text>
+  <text x="706" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ Terminé</text>
+  <text x="899" y="478" font-size="11" font-weight="600" fill="#fb8c00" text-anchor="middle">⏳ En attente</text>
+  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">Jalon : socle · multi-appareils · sécurité livrés, monétisation (VIP / paiements / admin) terminée · Recommandations IA en attente de déclenchement par les données · Stack Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
   <text x="988" y="628" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

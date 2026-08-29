@@ -28,9 +28,9 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 - **독서 경험**: 챕터별 독서, 글꼴·크기 전환, 라이트/다크 테마, 오프라인 캐시, 페이지 넘김 애니메이션
 - **도서 콘텐츠**: 도서 메타데이터, 챕터 관리, 카테고리 태그, 연재 업데이트, 다국어 번역
 - **소통 커뮤니티**: 댓글·서평, 좋아요, 즐겨찾기, 신고·검수
-- **검색 및 발견**: 다국어 형태소 분석 검색, 인기 랭킹, AI 추천, 카테고리 탐색
-- **관리 백엔드**: 콘텐츠 검수, 사용자 관리, 데이터 통계, 설정 관리
-- **결제 및 VIP**: Stripe / NOWPayments(USDT) 다중 채널 결제, VIP 플랜 구독 및 갱신, 언어별 결제 수단 라우팅
+- **검색 및 발견**: 다국어 형태소 분석 검색, 인기 키워드 랭킹, 검색 제안(클라이언트 로컬 히스토리 20개 + 200ms 디바운스 제안), AI 추천, 카테고리 탐색
+- **관리 백엔드**: 콘텐츠 검수, 사용자 관리, 데이터 통계, 설정 관리, 감사 로그 조회 페이지(페이징 + 다중 조건 필터)
+- **결제 및 VIP**: 9개 결제 프로바이더(Stripe, NOWPayments(USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay) 다중 채널 결제, VIP 플랜 구독 및 갱신, 언어별 결제 수단 라우팅(WeChat Pay 미연동, 가맹점 자격 필요)
 
 ## 시스템 아키텍처
 
@@ -81,7 +81,7 @@ open-novel/
 | 클라이언트 | Flutter(Web / Desktop / Mobile), HarmonyOS NEXT(ArkTS / ArkUI) |
 | 게이트웨이 | Nginx + CDN, Go-Kratos API 게이트웨이(gRPC / HTTP 듀얼 프로토콜) |
 | 서버 | Go 1.22+, Kratos v2, protobuf / gRPC |
-| 스토리지 | MySQL 8.0(마스터-슬레이브), Redis 7.x(Cluster), OpenSearch 2.x |
+| 스토리지 | MySQL 8.0(마스터-슬레이브), Redis 7.x(Cluster), OpenSearch 2.x, Redis 위의 ristretto 프로세스 내 L1 캐시(30초 TTL) |
 | 관측성 | Prometheus, Grafana, ELK, OpenTelemetry 링크 추적 |
 | 운영 | Docker Compose, GitHub Actions CI/CD |
 
@@ -151,6 +151,8 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 | Phase 3 | 2주 | 보안 강화(JWT / RBAC / 속도 제한) + 스트레스 테스트 |
 | Phase 4 | 1~2주 | 전체 연동 테스트 + CDN 가속 설정 |
 | Phase 5 | 지속 | AI 추천 알고리즘 도입, 사용자 행동 분석 트래킹 |
+
+모든 작업 체인이 완료되었습니다.
 
 ## 후원 및 기부
 

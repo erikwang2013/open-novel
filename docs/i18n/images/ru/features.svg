@@ -77,6 +77,7 @@
     <text x="169" y="519" font-size="11" fill="#546e7a" text-anchor="middle">Топ-чарты</text>
     <text x="169" y="536" font-size="11" fill="#546e7a" text-anchor="middle">AI-рекомендации</text>
     <text x="169" y="553" font-size="11" fill="#546e7a" text-anchor="middle">Просмотр категорий</text>
+    <text x="169" y="570" font-size="11" fill="#546e7a" text-anchor="middle">Популярные запросы / Подсказки поиска</text>
   </g>
 
   <!-- 管理后台 -->
@@ -88,6 +89,7 @@
     <text x="831" y="519" font-size="11" fill="#546e7a" text-anchor="middle">Управление пользователями</text>
     <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">Статистика</text>
     <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">Управление конфигурацией</text>
+    <text x="831" y="570" font-size="11" fill="#546e7a" text-anchor="middle">Статистика / Аудит-логи</text>
   </g>
 
   <text x="500" y="700" font-size="12" fill="#78909c" text-anchor="middle">Основной контур: поиск → чтение → общение → синхронизация · i18n на всех уровнях</text>

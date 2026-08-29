@@ -84,14 +84,15 @@
       <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">역할 기반 권한 제어</text>
     </g>
     <g>
-      <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">금지어 검수</text>
-      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">댓글 / 콘텐츠 필터링</text>
+      <rect x="240" y="392" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">결제 콜백 검증</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">HMAC / 토큰 · IPN 재조회</text>
+    <text x="324" y="443" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay RSA2</text>
     </g>
     <g>
       <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CSRF 방어</text>
-      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">이중 제출 검증</text>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">금액 강 검증 · 멱등성</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">콜백 금액 = 주문 금액</text>
     </g>
     <g>
       <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>

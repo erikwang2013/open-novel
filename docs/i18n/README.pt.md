@@ -28,9 +28,9 @@ Open Novel é uma plataforma global de romances multilíngue com arquitetura de 
 - **Experiência de leitura**: leitura por capítulos, troca de fonte e tamanho, temas claro/escuro, cache offline, animações de virada de página
 - **Conteúdo do livro**: metadados de livros, gestão de capítulos, tags de categorias, atualizações seriadas, tradução multilíngue
 - **Comunidade interativa**: comentários e resenhas, curtidas, favoritos, denúncia e moderação
-- **Busca e descoberta**: busca com segmentação multilíngue, rankings populares, recomendações com IA, navegação por categorias
-- **Painel administrativo**: moderação de conteúdo, gestão de usuários, estatísticas de dados, gestão de configurações
-- **Pagamentos e VIP**: pagamentos multicanal via Stripe / NOWPayments (USDT), assinatura e renovação de planos VIP, roteamento de métodos de pagamento por idioma
+- **Busca e descoberta**: busca com segmentação multilíngue, ranking de palavras-chave populares, sugestões de busca (histórico local do cliente de 20 entradas + sugestões com debounce de 200 ms), recomendações com IA, navegação por categorias
+- **Painel administrativo**: moderação de conteúdo, gestão de usuários, estatísticas de dados, gestão de configurações, página de consulta de logs de auditoria (paginação + filtros multicondicionais)
+- **Pagamentos e VIP**: pagamentos multicanal via 9 provedores (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay), assinatura e renovação de planos VIP, roteamento de métodos de pagamento por idioma (WeChat Pay não integrado, exige qualificação de comerciante)
 
 ## Arquitetura do sistema
 
@@ -79,7 +79,7 @@ open-novel/
 | Cliente | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
 | Porta de entrada | Nginx + CDN, Go-Kratos API Gateway (protocolo duplo gRPC / HTTP) |
 | Servidor | Go 1.22+, Kratos v2, protobuf / gRPC |
-| Armazenamento | MySQL 8.0 (mestre-escravo), Redis 7.x (Cluster), OpenSearch 2.x |
+| Armazenamento | MySQL 8.0 (mestre-escravo), Redis 7.x (Cluster), OpenSearch 2.x, cache L1 em processo ristretto sobre Redis (TTL de 30 s) |
 | Observabilidade | Prometheus, Grafana, ELK, rastreamento de cadeia OpenTelemetry |
 | Operações | Docker Compose, GitHub Actions CI/CD |
 
@@ -149,6 +149,8 @@ Consulte [apps/README.md](../../apps/README.md) e [apps/client/flutter/README.md
 | Phase 3 | 2 semanas | Reforço de segurança (JWT / RBAC / limitação de taxa) + testes de carga |
 | Phase 4 | 1-2 semanas | Integração de todo o fluxo + configuração de aceleração CDN |
 | Phase 5 | Contínuo | Integração de algoritmos de recomendação com IA, rastreamento de análise de comportamento do usuário |
+
+Todas as cadeias de tarefas foram concluídas.
 
 ## Apoio e doações
 

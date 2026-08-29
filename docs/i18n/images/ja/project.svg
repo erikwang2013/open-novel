@@ -87,6 +87,11 @@
     <text x="899" y="436" font-size="10" fill="#ffffff" opacity="0.85" text-anchor="middle">継続</text>
   </g>
 
-  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">マイルストーン：MVP 12 週間でリリース · 技術スタック Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
+  <text x="129" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 完了</text>
+  <text x="321" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 完了</text>
+  <text x="514" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 完了</text>
+  <text x="706" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 完了</text>
+  <text x="899" y="478" font-size="11" font-weight="600" fill="#fb8c00" text-anchor="middle">⏳ 待機中</text>
+  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">マイルストーン：基盤 · マルチ端末 · セキュリティ納品済み、商業化（VIP / 支払い / 管理バックエンド）完了 · AI レコメンドはデータトリガー待ち · 技術スタック Go-Kratos / Flutter / HarmonyOS / MySQL / Redis / OpenSearch</text>
   <text x="988" y="628" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

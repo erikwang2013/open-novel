@@ -109,9 +109,10 @@
       <text x="150" y="573" font-size="10" fill="#78909c" text-anchor="middle">ডেটাবেস novel · প্রিফিক্স novel_</text>
     </g>
     <g>
-      <rect x="270" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <rect x="270" y="544" width="208" height="54" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
       <text x="374" y="559" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Redis Cluster</text>
       <text x="374" y="573" font-size="10" fill="#78909c" text-anchor="middle">হট ক্যাশ · সেশন · রেট-লিমিট</text>
+    <text x="374" y="589" font-size="10" fill="#78909c" text-anchor="middle">L1 ইন-প্রসেস ristretto · TTL 30s</text>
     </g>
     <g>
       <rect x="494" y="544" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>

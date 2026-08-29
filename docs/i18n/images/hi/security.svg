@@ -84,14 +84,15 @@
       <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">रोल-आधारित एक्सेस कंट्रोल</text>
     </g>
     <g>
-      <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">सेंसरशिप फ़िल्टरिंग</text>
-      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">टिप्पणी / सामग्री फ़िल्टर</text>
+      <rect x="240" y="392" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">भुगतान कॉलबैक सत्यापन</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">HMAC / टोकन · IPN री-चेक</text>
+    <text x="324" y="443" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay RSA2</text>
     </g>
     <g>
       <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CSRF सुरक्षा</text>
-      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">डबल-सबमिट सत्यापन</text>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">राशि जाँच · आइडेम्पोटेंसी</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">कॉलबैक राशि = ऑर्डर राशि</text>
     </g>
     <g>
       <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>

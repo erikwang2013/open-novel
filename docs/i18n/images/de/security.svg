@@ -84,14 +84,15 @@
       <text x="144" y="427" font-size="10" fill="#78909c" text-anchor="middle">Rollenbasierte Zugriffskontrolle</text>
     </g>
     <g>
-      <rect x="240" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Sensibler-Wörter-Filter</text>
-      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">Kommentar- / Inhaltsfilter</text>
+      <rect x="240" y="392" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
+      <text x="324" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Zahlungsverifikation</text>
+      <text x="324" y="427" font-size="10" fill="#78909c" text-anchor="middle">HMAC / Token · IPN-Rückfrage</text>
+    <text x="324" y="443" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay RSA2</text>
     </g>
     <g>
       <rect x="420" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CSRF-Schutz</text>
-      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">Doppelte-Submit-Prüfung</text>
+      <text x="504" y="411" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Betrag + Idempotenz</text>
+      <text x="504" y="427" font-size="10" fill="#78909c" text-anchor="middle">Callback-Betrag = Bestellbetrag</text>
     </g>
     <g>
       <rect x="600" y="392" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>

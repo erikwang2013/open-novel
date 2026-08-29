@@ -24,7 +24,7 @@
 ├─ Comment Service（评论 / 点赞 / 收藏）
 ├─ Recommendation Service（推荐引擎接口）
 ├─ Payment Service（支付 / 会员订单 / VIP 激活）
-└─ Admin Service（仪表盘统计 / 分类标签 / RBAC）
+└─ Admin Service（仪表盘统计 / 分类标签 / 审计日志 / RBAC）
 
 [存储层]
 ├─ MySQL（主从 + 读写分离）— 业务数据，库名 novel，表前缀 novel_
@@ -147,9 +147,9 @@ index_settings:
 
 按用户语言路由对应 analyzer，同一文档以多字段（zh / en / ja...）存储便于分语种搜索。
 
-### 4. 支付与 VIP 模块（2026-08 已实现，T-P-01~18）
+### 4. 支付与 VIP 模块（2026-08 已实现，T-P-01~20）
 
-- **Provider 抽象**：`CreateCheckout / Verify / VerifyWebhook` 接口 + 注册表；一期实现 Stripe（stripe-go v81 Checkout Session + ConstructEvent 验签）与 NOWPayments（USDT，HMAC-SHA512 IPN 验签）。
+- **Provider 抽象**：`CreateCheckout / Verify / VerifyWebhook` 接口 + 注册表；已接入 9 个渠道——Stripe（stripe-go v81 Checkout Session + ConstructEvent 验签）、PayPal、NOWPayments（USDT，HMAC-SHA512 IPN 验签）、Razorpay(hi)、KOMOJU(ja)、PortOne(ko)、Mercado Pago(pt-BR)、Xendit(id/th/vn)、Alipay（zh-CN，RSA2 验签，2026-08-29 接入，沙箱可用）；微信支付未接入（需中国大陆商户资质）。
 - **下单 / 查单**：幂等（同 user+套餐未支付订单复用）、15 分钟超时自动关闭、回调金额=订单金额强校验、webhook 幂等 settle；金额一律整数分。
 - **VIP 激活**：支付成功 → `novel_user.vip_expires_at` 续期（可叠加）；客户端按 `chapter.isVip` + `/api/payments/vip-status` 判断展示 VIP 引导，后端不拦截正文。
 - **语言路由**：`GET /api/payments/methods?lang=` 按 enabled / lang / region / sort 返回支付方式；DB 套餐表优先于内置默认。
@@ -206,7 +206,7 @@ message GetBookRequest {
 - **穿透防护**：查询不存在的数据时缓存空值（TTL 较短，如 60s）；高价值场景可选布隆过滤器前置拦截。
 - **击穿防护**：热点 key 过期瞬间用分布式锁（Redis `SETNX`）仅放行一个请求回源，其余等待后读缓存。
 - **雪崩防护**：缓存 TTL 加随机抖动（±30s），避免同一时间批量过期。
-- **本地缓存**（可选）：单服务内 `ristretto` 缓存超高热数据（如首页榜单），配合 Redis 失效订阅清理。
+- **本地缓存**：Redis 之上叠加 ristretto 进程内 L1 二级缓存（128MB / 30s TTL，写路径双删），兜底超热 key。
 
 ---
 
@@ -243,7 +243,7 @@ httpSrv := http.NewServer(
 
 - **认证授权**：JWT（短时 access + RefreshToken 轮换）；RBAC 角色权限（普通用户 / 作者 / 管理员，service 层 `requireAdmin` 校验 role=3）。
 - **Web 攻击面**：SQL 注入 → 全部参数化查询 / ORM；XSS → 输出转义 + CSP 响应头；CSRF → 网关校验 `Origin/Referer` + SameSite Cookie，写操作走 Authorization Header。
-- **支付安全**：渠道回调验签（Stripe `ConstructEvent` 签名 / NOWPayments HMAC-SHA512）、回调金额=订单金额强校验、webhook 幂等 settle、支付回调限流 30/min。
+- **支付安全**：渠道回调验签（Stripe `ConstructEvent` 签名 / NOWPayments HMAC-SHA512 / Alipay RSA2）、回调金额=订单金额强校验、webhook 幂等 settle、支付回调限流 30/min。
 - **敏感数据**：密码 bcrypt/argon2 哈希存储；支付渠道密钥（config）AES-GCM 加密存储，不入库明文。
 - **传输安全**：全链路 HTTPS/TLS（Nginx 终结）。
 - **审计日志**：管理操作、登录、支付写审计表（`novel_audit_log`），留存可追溯。
@@ -306,8 +306,8 @@ services:
 | **Phase 3** | 2 周 | 安全体系落地（JWT / 限流 / 校验 / 追踪）+ 压力测试 | ✅ 已完成 |
 | **Phase 4** | 1-2 周 | 全链路联调 + CDN（CloudFront / 阿里云 OSS）+ 监控告警 | ✅ 已完成 |
 | **Phase 5** | 持续迭代 | AI 推荐、用户行为埋点分析、搜索优化 | ⏳ 进行中 |
-| **商业化** | 2026-08 | 管理后台（审核/用户/统计/配置）、支付与 VIP（Stripe / NOWPayments） | ✅ 已完成（T-A-01~16 / T-C-01~12 / T-P-01~18） |
-| **二期** | 按资质 | 本地支付逐语言、PayPal、多端体验统一（C4） | ⬜ 未开始 |
+| **商业化** | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、支付与 VIP（9 渠道） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~20） |
+| **二期** | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal、多端体验统一（C4） | ✅ 已完成（微信支付未接入，需大陆商户资质） |
 
 ### 关键资源清单
 

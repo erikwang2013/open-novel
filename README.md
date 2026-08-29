@@ -17,7 +17,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **后端**：Go-Kratos v2（gRPC / HTTP 双协议），微服务按领域拆分（用户、书籍、章节、评论、搜索、推荐）
 - **前端**：Flutter 全平台（Web / Desktop / Mobile）+ HarmonyOS NEXT 原生应用，共用同一套后端 API
 - **多语言**：i18n 资源动态加载，支持 12+ 语种（中文、英文、日文、韩文、法文、德文、西班牙文、俄文、阿拉伯文等）
-- **存储**：MySQL 8（主从读写分离）+ Redis（热点缓存 / 会话）+ OpenSearch（多语言搜索）
+- **存储**：MySQL 8（主从读写分离）+ Redis（热点缓存 / 会话）+ ristretto（进程内 L1 二级缓存）+ OpenSearch（多语言搜索）
 - **运维**：Docker Compose 一键部署，Prometheus + Grafana 监控，GitHub Actions 持续集成
 
 ## 功能特性
@@ -28,15 +28,15 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **阅读体验**：分章阅读、字体字号切换、深浅主题、离线缓存、翻页动画
 - **书籍内容**：书籍元数据、章节管理、分类标签、连载更新、多语言翻译
 - **互动社区**：评论书评、点赞、收藏、举报审核
-- **搜索发现**：多语言分词搜索、热门榜单、AI 推荐、分类浏览
-- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）
-- **支付与会员**：Stripe / NOWPayments（USDT）多渠道支付、VIP 套餐订阅与续期、支付方式多语言路由
+- **搜索发现**：多语言分词搜索、热搜词榜（/api/search/hot-keywords）、搜索建议（/api/search/suggest，本地历史 20 条可清空 + 200ms 防抖）、热门榜单、AI 推荐、分类浏览
+- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）、审计日志查询（/api/admin/audit-logs）
+- **支付与会员**：9 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN)）、VIP 套餐订阅与续期、支付方式多语言路由
 
 ## 系统架构
 
 <p align="center"><img src="docs/architecture.svg" alt="系统架构图" width="860"/></p>
 
-整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + CDN 与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存 + OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
+整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + CDN 与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
 
 其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg)。
 
@@ -73,7 +73,7 @@ open-novel/
 | 管理端 | Flutter Web（`apps/admin/`，B 端后台） |
 | 网关 | Nginx + CDN、Go-Kratos API 网关（gRPC / HTTP 双协议） |
 | 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC、stripe-go（Stripe 支付 SDK） |
-| 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、OpenSearch 2.x |
+| 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、ristretto（进程内 L1 二级缓存，128MB / 30s TTL）、OpenSearch 2.x |
 | 可观测 | Prometheus、Grafana、ELK、OpenTelemetry 链路追踪 |
 | 运维 | Docker Compose、GitHub Actions CI/CD |
 
@@ -98,10 +98,10 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 | 书籍 | `/api/books`、`/api/books/{id}`、`/api/categories`、`/api/tags` | `kratos/backend/api/book/v1` |
 | 章节 | `/api/...` | `kratos/backend/api/chapter/v1` |
 | 评论 | `/api/...` | `kratos/backend/api/comment/v1` |
-| 搜索 | `/api/...` | `kratos/backend/api/search/v1` |
+| 搜索 | `/api/search/hot-keywords`（热搜词榜）、`/api/search/suggest`（搜索建议）、`/api/search/hot` 等 | `kratos/backend/api/search/v1` |
 | 推荐 | `/api/...` | `kratos/backend/api/recommendation/v1` |
 | 支付 | `/api/payments/...` | `kratos/backend/api/payment/v1` |
-| 管理 | `/api/stats/overview`、`/api/categories`、`/api/tags` | `kratos/backend/api/admin/v1` |
+| 管理 | `/api/stats/overview`、`/api/categories`、`/api/tags`、`/api/admin/audit-logs`（审计日志，分页 + 多条件筛选） | `kratos/backend/api/admin/v1` |
 
 详细路由见各 proto 文件 `option (google.api.http)` 声明。
 
@@ -145,7 +145,7 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 | Phase 3 | 2 周 | 安全加固（JWT / RBAC / 限流）+ 压力测试 | ✅ 已完成 |
 | Phase 4 | 1-2 周 | 全链路联调 + CDN 加速配置 | ✅ 已完成 |
 | Phase 5 | 持续 | AI 推荐算法接入、用户行为分析埋点 | ⏳ 进行中 |
-| 商业化 | 2026-08 | 管理后台（审核/用户/统计/配置）、多语言与阅读体验、VIP 与支付链（Stripe / NOWPayments） | ✅ 已完成（T-A-01~16 / T-C-01~12 / T-P-01~18） |
+| 商业化 | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、多语言与阅读体验、VIP 与支付链（9 渠道，支付宝 2026-08-29 接入） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~20） |
 
 ## 支持与打赏
 

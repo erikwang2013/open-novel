@@ -29,9 +29,9 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 - **Reading Experience**: Chapter-by-chapter reading, font and size switching, light/dark themes, offline caching, page-turn animations
 - **Book Content**: Book metadata, chapter management, category tags, serialized updates, multilingual translation
 - **Interactive Community**: Comments and reviews, likes, favorites, reporting and moderation
-- **Search & Discovery**: Multilingual tokenized search, trending rankings, AI recommendations, category browsing
-- **Admin Console**: Content moderation, user management, data statistics, configuration management
-- **Payments & VIP**: Multi-channel payments via Stripe / NOWPayments (USDT), VIP plan subscription and renewal, language-based payment method routing
+- **Search & Discovery**: Multilingual tokenized search, hot keyword rankings, search suggestions (client-side local history of 20 entries + 200 ms debounced suggestions), AI recommendations, category browsing
+- **Admin Console**: Content moderation, user management, data statistics, configuration management, audit log query page (pagination + multi-condition filtering)
+- **Payments & VIP**: Multi-channel payments via 9 providers (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay), VIP plan subscription and renewal, language-based payment method routing (WeChat Pay not yet integrated, requires merchant qualification)
 
 ## System Architecture
 
@@ -82,7 +82,7 @@ open-novel/
 | Client | Flutter (Web / Desktop / Mobile), HarmonyOS NEXT (ArkTS / ArkUI) |
 | Gateway | Nginx + CDN, Go-Kratos API Gateway (gRPC / HTTP dual protocol) |
 | Server | Go 1.22+, Kratos v2, protobuf / gRPC |
-| Storage | MySQL 8.0 (master-slave), Redis 7.x (Cluster), OpenSearch 2.x |
+| Storage | MySQL 8.0 (master-slave), Redis 7.x (Cluster), OpenSearch 2.x, ristretto in-process L1 cache on top of Redis (30 s TTL) |
 | Observability | Prometheus, Grafana, ELK, OpenTelemetry tracing |
 | Operations | Docker Compose, GitHub Actions CI/CD |
 
@@ -152,6 +152,8 @@ See [apps/README.md](../../apps/README.md) and [apps/client/flutter/README.md](.
 | Phase 3 | 2 weeks | Security hardening (JWT / RBAC / rate limiting) + stress testing |
 | Phase 4 | 1-2 weeks | Full-link integration testing + CDN acceleration configuration |
 | Phase 5 | Ongoing | AI recommendation algorithms, user behavior analytics tracking |
+
+All task chains have been completed.
 
 ## Support and Donations
 

@@ -28,9 +28,9 @@ Open Novel adalah platform novel multibahasa global dengan arsitektur mikroservi
 - **Pengalaman membaca**: membaca per bab, pergantian font dan ukuran, tema terang/gelap, cache offline, animasi ganti halaman
 - **Konten buku**: metadata buku, manajemen bab, tag kategori, pembaruan berseri, terjemahan multibahasa
 - **Komunitas interaktif**: komentar dan ulasan, suka, favorit, pelaporan dan moderasi
-- **Pencarian dan penemuan**: pencarian dengan segmentasi multibahasa, peringkat populer, rekomendasi AI, penjelajahan kategori
-- **Panel admin**: moderasi konten, manajemen pengguna, statistik data, manajemen konfigurasi
-- **Pembayaran & VIP**: pembayaran multi-channel melalui Stripe / NOWPayments (USDT), langganan dan perpanjangan paket VIP, perutean metode pembayaran berdasarkan bahasa
+- **Pencarian dan penemuan**: pencarian dengan segmentasi multibahasa, peringkat kata kunci populer, saran pencarian (riwayat lokal klien 20 entri + saran dengan debounce 200 ms), rekomendasi AI, penjelajahan kategori
+- **Panel admin**: moderasi konten, manajemen pengguna, statistik data, manajemen konfigurasi, halaman kueri log audit (paginasi + filter multikondisi)
+- **Pembayaran & VIP**: pembayaran multi-channel melalui 9 penyedia (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay), langganan dan perpanjangan paket VIP, perutean metode pembayaran berdasarkan bahasa (WeChat Pay belum terintegrasi, memerlukan kualifikasi merchant)
 
 ## Arsitektur sistem
 
@@ -79,7 +79,7 @@ open-novel/
 | Klien | Flutter（Web / Desktop / Mobile）、HarmonyOS NEXT（ArkTS / ArkUI） |
 | Gateway | Nginx + CDN、Go-Kratos API Gateway（protokol ganda gRPC / HTTP） |
 | Server | Go 1.22+、Kratos v2、protobuf / gRPC |
-| Penyimpanan | MySQL 8.0（master-slave）、Redis 7.x（Cluster）、OpenSearch 2.x |
+| Penyimpanan | MySQL 8.0（master-slave）、Redis 7.x（Cluster）、OpenSearch 2.x、cache L1 dalam proses ristretto di atas Redis（TTL 30 detik） |
 | Observabilitas | Prometheus、Grafana、ELK、penelusuran rantai OpenTelemetry |
 | Operasional | Docker Compose、GitHub Actions CI/CD |
 
@@ -149,6 +149,8 @@ Lihat [apps/README.md](../../apps/README.md) dan [apps/client/flutter/README.md]
 | Phase 3 | 2 minggu | Penguatan keamanan (JWT / RBAC / pembatasan laju) + uji beban |
 | Phase 4 | 1-2 minggu | Integrasi seluruh alur + konfigurasi akselerasi CDN |
 | Phase 5 | Berkelanjutan | Integrasi algoritme rekomendasi AI, pelacakan analisis perilaku pengguna |
+
+Semua rantai tugas telah selesai.
 
 ---
 
