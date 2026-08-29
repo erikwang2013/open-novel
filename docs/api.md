@@ -140,7 +140,7 @@ provider 行由 admin「支付方式」页创建，config 键 AES-GCM 加密存�
 | portone | ko | `api_secret` `webhook_token` | X-IAMPORT-TOKEN 比对 |
 | mercadopago | pt-BR | `access_token` | IPN 无签名，access_token 回查 GET /v1/payments/{id} |
 | xendit | id / th / vn | `api_key` `callback_token` | X-CALLBACK-TOKEN 比对 |
-| paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | transmission 头 + webhook-id 比对（简化，见实现） |
+| paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | 官方 verify-webhook-signature API 验签（复用 OAuth access_token） |
 
 zh-CN 支付宝/微信需中国大陆企业资质，未实现（见 tasks.md）。
 

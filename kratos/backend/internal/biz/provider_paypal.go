@@ -1,8 +1,8 @@
 package biz
 
 // PayPal 渠道（T-P-20，兜底）：Orders API v2——OAuth2 换 token → POST /v2/checkout/orders
-// → 取 approve link 跳转；webhook 为简化验签（transmission 头存在 + webhook-id token 比对 +
-// 金额核对），见 VerifyWebhook 内 ponytail 注释。
+// → 取 approve link 跳转；webhook 调官方 /v1/notifications/verify-webhook-signature 验签
+// （复用 OAuth access_token），见 VerifyWebhook。
 //
 // config 键：client_id / client_secret / webhook_id；可选 base_url（沙箱
 // https://api-m.sandbox.paypal.com）
@@ -138,16 +138,18 @@ func (p *PayPalProvider) VerifyWebhook(ctx context.Context, provider string, raw
 	if p.webhookID == "" {
 		return PaymentEvent{}, errors.New("paypal: webhook id not configured")
 	}
-	// ponytail: 官方 Webhooks 验签需按 PayPal-Transmission-Id|Time|Sig + PayPal-Webhook-Id
-	// 下载 cert（PayPal-Cert-Url）→ 提取公钥 → RSA-SHA256 摘要比对，并建议 GET
-	// /v2/checkout/events/{id} 复核。此处简化：transmission 头存在 + webhook-id 与配置
-	// 比对 + 金额核对。升级路径：实现 cert 下载与 crypto/rsa VerifyPKCS1v15(sha256) 完整验签。
+	// 快速失败：transmission 头缺失 / webhook-id 与配置不匹配（本地即拒，不必打 PayPal）。
 	if headers["PayPal-Transmission-Id"] == "" || headers["PayPal-Transmission-Time"] == "" ||
-		headers["PayPal-Transmission-Sig"] == "" {
+		headers["PayPal-Transmission-Sig"] == "" || headers["PayPal-Auth-Algo"] == "" || headers["PayPal-Cert-Url"] == "" {
 		return PaymentEvent{}, errors.New("paypal: transmission headers missing")
 	}
 	if !hmac.Equal([]byte(headers["PayPal-Webhook-Id"]), []byte(p.webhookID)) {
 		return PaymentEvent{}, errors.New("paypal: webhook id mismatch")
+	}
+	// 官方验签：verify-webhook-signature 接口复验（cert_url/auth_algo 与签名由 PayPal 侧校验，
+	// 比本地下载 cert + RSA 摘要比对更可靠）。正式上线前需用真实沙箱 webhook 验证一次。
+	if err := p.verifyWebhookSignature(ctx, rawBody, headers); err != nil {
+		return PaymentEvent{}, err
 	}
 	var evt paypalEvent
 	if err := json.Unmarshal(rawBody, &evt); err != nil {
@@ -162,4 +164,35 @@ func (p *PayPalProvider) VerifyWebhook(ctx context.Context, provider string, raw
 	pu := evt.Resource.PurchaseUnits[0]
 	return PaymentEvent{OrderNo: pu.ReferenceID, TxID: evt.Resource.ID, Paid: true,
 		AmountCents: moneyToCents(pu.Amount.Value), Currency: pu.Amount.CurrencyCode}, nil
+}
+
+// verifyWebhookSignature 调 PayPal 官方验签接口（OAuth access_token 复用，与 CreateCheckout 一致）。
+func (p *PayPalProvider) verifyWebhookSignature(ctx context.Context, rawBody []byte, headers map[string]string) error {
+	if p.clientID == "" || p.clientSecret == "" {
+		return errors.New("paypal: credentials not configured")
+	}
+	token, err := p.accessToken(ctx)
+	if err != nil {
+		return err
+	}
+	body := map[string]any{
+		"auth_algo":         headers["PayPal-Auth-Algo"],
+		"cert_url":          headers["PayPal-Cert-Url"],
+		"transmission_id":   headers["PayPal-Transmission-Id"],
+		"transmission_sig":  headers["PayPal-Transmission-Sig"],
+		"transmission_time": headers["PayPal-Transmission-Time"],
+		"webhook_id":        headers["PayPal-Webhook-Id"],
+		"webhook_event":     json.RawMessage(rawBody),
+	}
+	var resp struct {
+		VerificationStatus string `json:"verification_status"`
+	}
+	if err := doJSON(ctx, p.http, http.MethodPost, p.base+"/v1/notifications/verify-webhook-signature",
+		map[string]string{"Authorization": "Bearer " + token}, body, &resp); err != nil {
+		return err
+	}
+	if resp.VerificationStatus != "SUCCESS" {
+		return fmt.Errorf("paypal: verify webhook signature: %s", resp.VerificationStatus)
+	}
+	return nil
 }

@@ -105,6 +105,7 @@ func (s *PaymentService) Webhook(ctx context.Context, req *paymentv1.WebhookReq)
 			"Stripe-Signature", "X-Nowpayments-Sig",
 			"X-Razorpay-Signature", "X-KOMOJU-SIGNATURE", "X-IAMPORT-TOKEN",
 			"X-CALLBACK-TOKEN",
+			"PayPal-Auth-Algo", "PayPal-Cert-Url",
 			"PayPal-Transmission-Id", "PayPal-Transmission-Time",
 			"PayPal-Transmission-Sig", "PayPal-Webhook-Id",
 		} {

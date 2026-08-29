@@ -1,7 +1,7 @@
 package biz
 
 // T-P-19/20 新渠道验签单测：Razorpay/KOMOJU HMAC-SHA256 向量、PortOne/Xendit token 比对、
-// Mercado Pago IPN payment_id 解析 + 回查模拟、PayPal transmission 头简化验签。
+// Mercado Pago IPN payment_id 解析 + 回查模拟、PayPal 官方 verify-webhook-signature 验签 mock。
 
 import (
 	"context"
@@ -114,6 +114,19 @@ func (f fakeRoundTripper) RoundTrip(*http.Request) (*http.Response, error) {
 		Body: io.NopCloser(strings.NewReader(f.body)), Header: http.Header{}}, nil
 }
 
+// routeRoundTripper 按 URL path 分发的假 transport（PayPal oauth + verify 两个端点用）。
+type routeRoundTripper struct {
+	routes map[string]fakeRoundTripper
+}
+
+func (r routeRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+	if rt, ok := r.routes[req.URL.Path]; ok {
+		return rt.RoundTrip(req)
+	}
+	return &http.Response{StatusCode: 500,
+		Body: io.NopCloser(strings.NewReader("")), Header: http.Header{}}, nil
+}
+
 func TestMercadoPagoVerifyWebhook(t *testing.T) {
 	p := &MercadoPagoProvider{accessToken: "TEST-access-token",
 		http: &http.Client{Transport: fakeRoundTripper{status: 200,
@@ -135,13 +148,21 @@ func TestMercadoPagoVerifyWebhook(t *testing.T) {
 }
 
 func TestPayPalVerifyWebhook(t *testing.T) {
-	p := &PayPalProvider{webhookID: "WH-1"}
 	ctx := context.Background()
 	body := []byte(`{"event_type":"CHECKOUT.ORDER.APPROVED","resource":{"id":"ORDER-1","status":"APPROVED","purchase_units":[{"reference_id":"2026082992","amount":{"currency_code":"USD","value":"3.00"}}]}}`)
 	hdrs := map[string]string{
+		"PayPal-Auth-Algo": "SHA256withRSA", "PayPal-Cert-Url": "https://api.paypal.com/cert",
 		"PayPal-Transmission-Id": "txn-1", "PayPal-Transmission-Time": "2026-08-29T00:00:00Z",
 		"PayPal-Transmission-Sig": "sig-1", "PayPal-Webhook-Id": "WH-1",
 	}
+	rt := routeRoundTripper{routes: map[string]fakeRoundTripper{
+		"/v1/oauth2/token": {status: 200, body: `{"access_token":"tok-1"}`},
+		"/v1/notifications/verify-webhook-signature": {status: 200, body: `{"verification_status":"SUCCESS"}`},
+	}}
+	p := &PayPalProvider{webhookID: "WH-1", clientID: "cid", clientSecret: "cs",
+		http: &http.Client{Transport: rt}}
+
+	// 官方验签 SUCCESS → 通过，金额/订单解析保留
 	ev, err := p.VerifyWebhook(ctx, "paypal", body, hdrs)
 	if err != nil {
 		t.Fatal(err)
@@ -149,8 +170,26 @@ func TestPayPalVerifyWebhook(t *testing.T) {
 	if !ev.Paid || ev.OrderNo != "2026082992" || ev.AmountCents != 300 || ev.Currency != "USD" || ev.TxID != "ORDER-1" {
 		t.Fatalf("unexpected event: %+v", ev)
 	}
-	// webhook id 不匹配 → 拒绝
-	bad := map[string]string{"PayPal-Transmission-Id": "txn-1", "PayPal-Transmission-Time": "t",
+
+	// 验签返回 FAILURE → 拒绝
+	rt.routes["/v1/notifications/verify-webhook-signature"] =
+		fakeRoundTripper{status: 200, body: `{"verification_status":"FAILURE"}`}
+	if _, err := p.VerifyWebhook(ctx, "paypal", body, hdrs); err == nil {
+		t.Fatal("verify FAILURE must be rejected")
+	}
+
+	// 验签端点 HTTP 错误 → 拒绝
+	rt.routes["/v1/notifications/verify-webhook-signature"] =
+		fakeRoundTripper{status: 500, body: `internal error`}
+	if _, err := p.VerifyWebhook(ctx, "paypal", body, hdrs); err == nil {
+		t.Fatal("verify http error must be rejected")
+	}
+
+	// 恢复 SUCCESS；webhook id 不匹配 → 拒绝（本地快速失败，不打 PayPal）
+	rt.routes["/v1/notifications/verify-webhook-signature"] =
+		fakeRoundTripper{status: 200, body: `{"verification_status":"SUCCESS"}`}
+	bad := map[string]string{"PayPal-Auth-Algo": "SHA256withRSA", "PayPal-Cert-Url": "https://api.paypal.com/cert",
+		"PayPal-Transmission-Id": "txn-1", "PayPal-Transmission-Time": "t",
 		"PayPal-Transmission-Sig": "s", "PayPal-Webhook-Id": "WH-OTHER"}
 	if _, err := p.VerifyWebhook(ctx, "paypal", body, bad); err == nil {
 		t.Fatal("wrong webhook id must fail")
