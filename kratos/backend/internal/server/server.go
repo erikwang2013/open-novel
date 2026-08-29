@@ -14,15 +14,16 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 
+	adminv1 "open-novel/backend/api/admin/v1"
+	behaviorv1 "open-novel/backend/api/behavior/v1"
+	bookv1 "open-novel/backend/api/book/v1"
+	cdnv1 "open-novel/backend/api/cdn/v1"
+	chapterv1 "open-novel/backend/api/chapter/v1"
 	commentv1 "open-novel/backend/api/comment/v1"
 	paymentv1 "open-novel/backend/api/payment/v1"
-	chapterv1 "open-novel/backend/api/chapter/v1"
-	bookv1 "open-novel/backend/api/book/v1"
 	recommendationv1 "open-novel/backend/api/recommendation/v1"
 	searchv1 "open-novel/backend/api/search/v1"
 	userv1 "open-novel/backend/api/user/v1"
-	adminv1 "open-novel/backend/api/admin/v1"
-	behaviorv1 "open-novel/backend/api/behavior/v1"
 	"open-novel/backend/internal/conf"
 	"open-novel/backend/internal/middleware"
 	"open-novel/backend/internal/pkg"
@@ -31,10 +32,10 @@ import (
 
 // 限流路由表（按路径模板，§六）：登录/评论发布/举报/搜索/支付回调。
 var rateLimits = map[string]int{
-	"/api/users/login":                10,
-	"/api/comments":                   10,
+	"/api/users/login":                 10,
+	"/api/comments":                    10,
 	"/api/comments/{id}/report":        5,
-	"/api/search":                     10,
+	"/api/search":                      10,
 	"/api/payments/webhook/{provider}": 30,
 }
 
@@ -42,6 +43,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
 	pay *service.PaymentService, admin *service.AdminService, behavior *service.BehaviorService,
+	cdn *service.CdnService,
 ) *khttp.Server {
 	opts := []khttp.ServerOption{
 		khttp.Middleware(
@@ -68,6 +70,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	paymentv1.RegisterPaymentHTTPServer(srv, pay)
 	adminv1.RegisterAdminHTTPServer(srv, admin)
 	behaviorv1.RegisterBehaviorHTTPServer(srv, behavior)
+	cdnv1.RegisterCdnHTTPServer(srv, cdn)
 	return srv
 }
 
@@ -75,6 +78,7 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
 	pay *service.PaymentService, admin *service.AdminService, behavior *service.BehaviorService,
+	cdn *service.CdnService,
 ) *grpc.Server {
 	opts := []grpc.ServerOption{
 		grpc.Middleware(
@@ -96,6 +100,7 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	paymentv1.RegisterPaymentServer(srv, pay)
 	adminv1.RegisterAdminServer(srv, admin)
 	behaviorv1.RegisterBehaviorServer(srv, behavior)
+	cdnv1.RegisterCdnServer(srv, cdn)
 	return srv
 }
 

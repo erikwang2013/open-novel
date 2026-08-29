@@ -94,7 +94,8 @@ func (p *tencentProvider) purgeBatch(ctx context.Context, keys []string) error {
 // canonicalRequest = "POST\n/\n\ncontent-type;host;x-tc-action\n" + sha256Hex(body)
 // credentialScope = "{date}/cdn/tc3_request"
 // 4 步密钥派生：kDate=HMAC(secret,date) → kService=HMAC(kDate,"cdn")
-//              → kSigning=HMAC(kService,"tc3_request") → Signature=HMAC(kSigning,strToSign)
+//
+//	→ kSigning=HMAC(kService,"tc3_request") → Signature=HMAC(kSigning,strToSign)
 func tencentSign(secretID, secretKey, date string, ts int64, body []byte, host string) string {
 	canonicalRequest := strings.Join([]string{
 		"POST", "/", "",

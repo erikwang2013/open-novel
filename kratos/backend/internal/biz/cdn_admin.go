@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	gormdb "gorm.io/plugin/dbresolver"
 	"gorm.io/gorm"
+	gormdb "gorm.io/plugin/dbresolver"
 
 	"open-novel/backend/internal/data"
 	"open-novel/backend/internal/pkg"

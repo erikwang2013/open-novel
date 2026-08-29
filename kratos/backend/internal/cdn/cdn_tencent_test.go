@@ -38,7 +38,7 @@ func TestNewTencentValidate(t *testing.T) {
 func TestTencentPurgeHeaders(t *testing.T) {
 	var got struct {
 		Action, Version, Timestamp, Auth, CT string
-		Urls                                []string `json:"Urls"`
+		Urls                                 []string `json:"Urls"`
 	}
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		got.Action = r.Header.Get("X-TC-Action")
