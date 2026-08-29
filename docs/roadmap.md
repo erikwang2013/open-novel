@@ -86,7 +86,7 @@
 | 本地支付 / PayPal / 微信国际版 | ✅ 已实现（T-P-19/20：Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay + PayPal；T-P-21：WeChat Pay Global 国际版）；国内微信支付未接入（需大陆商户资质） | ✅ |
 | ristretto 本地二级缓存 | ✅ 已实现（128MB / 30s TTL / 写路径双删） | ✅ |
 
-技术债：GET /api/categories、GET /api/tags 存在 book 公开路由遮蔽 admin requireAdmin 同名路由的疑点（详见 [api.md](api.md) 文末）。
+技术债：~~分类/标签路由遮蔽疑点~~ 已查实非问题（admin 用 /api/admin/* 独立路径，2026-08-29）。
 
 ---
 
@@ -147,7 +147,7 @@
 | RBAC | requireAdmin（role=3 检查，service 层 helper），替换前端 role==3 硬编码 | ✅ 已完成 |
 | 审计 | 管理操作 / 审核操作 / 用户状态变更写 `novel_audit_log`；查询页 GET /api/admin/audit-logs（分页 + user_id/action/target_type/target_id/时间范围筛选） | ✅ 已完成 |
 | VIP / 支付 | `novel_payment_provider`（config AES-GCM 加密）/ `novel_payment_order` / `novel_vip_order` / `novel_vip_plan` 表 + Provider 抽象（10 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global）+ Webhook 验签 + 幂等 settle + 15min 超时关闭 + VIP 叠加续期；后台控制展示与流水 | ✅ 已完成（T-P-01~21） |
-| AI 推荐 | 基于阅读/搜索行为埋点（`novel_search_log` 已有），算法推荐替代策略推荐 | 🟢 门槛项（可选方向，未开发） |
+| AI 推荐 | 基于阅读/搜索行为埋点（`novel_search_log` 已有）的启发式画像推荐（`strategy=ai`，候选 <5 回退 hot）；数据达标后换第三方模型 | ✅ 已实现（2026-08-29，配置门控） |
 | 本地二级缓存 | ristretto 进程内 L1（128MB / 30s TTL / 写路径双删），Redis 之上 | ✅ 已完成 |
 
 ---
@@ -166,12 +166,12 @@
 | 多端统一 / 收尾 | 1-2 周 | 分页统一、token 持久化、桌面布局（T-C-16~23、T-A-17） | ✅ 已完成 |
 | 二期支付 | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal（T-P-19~20） | ✅ 已完成 |
 
-**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，剩余可选方向为 AI 推荐（门槛项，未开发）。
+**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4/7.5 已实现（2026-08-29，均配置门控默认关闭），仅剩 T-C-23 人工回归按需执行。
 
 ---
 
 ## 八、风险与技术债
 
 1. **多语言内容供给**：翻译表（`novel_book_translation`）有结构但缺内容生产流程——需定义翻译工作流（人工/第三方翻译 API）。
-2. **路由重叠疑点**：GET `/api/categories` / `/api/tags` 的 admin requireAdmin 版本被 book 公开路由遮蔽（gorilla/mux 先注册优先），如需 GET 管理鉴权须删 book 同名路由或调整注册顺序（详见 [api.md](api.md) 文末）。
+2. ~~路由重叠疑点~~：已查实为非问题（2026-08-29）——admin 用独立路径 `GET /api/admin/categories` / `/api/admin/tags`（requireAdmin，admin.proto:25 注释记录设计决策），与 book 公开 `GET /api/categories` / `/api/tags`（无鉴权浏览用）路径不冲突、无遮蔽。
 3. **支付资质**：微信支付国际版 2026-08-29 已接入（wechatpay_global，HK API v3 H5，平台公钥验签 + AES-GCM 解密，全球可用）；国内微信支付未接入（需中国大陆商户资质）；支付宝 2026-08-29 已接入（RSA2 验签，沙箱可用）；各渠道上线前需配置生产密钥。

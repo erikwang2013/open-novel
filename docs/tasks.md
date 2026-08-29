@@ -249,11 +249,15 @@
 
 ### 7.4 AI 推荐（方向 4，门槛项）
 
+**状态**：✅ 已实现（2026-08-29，`strategy=ai` 启发式画像排序，候选 <5 回退 hot；行为数据量达标后换第三方模型，替换点在 `rankAI`）。
+
 **触发条件**：`novel_recommend_log` + `novel_search_log` 累积 ≥ 阈值（如单语言 ≥ 10 万条有效行为），且业务侧确认第三方 API 预算。当前推荐为 `recommend.go` 仅 hot/new 策略，AI 属替代策略，不是补丁。
 
 **方案草图（≤10 行）**：① 现有 `recommend.go` 的 `Log()` 已在写 impression 日志（`novel_recommend_log`，含 UserID/BookID/Strategy/RankNo），无需新埋点 → ② 批量导出行为数据 → ③ 第三方（如 OpenAI embeddings 或推荐 SaaS）离线训练/计算 → ④ `recommend.go` 新增 strategy 分支（如 `ai`），按语言路由 + 预热到 Redis → ⑤ `recommendation.proto` 无接口变更，策略参数走现有 `GetRecommendationsReq`；未达标前不接第三方 API（无账单、无数据泄露面）。数据量达标前，hot/new 策略 + 热搜词已够用。
 
 ### 7.5 CDN 章节静态化（方向 5，门槛项）
+
+**状态**：✅ 已实现（2026-08-29，`CDN_BASE_URL`/`CDN_PURGE_URL` 门控默认关闭；免费章节 `Cache-Control: public, s-maxage=3600`，VIP `no-store`；章节创建/状态变更 fire-and-forget purge，key 约定 `chapter/{id}?lang={lang}`）。
 
 **触发条件**：章节读流量达阈值（如单章日读 > 1 万次或 CDN 成本超过源站 CPU 成本），且章节变更频率低（连载期间不适用——章节每日更新，静态化收益被失效成本抵消）。
 
@@ -263,4 +267,4 @@
 
 引用 `docs/tasks.md` 上文 T-C-23（9 项两端手测清单，含搜索、推荐、评论、支付等两端对齐验证），按需执行，无开发工作。
 
-**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 均未触发，仅保留触发条件，不做开发。
+**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已实现（2026-08-29，均配置门控默认关闭，仅启用后才生效）；7.6 人工回归按需执行。
