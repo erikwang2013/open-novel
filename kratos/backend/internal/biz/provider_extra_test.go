@@ -6,10 +6,15 @@ package biz
 import (
 	"context"
 	"crypto/hmac"
+	"crypto/rand"
+	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/hex"
+	"encoding/pem"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 )
@@ -198,4 +203,163 @@ func TestPayPalVerifyWebhook(t *testing.T) {
 	if _, err := p.VerifyWebhook(ctx, "paypal", body, map[string]string{"PayPal-Webhook-Id": "WH-1"}); err == nil {
 		t.Fatal("missing transmission headers must fail")
 	}
+}
+
+// ---- Alipay（RSA2 签名/验签 + 表单 notify 解析，自造密钥对）----
+
+// testAlipayKeys 生成 RSA-2048 密钥对并编码为 PKCS8 私钥 / PKIX 公钥 PEM。
+func testAlipayKeys(t *testing.T) (privPEM, pubPEM string) {
+	t.Helper()
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		t.Fatal(err)
+	}
+	privDER, err := x509.MarshalPKCS8PrivateKey(priv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pubDER, err := x509.MarshalPKIXPublicKey(&priv.PublicKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	privPEM = string(pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: privDER}))
+	pubPEM = string(pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: pubDER}))
+	return privPEM, pubPEM
+}
+
+// alipayNotifyBody 构造已签名的 notify 表单体（模拟支付宝回调）。
+func alipayNotifyBody(t *testing.T, privPEM string, fields map[string]string) []byte {
+	t.Helper()
+	priv, err := parseRSAPrivateKey(privPEM)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sign, err := alipaySign(fields, priv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fields["sign"] = sign
+	fields["sign_type"] = "RSA2"
+	return []byte(urlValues(fields).Encode())
+}
+
+func TestAlipaySignVerify(t *testing.T) {
+	privPEM, pubPEM := testAlipayKeys(t)
+	priv, _ := parseRSAPrivateKey(privPEM)
+	pub, _ := parseRSAPublicKey(pubPEM)
+	params := map[string]string{
+		"app_id": "2021000000000001", "method": "alipay.trade.wap.pay", "charset": "utf-8",
+		"sign_type": "RSA2", "timestamp": "2026-08-29 12:00:00", "version": "1.0",
+		"notify_url": "https://example.com/webhook/alipay",
+		"biz_content": `{"out_trade_no":"2026082999","total_amount":"3.00","product_code":"QUICK_WAP_WAY","subject":"Open Novel VIP monthly"}`,
+	}
+	// 签名 → 验签通过
+	params["sign"] = mustSign(t, params, priv)
+	if err := alipayVerify(copyParams(params), pub); err != nil {
+		t.Fatalf("valid signature rejected: %v", err)
+	}
+	// 篡改任一参数 → 拒绝
+	tampered := copyParams(params)
+	tampered["total_amount"] = "300.00"
+	// 重新构造 biz_content 使篡改进入签名串
+	tampered["biz_content"] = `{"out_trade_no":"2026082999","total_amount":"300.00","product_code":"QUICK_WAP_WAY","subject":"Open Novel VIP monthly"}`
+	if err := alipayVerify(tampered, pub); err == nil {
+		t.Fatal("tampered params must fail")
+	}
+	// sign 错误 → 拒绝
+	wrong := copyParams(params)
+	wrong["sign"] = "AAAA"
+	if err := alipayVerify(wrong, pub); err == nil {
+		t.Fatal("wrong sign must fail")
+	}
+}
+
+func TestAlipayVerifyWebhook(t *testing.T) {
+	privPEM, pubPEM := testAlipayKeys(t)
+	p := &AlipayProvider{pubKey: pubPEM}
+	ctx := context.Background()
+	base := map[string]string{
+		"app_id": "2021000000000001", "charset": "utf-8", "timestamp": "2026-08-29 12:00:00",
+		"version": "1.0", "trade_status": "TRADE_SUCCESS", "out_trade_no": "2026082999",
+		"trade_no": "2026082922001400000001", "total_amount": "9.90",
+	}
+	ev, err := p.VerifyWebhook(ctx, "alipay", alipayNotifyBody(t, privPEM, copyParams(base)), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !ev.Paid || ev.OrderNo != "2026082999" || ev.TxID != "2026082922001400000001" ||
+		ev.AmountCents != 990 || ev.Currency != "CNY" {
+		t.Fatalf("unexpected event: %+v", ev)
+	}
+	// TRADE_FINISHED 同样算支付成功
+	fin := copyParams(base)
+	fin["trade_status"] = "TRADE_FINISHED"
+	ev, err = p.VerifyWebhook(ctx, "alipay", alipayNotifyBody(t, privPEM, fin), nil)
+	if err != nil || !ev.Paid {
+		t.Fatalf("TRADE_FINISHED: err=%v ev=%+v", err, ev)
+	}
+	// WAIT_BUYER_PAY → Paid=false
+	wait := copyParams(base)
+	wait["trade_status"] = "TRADE_WAIT_BUYER_PAY"
+	ev, err = p.VerifyWebhook(ctx, "alipay", alipayNotifyBody(t, privPEM, wait), nil)
+	if err != nil || ev.Paid {
+		t.Fatalf("pending: err=%v ev=%+v", err, ev)
+	}
+	// 篡改表单（金额被换）→ 验签拒绝
+	tampered := alipayNotifyBody(t, privPEM, copyParams(base))
+	tampered = []byte(strings.Replace(string(tampered), "total_amount=9.90", "total_amount=99.00", 1))
+	if _, err := p.VerifyWebhook(ctx, "alipay", tampered, nil); err == nil {
+		t.Fatal("tampered notify must be rejected")
+	}
+}
+
+func TestAlipayCreateCheckout(t *testing.T) {
+	privPEM, pubPEM := testAlipayKeys(t)
+	p := &AlipayProvider{appID: "2021000000000001", privKey: privPEM, pubKey: pubPEM,
+		notifyURL: "https://example.com/webhook/alipay", gateway: alipayBase}
+	u, err := p.CreateCheckout(context.Background(), "2026082999", 300, "CNY", "Open Novel VIP monthly")
+	if err != nil {
+		t.Fatal(err)
+	}
+	parsed, err := url.Parse(u)
+	if err != nil || parsed.Host != "openapi.alipay.com" {
+		t.Fatalf("bad checkout url: %v err=%v", u, err)
+	}
+	q := parsed.Query()
+	if q.Get("method") != "alipay.trade.wap.pay" || q.Get("sign_type") != "RSA2" ||
+		q.Get("app_id") != "2021000000000001" || q.Get("sign") == "" ||
+		!strings.Contains(q.Get("biz_content"), `"out_trade_no":"2026082999"`) {
+		t.Fatalf("checkout params missing: %v", q)
+	}
+	// 从 URL 还原参数并复验签名
+	params := map[string]string{}
+	for k := range q {
+		params[k] = q.Get(k)
+	}
+	pub, _ := parseRSAPublicKey(pubPEM)
+	if err := alipayVerify(params, pub); err != nil {
+		t.Fatalf("checkout url signature invalid: %v", err)
+	}
+	// 未配置密钥 → ErrProviderOn
+	bad := &AlipayProvider{appID: "", privKey: "", pubKey: pubPEM}
+	if _, err := bad.CreateCheckout(context.Background(), "1", 100, "CNY", "x"); err == nil {
+		t.Fatal("missing keys must fail")
+	}
+}
+
+func mustSign(t *testing.T, params map[string]string, priv *rsa.PrivateKey) string {
+	t.Helper()
+	s, err := alipaySign(params, priv)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return s
+}
+
+func copyParams(m map[string]string) map[string]string {
+	out := make(map[string]string, len(m))
+	for k, v := range m {
+		out[k] = v
+	}
+	return out
 }

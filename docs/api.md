@@ -141,8 +141,9 @@ provider 行由 admin「支付方式」页创建，config 键 AES-GCM 加密存�
 | mercadopago | pt-BR | `access_token` | IPN 无签名，access_token 回查 GET /v1/payments/{id} |
 | xendit | id / th / vn | `api_key` `callback_token` | X-CALLBACK-TOKEN 比对 |
 | paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | 官方 verify-webhook-signature API 验签（复用 OAuth access_token） |
+| alipay | zh-CN | `app_id` `merchant_private_key` `alipay_public_key` `notify_url`（可选 `base_url` 沙箱） | 表单 notify RSA2 验签（沙箱可测） |
 
-zh-CN 支付宝/微信需中国大陆企业资质，未实现（见 tasks.md）。
+zh-CN 支付宝已实现（沙箱可配置）；微信支付需企业商户号，未实现。
 
 ### 支付管理（T-P-09~13，全部 requireAdmin → 180401）
 

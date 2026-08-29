@@ -60,6 +60,7 @@ var providerFactories = map[string]providerFactory{
 	"mercadopago":  newMercadoPagoProvider,
 	"xendit":       newXenditProvider,
 	"paypal":       newPayPalProvider,
+	"alipay":       newAlipayProvider,
 }
 
 // webhookAlias 把 webhook 路径参数（stripe/nowpayments）归一为渠道码。
