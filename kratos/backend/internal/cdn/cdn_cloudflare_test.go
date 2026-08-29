@@ -25,13 +25,15 @@ func TestCloudflarePurge(t *testing.T) {
 		Method string
 		Auth   string
 		Path   string
-		Files  []string
+		Files  []string `json:"files"`
 	}
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		got.Method = r.Method
 		got.Auth = r.Header.Get("Authorization")
 		got.Path = r.URL.Path
-		_ = json.NewDecoder(r.Body).Decode(&got.Files)
+		if err := json.NewDecoder(r.Body).Decode(&got); err != nil {
+			t.Errorf("decode body: %v", err)
+		}
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"success":true}`))
 	}))
