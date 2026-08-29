@@ -196,6 +196,22 @@ class PaymentProvider {
         configConfigured = j['configConfigured'] == true;
 }
 
+/// CDN 厂商（CdnProviderReply）。configConfigured: 密钥是否已配置（不返回明文）。
+class CdnProvider {
+  final String id;
+  final String code;
+  final int enabled;
+  final int sort;
+  final bool configConfigured;
+
+  CdnProvider.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        code = asStr(j['code']),
+        enabled = asInt(j['enabled']),
+        sort = asInt(j['sort']),
+        configConfigured = j['configConfigured'] == true;
+}
+
 /// 流水（OrderItem）。amount 单位分；status: 0待支付 1已付 2失败 3关闭。
 class PaymentOrder {
   final String orderNo;

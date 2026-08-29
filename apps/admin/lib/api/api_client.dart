@@ -289,6 +289,35 @@ class ApiClient {
     _data(await _dio.delete('/api/payments/admin/providers/$id'));
   }
 
+  // ---------- CDN 厂商 ----------
+
+  /// CDN 厂商列表（管理员）。
+  Future<(List<CdnProvider>, int)> cdnProviders() async {
+    final d = _data(await _dio.get('/api/cdn/admin/providers'));
+    return (_listOf(d, CdnProvider.fromJson), asInt(d['total']));
+  }
+
+  Future<void> createCdnProvider({
+    required String code,
+    int sort = 0,
+    Map<String, String> config = const {},
+  }) async {
+    _data(await _dio.post('/api/cdn/admin/providers',
+        data: {'code': code, 'sort': sort, 'config': config}));
+  }
+
+  Future<void> updateCdnProvider(String id, Map<String, dynamic> patch) async {
+    _data(await _dio.put('/api/cdn/admin/providers/$id', data: patch));
+  }
+
+  Future<void> toggleCdnProvider(String id) async {
+    _data(await _dio.patch('/api/cdn/admin/providers/$id/toggle'));
+  }
+
+  Future<void> deleteCdnProvider(String id) async {
+    _data(await _dio.delete('/api/cdn/admin/providers/$id'));
+  }
+
   /// 流水分页。status: -1 全部；userId/provider 空=全部。
   Future<(List<PaymentOrder>, int)> orders({
     String userId = '',

@@ -5,6 +5,7 @@ import 'audit_logs_page.dart';
 import 'behavior_page.dart';
 import 'books_page.dart';
 import 'categories_page.dart';
+import 'cdn_providers_page.dart';
 import 'comments_page.dart';
 import 'dashboard_page.dart';
 import 'login_page.dart';
@@ -34,6 +35,7 @@ class _HomePageState extends State<HomePage> {
     '用户',
     '分类标签',
     '支付方式',
+    'CDN 厂商', // 新增
     '流水账单',
     'VIP套餐',
     '审计日志',
@@ -48,6 +50,7 @@ class _HomePageState extends State<HomePage> {
     Icons.people_outline,
     Icons.category_outlined,
     Icons.account_balance_wallet_outlined,
+    Icons.cloud_outlined, // 新增
     Icons.receipt_long_outlined,
     Icons.workspace_premium_outlined,
     Icons.history_outlined,
@@ -63,6 +66,7 @@ class _HomePageState extends State<HomePage> {
     UsersPage(),
     CategoriesPage(),
     ProvidersPage(),
+    CdnProvidersPage(), // 新增
     OrdersPage(),
     PlansPage(),
     AuditLogsPage(),
