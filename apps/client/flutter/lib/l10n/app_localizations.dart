@@ -306,6 +306,24 @@ abstract class AppLocalizations {
   /// **'热门搜索'**
   String get hotSearch;
 
+  /// No description provided for @searchHistory.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索历史'**
+  String get searchHistory;
+
+  /// No description provided for @searchSuggest.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索建议'**
+  String get searchSuggest;
+
+  /// No description provided for @clearHistory.
+  ///
+  /// In zh, this message translates to:
+  /// **'清空'**
+  String get clearHistory;
+
   /// No description provided for @loading.
   ///
   /// In zh, this message translates to:

@@ -973,6 +973,266 @@ func (*EmptyReply) Descriptor() ([]byte, []int) {
 	return file_admin_v1_admin_proto_rawDescGZIP(), []int{16}
 }
 
+type ListAuditLogsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int64                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int64                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`            // 0=全部
+	Action        string                 `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"`                           // 空=全部
+	TargetType    string                 `protobuf:"bytes,5,opt,name=target_type,json=targetType,proto3" json:"target_type,omitempty"` // 空=全部
+	TargetId      int64                  `protobuf:"varint,6,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`      // 0=全部
+	StartTime     string                 `protobuf:"bytes,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`    // created_at >=（RFC3339 或日期）
+	EndTime       string                 `protobuf:"bytes,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`          // created_at <=
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAuditLogsReq) Reset() {
+	*x = ListAuditLogsReq{}
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAuditLogsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAuditLogsReq) ProtoMessage() {}
+
+func (x *ListAuditLogsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAuditLogsReq.ProtoReflect.Descriptor instead.
+func (*ListAuditLogsReq) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ListAuditLogsReq) GetPage() int64 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListAuditLogsReq) GetPageSize() int64 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+func (x *ListAuditLogsReq) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListAuditLogsReq) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+func (x *ListAuditLogsReq) GetTargetType() string {
+	if x != nil {
+		return x.TargetType
+	}
+	return ""
+}
+
+func (x *ListAuditLogsReq) GetTargetId() int64 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+func (x *ListAuditLogsReq) GetStartTime() string {
+	if x != nil {
+		return x.StartTime
+	}
+	return ""
+}
+
+func (x *ListAuditLogsReq) GetEndTime() string {
+	if x != nil {
+		return x.EndTime
+	}
+	return ""
+}
+
+type AuditLogReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Action        string                 `protobuf:"bytes,3,opt,name=action,proto3" json:"action,omitempty"`
+	TargetType    string                 `protobuf:"bytes,4,opt,name=target_type,json=targetType,proto3" json:"target_type,omitempty"`
+	TargetId      int64                  `protobuf:"varint,5,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	Detail        string                 `protobuf:"bytes,6,opt,name=detail,proto3" json:"detail,omitempty"`
+	Ip            string                 `protobuf:"bytes,7,opt,name=ip,proto3" json:"ip,omitempty"`
+	UserAgent     string                 `protobuf:"bytes,8,opt,name=user_agent,json=userAgent,proto3" json:"user_agent,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // RFC3339
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuditLogReply) Reset() {
+	*x = AuditLogReply{}
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuditLogReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuditLogReply) ProtoMessage() {}
+
+func (x *AuditLogReply) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuditLogReply.ProtoReflect.Descriptor instead.
+func (*AuditLogReply) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *AuditLogReply) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *AuditLogReply) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *AuditLogReply) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+func (x *AuditLogReply) GetTargetType() string {
+	if x != nil {
+		return x.TargetType
+	}
+	return ""
+}
+
+func (x *AuditLogReply) GetTargetId() int64 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+func (x *AuditLogReply) GetDetail() string {
+	if x != nil {
+		return x.Detail
+	}
+	return ""
+}
+
+func (x *AuditLogReply) GetIp() string {
+	if x != nil {
+		return x.Ip
+	}
+	return ""
+}
+
+func (x *AuditLogReply) GetUserAgent() string {
+	if x != nil {
+		return x.UserAgent
+	}
+	return ""
+}
+
+func (x *AuditLogReply) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+type ListAuditLogsReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	List          []*AuditLogReply       `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAuditLogsReply) Reset() {
+	*x = ListAuditLogsReply{}
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAuditLogsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAuditLogsReply) ProtoMessage() {}
+
+func (x *ListAuditLogsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAuditLogsReply.ProtoReflect.Descriptor instead.
+func (*ListAuditLogsReply) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ListAuditLogsReply) GetList() []*AuditLogReply {
+	if x != nil {
+		return x.List
+	}
+	return nil
+}
+
+func (x *ListAuditLogsReply) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 var File_admin_v1_admin_proto protoreflect.FileDescriptor
 
 const file_admin_v1_admin_proto_rawDesc = "" +
@@ -1053,9 +1313,37 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\fDeleteTagReq\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\f\n" +
 	"\n" +
-	"EmptyReply2\xc8\x06\n" +
+	"EmptyReply\"\xec\x01\n" +
+	"\x10ListAuditLogsReq\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x03R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x03R\bpageSize\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x16\n" +
+	"\x06action\x18\x04 \x01(\tR\x06action\x12\x1f\n" +
+	"\vtarget_type\x18\x05 \x01(\tR\n" +
+	"targetType\x12\x1b\n" +
+	"\ttarget_id\x18\x06 \x01(\x03R\btargetId\x12\x1d\n" +
+	"\n" +
+	"start_time\x18\a \x01(\tR\tstartTime\x12\x19\n" +
+	"\bend_time\x18\b \x01(\tR\aendTime\"\xf4\x01\n" +
+	"\rAuditLogReply\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x16\n" +
+	"\x06action\x18\x03 \x01(\tR\x06action\x12\x1f\n" +
+	"\vtarget_type\x18\x04 \x01(\tR\n" +
+	"targetType\x12\x1b\n" +
+	"\ttarget_id\x18\x05 \x01(\x03R\btargetId\x12\x16\n" +
+	"\x06detail\x18\x06 \x01(\tR\x06detail\x12\x0e\n" +
+	"\x02ip\x18\a \x01(\tR\x02ip\x12\x1d\n" +
+	"\n" +
+	"user_agent\x18\b \x01(\tR\tuserAgent\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\"W\n" +
+	"\x12ListAuditLogsReply\x12+\n" +
+	"\x04list\x18\x01 \x03(\v2\x17.admin.v1.AuditLogReplyR\x04list\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total2\xb2\a\n" +
 	"\x05Admin\x12W\n" +
-	"\bGetStats\x12\x15.admin.v1.GetStatsReq\x1a\x17.admin.v1.GetStatsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/stats/overview\x12k\n" +
+	"\bGetStats\x12\x15.admin.v1.GetStatsReq\x1a\x17.admin.v1.GetStatsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/stats/overview\x12h\n" +
+	"\rListAuditLogs\x12\x1a.admin.v1.ListAuditLogsReq\x1a\x1c.admin.v1.ListAuditLogsReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/audit-logs\x12k\n" +
 	"\x0eListCategories\x12\x1b.admin.v1.ListCategoriesReq\x1a\x1d.admin.v1.ListCategoriesReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/categories\x12b\n" +
 	"\x0eCreateCategory\x12\x1b.admin.v1.CreateCategoryReq\x1a\x17.admin.v1.CategoryReply\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/api/categories\x12g\n" +
 	"\x0eUpdateCategory\x12\x1b.admin.v1.UpdateCategoryReq\x1a\x17.admin.v1.CategoryReply\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\x1a\x14/api/categories/{id}\x12a\n" +
@@ -1077,7 +1365,7 @@ func file_admin_v1_admin_proto_rawDescGZIP() []byte {
 	return file_admin_v1_admin_proto_rawDescData
 }
 
-var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_admin_v1_admin_proto_goTypes = []any{
 	(*GetStatsReq)(nil),         // 0: admin.v1.GetStatsReq
 	(*GetStatsReply)(nil),       // 1: admin.v1.GetStatsReply
@@ -1096,35 +1384,41 @@ var file_admin_v1_admin_proto_goTypes = []any{
 	(*UpdateTagReq)(nil),        // 14: admin.v1.UpdateTagReq
 	(*DeleteTagReq)(nil),        // 15: admin.v1.DeleteTagReq
 	(*EmptyReply)(nil),          // 16: admin.v1.EmptyReply
+	(*ListAuditLogsReq)(nil),    // 17: admin.v1.ListAuditLogsReq
+	(*AuditLogReply)(nil),       // 18: admin.v1.AuditLogReply
+	(*ListAuditLogsReply)(nil),  // 19: admin.v1.ListAuditLogsReply
 }
 var file_admin_v1_admin_proto_depIdxs = []int32{
 	2,  // 0: admin.v1.GetStatsReply.hot_books:type_name -> admin.v1.HotBook
 	3,  // 1: admin.v1.GetStatsReply.hot_keywords:type_name -> admin.v1.HotKeyword
 	4,  // 2: admin.v1.ListCategoriesReply.list:type_name -> admin.v1.CategoryReply
 	10, // 3: admin.v1.ListTagsReply.list:type_name -> admin.v1.TagReply
-	0,  // 4: admin.v1.Admin.GetStats:input_type -> admin.v1.GetStatsReq
-	5,  // 5: admin.v1.Admin.ListCategories:input_type -> admin.v1.ListCategoriesReq
-	7,  // 6: admin.v1.Admin.CreateCategory:input_type -> admin.v1.CreateCategoryReq
-	8,  // 7: admin.v1.Admin.UpdateCategory:input_type -> admin.v1.UpdateCategoryReq
-	9,  // 8: admin.v1.Admin.DeleteCategory:input_type -> admin.v1.DeleteCategoryReq
-	11, // 9: admin.v1.Admin.ListTags:input_type -> admin.v1.ListTagsReq
-	13, // 10: admin.v1.Admin.CreateTag:input_type -> admin.v1.CreateTagReq
-	14, // 11: admin.v1.Admin.UpdateTag:input_type -> admin.v1.UpdateTagReq
-	15, // 12: admin.v1.Admin.DeleteTag:input_type -> admin.v1.DeleteTagReq
-	1,  // 13: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
-	6,  // 14: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
-	4,  // 15: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
-	4,  // 16: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
-	16, // 17: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
-	12, // 18: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
-	10, // 19: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
-	10, // 20: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
-	16, // 21: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
-	13, // [13:22] is the sub-list for method output_type
-	4,  // [4:13] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	18, // 4: admin.v1.ListAuditLogsReply.list:type_name -> admin.v1.AuditLogReply
+	0,  // 5: admin.v1.Admin.GetStats:input_type -> admin.v1.GetStatsReq
+	17, // 6: admin.v1.Admin.ListAuditLogs:input_type -> admin.v1.ListAuditLogsReq
+	5,  // 7: admin.v1.Admin.ListCategories:input_type -> admin.v1.ListCategoriesReq
+	7,  // 8: admin.v1.Admin.CreateCategory:input_type -> admin.v1.CreateCategoryReq
+	8,  // 9: admin.v1.Admin.UpdateCategory:input_type -> admin.v1.UpdateCategoryReq
+	9,  // 10: admin.v1.Admin.DeleteCategory:input_type -> admin.v1.DeleteCategoryReq
+	11, // 11: admin.v1.Admin.ListTags:input_type -> admin.v1.ListTagsReq
+	13, // 12: admin.v1.Admin.CreateTag:input_type -> admin.v1.CreateTagReq
+	14, // 13: admin.v1.Admin.UpdateTag:input_type -> admin.v1.UpdateTagReq
+	15, // 14: admin.v1.Admin.DeleteTag:input_type -> admin.v1.DeleteTagReq
+	1,  // 15: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
+	19, // 16: admin.v1.Admin.ListAuditLogs:output_type -> admin.v1.ListAuditLogsReply
+	6,  // 17: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
+	4,  // 18: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
+	4,  // 19: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
+	16, // 20: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
+	12, // 21: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
+	10, // 22: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
+	10, // 23: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
+	16, // 24: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
+	15, // [15:25] is the sub-list for method output_type
+	5,  // [5:15] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_admin_v1_admin_proto_init() }
@@ -1140,7 +1434,7 @@ func file_admin_v1_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_v1_admin_proto_rawDesc), len(file_admin_v1_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   17,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

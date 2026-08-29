@@ -102,6 +102,15 @@ class AppLocalizationsBn extends AppLocalizations {
   String get hotSearch => 'জনপ্রিয় অনুসন্ধান';
 
   @override
+  String get searchHistory => 'অনুসন্ধান ইতিহাস';
+
+  @override
+  String get searchSuggest => 'পরামর্শ';
+
+  @override
+  String get clearHistory => 'মুছুন';
+
+  @override
   String get loading => 'লোড হচ্ছে…';
 
   @override

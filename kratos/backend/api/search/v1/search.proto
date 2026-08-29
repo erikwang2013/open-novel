@@ -27,6 +27,12 @@ service Search {
       get: "/api/search/hot-keywords"
     };
   }
+  // 搜索建议（前缀补全，缓存 suggest:{q} 1s）
+  rpc Suggest(SuggestReq) returns (SuggestReply) {
+    option (google.api.http) = {
+      get: "/api/search/suggest"
+    };
+  }
   // 索引同步（书籍服务在新建/更新书籍或翻译时调用）
   rpc SyncIndex(SyncIndexReq) returns (SyncIndexReply) {
     option (google.api.http) = {
@@ -94,6 +100,14 @@ message HotKeywordsReply {
 message HotKeyword {
   string keyword = 1;
   int64 count = 2;
+}
+
+message SuggestReq {
+  string q = 1;
+}
+
+message SuggestReply {
+  repeated string keywords = 1;
 }
 
 message SyncIndexReq {

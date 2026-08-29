@@ -102,6 +102,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get hotSearch => '热门搜索';
 
   @override
+  String get searchHistory => '搜索历史';
+
+  @override
+  String get searchSuggest => '搜索建议';
+
+  @override
+  String get clearHistory => '清空';
+
+  @override
   String get loading => '加载中…';
 
   @override

@@ -102,6 +102,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get hotSearch => 'लोकप्रिय खोज';
 
   @override
+  String get searchHistory => 'खोज इतिहास';
+
+  @override
+  String get searchSuggest => 'सुझाव';
+
+  @override
+  String get clearHistory => 'साफ़ करें';
+
+  @override
   String get loading => 'लोड हो रहा है…';
 
   @override

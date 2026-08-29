@@ -47,6 +47,15 @@ func (s *SearchService) HotKeywords(ctx context.Context, req *v1.HotKeywordsReq)
 	return &v1.HotKeywordsReply{List: list}, nil
 }
 
+// Suggest 搜索建议（无鉴权，同 HotKeywords；读接口，匿名可访问）。
+func (s *SearchService) Suggest(ctx context.Context, req *v1.SuggestReq) (*v1.SuggestReply, error) {
+	words, err := s.uc.Suggest(ctx, req.Q)
+	if err != nil {
+		return nil, err
+	}
+	return &v1.SuggestReply{Keywords: words}, nil
+}
+
 // 写接口需认证 + 作者角色（匿名可投毒/删除索引，审查 P1）。
 func (s *SearchService) SyncIndex(ctx context.Context, req *v1.SyncIndexReq) (*v1.SyncIndexReply, error) {
 	c, err := auth(ctx)

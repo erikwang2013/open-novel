@@ -24,6 +24,7 @@ const OperationAdminCreateTag = "/admin.v1.Admin/CreateTag"
 const OperationAdminDeleteCategory = "/admin.v1.Admin/DeleteCategory"
 const OperationAdminDeleteTag = "/admin.v1.Admin/DeleteTag"
 const OperationAdminGetStats = "/admin.v1.Admin/GetStats"
+const OperationAdminListAuditLogs = "/admin.v1.Admin/ListAuditLogs"
 const OperationAdminListCategories = "/admin.v1.Admin/ListCategories"
 const OperationAdminListTags = "/admin.v1.Admin/ListTags"
 const OperationAdminUpdateCategory = "/admin.v1.Admin/UpdateCategory"
@@ -36,6 +37,8 @@ type AdminHTTPServer interface {
 	DeleteTag(context.Context, *DeleteTagReq) (*EmptyReply, error)
 	// GetStats 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(context.Context, *GetStatsReq) (*GetStatsReply, error)
+	// ListAuditLogs 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
+	ListAuditLogs(context.Context, *ListAuditLogsReq) (*ListAuditLogsReply, error)
 	// ListCategories 分类列表（requireAdmin，全量返回，量小）
 	// 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesReply, error)
@@ -49,6 +52,7 @@ type AdminHTTPServer interface {
 func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r := s.Route("/")
 	r.GET("/api/stats/overview", _Admin_GetStats0_HTTP_Handler(srv))
+	r.GET("/api/admin/audit-logs", _Admin_ListAuditLogs0_HTTP_Handler(srv))
 	r.GET("/api/admin/categories", _Admin_ListCategories0_HTTP_Handler(srv))
 	r.POST("/api/categories", _Admin_CreateCategory0_HTTP_Handler(srv))
 	r.PUT("/api/categories/{id}", _Admin_UpdateCategory0_HTTP_Handler(srv))
@@ -74,6 +78,25 @@ func _Admin_GetStats0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) e
 			return err
 		}
 		reply := out.(*GetStatsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Admin_ListAuditLogs0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListAuditLogsReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminListAuditLogs)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListAuditLogs(ctx, req.(*ListAuditLogsReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListAuditLogsReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -261,6 +284,8 @@ type AdminHTTPClient interface {
 	DeleteTag(ctx context.Context, req *DeleteTagReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 	// GetStats 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(ctx context.Context, req *GetStatsReq, opts ...http.CallOption) (rsp *GetStatsReply, err error)
+	// ListAuditLogs 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
+	ListAuditLogs(ctx context.Context, req *ListAuditLogsReq, opts ...http.CallOption) (rsp *ListAuditLogsReply, err error)
 	// ListCategories 分类列表（requireAdmin，全量返回，量小）
 	// 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
 	ListCategories(ctx context.Context, req *ListCategoriesReq, opts ...http.CallOption) (rsp *ListCategoriesReply, err error)
@@ -337,6 +362,20 @@ func (c *AdminHTTPClientImpl) GetStats(ctx context.Context, in *GetStatsReq, opt
 	pattern := "/api/stats/overview"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAdminGetStats))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListAuditLogs 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
+func (c *AdminHTTPClientImpl) ListAuditLogs(ctx context.Context, in *ListAuditLogsReq, opts ...http.CallOption) (*ListAuditLogsReply, error) {
+	var out ListAuditLogsReply
+	pattern := "/api/admin/audit-logs"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAdminListAuditLogs))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

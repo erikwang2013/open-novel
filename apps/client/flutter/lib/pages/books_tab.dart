@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api/api_client.dart';
 import '../l10n/app_localizations.dart';
@@ -24,12 +27,18 @@ class _BooksTabState extends State<BooksTab> {
   String? _error;
   bool _searching = false;
 
+  static const _kSearchHistory = 'search_history';
+  List<String> _history = [];
+  List<String> _suggestions = [];
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
     _loadBooks();
     // 分类 / 热搜为增强功能，失败静默不影响书单浏览
     _loadMeta();
+    _loadHistory();
   }
 
   Future<void> _loadMeta() async {
@@ -48,8 +57,52 @@ class _BooksTabState extends State<BooksTab> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadHistory() async {
+    final p = await SharedPreferences.getInstance();
+    final h = p.getStringList(_kSearchHistory) ?? const [];
+    if (mounted && h.isNotEmpty) setState(() => _history = h);
+  }
+
+  /// 新搜索插入头部、去重，最多 20 条（最新在前）。
+  void _addHistory(String q) {
+    final h = [q, ..._history.where((e) => e != q)];
+    if (h.length > 20) h.removeRange(20, h.length);
+    setState(() => _history = h);
+    SharedPreferences.getInstance()
+        .then((p) => p.setStringList(_kSearchHistory, h));
+  }
+
+  void _clearHistory() {
+    setState(() => _history = []);
+    SharedPreferences.getInstance().then((p) => p.remove(_kSearchHistory));
+  }
+
+  /// 输入防抖 200ms 后拉搜索建议，空输入取消。
+  void _onQueryChanged(String q) {
+    _debounce?.cancel();
+    final query = q.trim();
+    if (query.isEmpty) {
+      if (_suggestions.isNotEmpty) setState(() => _suggestions = []);
+      return;
+    }
+    _debounce = Timer(const Duration(milliseconds: 200),
+        () => _loadSuggestions(query));
+  }
+
+  Future<void> _loadSuggestions(String q) async {
+    try {
+      final list = await ApiClient.instance.suggest(q);
+      // 响应过期（输入已变/已提交搜索）则丢弃
+      if (!mounted || _searchCtrl.text.trim() != q) return;
+      setState(() => _suggestions = list);
+    } catch (_) {
+      // 建议失败静默，不影响搜索
+    }
   }
 
   Future<void> _loadBooks() async {
@@ -71,13 +124,16 @@ class _BooksTabState extends State<BooksTab> {
   }
 
   Future<void> _search(String q) async {
+    final query = q.trim();
+    if (query.isEmpty) return;
+    _addHistory(query);
     setState(() {
       _searching = true;
       _error = null;
     });
     try {
       final lang = langCode(localeNotifier.value);
-      final results = await ApiClient.instance.search(q, lang: lang);
+      final results = await ApiClient.instance.search(query, lang: lang);
       setState(() {
         _searchResults = results;
         _searching = false;
@@ -106,6 +162,7 @@ class _BooksTabState extends State<BooksTab> {
               onPressed: () => _search(_searchCtrl.text.trim()),
             ),
           ),
+          onChanged: _onQueryChanged,
           onSubmitted: _search,
         ),
       ),
@@ -147,6 +204,10 @@ class _BooksTabState extends State<BooksTab> {
           );
         },
       );
+    }
+    // 输入中（未提交）：搜索框下方展示「搜索建议 + 搜索历史」
+    if (_searchCtrl.text.trim().isNotEmpty) {
+      return _buildSearchPanel(context, l10n);
     }
     final books = _books;
     if (books == null) return const Center(child: CircularProgressIndicator());
@@ -229,6 +290,65 @@ class _BooksTabState extends State<BooksTab> {
           ),
         );
       },
+    );
+  }
+
+  /// 建议优先、历史其次；无内容返回空（不显示区块）。
+  Widget _buildSearchPanel(BuildContext context, AppLocalizations l10n) {
+    final suggest = _suggestions;
+    final history = _history;
+    if (suggest.isEmpty && history.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    Widget section(String title, List<String> words, {Widget? trailing}) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 12, bottom: 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(title,
+                      style: Theme.of(context).textTheme.titleSmall),
+                ),
+                ?trailing,
+              ],
+            ),
+          ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              for (final w in words)
+                ActionChip(
+                  label: Text(w),
+                  onPressed: () {
+                    _searchCtrl.text = w;
+                    _search(w);
+                  },
+                ),
+            ],
+          ),
+        ],
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(8),
+      children: [
+        if (suggest.isNotEmpty) section(l10n.searchSuggest, suggest),
+        if (history.isNotEmpty)
+          section(
+            l10n.searchHistory,
+            history,
+            trailing: IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: l10n.clearHistory,
+              onPressed: _clearHistory,
+            ),
+          ),
+      ],
     );
   }
 

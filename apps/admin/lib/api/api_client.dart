@@ -292,6 +292,33 @@ class ApiClient {
     return OrderStats.fromJson(d);
   }
 
+  // ---------- 审计日志 ----------
+
+  /// 审计日志分页。空字符串=不过滤。
+  Future<(List<AuditLog>, int)> auditLogs({
+    String userId = '',
+    String action = '',
+    String targetType = '',
+    String targetId = '',
+    String startTime = '',
+    String endTime = '',
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    final r = await _dio.get('/api/admin/audit-logs', queryParameters: {
+      if (userId.isNotEmpty) 'user_id': userId,
+      if (action.isNotEmpty) 'action': action,
+      if (targetType.isNotEmpty) 'target_type': targetType,
+      if (targetId.isNotEmpty) 'target_id': targetId,
+      if (startTime.isNotEmpty) 'start_time': startTime,
+      if (endTime.isNotEmpty) 'end_time': endTime,
+      'page': page,
+      'page_size': pageSize,
+    });
+    final d = _data(r);
+    return (_listOf(d, AuditLog.fromJson), asInt(d['total']));
+  }
+
   /// VIP 套餐列表（含禁用）。
   Future<(List<VipPlan>, int)> plans() async {
     final d = _data(await _dio.get('/api/payments/admin/plans'));

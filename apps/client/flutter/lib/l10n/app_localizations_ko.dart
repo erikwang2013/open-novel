@@ -102,6 +102,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hotSearch => '인기 검색';
 
   @override
+  String get searchHistory => '검색 기록';
+
+  @override
+  String get searchSuggest => '검색 제안';
+
+  @override
+  String get clearHistory => '지우기';
+
+  @override
   String get loading => '불러오는 중…';
 
   @override

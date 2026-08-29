@@ -275,6 +275,18 @@ class ApiClient {
     return _parseList<HotKeyword>(r.data, HotKeyword.fromJson);
   }
 
+  /// 搜索建议（GET /api/search/suggest）：{keywords:[...]}，最多 10 条。
+  Future<List<String>> suggest(String q) async {
+    final r =
+        await _dio.get('/api/search/suggest', queryParameters: {'q': q});
+    final d = r.data;
+    if (d is! Map) return const [];
+    return (d['keywords'] as List? ?? const [])
+        .map((e) => asStr(e))
+        .where((s) => s.isNotEmpty)
+        .toList();
+  }
+
   Future<void> favoriteBook(String bookId) =>
       _dio.post('/api/books/$bookId/favorite');
 

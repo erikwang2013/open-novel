@@ -23,6 +23,7 @@ const OperationSearchDeleteIndex = "/search.v1.Search/DeleteIndex"
 const OperationSearchHotKeywords = "/search.v1.Search/HotKeywords"
 const OperationSearchHotSearches = "/search.v1.Search/HotSearches"
 const OperationSearchSearchBooks = "/search.v1.Search/SearchBooks"
+const OperationSearchSuggest = "/search.v1.Search/Suggest"
 const OperationSearchSyncIndex = "/search.v1.Search/SyncIndex"
 
 type SearchHTTPServer interface {
@@ -33,6 +34,8 @@ type SearchHTTPServer interface {
 	HotSearches(context.Context, *HotSearchesReq) (*HotSearchesReply, error)
 	// SearchBooks 搜索（lang 缺省 zh-CN；记录搜索日志，best-effort 不阻塞搜索）
 	SearchBooks(context.Context, *SearchBooksReq) (*SearchBooksReply, error)
+	// Suggest 搜索建议（前缀补全，缓存 suggest:{q} 1s）
+	Suggest(context.Context, *SuggestReq) (*SuggestReply, error)
 	// SyncIndex 索引同步（书籍服务在新建/更新书籍或翻译时调用）
 	SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error)
 }
@@ -42,6 +45,7 @@ func RegisterSearchHTTPServer(s *http.Server, srv SearchHTTPServer) {
 	r.GET("/api/search", _Search_SearchBooks0_HTTP_Handler(srv))
 	r.GET("/api/search/hot", _Search_HotSearches0_HTTP_Handler(srv))
 	r.GET("/api/search/hot-keywords", _Search_HotKeywords0_HTTP_Handler(srv))
+	r.GET("/api/search/suggest", _Search_Suggest0_HTTP_Handler(srv))
 	r.POST("/api/search/index/{book_id}", _Search_SyncIndex0_HTTP_Handler(srv))
 	r.DELETE("/api/search/index/{book_id}", _Search_DeleteIndex0_HTTP_Handler(srv))
 }
@@ -103,6 +107,25 @@ func _Search_HotKeywords0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Conte
 	}
 }
 
+func _Search_Suggest0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in SuggestReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSearchSuggest)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Suggest(ctx, req.(*SuggestReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SuggestReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _Search_SyncIndex0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in SyncIndexReq
@@ -158,6 +181,8 @@ type SearchHTTPClient interface {
 	HotSearches(ctx context.Context, req *HotSearchesReq, opts ...http.CallOption) (rsp *HotSearchesReply, err error)
 	// SearchBooks 搜索（lang 缺省 zh-CN；记录搜索日志，best-effort 不阻塞搜索）
 	SearchBooks(ctx context.Context, req *SearchBooksReq, opts ...http.CallOption) (rsp *SearchBooksReply, err error)
+	// Suggest 搜索建议（前缀补全，缓存 suggest:{q} 1s）
+	Suggest(ctx context.Context, req *SuggestReq, opts ...http.CallOption) (rsp *SuggestReply, err error)
 	// SyncIndex 索引同步（书籍服务在新建/更新书籍或翻译时调用）
 	SyncIndex(ctx context.Context, req *SyncIndexReq, opts ...http.CallOption) (rsp *SyncIndexReply, err error)
 }
@@ -217,6 +242,20 @@ func (c *SearchHTTPClientImpl) SearchBooks(ctx context.Context, in *SearchBooksR
 	pattern := "/api/search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationSearchSearchBooks))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Suggest 搜索建议（前缀补全，缓存 suggest:{q} 1s）
+func (c *SearchHTTPClientImpl) Suggest(ctx context.Context, in *SuggestReq, opts ...http.CallOption) (*SuggestReply, error) {
+	var out SuggestReply
+	pattern := "/api/search/suggest"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationSearchSuggest))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

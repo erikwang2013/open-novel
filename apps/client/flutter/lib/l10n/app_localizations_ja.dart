@@ -102,6 +102,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get hotSearch => '人気検索';
 
   @override
+  String get searchHistory => '検索履歴';
+
+  @override
+  String get searchSuggest => '検索候補';
+
+  @override
+  String get clearHistory => 'クリア';
+
+  @override
   String get loading => '読み込み中…';
 
   @override

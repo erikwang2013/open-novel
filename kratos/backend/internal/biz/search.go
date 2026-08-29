@@ -105,6 +105,36 @@ func (uc *SearchUsecase) HotKeywords(ctx context.Context) ([]HotKeyword, error) 
 	return out, nil
 }
 
+// Suggest 搜索建议：搜索日志按 keyword 前缀补全（LIKE 参数绑定防注入），
+// 按热度 count 降序 TOP 10；缓存 suggest:{q}，TTL 1s。
+func (uc *SearchUsecase) Suggest(ctx context.Context, q string) ([]string, error) {
+	q = strings.TrimSpace(q)
+	if q == "" {
+		return nil, nil
+	}
+	key := "suggest:" + q
+	if v, ok := uc.cache.Get(ctx, key); ok {
+		var cached []string
+		if err := json.Unmarshal([]byte(v), &cached); err == nil {
+			return cached, nil
+		}
+	}
+	var rows []HotKeyword
+	if err := uc.db.WithContext(ctx).Model(&data.SearchLog{}).
+		Where("keyword LIKE ?", q+"%").
+		Select("keyword, COUNT(*) AS count").
+		Group("keyword").Order("count DESC").Limit(10).Scan(&rows).Error; err != nil {
+		return nil, pkg.ErrSearch
+	}
+	out := make([]string, 0, len(rows))
+	for _, r := range rows {
+		out = append(out, r.Keyword)
+	}
+	b, _ := json.Marshal(out)
+	uc.cache.Set(ctx, key, string(b), time.Second)
+	return out, nil
+}
+
 // SyncIndex 同步书籍文档（书籍服务在新建/更新书籍或翻译时调用）。
 func (uc *SearchUsecase) SyncIndex(ctx context.Context, doc data.SearchDoc) error {
 	if doc.BookID == 0 {

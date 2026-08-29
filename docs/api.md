@@ -96,6 +96,7 @@
 | GET | `/api/stats/overview` | 仪表盘统计：书籍/用户/评论数、DAU 近似（当日登录 ∪ 当日搜索的去重用户）、热门书籍（复用 `/api/search/hot`）、热门搜索词（搜索日志聚合） | Bearer（管理） |
 | GET | `/api/admin/categories` | 分类列表（全量，含 status/sort_order） | Bearer（管理） |
 | GET | `/api/admin/tags` | 标签列表（全量，含 status） | Bearer（管理） |
+| GET | `/api/admin/audit-logs` | 审计日志分页查询（筛选 user_id/action/target_type/target_id/start_time/end_time，按时间倒序） | Bearer（管理） |
 | POST | `/api/categories` | 创建分类 `{name, parent_id?, sort_order?}` | Bearer（管理） |
 | PUT | `/api/categories/{id}` | 更新分类（可选字段，仅更新非空项；`status` 0 禁用 1 启用） | Bearer（管理） |
 | DELETE | `/api/categories/{id}` | 删除分类 | Bearer（管理） |
@@ -110,6 +111,7 @@
 | GET | `/api/search` | 搜索 `q` + 分页 + `lang` | 无 |
 | GET | `/api/search/hot` | 热门书籍榜（BookDoc 列表） | 无 |
 | GET | `/api/search/hot-keywords` | 热搜词榜 `{list:[{keyword,count}]}`，搜索日志聚合 TOP 10 | 无 |
+| GET | `/api/search/suggest` | 搜索建议 `q` 前缀补全 `{keywords:[...]}`，搜索日志聚合 TOP 10，缓存 1s | 无 |
 | POST | `/api/search/index/{book_id}` | 重建单本书搜索索引 | Bearer（管理） |
 | DELETE | `/api/search/index/{book_id}` | 删除单本书搜索索引 | Bearer（管理） |
 | GET | `/api/recommend` | 推荐 `strategy=hot|new` + `page_size` + `lang` | 无 |

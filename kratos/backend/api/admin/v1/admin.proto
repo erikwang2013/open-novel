@@ -15,6 +15,12 @@ service Admin {
       get: "/api/stats/overview"
     };
   }
+  // 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
+  rpc ListAuditLogs(ListAuditLogsReq) returns (ListAuditLogsReply) {
+    option (google.api.http) = {
+      get: "/api/admin/audit-logs"
+    };
+  }
   // 分类列表（requireAdmin，全量返回，量小）
   // 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
   rpc ListCategories(ListCategoriesReq) returns (ListCategoriesReply) {
@@ -151,3 +157,31 @@ message DeleteTagReq {
 }
 
 message EmptyReply {}
+
+message ListAuditLogsReq {
+  int64 page = 1;
+  int64 page_size = 2;
+  int64 user_id = 3; // 0=全部
+  string action = 4; // 空=全部
+  string target_type = 5; // 空=全部
+  int64 target_id = 6; // 0=全部
+  string start_time = 7; // created_at >=（RFC3339 或日期）
+  string end_time = 8; // created_at <=
+}
+
+message AuditLogReply {
+  int64 id = 1;
+  int64 user_id = 2;
+  string action = 3;
+  string target_type = 4;
+  int64 target_id = 5;
+  string detail = 6;
+  string ip = 7;
+  string user_agent = 8;
+  string created_at = 9; // RFC3339
+}
+
+message ListAuditLogsReply {
+  repeated AuditLogReply list = 1;
+  int64 total = 2;
+}

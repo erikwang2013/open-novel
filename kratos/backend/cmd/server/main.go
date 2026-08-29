@@ -36,6 +36,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer d.Cache.Close()
 	am := pkg.NewAuthManager(d.RDB,
 		time.Duration(cfg.Auth.JwtAccessTtl)*time.Second,
 		time.Duration(cfg.Auth.JwtRefreshTtl)*time.Second)

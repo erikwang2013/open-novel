@@ -5,7 +5,7 @@
 // source: admin/v1/admin.proto
 
 // 管理端服务：仪表盘统计 / 分类 / 标签（T-A-14/16）
-// 业务码段 18xxxx；REST 映射 /api/stats/overview、/api/categories、/api/tags
+// 业务码段 18xxxx；REST 映射 /api/stats/overview、/api/admin/categories、/api/admin/tags
 
 package v1
 
@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Admin_GetStats_FullMethodName       = "/admin.v1.Admin/GetStats"
+	Admin_ListAuditLogs_FullMethodName  = "/admin.v1.Admin/ListAuditLogs"
 	Admin_ListCategories_FullMethodName = "/admin.v1.Admin/ListCategories"
 	Admin_CreateCategory_FullMethodName = "/admin.v1.Admin/CreateCategory"
 	Admin_UpdateCategory_FullMethodName = "/admin.v1.Admin/UpdateCategory"
@@ -39,7 +40,10 @@ const (
 type AdminClient interface {
 	// 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(ctx context.Context, in *GetStatsReq, opts ...grpc.CallOption) (*GetStatsReply, error)
+	// 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
+	ListAuditLogs(ctx context.Context, in *ListAuditLogsReq, opts ...grpc.CallOption) (*ListAuditLogsReply, error)
 	// 分类列表（requireAdmin，全量返回，量小）
+	// 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
 	ListCategories(ctx context.Context, in *ListCategoriesReq, opts ...grpc.CallOption) (*ListCategoriesReply, error)
 	CreateCategory(ctx context.Context, in *CreateCategoryReq, opts ...grpc.CallOption) (*CategoryReply, error)
 	// 更新分类；字段可选，仅更新非空项
@@ -64,6 +68,16 @@ func (c *adminClient) GetStats(ctx context.Context, in *GetStatsReq, opts ...grp
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetStatsReply)
 	err := c.cc.Invoke(ctx, Admin_GetStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) ListAuditLogs(ctx context.Context, in *ListAuditLogsReq, opts ...grpc.CallOption) (*ListAuditLogsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAuditLogsReply)
+	err := c.cc.Invoke(ctx, Admin_ListAuditLogs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +170,10 @@ func (c *adminClient) DeleteTag(ctx context.Context, in *DeleteTagReq, opts ...g
 type AdminServer interface {
 	// 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(context.Context, *GetStatsReq) (*GetStatsReply, error)
+	// 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
+	ListAuditLogs(context.Context, *ListAuditLogsReq) (*ListAuditLogsReply, error)
 	// 分类列表（requireAdmin，全量返回，量小）
+	// 独立路径 /api/admin/categories：与 book 服务公开 GET /api/categories 区分（gorilla/mux 先注册优先）
 	ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesReply, error)
 	CreateCategory(context.Context, *CreateCategoryReq) (*CategoryReply, error)
 	// 更新分类；字段可选，仅更新非空项
@@ -179,6 +196,9 @@ type UnimplementedAdminServer struct{}
 
 func (UnimplementedAdminServer) GetStats(context.Context, *GetStatsReq) (*GetStatsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetStats not implemented")
+}
+func (UnimplementedAdminServer) ListAuditLogs(context.Context, *ListAuditLogsReq) (*ListAuditLogsReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListAuditLogs not implemented")
 }
 func (UnimplementedAdminServer) ListCategories(context.Context, *ListCategoriesReq) (*ListCategoriesReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCategories not implemented")
@@ -239,6 +259,24 @@ func _Admin_GetStats_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServer).GetStats(ctx, req.(*GetStatsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Admin_ListAuditLogs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAuditLogsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).ListAuditLogs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_ListAuditLogs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).ListAuditLogs(ctx, req.(*ListAuditLogsReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -397,6 +435,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStats",
 			Handler:    _Admin_GetStats_Handler,
+		},
+		{
+			MethodName: "ListAuditLogs",
+			Handler:    _Admin_ListAuditLogs_Handler,
 		},
 		{
 			MethodName: "ListCategories",

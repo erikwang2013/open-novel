@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api/api_client.dart';
+import 'audit_logs_page.dart';
 import 'books_page.dart';
 import 'categories_page.dart';
 import 'comments_page.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
     '支付方式',
     '流水账单',
     'VIP套餐',
+    '审计日志',
   ];
   static const _icons = [
     Icons.dashboard_outlined,
@@ -44,6 +46,7 @@ class _HomePageState extends State<HomePage> {
     Icons.account_balance_wallet_outlined,
     Icons.receipt_long_outlined,
     Icons.workspace_premium_outlined,
+    Icons.history_outlined,
   ];
 
   static const _pages = [
@@ -56,6 +59,7 @@ class _HomePageState extends State<HomePage> {
     ProvidersPage(),
     OrdersPage(),
     PlansPage(),
+    AuditLogsPage(),
   ];
 
   void _logout() {

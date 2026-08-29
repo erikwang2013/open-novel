@@ -39,7 +39,11 @@ func NewData(c *conf.Data) (*Data, error) {
 		return nil, fmt.Errorf("register replica: %w", err)
 	}
 	rdb := newRedis(c.RedisAddr)
-	return &Data{DB: db, RDB: rdb, Cache: NewCache(rdb), ES: NewES(c.OpensearchAddr)}, nil
+	cache, err := NewCache(rdb)
+	if err != nil {
+		return nil, err
+	}
+	return &Data{DB: db, RDB: rdb, Cache: cache, ES: NewES(c.OpensearchAddr)}, nil
 }
 
 func newRedis(addr string) *redis.Client {

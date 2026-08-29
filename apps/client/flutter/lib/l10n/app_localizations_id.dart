@@ -102,6 +102,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get hotSearch => 'Pencarian populer';
 
   @override
+  String get searchHistory => 'Riwayat pencarian';
+
+  @override
+  String get searchSuggest => 'Saran pencarian';
+
+  @override
+  String get clearHistory => 'Hapus';
+
+  @override
   String get loading => 'Memuat…';
 
   @override

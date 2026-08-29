@@ -102,6 +102,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get hotSearch => 'Beliebte Suchanfragen';
 
   @override
+  String get searchHistory => 'Suchverlauf';
+
+  @override
+  String get searchSuggest => 'Suchvorschläge';
+
+  @override
+  String get clearHistory => 'Löschen';
+
+  @override
   String get loading => 'Wird geladen…';
 
   @override

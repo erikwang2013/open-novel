@@ -101,6 +101,39 @@ func (uc *AdminUsecase) Stats(ctx context.Context) (Stats, error) {
 	return s, nil
 }
 
+// ListAuditLogs 审计日志分页查询（管理员审计查询，T-A-16），created_at 倒序。
+// 条件均为可选；时间串直传 GORM 参数绑定（MySQL 可解析日期/RFC3339），不拼 SQL 字符串。
+func (uc *AdminUsecase) ListAuditLogs(ctx context.Context, f AuditLogQuery, p pkg.Page) ([]data.AuditLog, int64, error) {
+	q := uc.db.WithContext(ctx).Model(&data.AuditLog{})
+	if f.UserID > 0 {
+		q = q.Where("user_id = ?", f.UserID)
+	}
+	if f.Action != "" {
+		q = q.Where("action = ?", f.Action)
+	}
+	if f.TargetType != "" {
+		q = q.Where("target_type = ?", f.TargetType)
+	}
+	if f.TargetID > 0 {
+		q = q.Where("target_id = ?", strconv.FormatInt(f.TargetID, 10)) // 列存字符串
+	}
+	if f.StartAt != "" {
+		q = q.Where("created_at >= ?", f.StartAt)
+	}
+	if f.EndAt != "" {
+		q = q.Where("created_at <= ?", f.EndAt)
+	}
+	var total int64
+	if err := q.Count(&total).Error; err != nil {
+		return nil, 0, pkg.ErrAdminDB
+	}
+	var list []data.AuditLog
+	if err := q.Order("created_at DESC").Offset(p.Offset()).Limit(p.PageSize).Find(&list).Error; err != nil {
+		return nil, 0, pkg.ErrAdminDB
+	}
+	return list, total, nil
+}
+
 // ListCategories 全量分类（量小不分页），按父级 + 排序返回。
 func (uc *AdminUsecase) ListCategories(ctx context.Context) ([]data.Category, error) {
 	var list []data.Category
@@ -294,6 +327,16 @@ func (uc *AdminUsecase) checkParent(ctx context.Context, parentID uint64) error 
 		return pkg.ErrTargetNF
 	}
 	return nil
+}
+
+// AuditLogQuery 审计日志查询条件；0/空串=不过滤。
+type AuditLogQuery struct {
+	UserID     int64
+	Action     string
+	TargetType string
+	TargetID   int64
+	StartAt    string // created_at >=
+	EndAt      string // created_at <=
 }
 
 // CategoryUpdate / TagUpdate 可选更新字段（service 层从 proto optional 转换）。

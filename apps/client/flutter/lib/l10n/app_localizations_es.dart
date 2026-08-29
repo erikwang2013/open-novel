@@ -102,6 +102,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get hotSearch => 'Búsquedas populares';
 
   @override
+  String get searchHistory => 'Historial de búsqueda';
+
+  @override
+  String get searchSuggest => 'Sugerencias';
+
+  @override
+  String get clearHistory => 'Borrar';
+
+  @override
   String get loading => 'Cargando…';
 
   @override

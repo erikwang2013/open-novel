@@ -4,11 +4,13 @@ package service
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	adminv1 "open-novel/backend/api/admin/v1"
 	"open-novel/backend/internal/biz"
 	"open-novel/backend/internal/data"
+	"open-novel/backend/internal/pkg"
 )
 
 type AdminService struct {
@@ -38,6 +40,26 @@ func (s *AdminService) GetStats(ctx context.Context, req *adminv1.GetStatsReq) (
 		BookCount: st.BookCount, UserCount: st.UserCount, CommentCount: st.CommentCount, Dau: st.DAU,
 		HotBooks: books, HotKeywords: words,
 	}, nil
+}
+
+// ListAuditLogs 审计日志分页查询（requireAdmin），支持用户/动作/目标/时间范围筛选。
+func (s *AdminService) ListAuditLogs(ctx context.Context, req *adminv1.ListAuditLogsReq) (*adminv1.ListAuditLogsReply, error) {
+	if _, err := requireAdmin(ctx); err != nil {
+		return nil, err
+	}
+	p := pkg.ParsePage(int32(req.Page), int32(req.PageSize))
+	items, total, err := s.uc.ListAuditLogs(ctx, biz.AuditLogQuery{
+		UserID: req.UserId, Action: req.Action, TargetType: req.TargetType, TargetID: req.TargetId,
+		StartAt: req.StartTime, EndAt: req.EndTime,
+	}, p)
+	if err != nil {
+		return nil, err
+	}
+	list := make([]*adminv1.AuditLogReply, 0, len(items))
+	for _, a := range items {
+		list = append(list, toAuditLogReply(&a))
+	}
+	return &adminv1.ListAuditLogsReply{List: list, Total: total}, nil
 }
 
 func (s *AdminService) ListCategories(ctx context.Context, req *adminv1.ListCategoriesReq) (*adminv1.ListCategoriesReply, error) {
@@ -165,6 +187,19 @@ func toCategoryReply(c *data.Category) *adminv1.CategoryReply {
 		Id: i64(c.ID), Name: c.Name, ParentId: i64(c.ParentID),
 		SortOrder: int32(c.SortOrder), Status: int32(c.Status),
 		CreatedAt: c.CreatedAt.Format(time.RFC3339),
+	}
+}
+
+func toAuditLogReply(a *data.AuditLog) *adminv1.AuditLogReply {
+	uid := int64(0)
+	if a.UserID != nil {
+		uid = *a.UserID
+	}
+	tid, _ := strconv.ParseInt(a.TargetID, 10, 64) // 列存字符串，解析失败按 0
+	return &adminv1.AuditLogReply{
+		Id: i64(a.ID), UserId: uid, Action: a.Action, TargetType: a.TargetType,
+		TargetId: tid, Detail: a.Detail, Ip: a.IP, UserAgent: a.UserAgent,
+		CreatedAt: a.CreatedAt.Format(time.RFC3339),
 	}
 }
 

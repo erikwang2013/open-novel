@@ -102,6 +102,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hotSearch => 'البحث الشائع';
 
   @override
+  String get searchHistory => 'سجل البحث';
+
+  @override
+  String get searchSuggest => 'اقتراحات';
+
+  @override
+  String get clearHistory => 'مسح';
+
+  @override
   String get loading => 'جارٍ التحميل…';
 
   @override

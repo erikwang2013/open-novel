@@ -102,6 +102,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get hotSearch => 'Популярные запросы';
 
   @override
+  String get searchHistory => 'История поиска';
+
+  @override
+  String get searchSuggest => 'Подсказки';
+
+  @override
+  String get clearHistory => 'Очистить';
+
+  @override
   String get loading => 'Загрузка…';
 
   @override

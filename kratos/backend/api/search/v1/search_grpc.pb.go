@@ -25,6 +25,7 @@ const (
 	Search_SearchBooks_FullMethodName = "/search.v1.Search/SearchBooks"
 	Search_HotSearches_FullMethodName = "/search.v1.Search/HotSearches"
 	Search_HotKeywords_FullMethodName = "/search.v1.Search/HotKeywords"
+	Search_Suggest_FullMethodName     = "/search.v1.Search/Suggest"
 	Search_SyncIndex_FullMethodName   = "/search.v1.Search/SyncIndex"
 	Search_DeleteIndex_FullMethodName = "/search.v1.Search/DeleteIndex"
 )
@@ -39,6 +40,8 @@ type SearchClient interface {
 	HotSearches(ctx context.Context, in *HotSearchesReq, opts ...grpc.CallOption) (*HotSearchesReply, error)
 	// 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
 	HotKeywords(ctx context.Context, in *HotKeywordsReq, opts ...grpc.CallOption) (*HotKeywordsReply, error)
+	// 搜索建议（前缀补全，缓存 suggest:{q} 1s）
+	Suggest(ctx context.Context, in *SuggestReq, opts ...grpc.CallOption) (*SuggestReply, error)
 	// 索引同步（书籍服务在新建/更新书籍或翻译时调用）
 	SyncIndex(ctx context.Context, in *SyncIndexReq, opts ...grpc.CallOption) (*SyncIndexReply, error)
 	DeleteIndex(ctx context.Context, in *DeleteIndexReq, opts ...grpc.CallOption) (*DeleteIndexReply, error)
@@ -82,6 +85,16 @@ func (c *searchClient) HotKeywords(ctx context.Context, in *HotKeywordsReq, opts
 	return out, nil
 }
 
+func (c *searchClient) Suggest(ctx context.Context, in *SuggestReq, opts ...grpc.CallOption) (*SuggestReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SuggestReply)
+	err := c.cc.Invoke(ctx, Search_Suggest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *searchClient) SyncIndex(ctx context.Context, in *SyncIndexReq, opts ...grpc.CallOption) (*SyncIndexReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SyncIndexReply)
@@ -112,6 +125,8 @@ type SearchServer interface {
 	HotSearches(context.Context, *HotSearchesReq) (*HotSearchesReply, error)
 	// 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
 	HotKeywords(context.Context, *HotKeywordsReq) (*HotKeywordsReply, error)
+	// 搜索建议（前缀补全，缓存 suggest:{q} 1s）
+	Suggest(context.Context, *SuggestReq) (*SuggestReply, error)
 	// 索引同步（书籍服务在新建/更新书籍或翻译时调用）
 	SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error)
 	DeleteIndex(context.Context, *DeleteIndexReq) (*DeleteIndexReply, error)
@@ -133,6 +148,9 @@ func (UnimplementedSearchServer) HotSearches(context.Context, *HotSearchesReq) (
 }
 func (UnimplementedSearchServer) HotKeywords(context.Context, *HotKeywordsReq) (*HotKeywordsReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method HotKeywords not implemented")
+}
+func (UnimplementedSearchServer) Suggest(context.Context, *SuggestReq) (*SuggestReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method Suggest not implemented")
 }
 func (UnimplementedSearchServer) SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method SyncIndex not implemented")
@@ -215,6 +233,24 @@ func _Search_HotKeywords_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Search_Suggest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SuggestReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SearchServer).Suggest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Search_Suggest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SearchServer).Suggest(ctx, req.(*SuggestReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Search_SyncIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SyncIndexReq)
 	if err := dec(in); err != nil {
@@ -269,6 +305,10 @@ var Search_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HotKeywords",
 			Handler:    _Search_HotKeywords_Handler,
+		},
+		{
+			MethodName: "Suggest",
+			Handler:    _Search_Suggest_Handler,
 		},
 		{
 			MethodName: "SyncIndex",

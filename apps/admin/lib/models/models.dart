@@ -260,6 +260,30 @@ class VipPlan {
         status = asInt(j['status']);
 }
 
+/// 审计日志（AuditLogItem）。
+class AuditLog {
+  final String id;
+  final String userId;
+  final String action;
+  final String targetType;
+  final String targetId;
+  final String detail;
+  final String ip;
+  final String userAgent;
+  final String createdAt;
+
+  AuditLog.fromJson(Map<String, dynamic> j)
+      : id = asStr(j['id']),
+        userId = asStr(j['userId']),
+        action = asStr(j['action']),
+        targetType = asStr(j['targetType']),
+        targetId = asStr(j['targetId']),
+        detail = asStr(j['detail']),
+        ip = asStr(j['ip']),
+        userAgent = asStr(j['userAgent']),
+        createdAt = asStr(j['createdAt']);
+}
+
 /// 评论（CommentReply）。status: 1 正常 0 下架 2 举报待审。
 class Comment {
   final String id;
