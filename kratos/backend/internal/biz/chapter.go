@@ -61,6 +61,8 @@ func (uc *ChapterUsecase) CreateChapter(ctx context.Context, bookID uint64, chap
 	if err != nil {
 		return nil, pkg.ErrChapterCflt
 	}
+	// CDN 失效：新建章节清掉同名旧 key（若存在）；未启用或未配 purge 端点时为空操作
+	PurgeChapterAsync(ch.ID, lang)
 	return &ChapterItem{ID: ch.ID, BookID: ch.BookID, ChapterNo: ch.ChapterNo, Title: ch.Title,
 		WordCount: ch.WordCount, IsVip: ch.IsVip, Status: ch.Status,
 		CreatedAt: ch.CreatedAt.Format("2006-01-02T15:04:05Z07:00")}, nil
@@ -116,6 +118,7 @@ type ChapterContentItem struct {
 	ChapterID uint64
 	Lang      string
 	Content   string
+	IsVip     uint8 // CDN 缓存头判定（VIP 章节禁止静态化）
 }
 
 // GetChapterContent 正文；缓存 key 含 book_id+chapter_id+lang；无内容缓存空值 60s。
@@ -150,7 +153,7 @@ func (uc *ChapterUsecase) GetChapterContent(ctx context.Context, chapterID uint6
 	if err := json.Unmarshal([]byte(payload), &ct); err != nil {
 		return nil, pkg.ErrChapterDB
 	}
-	return &ChapterContentItem{ID: ct.ID, ChapterID: ct.ChapterID, Lang: ct.Lang, Content: ct.Content}, nil
+	return &ChapterContentItem{ID: ct.ID, ChapterID: ct.ChapterID, Lang: ct.Lang, Content: ct.Content, IsVip: ch.IsVip}, nil
 }
 
 func (uc *ChapterUsecase) GetProgress(ctx context.Context, uid int64, bookID uint64) (*data.ReadingProgress, error) {
@@ -223,6 +226,12 @@ func (uc *ChapterUsecase) SetChapterStatus(ctx context.Context, adminID int64, i
 		return pkg.ErrChapterNF
 	}
 	uc.cache.DelPattern(ctx, fmt.Sprintf("chapter:list:%d:*", ch.BookID))
+	// CDN 失效：状态变更影响所有语言版本，逐 lang purge（未启用或未配端点时为空操作）
+	var langs []string
+	uc.db.WithContext(ctx).Model(&data.ChapterContent{}).Where("chapter_id = ?", id).Distinct().Pluck("lang", &langs)
+	for _, l := range langs {
+		PurgeChapterAsync(id, l)
+	}
 	data.WriteAudit(uc.db, ctx, adminID, "chapter_status", "chapter", strconv.FormatUint(id, 10), fmt.Sprintf("status=%d", status))
 	return nil
 }

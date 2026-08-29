@@ -59,8 +59,8 @@ func TestRecommendFlow(t *testing.T) {
 	}
 
 	// invalid strategy → 170400
-	if _, err := s.GetRecommendations(ctx, &recommendv1.GetRecommendationsReq{Strategy: "ai"}); err == nil {
-		t.Fatal("expected error for strategy=ai")
+	if _, err := s.GetRecommendations(ctx, &recommendv1.GetRecommendationsReq{Strategy: "bogus"}); err == nil {
+		t.Fatal("expected error for strategy=bogus")
 	} else if kerrors.FromError(err).Code != 170400 {
 		t.Fatalf("want 170400, got %d", kerrors.FromError(err).Code)
 	}

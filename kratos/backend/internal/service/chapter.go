@@ -5,6 +5,8 @@ package service
 import (
 	"context"
 
+	"github.com/go-kratos/kratos/v2/transport"
+
 	"open-novel/backend/api/chapter/v1"
 	"open-novel/backend/internal/biz"
 	"open-novel/backend/internal/data"
@@ -50,6 +52,12 @@ func (s *ChapterService) GetChapterContent(ctx context.Context, req *v1.GetChapt
 	it, err := s.uc.GetChapterContent(ctx, u64(req.Id), langOrDefault(ctx, req.Lang))
 	if err != nil {
 		return nil, err
+	}
+	// CDN 静态化：免费章节回源缓存 1h；VIP 章节 no-store。CDN_BASE_URL 为空时不设头（行为与现状一致）。
+	if biz.CdnEnabled() {
+		if tr, ok := transport.FromServerContext(ctx); ok {
+			tr.ReplyHeader().Set("Cache-Control", biz.ChapterCacheControl(it.IsVip > 0))
+		}
 	}
 	return &v1.ChapterContentReply{Id: i64(it.ID), ChapterId: i64(it.ChapterID), Lang: it.Lang, Content: it.Content}, nil
 }
