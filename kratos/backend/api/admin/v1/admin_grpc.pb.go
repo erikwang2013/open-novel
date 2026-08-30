@@ -34,6 +34,7 @@ const (
 	Admin_DeleteTag_FullMethodName             = "/admin.v1.Admin/DeleteTag"
 	Admin_TranslateBook_FullMethodName         = "/admin.v1.Admin/TranslateBook"
 	Admin_TranslateBookChapters_FullMethodName = "/admin.v1.Admin/TranslateBookChapters"
+	Admin_GetReports_FullMethodName            = "/admin.v1.Admin/GetReports"
 )
 
 // AdminClient is the client API for Admin service.
@@ -60,6 +61,8 @@ type AdminClient interface {
 	TranslateBook(ctx context.Context, in *TranslateBookReq, opts ...grpc.CallOption) (*TranslateBookReply, error)
 	// 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
 	TranslateBookChapters(ctx context.Context, in *TranslateBookChaptersReq, opts ...grpc.CallOption) (*TranslateBookChaptersReply, error)
+	// 报表：订单收入/用户增长/VIP 订阅/内容互动（requireAdmin；start_date/end_date YYYY-MM-DD，缺省近 30 天，含首尾）
+	GetReports(ctx context.Context, in *GetReportsReq, opts ...grpc.CallOption) (*GetReportsReply, error)
 }
 
 type adminClient struct {
@@ -190,6 +193,16 @@ func (c *adminClient) TranslateBookChapters(ctx context.Context, in *TranslateBo
 	return out, nil
 }
 
+func (c *adminClient) GetReports(ctx context.Context, in *GetReportsReq, opts ...grpc.CallOption) (*GetReportsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetReportsReply)
+	err := c.cc.Invoke(ctx, Admin_GetReports_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility.
@@ -214,6 +227,8 @@ type AdminServer interface {
 	TranslateBook(context.Context, *TranslateBookReq) (*TranslateBookReply, error)
 	// 翻译书籍全部章节到指定语言（requireAdmin；同步串行，单章失败不中断）
 	TranslateBookChapters(context.Context, *TranslateBookChaptersReq) (*TranslateBookChaptersReply, error)
+	// 报表：订单收入/用户增长/VIP 订阅/内容互动（requireAdmin；start_date/end_date YYYY-MM-DD，缺省近 30 天，含首尾）
+	GetReports(context.Context, *GetReportsReq) (*GetReportsReply, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -259,6 +274,9 @@ func (UnimplementedAdminServer) TranslateBook(context.Context, *TranslateBookReq
 }
 func (UnimplementedAdminServer) TranslateBookChapters(context.Context, *TranslateBookChaptersReq) (*TranslateBookChaptersReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method TranslateBookChapters not implemented")
+}
+func (UnimplementedAdminServer) GetReports(context.Context, *GetReportsReq) (*GetReportsReply, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetReports not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 func (UnimplementedAdminServer) testEmbeddedByValue()               {}
@@ -497,6 +515,24 @@ func _Admin_TranslateBookChapters_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_GetReports_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReportsReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).GetReports(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Admin_GetReports_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).GetReports(ctx, req.(*GetReportsReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -551,6 +587,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TranslateBookChapters",
 			Handler:    _Admin_TranslateBookChapters_Handler,
+		},
+		{
+			MethodName: "GetReports",
+			Handler:    _Admin_GetReports_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

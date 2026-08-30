@@ -83,6 +83,12 @@ service Admin {
       body: "*"
     };
   }
+  // 报表：订单收入/用户增长/VIP 订阅/内容互动（requireAdmin；start_date/end_date YYYY-MM-DD，缺省近 30 天，含首尾）
+  rpc GetReports(GetReportsReq) returns (GetReportsReply) {
+    option (google.api.http) = {
+      get: "/api/admin/reports"
+    };
+  }
 }
 
 message GetStatsReq {}
@@ -94,6 +100,12 @@ message GetStatsReply {
   int64 dau = 4; // DAU 近似：当日登录 + 当日搜索的去重用户
   repeated HotBook hot_books = 5; // 热门书籍（复用搜索热门榜）
   repeated HotKeyword hot_keywords = 6; // 热门搜索词（搜索日志聚合）
+  int64 order_count = 7;   // 累计支付订单数（status=1 已支付）
+  int64 order_amount = 8;  // 累计支付金额（分）
+  int64 vip_count = 9;     // VIP 有效订阅数（vip_expires_at > now）
+  int64 today_new_users = 10; // 今日新增用户
+  int64 pending_comments = 11; // 待审核评论数（status=2 举报待审）
+  int64 pending_reports = 12;  // 待处理举报数（status=2 评论的 report_count 累计）
 }
 
 message HotBook {
@@ -224,4 +236,70 @@ message AuditLogReply {
 message ListAuditLogsReply {
   repeated AuditLogReply list = 1;
   int64 total = 2;
+}
+
+// GetReports 报表请求；日期 YYYY-MM-DD，空=近 30 天（含首尾），服务端兜底区间。
+message GetReportsReq {
+  string start_date = 1; // YYYY-MM-DD，空=end_date-29 天
+  string end_date = 2;   // YYYY-MM-DD，空=start_date+29 天
+}
+
+message GetReportsReply {
+  OrderReport order_report = 1;
+  UserReport user_report = 2;
+  VipReport vip_report = 3;
+  ContentReport content_report = 4;
+}
+
+// 订单报表：仅统计已支付（status=1）订单；amount 为分（库中 DECIMAL(10,2) 元×100）。
+message OrderReport {
+  int64 total_count = 1;
+  int64 total_amount = 2;
+  repeated DateAmountPoint by_date = 3;
+  repeated ChannelAmountPoint by_channel = 4;
+}
+
+message UserReport {
+  int64 total_users = 1;
+  repeated DateCountPoint by_date = 2; // by_date: 每日新增+累计
+}
+
+// VIP 订阅报表：仅统计已支付（status=1）订单；amount 为分。
+message VipReport {
+  int64 total_count = 1;
+  int64 total_amount = 2;
+  repeated DateAmountPoint by_date = 3;
+  repeated PlanAmountPoint by_plan = 4;
+}
+
+// 内容互动报表：新增书籍/章节按日；评论/举报为累计量。
+message ContentReport {
+  repeated DateCountPoint books_by_date = 1;
+  repeated DateCountPoint chapters_by_date = 2;
+  int64 comment_count = 3;
+  int64 report_count = 4;
+}
+
+message DateAmountPoint {
+  string date = 1; // YYYY-MM-DD
+  int64 count = 2;
+  int64 amount = 3; // amount 与库中金额单位一致（分）
+}
+
+message DateCountPoint {
+  string date = 1; // YYYY-MM-DD
+  int64 count = 2;
+}
+
+message ChannelAmountPoint {
+  string channel = 1; // channel=支付渠道 code（provider）
+  int64 count = 2;
+  int64 amount = 3;
+}
+
+message PlanAmountPoint {
+  int64 plan_id = 1;
+  string plan_name = 2;
+  int64 count = 3;
+  int64 amount = 4;
 }

@@ -13,6 +13,25 @@ int asInt(dynamic v, [int fallback = 0]) {
   return int.tryParse(v.toString()) ?? fallback;
 }
 
+/// 解析 JSON 数组字段（缺省为空列表）。
+List<T> jlist<T>(dynamic v, T Function(Map<String, dynamic>) fromJson) =>
+    ((v ?? []) as List)
+        .map((e) => fromJson((e as Map).cast<String, dynamic>()))
+        .toList();
+
+/// 金额分转元显示：123456 -> ¥1,234.56。
+String fenToYuan(int fen) {
+  final abs = fen.abs();
+  final yuan = (abs ~/ 100).toString();
+  final cents = (abs % 100).toString().padLeft(2, '0');
+  final buf = StringBuffer();
+  for (var i = 0; i < yuan.length; i++) {
+    if (i > 0 && (yuan.length - i) % 3 == 0) buf.write(',');
+    buf.write(yuan[i]);
+  }
+  return '${fen < 0 ? '-' : ''}¥$buf.$cents';
+}
+
 class AdminUser {
   final String id;
   final String username;
@@ -139,6 +158,12 @@ class StatsData {
   final int userCount;
   final int commentCount;
   final int dau;
+  final int orderCount;
+  final int orderAmount; // 分
+  final int vipCount;
+  final int todayNewUsers;
+  final int pendingComments;
+  final int pendingReports;
   final List<HotBook> hotBooks;
   final List<HotKeyword> hotKeywords;
 
@@ -147,13 +172,14 @@ class StatsData {
         userCount = asInt(j['userCount']),
         commentCount = asInt(j['commentCount']),
         dau = asInt(j['dau']),
-        hotBooks = ((j['hotBooks'] ?? []) as List)
-            .map((e) => HotBook.fromJson((e as Map).cast<String, dynamic>()))
-            .toList(),
-        hotKeywords = ((j['hotKeywords'] ?? []) as List)
-            .map((e) =>
-                HotKeyword.fromJson((e as Map).cast<String, dynamic>()))
-            .toList();
+        orderCount = asInt(j['orderCount']),
+        orderAmount = asInt(j['orderAmount']),
+        vipCount = asInt(j['vipCount']),
+        todayNewUsers = asInt(j['todayNewUsers']),
+        pendingComments = asInt(j['pendingComments']),
+        pendingReports = asInt(j['pendingReports']),
+        hotBooks = jlist(j['hotBooks'], HotBook.fromJson),
+        hotKeywords = jlist(j['hotKeywords'], HotKeyword.fromJson);
 }
 
 class HotBook {
@@ -327,6 +353,124 @@ class HotReadingBook {
       : bookId = asStr(j['bookId']),
         title = asStr(j['title']),
         count = asInt(j['count']);
+}
+
+/// 运营报表（GET /api/admin/reports）。金额单位分。
+class ReportsData {
+  final OrderReport orderReport;
+  final UserReport userReport;
+  final VipReport vipReport;
+  final ContentReport contentReport;
+
+  ReportsData.fromJson(Map<String, dynamic> j)
+      : orderReport = OrderReport.fromJson(
+            (j['orderReport'] ?? {}) as Map<String, dynamic>),
+        userReport = UserReport.fromJson(
+            (j['userReport'] ?? {}) as Map<String, dynamic>),
+        vipReport = VipReport.fromJson(
+            (j['vipReport'] ?? {}) as Map<String, dynamic>),
+        contentReport = ContentReport.fromJson(
+            (j['contentReport'] ?? {}) as Map<String, dynamic>);
+}
+
+/// 订单报表。
+class OrderReport {
+  final int totalCount;
+  final int totalAmount; // 分
+  final List<DateAmount> byDate;
+  final List<ChannelAmount> byChannel;
+
+  OrderReport.fromJson(Map<String, dynamic> j)
+      : totalCount = asInt(j['totalCount']),
+        totalAmount = asInt(j['totalAmount']),
+        byDate = jlist(j['byDate'], DateAmount.fromJson),
+        byChannel = jlist(j['byChannel'], ChannelAmount.fromJson);
+}
+
+/// 按日金额统计行。
+class DateAmount {
+  final String date;
+  final int count;
+  final int amount; // 分
+
+  DateAmount.fromJson(Map<String, dynamic> j)
+      : date = asStr(j['date']),
+        count = asInt(j['count']),
+        amount = asInt(j['amount']);
+}
+
+/// 按渠道金额统计行。
+class ChannelAmount {
+  final String channel;
+  final int count;
+  final int amount; // 分
+
+  ChannelAmount.fromJson(Map<String, dynamic> j)
+      : channel = asStr(j['channel']),
+        count = asInt(j['count']),
+        amount = asInt(j['amount']);
+}
+
+/// 用户增长报表。
+class UserReport {
+  final int totalUsers;
+  final List<DateCount> byDate;
+
+  UserReport.fromJson(Map<String, dynamic> j)
+      : totalUsers = asInt(j['totalUsers']),
+        byDate = jlist(j['byDate'], DateCount.fromJson);
+}
+
+/// 按日计数行。
+class DateCount {
+  final String date;
+  final int count;
+
+  DateCount.fromJson(Map<String, dynamic> j)
+      : date = asStr(j['date']),
+        count = asInt(j['count']);
+}
+
+/// VIP 订阅报表。
+class VipReport {
+  final int totalCount;
+  final int totalAmount; // 分
+  final List<DateAmount> byDate;
+  final List<PlanStat> byPlan;
+
+  VipReport.fromJson(Map<String, dynamic> j)
+      : totalCount = asInt(j['totalCount']),
+        totalAmount = asInt(j['totalAmount']),
+        byDate = jlist(j['byDate'], DateAmount.fromJson),
+        byPlan = jlist(j['byPlan'], PlanStat.fromJson);
+}
+
+/// 按套餐统计行。
+class PlanStat {
+  final int planId;
+  final String planName;
+  final int count;
+  final int amount; // 分
+
+  PlanStat.fromJson(Map<String, dynamic> j)
+      : planId = asInt(j['planId']),
+        planName = asStr(j['planName']),
+        count = asInt(j['count']),
+        amount = asInt(j['amount']);
+}
+
+/// 内容/互动报表。
+class ContentReport {
+  final List<DateCount> booksByDate;
+  final List<DateCount> chaptersByDate;
+  final int commentCount;
+  final int reportCount;
+
+  ContentReport.fromJson(Map<String, dynamic> j)
+      : booksByDate = jlist(j['booksByDate'], DateCount.fromJson),
+        chaptersByDate = jlist(j['chaptersByDate'], DateCount.fromJson),
+        commentCount = asInt(j['commentCount']),
+        reportCount = asInt(j['reportCount']);
 }
 
 /// 评论（CommentReply）。status: 1 正常 0 下架 2 举报待审。

@@ -39,7 +39,68 @@ func (s *AdminService) GetStats(ctx context.Context, req *adminv1.GetStatsReq) (
 	return &adminv1.GetStatsReply{
 		BookCount: st.BookCount, UserCount: st.UserCount, CommentCount: st.CommentCount, Dau: st.DAU,
 		HotBooks: books, HotKeywords: words,
+		OrderCount: st.OrderCount, OrderAmount: st.OrderAmount, VipCount: st.VipCount,
+		TodayNewUsers: st.TodayNewUsers, PendingComments: st.PendingComments, PendingReports: st.PendingReports,
 	}, nil
+}
+
+// GetReports 报表：订单收入/用户增长/VIP 订阅/内容互动（requireAdmin，日期 YYYY-MM-DD，空=近 30 天）。
+func (s *AdminService) GetReports(ctx context.Context, req *adminv1.GetReportsReq) (*adminv1.GetReportsReply, error) {
+	if _, err := requireAdmin(ctx); err != nil {
+		return nil, err
+	}
+	r, err := s.uc.Reports(ctx, req.StartDate, req.EndDate)
+	if err != nil {
+		return nil, err
+	}
+	rep := &adminv1.GetReportsReply{
+		OrderReport: &adminv1.OrderReport{
+			TotalCount: r.Order.TotalCount, TotalAmount: r.Order.TotalAmount,
+			ByDate:    toDateAmountPoints(r.Order.ByDate),
+			ByChannel: make([]*adminv1.ChannelAmountPoint, 0, len(r.Order.ByChannel)),
+		},
+		UserReport: &adminv1.UserReport{
+			TotalUsers: r.User.TotalUsers,
+			ByDate:     toDateCountPoints(r.User.ByDate),
+		},
+		VipReport: &adminv1.VipReport{
+			TotalCount: r.Vip.TotalCount, TotalAmount: r.Vip.TotalAmount,
+			ByDate: toDateAmountPoints(r.Vip.ByDate),
+			ByPlan: make([]*adminv1.PlanAmountPoint, 0, len(r.Vip.ByPlan)),
+		},
+		ContentReport: &adminv1.ContentReport{
+			BooksByDate: toDateCountPoints(r.Content.BooksByDate),
+			ChaptersByDate: toDateCountPoints(r.Content.ChaptersByDate),
+			CommentCount: r.Content.CommentCount, ReportCount: r.Content.ReportCount,
+		},
+	}
+	for _, c := range r.Order.ByChannel {
+		rep.OrderReport.ByChannel = append(rep.OrderReport.ByChannel, &adminv1.ChannelAmountPoint{
+			Channel: c.Channel, Count: c.Count, Amount: c.Amount,
+		})
+	}
+	for _, p := range r.Vip.ByPlan {
+		rep.VipReport.ByPlan = append(rep.VipReport.ByPlan, &adminv1.PlanAmountPoint{
+			PlanId: p.PlanID, PlanName: p.PlanName, Count: p.Count, Amount: p.Amount,
+		})
+	}
+	return rep, nil
+}
+
+func toDateAmountPoints(rows []biz.DateAmountPoint) []*adminv1.DateAmountPoint {
+	out := make([]*adminv1.DateAmountPoint, 0, len(rows))
+	for _, p := range rows {
+		out = append(out, &adminv1.DateAmountPoint{Date: p.Date, Count: p.Count, Amount: p.Amount})
+	}
+	return out
+}
+
+func toDateCountPoints(rows []biz.DateCountPoint) []*adminv1.DateCountPoint {
+	out := make([]*adminv1.DateCountPoint, 0, len(rows))
+	for _, p := range rows {
+		out = append(out, &adminv1.DateCountPoint{Date: p.Date, Count: p.Count})
+	}
+	return out
 }
 
 // ListAuditLogs 审计日志分页查询（requireAdmin），支持用户/动作/目标/时间范围筛选。

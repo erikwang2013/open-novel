@@ -207,6 +207,16 @@ class ApiClient {
     return StatsData.fromJson(_data(await _dio.get('/api/stats/overview')));
   }
 
+  /// 运营报表（管理员）。日期 yyyy-MM-dd，空串=不限。
+  Future<ReportsData> reportsData(
+      {String startDate = '', String endDate = ''}) async {
+    final d = _data(await _dio.get('/api/admin/reports', queryParameters: {
+      if (startDate.isNotEmpty) 'start_date': startDate,
+      if (endDate.isNotEmpty) 'end_date': endDate,
+    }));
+    return ReportsData.fromJson(d);
+  }
+
   /// 阅读行为统计（管理员）。
   Future<BehaviorStats> behaviorStats() async {
     return BehaviorStats.fromJson(

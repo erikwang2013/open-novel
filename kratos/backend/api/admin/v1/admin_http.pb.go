@@ -23,6 +23,7 @@ const OperationAdminCreateCategory = "/admin.v1.Admin/CreateCategory"
 const OperationAdminCreateTag = "/admin.v1.Admin/CreateTag"
 const OperationAdminDeleteCategory = "/admin.v1.Admin/DeleteCategory"
 const OperationAdminDeleteTag = "/admin.v1.Admin/DeleteTag"
+const OperationAdminGetReports = "/admin.v1.Admin/GetReports"
 const OperationAdminGetStats = "/admin.v1.Admin/GetStats"
 const OperationAdminListAuditLogs = "/admin.v1.Admin/ListAuditLogs"
 const OperationAdminListCategories = "/admin.v1.Admin/ListCategories"
@@ -37,6 +38,8 @@ type AdminHTTPServer interface {
 	CreateTag(context.Context, *CreateTagReq) (*TagReply, error)
 	DeleteCategory(context.Context, *DeleteCategoryReq) (*EmptyReply, error)
 	DeleteTag(context.Context, *DeleteTagReq) (*EmptyReply, error)
+	// GetReports 报表：订单收入/用户增长/VIP 订阅/内容互动（requireAdmin；start_date/end_date YYYY-MM-DD，缺省近 30 天，含首尾）
+	GetReports(context.Context, *GetReportsReq) (*GetReportsReply, error)
 	// GetStats 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(context.Context, *GetStatsReq) (*GetStatsReply, error)
 	// ListAuditLogs 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
@@ -69,6 +72,7 @@ func RegisterAdminHTTPServer(s *http.Server, srv AdminHTTPServer) {
 	r.DELETE("/api/tags/{id}", _Admin_DeleteTag0_HTTP_Handler(srv))
 	r.POST("/api/admin/translate/book/{book_id}", _Admin_TranslateBook0_HTTP_Handler(srv))
 	r.POST("/api/admin/translate/book/{book_id}/chapters", _Admin_TranslateBookChapters0_HTTP_Handler(srv))
+	r.GET("/api/admin/reports", _Admin_GetReports0_HTTP_Handler(srv))
 }
 
 func _Admin_GetStats0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
@@ -335,11 +339,32 @@ func _Admin_TranslateBookChapters0_HTTP_Handler(srv AdminHTTPServer) func(ctx ht
 	}
 }
 
+func _Admin_GetReports0_HTTP_Handler(srv AdminHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetReportsReq
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAdminGetReports)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetReports(ctx, req.(*GetReportsReq))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetReportsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AdminHTTPClient interface {
 	CreateCategory(ctx context.Context, req *CreateCategoryReq, opts ...http.CallOption) (rsp *CategoryReply, err error)
 	CreateTag(ctx context.Context, req *CreateTagReq, opts ...http.CallOption) (rsp *TagReply, err error)
 	DeleteCategory(ctx context.Context, req *DeleteCategoryReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
 	DeleteTag(ctx context.Context, req *DeleteTagReq, opts ...http.CallOption) (rsp *EmptyReply, err error)
+	// GetReports 报表：订单收入/用户增长/VIP 订阅/内容互动（requireAdmin；start_date/end_date YYYY-MM-DD，缺省近 30 天，含首尾）
+	GetReports(ctx context.Context, req *GetReportsReq, opts ...http.CallOption) (rsp *GetReportsReply, err error)
 	// GetStats 仪表盘统计：书籍/用户/评论数、DAU 近似、热门书籍/热门搜索词（requireAdmin）
 	GetStats(ctx context.Context, req *GetStatsReq, opts ...http.CallOption) (rsp *GetStatsReply, err error)
 	// ListAuditLogs 审计日志分页查询（requireAdmin，支持用户/动作/目标/时间范围筛选）
@@ -412,6 +437,20 @@ func (c *AdminHTTPClientImpl) DeleteTag(ctx context.Context, in *DeleteTagReq, o
 	opts = append(opts, http.Operation(OperationAdminDeleteTag))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetReports 报表：订单收入/用户增长/VIP 订阅/内容互动（requireAdmin；start_date/end_date YYYY-MM-DD，缺省近 30 天，含首尾）
+func (c *AdminHTTPClientImpl) GetReports(ctx context.Context, in *GetReportsReq, opts ...http.CallOption) (*GetReportsReply, error) {
+	var out GetReportsReply
+	pattern := "/api/admin/reports"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAdminGetReports))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

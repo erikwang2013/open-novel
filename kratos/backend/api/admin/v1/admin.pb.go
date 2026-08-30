@@ -62,15 +62,21 @@ func (*GetStatsReq) Descriptor() ([]byte, []int) {
 }
 
 type GetStatsReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BookCount     int64                  `protobuf:"varint,1,opt,name=book_count,json=bookCount,proto3" json:"book_count,omitempty"`
-	UserCount     int64                  `protobuf:"varint,2,opt,name=user_count,json=userCount,proto3" json:"user_count,omitempty"`
-	CommentCount  int64                  `protobuf:"varint,3,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`
-	Dau           int64                  `protobuf:"varint,4,opt,name=dau,proto3" json:"dau,omitempty"`                                   // DAU 近似：当日登录 + 当日搜索的去重用户
-	HotBooks      []*HotBook             `protobuf:"bytes,5,rep,name=hot_books,json=hotBooks,proto3" json:"hot_books,omitempty"`          // 热门书籍（复用搜索热门榜）
-	HotKeywords   []*HotKeyword          `protobuf:"bytes,6,rep,name=hot_keywords,json=hotKeywords,proto3" json:"hot_keywords,omitempty"` // 热门搜索词（搜索日志聚合）
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	BookCount       int64                  `protobuf:"varint,1,opt,name=book_count,json=bookCount,proto3" json:"book_count,omitempty"`
+	UserCount       int64                  `protobuf:"varint,2,opt,name=user_count,json=userCount,proto3" json:"user_count,omitempty"`
+	CommentCount    int64                  `protobuf:"varint,3,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`
+	Dau             int64                  `protobuf:"varint,4,opt,name=dau,proto3" json:"dau,omitempty"`                                                 // DAU 近似：当日登录 + 当日搜索的去重用户
+	HotBooks        []*HotBook             `protobuf:"bytes,5,rep,name=hot_books,json=hotBooks,proto3" json:"hot_books,omitempty"`                        // 热门书籍（复用搜索热门榜）
+	HotKeywords     []*HotKeyword          `protobuf:"bytes,6,rep,name=hot_keywords,json=hotKeywords,proto3" json:"hot_keywords,omitempty"`               // 热门搜索词（搜索日志聚合）
+	OrderCount      int64                  `protobuf:"varint,7,opt,name=order_count,json=orderCount,proto3" json:"order_count,omitempty"`                 // 累计支付订单数（status=1 已支付）
+	OrderAmount     int64                  `protobuf:"varint,8,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`              // 累计支付金额（分）
+	VipCount        int64                  `protobuf:"varint,9,opt,name=vip_count,json=vipCount,proto3" json:"vip_count,omitempty"`                       // VIP 有效订阅数（vip_expires_at > now）
+	TodayNewUsers   int64                  `protobuf:"varint,10,opt,name=today_new_users,json=todayNewUsers,proto3" json:"today_new_users,omitempty"`     // 今日新增用户
+	PendingComments int64                  `protobuf:"varint,11,opt,name=pending_comments,json=pendingComments,proto3" json:"pending_comments,omitempty"` // 待审核评论数（status=2 举报待审）
+	PendingReports  int64                  `protobuf:"varint,12,opt,name=pending_reports,json=pendingReports,proto3" json:"pending_reports,omitempty"`    // 待处理举报数（status=2 评论的 report_count 累计）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *GetStatsReply) Reset() {
@@ -143,6 +149,48 @@ func (x *GetStatsReply) GetHotKeywords() []*HotKeyword {
 		return x.HotKeywords
 	}
 	return nil
+}
+
+func (x *GetStatsReply) GetOrderCount() int64 {
+	if x != nil {
+		return x.OrderCount
+	}
+	return 0
+}
+
+func (x *GetStatsReply) GetOrderAmount() int64 {
+	if x != nil {
+		return x.OrderAmount
+	}
+	return 0
+}
+
+func (x *GetStatsReply) GetVipCount() int64 {
+	if x != nil {
+		return x.VipCount
+	}
+	return 0
+}
+
+func (x *GetStatsReply) GetTodayNewUsers() int64 {
+	if x != nil {
+		return x.TodayNewUsers
+	}
+	return 0
+}
+
+func (x *GetStatsReply) GetPendingComments() int64 {
+	if x != nil {
+		return x.PendingComments
+	}
+	return 0
+}
+
+func (x *GetStatsReply) GetPendingReports() int64 {
+	if x != nil {
+		return x.PendingReports
+	}
+	return 0
 }
 
 type HotBook struct {
@@ -1489,12 +1537,632 @@ func (x *ListAuditLogsReply) GetTotal() int64 {
 	return 0
 }
 
+// GetReports 报表请求；日期 YYYY-MM-DD，空=近 30 天（含首尾），服务端兜底区间。
+type GetReportsReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StartDate     string                 `protobuf:"bytes,1,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"` // YYYY-MM-DD，空=end_date-29 天
+	EndDate       string                 `protobuf:"bytes,2,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`       // YYYY-MM-DD，空=start_date+29 天
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetReportsReq) Reset() {
+	*x = GetReportsReq{}
+	mi := &file_admin_v1_admin_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetReportsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetReportsReq) ProtoMessage() {}
+
+func (x *GetReportsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetReportsReq.ProtoReflect.Descriptor instead.
+func (*GetReportsReq) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetReportsReq) GetStartDate() string {
+	if x != nil {
+		return x.StartDate
+	}
+	return ""
+}
+
+func (x *GetReportsReq) GetEndDate() string {
+	if x != nil {
+		return x.EndDate
+	}
+	return ""
+}
+
+type GetReportsReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrderReport   *OrderReport           `protobuf:"bytes,1,opt,name=order_report,json=orderReport,proto3" json:"order_report,omitempty"`
+	UserReport    *UserReport            `protobuf:"bytes,2,opt,name=user_report,json=userReport,proto3" json:"user_report,omitempty"`
+	VipReport     *VipReport             `protobuf:"bytes,3,opt,name=vip_report,json=vipReport,proto3" json:"vip_report,omitempty"`
+	ContentReport *ContentReport         `protobuf:"bytes,4,opt,name=content_report,json=contentReport,proto3" json:"content_report,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetReportsReply) Reset() {
+	*x = GetReportsReply{}
+	mi := &file_admin_v1_admin_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetReportsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetReportsReply) ProtoMessage() {}
+
+func (x *GetReportsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetReportsReply.ProtoReflect.Descriptor instead.
+func (*GetReportsReply) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetReportsReply) GetOrderReport() *OrderReport {
+	if x != nil {
+		return x.OrderReport
+	}
+	return nil
+}
+
+func (x *GetReportsReply) GetUserReport() *UserReport {
+	if x != nil {
+		return x.UserReport
+	}
+	return nil
+}
+
+func (x *GetReportsReply) GetVipReport() *VipReport {
+	if x != nil {
+		return x.VipReport
+	}
+	return nil
+}
+
+func (x *GetReportsReply) GetContentReport() *ContentReport {
+	if x != nil {
+		return x.ContentReport
+	}
+	return nil
+}
+
+// 订单报表：仅统计已支付（status=1）订单；amount 为分（库中 DECIMAL(10,2) 元×100）。
+type OrderReport struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TotalCount    int64                  `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	TotalAmount   int64                  `protobuf:"varint,2,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	ByDate        []*DateAmountPoint     `protobuf:"bytes,3,rep,name=by_date,json=byDate,proto3" json:"by_date,omitempty"`
+	ByChannel     []*ChannelAmountPoint  `protobuf:"bytes,4,rep,name=by_channel,json=byChannel,proto3" json:"by_channel,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OrderReport) Reset() {
+	*x = OrderReport{}
+	mi := &file_admin_v1_admin_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OrderReport) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OrderReport) ProtoMessage() {}
+
+func (x *OrderReport) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OrderReport.ProtoReflect.Descriptor instead.
+func (*OrderReport) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *OrderReport) GetTotalCount() int64 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
+}
+
+func (x *OrderReport) GetTotalAmount() int64 {
+	if x != nil {
+		return x.TotalAmount
+	}
+	return 0
+}
+
+func (x *OrderReport) GetByDate() []*DateAmountPoint {
+	if x != nil {
+		return x.ByDate
+	}
+	return nil
+}
+
+func (x *OrderReport) GetByChannel() []*ChannelAmountPoint {
+	if x != nil {
+		return x.ByChannel
+	}
+	return nil
+}
+
+type UserReport struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TotalUsers    int64                  `protobuf:"varint,1,opt,name=total_users,json=totalUsers,proto3" json:"total_users,omitempty"`
+	ByDate        []*DateCountPoint      `protobuf:"bytes,2,rep,name=by_date,json=byDate,proto3" json:"by_date,omitempty"` // by_date: 每日新增+累计
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserReport) Reset() {
+	*x = UserReport{}
+	mi := &file_admin_v1_admin_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserReport) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserReport) ProtoMessage() {}
+
+func (x *UserReport) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserReport.ProtoReflect.Descriptor instead.
+func (*UserReport) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *UserReport) GetTotalUsers() int64 {
+	if x != nil {
+		return x.TotalUsers
+	}
+	return 0
+}
+
+func (x *UserReport) GetByDate() []*DateCountPoint {
+	if x != nil {
+		return x.ByDate
+	}
+	return nil
+}
+
+// VIP 订阅报表：仅统计已支付（status=1）订单；amount 为分。
+type VipReport struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TotalCount    int64                  `protobuf:"varint,1,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
+	TotalAmount   int64                  `protobuf:"varint,2,opt,name=total_amount,json=totalAmount,proto3" json:"total_amount,omitempty"`
+	ByDate        []*DateAmountPoint     `protobuf:"bytes,3,rep,name=by_date,json=byDate,proto3" json:"by_date,omitempty"`
+	ByPlan        []*PlanAmountPoint     `protobuf:"bytes,4,rep,name=by_plan,json=byPlan,proto3" json:"by_plan,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VipReport) Reset() {
+	*x = VipReport{}
+	mi := &file_admin_v1_admin_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VipReport) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VipReport) ProtoMessage() {}
+
+func (x *VipReport) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VipReport.ProtoReflect.Descriptor instead.
+func (*VipReport) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *VipReport) GetTotalCount() int64 {
+	if x != nil {
+		return x.TotalCount
+	}
+	return 0
+}
+
+func (x *VipReport) GetTotalAmount() int64 {
+	if x != nil {
+		return x.TotalAmount
+	}
+	return 0
+}
+
+func (x *VipReport) GetByDate() []*DateAmountPoint {
+	if x != nil {
+		return x.ByDate
+	}
+	return nil
+}
+
+func (x *VipReport) GetByPlan() []*PlanAmountPoint {
+	if x != nil {
+		return x.ByPlan
+	}
+	return nil
+}
+
+// 内容互动报表：新增书籍/章节按日；评论/举报为累计量。
+type ContentReport struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	BooksByDate    []*DateCountPoint      `protobuf:"bytes,1,rep,name=books_by_date,json=booksByDate,proto3" json:"books_by_date,omitempty"`
+	ChaptersByDate []*DateCountPoint      `protobuf:"bytes,2,rep,name=chapters_by_date,json=chaptersByDate,proto3" json:"chapters_by_date,omitempty"`
+	CommentCount   int64                  `protobuf:"varint,3,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`
+	ReportCount    int64                  `protobuf:"varint,4,opt,name=report_count,json=reportCount,proto3" json:"report_count,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ContentReport) Reset() {
+	*x = ContentReport{}
+	mi := &file_admin_v1_admin_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ContentReport) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ContentReport) ProtoMessage() {}
+
+func (x *ContentReport) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ContentReport.ProtoReflect.Descriptor instead.
+func (*ContentReport) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *ContentReport) GetBooksByDate() []*DateCountPoint {
+	if x != nil {
+		return x.BooksByDate
+	}
+	return nil
+}
+
+func (x *ContentReport) GetChaptersByDate() []*DateCountPoint {
+	if x != nil {
+		return x.ChaptersByDate
+	}
+	return nil
+}
+
+func (x *ContentReport) GetCommentCount() int64 {
+	if x != nil {
+		return x.CommentCount
+	}
+	return 0
+}
+
+func (x *ContentReport) GetReportCount() int64 {
+	if x != nil {
+		return x.ReportCount
+	}
+	return 0
+}
+
+type DateAmountPoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"` // YYYY-MM-DD
+	Count         int64                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"` // amount 与库中金额单位一致（分）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DateAmountPoint) Reset() {
+	*x = DateAmountPoint{}
+	mi := &file_admin_v1_admin_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DateAmountPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DateAmountPoint) ProtoMessage() {}
+
+func (x *DateAmountPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DateAmountPoint.ProtoReflect.Descriptor instead.
+func (*DateAmountPoint) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *DateAmountPoint) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *DateAmountPoint) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+func (x *DateAmountPoint) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type DateCountPoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"` // YYYY-MM-DD
+	Count         int64                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DateCountPoint) Reset() {
+	*x = DateCountPoint{}
+	mi := &file_admin_v1_admin_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DateCountPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DateCountPoint) ProtoMessage() {}
+
+func (x *DateCountPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DateCountPoint.ProtoReflect.Descriptor instead.
+func (*DateCountPoint) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *DateCountPoint) GetDate() string {
+	if x != nil {
+		return x.Date
+	}
+	return ""
+}
+
+func (x *DateCountPoint) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type ChannelAmountPoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Channel       string                 `protobuf:"bytes,1,opt,name=channel,proto3" json:"channel,omitempty"` // channel=支付渠道 code（provider）
+	Count         int64                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	Amount        int64                  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChannelAmountPoint) Reset() {
+	*x = ChannelAmountPoint{}
+	mi := &file_admin_v1_admin_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChannelAmountPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChannelAmountPoint) ProtoMessage() {}
+
+func (x *ChannelAmountPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChannelAmountPoint.ProtoReflect.Descriptor instead.
+func (*ChannelAmountPoint) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *ChannelAmountPoint) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *ChannelAmountPoint) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+func (x *ChannelAmountPoint) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+type PlanAmountPoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PlanId        int64                  `protobuf:"varint,1,opt,name=plan_id,json=planId,proto3" json:"plan_id,omitempty"`
+	PlanName      string                 `protobuf:"bytes,2,opt,name=plan_name,json=planName,proto3" json:"plan_name,omitempty"`
+	Count         int64                  `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
+	Amount        int64                  `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlanAmountPoint) Reset() {
+	*x = PlanAmountPoint{}
+	mi := &file_admin_v1_admin_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlanAmountPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlanAmountPoint) ProtoMessage() {}
+
+func (x *PlanAmountPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlanAmountPoint.ProtoReflect.Descriptor instead.
+func (*PlanAmountPoint) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *PlanAmountPoint) GetPlanId() int64 {
+	if x != nil {
+		return x.PlanId
+	}
+	return 0
+}
+
+func (x *PlanAmountPoint) GetPlanName() string {
+	if x != nil {
+		return x.PlanName
+	}
+	return ""
+}
+
+func (x *PlanAmountPoint) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+func (x *PlanAmountPoint) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
 var File_admin_v1_admin_proto protoreflect.FileDescriptor
 
 const file_admin_v1_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x14admin/v1/admin.proto\x12\badmin.v1\x1a\x1cgoogle/api/annotations.proto\"\r\n" +
-	"\vGetStatsReq\"\xed\x01\n" +
+	"\vGetStatsReq\"\xca\x03\n" +
 	"\rGetStatsReply\x12\x1d\n" +
 	"\n" +
 	"book_count\x18\x01 \x01(\x03R\tbookCount\x12\x1d\n" +
@@ -1503,7 +2171,15 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\rcomment_count\x18\x03 \x01(\x03R\fcommentCount\x12\x10\n" +
 	"\x03dau\x18\x04 \x01(\x03R\x03dau\x12.\n" +
 	"\thot_books\x18\x05 \x03(\v2\x11.admin.v1.HotBookR\bhotBooks\x127\n" +
-	"\fhot_keywords\x18\x06 \x03(\v2\x14.admin.v1.HotKeywordR\vhotKeywords\"J\n" +
+	"\fhot_keywords\x18\x06 \x03(\v2\x14.admin.v1.HotKeywordR\vhotKeywords\x12\x1f\n" +
+	"\vorder_count\x18\a \x01(\x03R\n" +
+	"orderCount\x12!\n" +
+	"\forder_amount\x18\b \x01(\x03R\vorderAmount\x12\x1b\n" +
+	"\tvip_count\x18\t \x01(\x03R\bvipCount\x12&\n" +
+	"\x0ftoday_new_users\x18\n" +
+	" \x01(\x03R\rtodayNewUsers\x12)\n" +
+	"\x10pending_comments\x18\v \x01(\x03R\x0fpendingComments\x12'\n" +
+	"\x0fpending_reports\x18\f \x01(\x03R\x0ependingReports\"J\n" +
 	"\aHotBook\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x10\n" +
@@ -1614,7 +2290,58 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\"W\n" +
 	"\x12ListAuditLogsReply\x12+\n" +
 	"\x04list\x18\x01 \x03(\v2\x17.admin.v1.AuditLogReplyR\x04list\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total2\xca\t\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"I\n" +
+	"\rGetReportsReq\x12\x1d\n" +
+	"\n" +
+	"start_date\x18\x01 \x01(\tR\tstartDate\x12\x19\n" +
+	"\bend_date\x18\x02 \x01(\tR\aendDate\"\xf6\x01\n" +
+	"\x0fGetReportsReply\x128\n" +
+	"\forder_report\x18\x01 \x01(\v2\x15.admin.v1.OrderReportR\vorderReport\x125\n" +
+	"\vuser_report\x18\x02 \x01(\v2\x14.admin.v1.UserReportR\n" +
+	"userReport\x122\n" +
+	"\n" +
+	"vip_report\x18\x03 \x01(\v2\x13.admin.v1.VipReportR\tvipReport\x12>\n" +
+	"\x0econtent_report\x18\x04 \x01(\v2\x17.admin.v1.ContentReportR\rcontentReport\"\xc2\x01\n" +
+	"\vOrderReport\x12\x1f\n" +
+	"\vtotal_count\x18\x01 \x01(\x03R\n" +
+	"totalCount\x12!\n" +
+	"\ftotal_amount\x18\x02 \x01(\x03R\vtotalAmount\x122\n" +
+	"\aby_date\x18\x03 \x03(\v2\x19.admin.v1.DateAmountPointR\x06byDate\x12;\n" +
+	"\n" +
+	"by_channel\x18\x04 \x03(\v2\x1c.admin.v1.ChannelAmountPointR\tbyChannel\"`\n" +
+	"\n" +
+	"UserReport\x12\x1f\n" +
+	"\vtotal_users\x18\x01 \x01(\x03R\n" +
+	"totalUsers\x121\n" +
+	"\aby_date\x18\x02 \x03(\v2\x18.admin.v1.DateCountPointR\x06byDate\"\xb7\x01\n" +
+	"\tVipReport\x12\x1f\n" +
+	"\vtotal_count\x18\x01 \x01(\x03R\n" +
+	"totalCount\x12!\n" +
+	"\ftotal_amount\x18\x02 \x01(\x03R\vtotalAmount\x122\n" +
+	"\aby_date\x18\x03 \x03(\v2\x19.admin.v1.DateAmountPointR\x06byDate\x122\n" +
+	"\aby_plan\x18\x04 \x03(\v2\x19.admin.v1.PlanAmountPointR\x06byPlan\"\xd9\x01\n" +
+	"\rContentReport\x12<\n" +
+	"\rbooks_by_date\x18\x01 \x03(\v2\x18.admin.v1.DateCountPointR\vbooksByDate\x12B\n" +
+	"\x10chapters_by_date\x18\x02 \x03(\v2\x18.admin.v1.DateCountPointR\x0echaptersByDate\x12#\n" +
+	"\rcomment_count\x18\x03 \x01(\x03R\fcommentCount\x12!\n" +
+	"\freport_count\x18\x04 \x01(\x03R\vreportCount\"S\n" +
+	"\x0fDateAmountPoint\x12\x12\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\":\n" +
+	"\x0eDateCountPoint\x12\x12\n" +
+	"\x04date\x18\x01 \x01(\tR\x04date\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x03R\x05count\"\\\n" +
+	"\x12ChannelAmountPoint\x12\x18\n" +
+	"\achannel\x18\x01 \x01(\tR\achannel\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x03R\x05count\x12\x16\n" +
+	"\x06amount\x18\x03 \x01(\x03R\x06amount\"u\n" +
+	"\x0fPlanAmountPoint\x12\x17\n" +
+	"\aplan_id\x18\x01 \x01(\x03R\x06planId\x12\x1b\n" +
+	"\tplan_name\x18\x02 \x01(\tR\bplanName\x12\x14\n" +
+	"\x05count\x18\x03 \x01(\x03R\x05count\x12\x16\n" +
+	"\x06amount\x18\x04 \x01(\x03R\x06amount2\xa8\n" +
+	"\n" +
 	"\x05Admin\x12W\n" +
 	"\bGetStats\x12\x15.admin.v1.GetStatsReq\x1a\x17.admin.v1.GetStatsReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/stats/overview\x12h\n" +
 	"\rListAuditLogs\x12\x1a.admin.v1.ListAuditLogsReq\x1a\x1c.admin.v1.ListAuditLogsReply\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/api/admin/audit-logs\x12k\n" +
@@ -1627,7 +2354,9 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\tUpdateTag\x12\x16.admin.v1.UpdateTagReq\x1a\x12.admin.v1.TagReply\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\x1a\x0e/api/tags/{id}\x12Q\n" +
 	"\tDeleteTag\x12\x16.admin.v1.DeleteTagReq\x1a\x14.admin.v1.EmptyReply\"\x16\x82\xd3\xe4\x93\x02\x10*\x0e/api/tags/{id}\x12y\n" +
 	"\rTranslateBook\x12\x1a.admin.v1.TranslateBookReq\x1a\x1c.admin.v1.TranslateBookReply\".\x82\xd3\xe4\x93\x02(:\x01*\"#/api/admin/translate/book/{book_id}\x12\x9a\x01\n" +
-	"\x15TranslateBookChapters\x12\".admin.v1.TranslateBookChaptersReq\x1a$.admin.v1.TranslateBookChaptersReply\"7\x82\xd3\xe4\x93\x021:\x01*\",/api/admin/translate/book/{book_id}/chaptersB$Z\"open-novel/backend/api/admin/v1;v1b\x06proto3"
+	"\x15TranslateBookChapters\x12\".admin.v1.TranslateBookChaptersReq\x1a$.admin.v1.TranslateBookChaptersReply\"7\x82\xd3\xe4\x93\x021:\x01*\",/api/admin/translate/book/{book_id}/chapters\x12\\\n" +
+	"\n" +
+	"GetReports\x12\x17.admin.v1.GetReportsReq\x1a\x19.admin.v1.GetReportsReply\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/api/admin/reportsB$Z\"open-novel/backend/api/admin/v1;v1b\x06proto3"
 
 var (
 	file_admin_v1_admin_proto_rawDescOnce sync.Once
@@ -1641,7 +2370,7 @@ func file_admin_v1_admin_proto_rawDescGZIP() []byte {
 	return file_admin_v1_admin_proto_rawDescData
 }
 
-var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
 var file_admin_v1_admin_proto_goTypes = []any{
 	(*GetStatsReq)(nil),                // 0: admin.v1.GetStatsReq
 	(*GetStatsReply)(nil),              // 1: admin.v1.GetStatsReply
@@ -1667,6 +2396,16 @@ var file_admin_v1_admin_proto_goTypes = []any{
 	(*ListAuditLogsReq)(nil),           // 21: admin.v1.ListAuditLogsReq
 	(*AuditLogReply)(nil),              // 22: admin.v1.AuditLogReply
 	(*ListAuditLogsReply)(nil),         // 23: admin.v1.ListAuditLogsReply
+	(*GetReportsReq)(nil),              // 24: admin.v1.GetReportsReq
+	(*GetReportsReply)(nil),            // 25: admin.v1.GetReportsReply
+	(*OrderReport)(nil),                // 26: admin.v1.OrderReport
+	(*UserReport)(nil),                 // 27: admin.v1.UserReport
+	(*VipReport)(nil),                  // 28: admin.v1.VipReport
+	(*ContentReport)(nil),              // 29: admin.v1.ContentReport
+	(*DateAmountPoint)(nil),            // 30: admin.v1.DateAmountPoint
+	(*DateCountPoint)(nil),             // 31: admin.v1.DateCountPoint
+	(*ChannelAmountPoint)(nil),         // 32: admin.v1.ChannelAmountPoint
+	(*PlanAmountPoint)(nil),            // 33: admin.v1.PlanAmountPoint
 }
 var file_admin_v1_admin_proto_depIdxs = []int32{
 	2,  // 0: admin.v1.GetStatsReply.hot_books:type_name -> admin.v1.HotBook
@@ -1674,35 +2413,48 @@ var file_admin_v1_admin_proto_depIdxs = []int32{
 	4,  // 2: admin.v1.ListCategoriesReply.list:type_name -> admin.v1.CategoryReply
 	10, // 3: admin.v1.ListTagsReply.list:type_name -> admin.v1.TagReply
 	22, // 4: admin.v1.ListAuditLogsReply.list:type_name -> admin.v1.AuditLogReply
-	0,  // 5: admin.v1.Admin.GetStats:input_type -> admin.v1.GetStatsReq
-	21, // 6: admin.v1.Admin.ListAuditLogs:input_type -> admin.v1.ListAuditLogsReq
-	5,  // 7: admin.v1.Admin.ListCategories:input_type -> admin.v1.ListCategoriesReq
-	7,  // 8: admin.v1.Admin.CreateCategory:input_type -> admin.v1.CreateCategoryReq
-	8,  // 9: admin.v1.Admin.UpdateCategory:input_type -> admin.v1.UpdateCategoryReq
-	9,  // 10: admin.v1.Admin.DeleteCategory:input_type -> admin.v1.DeleteCategoryReq
-	11, // 11: admin.v1.Admin.ListTags:input_type -> admin.v1.ListTagsReq
-	13, // 12: admin.v1.Admin.CreateTag:input_type -> admin.v1.CreateTagReq
-	14, // 13: admin.v1.Admin.UpdateTag:input_type -> admin.v1.UpdateTagReq
-	15, // 14: admin.v1.Admin.DeleteTag:input_type -> admin.v1.DeleteTagReq
-	17, // 15: admin.v1.Admin.TranslateBook:input_type -> admin.v1.TranslateBookReq
-	19, // 16: admin.v1.Admin.TranslateBookChapters:input_type -> admin.v1.TranslateBookChaptersReq
-	1,  // 17: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
-	23, // 18: admin.v1.Admin.ListAuditLogs:output_type -> admin.v1.ListAuditLogsReply
-	6,  // 19: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
-	4,  // 20: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
-	4,  // 21: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
-	16, // 22: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
-	12, // 23: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
-	10, // 24: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
-	10, // 25: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
-	16, // 26: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
-	18, // 27: admin.v1.Admin.TranslateBook:output_type -> admin.v1.TranslateBookReply
-	20, // 28: admin.v1.Admin.TranslateBookChapters:output_type -> admin.v1.TranslateBookChaptersReply
-	17, // [17:29] is the sub-list for method output_type
-	5,  // [5:17] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	26, // 5: admin.v1.GetReportsReply.order_report:type_name -> admin.v1.OrderReport
+	27, // 6: admin.v1.GetReportsReply.user_report:type_name -> admin.v1.UserReport
+	28, // 7: admin.v1.GetReportsReply.vip_report:type_name -> admin.v1.VipReport
+	29, // 8: admin.v1.GetReportsReply.content_report:type_name -> admin.v1.ContentReport
+	30, // 9: admin.v1.OrderReport.by_date:type_name -> admin.v1.DateAmountPoint
+	32, // 10: admin.v1.OrderReport.by_channel:type_name -> admin.v1.ChannelAmountPoint
+	31, // 11: admin.v1.UserReport.by_date:type_name -> admin.v1.DateCountPoint
+	30, // 12: admin.v1.VipReport.by_date:type_name -> admin.v1.DateAmountPoint
+	33, // 13: admin.v1.VipReport.by_plan:type_name -> admin.v1.PlanAmountPoint
+	31, // 14: admin.v1.ContentReport.books_by_date:type_name -> admin.v1.DateCountPoint
+	31, // 15: admin.v1.ContentReport.chapters_by_date:type_name -> admin.v1.DateCountPoint
+	0,  // 16: admin.v1.Admin.GetStats:input_type -> admin.v1.GetStatsReq
+	21, // 17: admin.v1.Admin.ListAuditLogs:input_type -> admin.v1.ListAuditLogsReq
+	5,  // 18: admin.v1.Admin.ListCategories:input_type -> admin.v1.ListCategoriesReq
+	7,  // 19: admin.v1.Admin.CreateCategory:input_type -> admin.v1.CreateCategoryReq
+	8,  // 20: admin.v1.Admin.UpdateCategory:input_type -> admin.v1.UpdateCategoryReq
+	9,  // 21: admin.v1.Admin.DeleteCategory:input_type -> admin.v1.DeleteCategoryReq
+	11, // 22: admin.v1.Admin.ListTags:input_type -> admin.v1.ListTagsReq
+	13, // 23: admin.v1.Admin.CreateTag:input_type -> admin.v1.CreateTagReq
+	14, // 24: admin.v1.Admin.UpdateTag:input_type -> admin.v1.UpdateTagReq
+	15, // 25: admin.v1.Admin.DeleteTag:input_type -> admin.v1.DeleteTagReq
+	17, // 26: admin.v1.Admin.TranslateBook:input_type -> admin.v1.TranslateBookReq
+	19, // 27: admin.v1.Admin.TranslateBookChapters:input_type -> admin.v1.TranslateBookChaptersReq
+	24, // 28: admin.v1.Admin.GetReports:input_type -> admin.v1.GetReportsReq
+	1,  // 29: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
+	23, // 30: admin.v1.Admin.ListAuditLogs:output_type -> admin.v1.ListAuditLogsReply
+	6,  // 31: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
+	4,  // 32: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
+	4,  // 33: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
+	16, // 34: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
+	12, // 35: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
+	10, // 36: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
+	10, // 37: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
+	16, // 38: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
+	18, // 39: admin.v1.Admin.TranslateBook:output_type -> admin.v1.TranslateBookReply
+	20, // 40: admin.v1.Admin.TranslateBookChapters:output_type -> admin.v1.TranslateBookChaptersReply
+	25, // 41: admin.v1.Admin.GetReports:output_type -> admin.v1.GetReportsReply
+	29, // [29:42] is the sub-list for method output_type
+	16, // [16:29] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_admin_v1_admin_proto_init() }
@@ -1718,7 +2470,7 @@ func file_admin_v1_admin_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_v1_admin_proto_rawDesc), len(file_admin_v1_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   24,
+			NumMessages:   34,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

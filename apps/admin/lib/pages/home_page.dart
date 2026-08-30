@@ -12,6 +12,7 @@ import 'login_page.dart';
 import 'orders_page.dart';
 import 'plans_page.dart';
 import 'providers_page.dart';
+import 'report_page.dart';
 import 'reports_page.dart';
 import 'translate_page.dart';
 import 'users_page.dart';
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
     'VIP套餐',
     '审计日志',
     '行为分析',
+    '报表',
     '翻译',
   ];
   static const _icons = [
@@ -55,6 +57,7 @@ class _HomePageState extends State<HomePage> {
     Icons.workspace_premium_outlined,
     Icons.history_outlined,
     Icons.insights_outlined,
+    Icons.bar_chart,
     Icons.translate,
   ];
 
@@ -71,6 +74,7 @@ class _HomePageState extends State<HomePage> {
     PlansPage(),
     AuditLogsPage(),
     BehaviorPage(),
+    ReportPage(),
     TranslatePage(),
   ];
 

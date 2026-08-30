@@ -61,10 +61,26 @@ class _DashboardPageState extends State<DashboardPage> {
                   children: [
                     Row(
                       children: [
-                        _StatCard('书籍', s?.bookCount ?? 0, Icons.menu_book),
-                        _StatCard('用户', s?.userCount ?? 0, Icons.people),
-                        _StatCard('评论', s?.commentCount ?? 0, Icons.comment),
-                        _StatCard('DAU（近似）', s?.dau ?? 0, Icons.trending_up),
+                        _StatCard('书籍', '${s?.bookCount ?? 0}', Icons.menu_book),
+                        _StatCard('用户', '${s?.userCount ?? 0}', Icons.people),
+                        _StatCard('评论', '${s?.commentCount ?? 0}', Icons.comment),
+                        _StatCard('DAU（近似）', '${s?.dau ?? 0}', Icons.trending_up),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _StatCard('订单数', '${s?.orderCount ?? 0}', Icons.receipt_long),
+                        _StatCard('收入', fenToYuan(s?.orderAmount ?? 0), Icons.payments),
+                        _StatCard('VIP 订阅', '${s?.vipCount ?? 0}', Icons.workspace_premium),
+                        _StatCard('今日新增用户', '${s?.todayNewUsers ?? 0}', Icons.person_add),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        _StatCard('待审评论', '${s?.pendingComments ?? 0}', Icons.comment_bank),
+                        _StatCard('待审举报', '${s?.pendingReports ?? 0}', Icons.report),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -102,7 +118,7 @@ class _StatCard extends StatelessWidget {
   const _StatCard(this.title, this.value, this.icon);
 
   final String title;
-  final int value;
+  final String value;
   final IconData icon;
 
   @override
@@ -116,7 +132,7 @@ class _StatCard extends StatelessWidget {
             children: [
               Icon(icon, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 8),
-              Text('$value',
+              Text(value,
                   style: Theme.of(context).textTheme.headlineSmall),
               Text(title, style: Theme.of(context).textTheme.bodySmall),
             ],

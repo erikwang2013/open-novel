@@ -43,6 +43,13 @@ type Stats struct {
 	DAU          int64
 	HotBooks     []HotBook
 	HotKeywords  []HotKeyword
+	// 报表字段：金额一律整数分（库中 DECIMAL(10,2) 元×100，与 models.go 注释口径一致）
+	OrderCount      int64 // 累计支付订单数（status=1）
+	OrderAmount     int64 // 累计支付金额（分）
+	VipCount        int64 // VIP 有效订阅数（vip_expires_at > now）
+	TodayNewUsers   int64 // 今日新增用户
+	PendingComments int64 // 待审核评论数（status=2 举报待审）
+	PendingReports  int64 // 待处理举报数（status=2 评论 report_count 累计）
 }
 
 type HotBook struct {
@@ -79,29 +86,60 @@ func (uc *AdminUsecase) Stats(ctx context.Context) (Stats, error) {
 		) t`, today, today).Scan(&s.DAU).Error; err != nil {
 		return s, pkg.ErrAdminDB
 	}
-	// 热门书籍：复用搜索热门榜（缓存 search:hot），失败不阻断统计
-	if docs, _, err := uc.search.Hot(ctx); err == nil {
-		for _, d := range docs {
-			if len(s.HotBooks) >= 10 {
-				break
+	// 热门书籍：复用搜索热门榜（缓存 search:hot），失败/未注入（nil）不阻断统计
+	if uc.search != nil {
+		docs, _, err := uc.search.Hot(ctx)
+		if err == nil {
+			for _, d := range docs {
+				if len(s.HotBooks) >= 10 {
+					break
+				}
+				title := d.TitleZh
+				if title == "" {
+					title = d.TitleEn
+				}
+				if title == "" {
+					title = d.TitleJa
+				}
+				if title == "" {
+					title = d.TitleKo
+				}
+				s.HotBooks = append(s.HotBooks, HotBook{BookID: d.BookID, Title: title, Hot: d.Hot})
 			}
-			title := d.TitleZh
-			if title == "" {
-				title = d.TitleEn
-			}
-			if title == "" {
-				title = d.TitleJa
-			}
-			if title == "" {
-				title = d.TitleKo
-			}
-			s.HotBooks = append(s.HotBooks, HotBook{BookID: d.BookID, Title: title, Hot: d.Hot})
 		}
 	}
 	// 热门搜索词：搜索日志按词聚合
 	if err := uc.db.WithContext(ctx).Model(&data.SearchLog{}).
 		Select("keyword, COUNT(*) AS count").
 		Group("keyword").Order("count DESC").Limit(10).Scan(&s.HotKeywords).Error; err != nil {
+		return s, pkg.ErrAdminDB
+	}
+	// 报表字段：金额聚合 SUM(amount) 元 → 分（DECIMAL 需按 float64 扫描再换算）
+	var pay struct {
+		Cnt    int64
+		Amount float64
+	}
+	if err := uc.db.WithContext(ctx).Raw(
+		`SELECT COUNT(*) AS cnt, COALESCE(SUM(amount),0) AS amount
+		 FROM novel_payment_order WHERE status = 1`).Scan(&pay).Error; err != nil {
+		return s, pkg.ErrAdminDB
+	}
+	s.OrderCount, s.OrderAmount = pay.Cnt, toCents(pay.Amount)
+	if err := uc.db.WithContext(ctx).Raw(
+		`SELECT COUNT(*) FROM novel_user WHERE vip_expires_at > NOW()`).Scan(&s.VipCount).Error; err != nil {
+		return s, pkg.ErrAdminDB
+	}
+	if err := uc.db.WithContext(ctx).Raw(
+		`SELECT COUNT(*) FROM novel_user WHERE created_at >= ?`, today).Scan(&s.TodayNewUsers).Error; err != nil {
+		return s, pkg.ErrAdminDB
+	}
+	// 待审核/待处理均指 status=2 举报待审队列（本平台无独立评论审核流）
+	if err := uc.db.WithContext(ctx).Raw(
+		`SELECT COUNT(*) FROM novel_comment WHERE status = 2`).Scan(&s.PendingComments).Error; err != nil {
+		return s, pkg.ErrAdminDB
+	}
+	if err := uc.db.WithContext(ctx).Raw(
+		`SELECT COALESCE(SUM(report_count),0) FROM novel_comment WHERE status = 2`).Scan(&s.PendingReports).Error; err != nil {
 		return s, pkg.ErrAdminDB
 	}
 	return s, nil

@@ -126,3 +126,126 @@ func TestListAuditLogs(t *testing.T) {
 		t.Fatal("pages overlap")
 	}
 }
+
+// TestGetReports: requireAdmin → 缺省近 30 天区间补零 → 非法日期 140400 → 字段透出。
+func TestGetReports(t *testing.T) {
+	s, _ := newTestAdmin(t)
+	ctx := context.Background()
+	adminCtx := pkg.WithClaims(ctx, pkg.Claims{UID: 100, Role: 3})
+
+	// 匿名 140401；普通用户 180401
+	if _, err := s.GetReports(ctx, &adminv1.GetReportsReq{}); err == nil || kerrors.FromError(err).Code != 140401 {
+		t.Fatalf("anonymous: want 140401, got %v", err)
+	}
+	readerCtx := pkg.WithClaims(ctx, pkg.Claims{UID: 100, Role: 1})
+	if _, err := s.GetReports(readerCtx, &adminv1.GetReportsReq{}); err == nil || kerrors.FromError(err).Code != 180401 {
+		t.Fatalf("reader: want 180401, got %v", err)
+	}
+	// 非法日期
+	if _, err := s.GetReports(adminCtx, &adminv1.GetReportsReq{StartDate: "2026/01/01", EndDate: "2026-01-31"}); err == nil || kerrors.FromError(err).Code != 140400 {
+		t.Fatalf("bad date: want 140400, got %v", err)
+	}
+	// 缺省近 30 天：四组 by_date 均 30 天、升序、末位为今天
+	rep, err := s.GetReports(adminCtx, &adminv1.GetReportsReq{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	today := time.Now().Format("2006-01-02")
+	checkDates := func(name string, pts []string) {
+		t.Helper()
+		if len(pts) != 30 {
+			t.Fatalf("%s: want 30 days, got %d", name, len(pts))
+		}
+		if pts[0] > pts[len(pts)-1] || pts[len(pts)-1] != today {
+			t.Fatalf("%s: range end=%s want %s", name, pts[len(pts)-1], today)
+		}
+	}
+	checkDates("order", datesOfAmount(rep.OrderReport.ByDate))
+	checkDates("user", datesOfCount(rep.UserReport.ByDate))
+	checkDates("vip", datesOfAmount(rep.VipReport.ByDate))
+	checkDates("books", datesOfCount(rep.ContentReport.BooksByDate))
+	checkDates("chapters", datesOfCount(rep.ContentReport.ChaptersByDate))
+	if rep.OrderReport.ByDate[0].Amount < 0 || rep.VipReport.TotalAmount < 0 {
+		t.Fatal("amount fields must be >= 0")
+	}
+}
+
+func datesOfAmount(pts []*adminv1.DateAmountPoint) []string {
+	out := make([]string, len(pts))
+	for i, p := range pts {
+		out[i] = p.Date
+	}
+	return out
+}
+
+func datesOfCount(pts []*adminv1.DateCountPoint) []string {
+	out := make([]string, len(pts))
+	for i, p := range pts {
+		out[i] = p.Date
+	}
+	return out
+}
+
+// TestGetStatsExt: 报表新字段（order/vip/user/评论举报）随 fixture 增量，且共享库下用 >= 断言。
+func TestGetStatsExt(t *testing.T) {
+	s, d := newTestAdmin(t)
+	ctx := context.Background()
+	adminCtx := pkg.WithClaims(ctx, pkg.Claims{UID: 100, Role: 3})
+	marker := "stats_ext_test"
+
+	base, err := s.GetStats(adminCtx, &adminv1.GetStatsReq{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if base.OrderCount < 0 || base.OrderAmount < 0 || base.VipCount < 0 {
+		t.Fatal("stats ext fields must be >= 0")
+	}
+
+	now := time.Now()
+	exp := now.AddDate(0, 0, 30)
+	var u1, u2 data.User
+	u1 = data.User{Username: marker + "_u1", Email: marker + "_u1@t.co", PasswordHash: "x", Status: 1, CreatedAt: now}
+	u2 = data.User{Username: marker + "_u2", Email: marker + "_u2@t.co", PasswordHash: "x", Status: 1, VipExpiresAt: &exp, CreatedAt: now.Add(-24 * time.Hour)}
+	if err := d.DB.WithContext(ctx).Create(&u1).Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := d.DB.WithContext(ctx).Create(&u2).Error; err != nil {
+		t.Fatal(err)
+	}
+	o := data.PaymentOrder{OrderNo: marker, UserID: u1.ID, Amount: 6.66, Currency: "USD", Provider: marker, Status: 1, CreatedAt: now}
+	if err := d.DB.WithContext(ctx).Create(&o).Error; err != nil {
+		t.Fatal(err)
+	}
+	c := data.Comment{BookID: 1, UserID: u1.ID, Content: marker, Status: 2, ReportCount: 3, CreatedAt: now}
+	if err := d.DB.WithContext(ctx).Create(&c).Error; err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		d.DB.WithContext(ctx).Delete(&data.Comment{}, c.ID)
+		d.DB.WithContext(ctx).Delete(&data.PaymentOrder{}, o.ID)
+		d.DB.WithContext(ctx).Delete(&data.User{}, []uint64{u1.ID, u2.ID})
+	})
+
+	after, err := s.GetStats(adminCtx, &adminv1.GetStatsReq{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if after.TodayNewUsers < base.TodayNewUsers+1 {
+		t.Fatalf("today_new_users: want >= %d, got %d", base.TodayNewUsers+1, after.TodayNewUsers)
+	}
+	if after.VipCount < base.VipCount+1 {
+		t.Fatalf("vip_count: want >= %d, got %d", base.VipCount+1, after.VipCount)
+	}
+	if after.OrderCount < base.OrderCount+1 {
+		t.Fatalf("order_count: want >= %d, got %d", base.OrderCount+1, after.OrderCount)
+	}
+	if after.OrderAmount < base.OrderAmount+666 {
+		t.Fatalf("order_amount: want >= %d, got %d", base.OrderAmount+666, after.OrderAmount)
+	}
+	if after.PendingComments < base.PendingComments+1 {
+		t.Fatalf("pending_comments: want >= %d, got %d", base.PendingComments+1, after.PendingComments)
+	}
+	if after.PendingReports < base.PendingReports+3 {
+		t.Fatalf("pending_reports: want >= %d, got %d", base.PendingReports+3, after.PendingReports)
+	}
+}
