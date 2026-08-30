@@ -130,6 +130,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 বিস্তারিত জানতে দেখুন [apps/README.md](../../apps/README.md) এবং [apps/client/flutter/README.md](../../apps/client/flutter/README.md)।
 
+## ওয়ান-ক্লিক ইনস্টলেশন
+
+```bash
+bash scripts/install.sh
+```
+
+একটি কমান্ডেই পরিবেশ পরীক্ষা + ডিপেন্ডেন্সি স্ট্যাক + স্টার্টআপ নির্দেশনা সম্পন্ন হয়: এটি Docker / Go ≥ 1.22 / Flutter ইনস্টল আছে কি না পরীক্ষা করে (কোনোটি না থাকলে ইনস্টলেশন নির্দেশনা দেখায়), `docker compose up -d` দিয়ে ডিপেন্ডেন্সি স্ট্যাক চালু করে, MySQL প্রস্তুত হওয়া পর্যন্ত অপেক্ষা করে (সর্বোচ্চ ৬০ সেকেন্ড), তারপর ব্যাকএন্ড ও তিনটি ফ্রন্টএন্ডের স্টার্টআপ কমান্ড ও অ্যাক্সেস ঠিকানা প্রিন্ট করে। স্ক্রিপ্টটি ইডেম্পোটেন্ট, বারবার চালানো নিরাপদ; `bash scripts/install.sh --skip-deps` দিয়ে ডিপেন্ডেন্সি স্ট্যাক ধাপ বাদ দেওয়া যায়।
+
+## ইনস্টলেশন
+
+- **পূর্বশর্ত**: Docker (Compose প্লাগইনসহ), Go 1.22+, Flutter 3.x
+- **ওয়ান-ক্লিক**: `bash scripts/install.sh` চালান এবং পরিবেশ পরীক্ষা ও স্ট্যাক চালুর নির্দেশনা অনুসরণ করুন
+- **ম্যানুয়াল** (স্ক্রিপ্টের ধাপগুলোর সমতুল্য):
+
+  ```bash
+  docker compose up -d                                     # ডিপেন্ডেন্সি স্ট্যাক: MySQL / Redis / OpenSearch (প্রথম চালুতে init.sql স্বয়ংক্রিয়ভাবে চলে)
+  cd kratos/backend && go mod tidy && go run ./cmd/server  # ব্যাকএন্ড HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # ক্লায়েন্ট
+  ```
+
+## ব্যবহার
+
+- **ব্যাকএন্ড**: HTTP `http://localhost:8000` (gRPC `:9000`), সব API `/api` প্রিফিক্সে, ভার্সন `X-Api-Version: v1` হেডার দিয়ে নির্ধারিত হয়
+- **ক্লায়েন্ট**: `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (ডিফল্টভাবে localhost:8000-এর সাথে যুক্ত হয়)
+- **অ্যাডমিন কনসোল**: `cd apps/admin && flutter pub get && flutter run -d chrome`; Flutter র্যান্ডম পোর্ট নির্ধারণ করে কনসোলে দেখায় (`--web-port` দিয়ে ফিক্স করা যায়)
+- **ডিপেন্ডেন্সি স্ট্যাক পোর্ট**: MySQL `3307`, Redis `6380`, OpenSearch `9200`
+- **ডিফল্ট কনফিগারেশন**: `kratos/backend/config/` (DB সংযোগ, কী, পোর্ট), এনভায়রনমেন্ট ভেরিয়েবল দিয়ে ওভাররাইড করা যায়
+- **সাধারণ সমস্যা**:
+  - পোর্ট ব্যবহৃত: `lsof -i :8000` দিয়ে প্রসেস খুঁজুন, অথবা `kratos/backend/config/`-এ পোর্ট বদলে ব্যাকএন্ড পুনরায় চালু করুন
+  - ডেটাবেস সংযোগ ব্যর্থ: `docker compose ps` দিয়ে নিশ্চিত করুন mysql healthy আছে; প্রথম চালুতে `init.sql`-এর টেবিল তৈরি শেষ হওয়া পর্যন্ত অপেক্ষা করুন
+
 ## রিলিজ প্রক্রিয়া
 
 - **স্বয়ংক্রিয়**: `main` পুশ করার পর GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) সর্বশেষ `v*` ট্যাগের ভিত্তিতে patch ভার্সন স্বয়ংক্রিয়ভাবে বাড়ায়, ট্যাগ তৈরি করে পুশ করে, তারপর ইনক্রিমেন্টাল changelog দিয়ে GitHub Release তৈরি করে; HEAD-এ ইতিমধ্যে ভার্সন ট্যাগ থাকলে এড়িয়ে যায়। প্রথম রিলিজ `v1.0.0` থেকে শুরু হয়।

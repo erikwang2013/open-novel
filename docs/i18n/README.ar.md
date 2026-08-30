@@ -130,6 +130,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 انظر [apps/README.md](../../apps/README.md) و [apps/client/flutter/README.md](../../apps/client/flutter/README.md) لمزيد من التفاصيل.
 
+## التثبيت بنقرة واحدة
+
+```bash
+bash scripts/install.sh
+```
+
+أمر واحد ينجز فحص البيئة + تشغيل مجموعة التبعيات + تعليمات الإقلاع: يتحقق من تثبيت Docker / Go ≥ 1.22 / Flutter (مع عرض تعليمات التثبيت عند نقص أي منها)، ويشغّل مجموعة التبعيات عبر `docker compose up -d`، وينتظر جاهزية MySQL (حتى 60 ثانية)، ثم يطبع أوامر الإقلاع وعناوين الوصول للخلفية وواجهات المستخدم الثلاث. السكربت متكرر التنفيذ بأمان (idempotent)؛ ويمكن تخطي خطوة مجموعة التبعيات عبر `bash scripts/install.sh --skip-deps`.
+
+## التثبيت
+
+- **المتطلبات الأساسية**: Docker (مع إضافة Compose)، Go 1.22+، Flutter 3.x
+- **بنقرة واحدة**: شغّل `bash scripts/install.sh` واتبع تعليمات فحص البيئة وتشغيل المجموعة
+- **يدويًا** (يعادل خطوات السكربت):
+
+  ```bash
+  docker compose up -d                                   # مجموعة التبعيات: MySQL / Redis / OpenSearch (ينفَّذ init.sql تلقائيًا عند أول تشغيل)
+  cd kratos/backend && go mod tidy && go run ./cmd/server  # الخلفية HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # التطبيق
+  ```
+
+## الاستخدام
+
+- **الخادم الخلفي**: HTTP `http://localhost:8000` (gRPC `:9000`)، جميع الواجهات تحت البادئة `/api`، ويُحدَّد الإصدار عبر الترويسة `X-Api-Version: v1`
+- **التطبيق**: `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (يتصل بـ localhost:8000 افتراضيًا)
+- **لوحة الإدارة**: `cd apps/admin && flutter pub get && flutter run -d chrome`؛ يخصص Flutter منفذًا عشوائيًا ويطبعه في وحدة التحكم (يمكن تثبيته بـ `--web-port`)
+- **منافذ مجموعة التبعيات**: MySQL `3307` و Redis `6380` و OpenSearch `9200`
+- **الإعدادات الافتراضية**: `kratos/backend/config/` (اتصال قاعدة البيانات والمفاتيح والمنافذ)، مع إمكانية التجاوز بمتغيرات البيئة
+- **المشكلات الشائعة**:
+  - المنفذ مشغول: حدد العملية عبر `lsof -i :8000`، أو غيّر المنفذ في `kratos/backend/config/` وأعد تشغيل الخادم
+  - فشل الاتصال بقاعدة البيانات: تحقق عبر `docker compose ps` من أن mysql بحالة healthy؛ وعند أول تشغيل انتظر حتى ينشئ `init.sql` الجداول
+
 ## عملية الإصدار
 
 - **تلقائي**: بعد دفع `main`، تقوم GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) تلقائيًا برفع رقم الإصدار patch استنادًا إلى أحدث وسم `v*`، وتنشئ الوسم وتدفعه، ثم تنشئ إصدار GitHub مع سجل تغييرات تدريجي؛ يُتخطى إذا كان HEAD يحمل وسم إصدار بالفعل. أول إصدار يبدأ من `v1.0.0`.

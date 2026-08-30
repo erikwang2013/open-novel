@@ -130,6 +130,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 Siehe [apps/README.md](../../apps/README.md) und [apps/client/flutter/README.md](../../apps/client/flutter/README.md).
 
+## Installation mit einem Klick
+
+```bash
+bash scripts/install.sh
+```
+
+Ein Befehl erledigt Umgebungsprüfung, Start des Abhängigkeits-Stacks und Start-Hinweise: Er prüft, ob Docker / Go ≥ 1.22 / Flutter installiert sind (fehlende Komponenten werden mit Installationshinweisen gemeldet), startet den Stack per `docker compose up -d`, wartet auf MySQL (max. 60 Sekunden) und gibt danach die Startbefehle und Zugriffsadressen für Backend und alle drei Frontends aus. Das Skript ist idempotent und kann bedenkenlos erneut ausgeführt werden; `bash scripts/install.sh --skip-deps` überspringt den Abhängigkeits-Stack.
+
+## Installation
+
+- **Voraussetzungen**: Docker (mit Compose-Plugin), Go 1.22+, Flutter 3.x
+- **Mit einem Klick**: führen Sie `bash scripts/install.sh` aus und folgen Sie den Hinweisen zu Umgebungsprüfung und Stack-Start
+- **Manuell** (entspricht den Skript-Schritten):
+
+  ```bash
+  docker compose up -d                                       # Abhängigkeits-Stack: MySQL / Redis / OpenSearch (init.sql läuft beim ersten Start)
+  cd kratos/backend && go mod tidy && go run ./cmd/server    # Backend HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # Client
+  ```
+
+## Verwendung
+
+- **Backend**: HTTP `http://localhost:8000` (gRPC `:9000`), alle APIs unter dem Präfix `/api`, Version über den Header `X-Api-Version: v1`
+- **Client**: `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (standardmäßig mit localhost:8000 verbunden)
+- **Admin-Konsole**: `cd apps/admin && flutter pub get && flutter run -d chrome`; der Port wird von Flutter zufällig vergeben und in der Konsole ausgegeben (mit `--web-port` fixierbar)
+- **Ports des Abhängigkeits-Stacks**: MySQL `3307`, Redis `6380`, OpenSearch `9200`
+- **Standard-Konfiguration**: `kratos/backend/config/` (DB-Verbindung, Schlüssel, Ports), per Umgebungsvariablen überschreibbar
+- **Häufige Probleme**:
+  - Port belegt: Prozess mit `lsof -i :8000` finden oder Port in `kratos/backend/config/` ändern und Backend neu starten
+  - Datenbankverbindung fehlgeschlagen: `docker compose ps` prüfen — mysql muss healthy sein; beim ersten Start auf die Tabellenerstellung durch `init.sql` warten
+
 ## Release-Prozess
 
 - **Automatisch**: Nach dem Push auf `main` erhöht GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) automatisch die Patch-Version auf Basis des neuesten `v*`-Tags, erstellt und pusht den Tag und erstellt anschließend mit einem inkrementellen Changelog ein GitHub Release; übersprungen, wenn HEAD bereits einen Versions-Tag trägt. Das erste Release startet bei `v1.0.0`.

@@ -130,6 +130,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 विस्तृत जानकारी के लिए [apps/README.md](../../apps/README.md) और [apps/client/flutter/README.md](../../apps/client/flutter/README.md) देखें।
 
+## एक-क्लिक इंस्टॉलेशन
+
+```bash
+bash scripts/install.sh
+```
+
+एक ही कमांड में पर्यावरण जाँच + डिपेंडेंसी स्टैक + स्टार्टअप निर्देश पूरे होते हैं: यह जाँचता है कि Docker / Go ≥ 1.22 / Flutter इंस्टॉल हैं या नहीं (कमी होने पर इंस्टॉलेशन निर्देश दिखाता है), `docker compose up -d` से डिपेंडेंसी स्टैक शुरू करता है, MySQL के तैयार होने का इंतज़ार करता है (अधिकतम 60 सेकंड), फिर बैकएंड और तीनों फ्रंटएंड के लिए स्टार्टअप कमांड और एक्सेस पते प्रिंट करता है। स्क्रिप्ट इडेम्पोटेंट है, दोबारा चलाना सुरक्षित है; `bash scripts/install.sh --skip-deps` से डिपेंडेंसी स्टैक चरण छोड़ा जा सकता है।
+
+## इंस्टॉलेशन
+
+- **पूर्वापेक्षाएँ**: Docker (Compose प्लगइन सहित), Go 1.22+, Flutter 3.x
+- **एक-क्लिक**: `bash scripts/install.sh` चलाएँ और पर्यावरण जाँच व स्टैक शुरू करने के निर्देशों का पालन करें
+- **मैन्युअल** (स्क्रिप्ट के चरणों के बराबर):
+
+  ```bash
+  docker compose up -d                                    # डिपेंडेंसी स्टैक: MySQL / Redis / OpenSearch (पहली बार init.sql स्वचालित रूप से चलता है)
+  cd kratos/backend && go mod tidy && go run ./cmd/server # बैकएंड HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # क्लाइंट
+  ```
+
+## उपयोग
+
+- **बैकएंड**: HTTP `http://localhost:8000` (gRPC `:9000`), सभी API `/api` प्रीफ़िक्स पर, वर्ज़न `X-Api-Version: v1` हेडर से निर्धारित होता है
+- **क्लाइंट**: `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (डिफ़ॉल्ट रूप से localhost:8000 से जुड़ता है)
+- **एडमिन कंसोल**: `cd apps/admin && flutter pub get && flutter run -d chrome`; पोर्ट Flutter द्वारा रैंडम तय होकर कंसोल में दिखाया जाता है (`--web-port` से फिक्स किया जा सकता है)
+- **डिपेंडेंसी स्टैक पोर्ट**: MySQL `3307`, Redis `6380`, OpenSearch `9200`
+- **डिफ़ॉल्ट कॉन्फ़िगरेशन**: `kratos/backend/config/` (DB कनेक्शन, कुंजियाँ, पोर्ट), पर्यावरण चरों से ओवरराइड किया जा सकता है
+- **सामान्य समस्याएँ**:
+  - पोर्ट व्यस्त: `lsof -i :8000` से प्रोसेस ढूँढें, या `kratos/backend/config/` में पोर्ट बदलकर बैकएंड फिर से शुरू करें
+  - डेटाबेस कनेक्शन विफल: `docker compose ps` से पुष्टि करें कि mysql healthy है; पहली बार शुरू होने पर `init.sql` के टेबल बनाने तक इंतज़ार करें
+
 ## रिलीज़ प्रक्रिया
 
 - **स्वचालित**: `main` पुश करने के बाद GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) नवीनतम `v*` टैग के आधार पर patch वर्ज़न स्वचालित रूप से बढ़ाता है, टैग बनाकर पुश करता है, फिर इंक्रीमेंटल changelog के साथ GitHub Release बनाता है; यदि HEAD में पहले से वर्ज़न टैग है तो छोड़ दिया जाता है। पहली रिलीज़ `v1.0.0` से शुरू होती है।

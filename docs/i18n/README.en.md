@@ -133,6 +133,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 See [apps/README.md](../../apps/README.md) and [apps/client/flutter/README.md](../../apps/client/flutter/README.md).
 
+## One-Click Installation
+
+```bash
+bash scripts/install.sh
+```
+
+A single command completes the environment check, dependency stack startup and launch hints: it checks whether Docker / Go ≥ 1.22 / Flutter are installed (printing installation hints if anything is missing), runs `docker compose up -d` to start the dependency stack, waits for MySQL to become ready (up to 60 seconds), then prints the startup commands and access addresses for the backend and all three frontends. The script is idempotent and safe to re-run; `bash scripts/install.sh --skip-deps` skips the dependency stack step.
+
+## Installation
+
+- **Prerequisites**: Docker (with the Compose plugin), Go 1.22+, Flutter 3.x
+- **One-click**: run `bash scripts/install.sh` and follow the printed hints for the environment check and dependency stack startup
+- **Manual** (equivalent to the script steps):
+
+  ```bash
+  docker compose up -d                                     # dependency stack: MySQL / Redis / OpenSearch (init.sql runs on first start)
+  cd kratos/backend && go mod tidy && go run ./cmd/server  # backend HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # client
+  ```
+
+## Usage
+
+- **Backend**: HTTP `http://localhost:8000` (gRPC `:9000`), all APIs under the `/api` prefix, version negotiated via the `X-Api-Version: v1` header
+- **Client**: `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (defaults to localhost:8000)
+- **Admin console**: `cd apps/admin && flutter pub get && flutter run -d chrome`; Flutter assigns a random port and prints it in the console (fix it with `--web-port`)
+- **Dependency stack ports**: MySQL `3307`, Redis `6380`, OpenSearch `9200`
+- **Default config**: `kratos/backend/config/` (database connection, secrets, ports), overridable via environment variables
+- **FAQ**:
+  - Port already in use: locate the process with `lsof -i :8000`, or change the port in `kratos/backend/config/` and restart the backend
+  - Database connection failure: run `docker compose ps` and make sure mysql is healthy; the first startup needs to wait for `init.sql` to create the tables
+
 ## Release Process
 
 - **Automatic**: after pushing `main`, GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) automatically bumps the patch version based on the latest `v*` tag, creates and pushes the tag, then creates a GitHub Release with an incremental changelog; skipped if HEAD already carries a version tag. The first release starts from `v1.0.0`.

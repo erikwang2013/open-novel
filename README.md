@@ -126,6 +126,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 详见 [apps/README.md](apps/README.md) 与 [apps/client/flutter/README.md](apps/client/flutter/README.md)。
 
+## 一键安装
+
+```bash
+bash scripts/install.sh
+```
+
+一条命令完成环境检查 + 依赖栈启动 + 启动提示：检查 Docker / Go ≥ 1.22 / Flutter 是否安装（缺失时给出安装提示）、`docker compose up -d` 启动依赖栈、等待 MySQL 就绪（最多 60 秒）、最后打印后端与三个前端的启动命令和访问地址。可重复执行（幂等）；`bash scripts/install.sh --skip-deps` 跳过依赖栈步骤。
+
+## 安装说明
+
+- **前置依赖**：Docker（含 Compose 插件）、Go 1.22+、Flutter 3.x
+- **一键方式**：运行 `bash scripts/install.sh`，按脚本提示完成环境检查与依赖栈启动
+- **手动方式**（与脚本步骤等价，亦见上文「[快速开始](#快速开始)」）：
+
+  ```bash
+  docker compose up -d                                     # 依赖栈：MySQL / Redis / OpenSearch（首次启动自动执行 init.sql 建表）
+  cd kratos/backend && go mod tidy && go run ./cmd/server  # 后端 HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # 客户端
+  ```
+
+## 使用说明
+
+- **后端**：HTTP `http://localhost:8000`（gRPC `:9000`），接口统一前缀 `/api`，版本经请求头 `X-Api-Version: v1` 协商
+- **客户端**：`cd apps/client/flutter && flutter pub get && flutter run -d chrome`（默认连 localhost:8000）
+- **管理端**：`cd apps/admin && flutter pub get && flutter run -d chrome`，端口由 Flutter 随机分配并打印在控制台（可用 `--web-port` 固定）
+- **依赖栈端口映射**：MySQL `3307`、Redis `6380`、OpenSearch `9200`
+- **默认配置**：`kratos/backend/config/`（数据库连接、密钥、端口），支持环境变量覆盖
+- **常见问题**：
+  - 端口占用：`lsof -i :8000` 定位占用进程，或修改 `kratos/backend/config/` 中端口后重启后端
+  - 数据库连接失败：`docker compose ps` 确认 mysql 为 healthy；首次启动需等待 `init.sql` 建表完成
+
 ## 发布流程
 
 - **自动**：推送 `main` 后 GitHub Actions（[.github/workflows/release.yml](.github/workflows/release.yml)）自动基于最新 `v*` tag 递增 patch 版本，创建 tag 并推送，再以增量 changelog 创建 GitHub Release；HEAD 已带版本 tag 时跳过。首次发布从 `v1.0.0` 起。

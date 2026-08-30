@@ -132,6 +132,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 Подробности — в [apps/README.md](../../apps/README.md) и [apps/client/flutter/README.md](../../apps/client/flutter/README.md).
 
+## Установка одной командой
+
+```bash
+bash scripts/install.sh
+```
+
+Одна команда выполняет проверку окружения, запуск стека зависимостей и подсказки по запуску: проверяет наличие Docker / Go ≥ 1.22 / Flutter (при отсутствии выводит подсказки по установке), запускает стек через `docker compose up -d`, ждёт готовности MySQL (до 60 секунд) и выводит команды запуска и адреса бэкенда и всех трёх фронтендов. Скрипт идемпотентен — повторный запуск безопасен; `bash scripts/install.sh --skip-deps` пропускает шаг стека зависимостей.
+
+## Установка
+
+- **Предварительные требования**: Docker (с плагином Compose), Go 1.22+, Flutter 3.x
+- **Одной командой**: выполните `bash scripts/install.sh` и следуйте подсказкам по проверке окружения и запуску стека зависимостей
+- **Вручную** (эквивалентно шагам скрипта):
+
+  ```bash
+  docker compose up -d                                          # стек зависимостей: MySQL / Redis / OpenSearch (при первом запуске выполняется init.sql)
+  cd kratos/backend && go mod tidy && go run ./cmd/server       # бэкенд HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # клиент
+  ```
+
+## Использование
+
+- **Бэкенд**: HTTP `http://localhost:8000` (gRPC `:9000`), все API под префиксом `/api`, версия задаётся заголовком `X-Api-Version: v1`
+- **Клиент**: `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (по умолчанию подключается к localhost:8000)
+- **Админ-консоль**: `cd apps/admin && flutter pub get && flutter run -d chrome`; порт назначается Flutter случайно и печатается в консоль (зафиксировать можно через `--web-port`)
+- **Порты стека зависимостей**: MySQL `3307`, Redis `6380`, OpenSearch `9200`
+- **Конфигурация по умолчанию**: `kratos/backend/config/` (подключение к БД, секреты, порты), переопределяется переменными окружения
+- **Частые вопросы**:
+  - Порт занят: найдите процесс через `lsof -i :8000` или измените порт в `kratos/backend/config/` и перезапустите бэкенд
+  - Ошибка подключения к БД: проверьте `docker compose ps` — mysql должен быть healthy; при первом запуске дождитесь создания таблиц через `init.sql`
+
 ## Процесс релиза
 
 - **Автоматически**: после пуша в `main` GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) автоматически увеличивает patch-версию на основе последнего тега `v*`, создаёт и пушит тег, затем создаёт GitHub Release с инкрементальным changelog; пропускается, если HEAD уже содержит тег версии. Первый релиз начинается с `v1.0.0`.

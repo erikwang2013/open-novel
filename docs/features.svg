@@ -91,7 +91,7 @@
     <text x="831" y="502" font-size="11" fill="#546e7a" text-anchor="middle">内容审核</text>
     <text x="831" y="519" font-size="11" fill="#546e7a" text-anchor="middle">用户管理</text>
     <text x="831" y="536" font-size="11" fill="#546e7a" text-anchor="middle">配置管理</text>
-    <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">数据统计 / 审计日志</text>
+    <text x="831" y="553" font-size="11" fill="#546e7a" text-anchor="middle">报表中心 / 审计日志</text>
     <text x="831" y="570" font-size="11" fill="#546e7a" text-anchor="middle">CDN 配置（多厂商启停）</text>
   </g>
 
@@ -122,9 +122,10 @@
     <rect x="706" y="628" width="250" height="132" rx="8" fill="#ffffff" stroke="#26a69a" stroke-width="2"/>
     <rect x="811" y="642" width="40" height="4" rx="2" fill="#26a69a"/>
     <text x="831" y="656" font-size="13" font-weight="700" fill="#26a69a" text-anchor="middle">数据统计</text>
-    <text x="831" y="678" font-size="11" fill="#546e7a" text-anchor="middle">运营仪表盘</text>
-    <text x="831" y="695" font-size="11" fill="#546e7a" text-anchor="middle">DAU 近似 · 热门榜单</text>
-    <text x="831" y="712" font-size="11" fill="#546e7a" text-anchor="middle">热门书籍 / 热搜词</text>
+    <text x="831" y="678" font-size="11" fill="#546e7a" text-anchor="middle">运营仪表盘（起始页）</text>
+    <text x="831" y="695" font-size="11" fill="#546e7a" text-anchor="middle">订单 / 收入报表</text>
+    <text x="831" y="712" font-size="11" fill="#546e7a" text-anchor="middle">用户增长 · VIP 订阅</text>
+    <text x="831" y="729" font-size="11" fill="#546e7a" text-anchor="middle">内容 / 互动统计 · 行为分析</text>
   </g>
 
   <!-- 平台能力：多厂商 CDN 全站加速 -->

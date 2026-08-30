@@ -130,6 +130,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 Voir [apps/README.md](../../apps/README.md) et [apps/client/flutter/README.md](../../apps/client/flutter/README.md).
 
+## Installation en une commande
+
+```bash
+bash scripts/install.sh
+```
+
+Une seule commande pour la vérification de l'environnement, le démarrage de la pile de dépendances et les consignes de lancement : elle vérifie que Docker / Go ≥ 1.22 / Flutter sont installés (avec des conseils d'installation si un composant manque), démarre la pile via `docker compose up -d`, attend que MySQL soit prêt (60 s maximum), puis affiche les commandes de démarrage et les adresses d'accès du backend et des trois frontaux. Le script est idempotent, son exécution répétée est sans risque ; `bash scripts/install.sh --skip-deps` permet de sauter l'étape de la pile de dépendances.
+
+## Installation
+
+- **Prérequis** : Docker (avec le plugin Compose), Go 1.22+, Flutter 3.x
+- **En une commande** : exécutez `bash scripts/install.sh` et suivez les consignes de vérification de l'environnement et de démarrage de la pile
+- **Manuellement** (équivalent aux étapes du script) :
+
+  ```bash
+  docker compose up -d                                        # pile de dépendances : MySQL / Redis / OpenSearch (init.sql s'exécute au premier démarrage)
+  cd kratos/backend && go mod tidy && go run ./cmd/server     # backend HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # client
+  ```
+
+## Utilisation
+
+- **Backend** : HTTP `http://localhost:8000` (gRPC `:9000`), toutes les API sous le préfixe `/api`, version négociée via l'en-tête `X-Api-Version: v1`
+- **Client** : `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (connecté par défaut à localhost:8000)
+- **Console d'administration** : `cd apps/admin && flutter pub get && flutter run -d chrome` ; Flutter attribue un port aléatoire et l'affiche dans la console (fixable avec `--web-port`)
+- **Ports de la pile de dépendances** : MySQL `3307`, Redis `6380`, OpenSearch `9200`
+- **Configuration par défaut** : `kratos/backend/config/` (connexion BDD, clés, ports), surchargeable par variables d'environnement
+- **Problèmes courants** :
+  - Port déjà utilisé : localisez le processus avec `lsof -i :8000`, ou modifiez le port dans `kratos/backend/config/` puis redémarrez le backend
+  - Échec de connexion à la base : vérifiez avec `docker compose ps` que mysql est healthy ; au premier démarrage, attendez la création des tables par `init.sql`
+
 ## Processus de publication
 
 - **Automatique** : après un push sur `main`, GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) incrémente automatiquement la version patch à partir du dernier tag `v*`, crée et pousse un tag, puis crée une Release GitHub avec un changelog incrémental ; ignoré si HEAD porte déjà un tag de version. La première release démarre à `v1.0.0`.

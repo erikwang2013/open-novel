@@ -130,6 +130,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 Lihat [apps/README.md](../../apps/README.md) dan [apps/client/flutter/README.md](../../apps/client/flutter/README.md) untuk detailnya.
 
+## Instalasi satu perintah
+
+```bash
+bash scripts/install.sh
+```
+
+Satu perintah untuk memeriksa lingkungan, menjalankan stack dependensi, dan mencetak petunjuk start: memeriksa apakah Docker / Go ≥ 1.22 / Flutter sudah terpasang (menampilkan petunjuk instalasi jika ada yang belum), menjalankan stack via `docker compose up -d`, menunggu MySQL siap (maks. 60 detik), lalu mencetak perintah start dan alamat akses backend beserta ketiga frontend. Skrip bersifat idempoten, aman dijalankan ulang; `bash scripts/install.sh --skip-deps` melewati langkah stack dependensi.
+
+## Instalasi
+
+- **Prasyarat**: Docker (dengan plugin Compose), Go 1.22+, Flutter 3.x
+- **Satu perintah**: jalankan `bash scripts/install.sh` dan ikuti petunjuk pemeriksaan lingkungan serta start stack
+- **Manual** (setara dengan langkah skrip):
+
+  ```bash
+  docker compose up -d                                      # stack dependensi: MySQL / Redis / OpenSearch (init.sql berjalan otomatis saat pertama kali dimulai)
+  cd kratos/backend && go mod tidy && go run ./cmd/server   # backend HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # klien
+  ```
+
+## Penggunaan
+
+- **Backend**: HTTP `http://localhost:8000` (gRPC `:9000`), semua API di bawah prefiks `/api`, versi ditentukan lewat header `X-Api-Version: v1`
+- **Klien**: `cd apps/client/flutter && flutter pub get && flutter run -d chrome` (terhubung ke localhost:8000 secara default)
+- **Konsol admin**: `cd apps/admin && flutter pub get && flutter run -d chrome`; port ditentukan acak oleh Flutter dan dicetak di konsol (bisa dikunci dengan `--web-port`)
+- **Port stack dependensi**: MySQL `3307`, Redis `6380`, OpenSearch `9200`
+- **Konfigurasi default**: `kratos/backend/config/` (koneksi DB, kunci, port), bisa ditimpa dengan variabel lingkungan
+- **Masalah umum**:
+  - Port dipakai: cari prosesnya dengan `lsof -i :8000`, atau ubah port di `kratos/backend/config/` lalu mulai ulang backend
+  - Koneksi database gagal: pastikan mysql healthy dengan `docker compose ps`; saat pertama kali dimulai, tunggu hingga `init.sql` membuat tabel
+
 ## Proses rilis
 
 - **Otomatis**: setelah push ke `main`, GitHub Actions ([.github/workflows/release.yml](../../.github/workflows/release.yml)) otomatis menaikkan versi patch berdasarkan tag `v*` terbaru, membuat dan mendorong tag, lalu membuat GitHub Release dengan changelog inkremental; dilewati jika HEAD sudah memiliki tag versi. Rilis pertama dimulai dari `v1.0.0`.

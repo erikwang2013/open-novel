@@ -133,6 +133,37 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 詳細は [apps/README.md](../../apps/README.md) と [apps/client/flutter/README.md](../../apps/client/flutter/README.md) を参照してください。
 
+## ワンクリックインストール
+
+```bash
+bash scripts/install.sh
+```
+
+環境チェック、依存スタックの起動、起動ヒントを 1 コマンドで完了します。Docker / Go ≥ 1.22 / Flutter がインストールされているかを確認し（不足している場合はインストールのヒントを表示）、`docker compose up -d` で依存スタックを起動し、MySQL の準備完了（最大 60 秒）を待ってから、バックエンドと 3 つのフロントエンドの起動コマンドとアクセス先を表示します。再実行しても安全（冪等）です。`bash scripts/install.sh --skip-deps` で依存スタックの手順をスキップできます。
+
+## インストール方法
+
+- **前提条件**：Docker（Compose プラグイン含む）、Go 1.22+、Flutter 3.x
+- **ワンクリック**：`bash scripts/install.sh` を実行し、表示されるヒントに従って環境チェックと依存スタックの起動を行います
+- **手動**（スクリプトと同等の手順）：
+
+  ```bash
+  docker compose up -d                                     # 依存スタック：MySQL / Redis / OpenSearch（初回起動時に init.sql が自動実行）
+  cd kratos/backend && go mod tidy && go run ./cmd/server  # バックエンド HTTP :8000 / gRPC :9000
+  cd apps/client/flutter && flutter pub get && flutter run -d chrome  # クライアント
+  ```
+
+## 使い方
+
+- **バックエンド**：HTTP `http://localhost:8000`（gRPC `:9000`）、API はすべて `/api` プレフィックス、バージョンは `X-Api-Version: v1` ヘッダーで指定
+- **クライアント**：`cd apps/client/flutter && flutter pub get && flutter run -d chrome`（デフォルトで localhost:8000 に接続）
+- **管理画面**：`cd apps/admin && flutter pub get && flutter run -d chrome`。ポートは Flutter がランダムに割り当ててコンソールに表示します（`--web-port` で固定可）
+- **依存スタックのポート**：MySQL `3307`、Redis `6380`、OpenSearch `9200`
+- **デフォルト設定**：`kratos/backend/config/`（DB 接続、シークレット、ポートなど）。環境変数で上書き可能
+- **よくある問題**：
+  - ポート競合：`lsof -i :8000` で占用プロセスを確認し、`kratos/backend/config/` のポートを変更して再起動
+  - データベース接続エラー：`docker compose ps` で mysql が healthy か確認。初回起動時は `init.sql` によるテーブル作成完了まで待つ必要があります
+
 ## リリースフロー
 
 - **自動**：`main` をプッシュすると、GitHub Actions（[.github/workflows/release.yml](../../.github/workflows/release.yml)）が最新の `v*` タグに基づいて patch バージョンを自動インクリメントし、タグを作成してプッシュした後、増分チェンジログ付きで GitHub Release を作成します。HEAD がすでにバージョンタグを保持している場合はスキップされます。初回リリースは `v1.0.0` から始まります。
