@@ -11,7 +11,7 @@ USE novel;
 -- 用户表：账号、多语言昵称、头像、密码哈希(bcrypt)、状态
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_user (
-  id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id            BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   username      VARCHAR(64)  NOT NULL COMMENT '登录账号',
   email         VARCHAR(128) NOT NULL DEFAULT '' COMMENT '邮箱',
   password_hash VARCHAR(255) NOT NULL COMMENT 'bcrypt 密码哈希',
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS novel_user (
 -- 书籍表：书名、作者、简介、封面、状态
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_book (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   title      VARCHAR(255) NOT NULL COMMENT '书名（原语言）',
   author     VARCHAR(128) NOT NULL DEFAULT '' COMMENT '作者',
   summary    TEXT         NULL COMMENT '简介',
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS novel_book (
 -- 书籍多语言翻译表：每本书每种语言一条
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_book_translation (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   lang       CHAR(5)         NOT NULL COMMENT 'zh-CN / en / ja ...',
   title      VARCHAR(255)    NOT NULL COMMENT '本地化书名',
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS novel_book_translation (
 -- 章节表：book_id + 序号、字数、状态
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_chapter (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   chapter_no INT UNSIGNED    NOT NULL COMMENT '章序号（从 1 开始）',
   title      VARCHAR(255)    NOT NULL DEFAULT '' COMMENT '章节标题',
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS novel_chapter (
 -- ponytail: 先用 MEDIUMTEXT 全文存储，章节超大需分块时再引入 chunk 表
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_chapter_content (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   chapter_id BIGINT UNSIGNED NOT NULL COMMENT '章节 ID',
   lang       CHAR(5)         NOT NULL COMMENT 'zh-CN / en / ja ...',
   content    MEDIUMTEXT      NOT NULL COMMENT '正文全文',
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS novel_chapter_content (
 -- 分类表：支持二级分类（parent_id）
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_category (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   name       VARCHAR(64)     NOT NULL COMMENT '分类名',
   parent_id  BIGINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '父分类 ID，0=一级',
   sort_order INT             NOT NULL DEFAULT 0 COMMENT '排序',
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS novel_category (
 -- 书籍-分类关联表
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_book_category (
-  id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id          BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   book_id     BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   category_id BIGINT UNSIGNED NOT NULL COMMENT '分类 ID',
   created_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS novel_book_category (
 -- 标签表：多语言标签（name+lang 唯一）
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_tag (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   name       VARCHAR(64) NOT NULL COMMENT '标签名',
   lang       CHAR(5)     NOT NULL DEFAULT 'zh-CN' COMMENT '语言',
   status     TINYINT     NOT NULL DEFAULT 1 COMMENT '0禁用 1启用',
@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS novel_tag (
 -- 书籍-标签关联表
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_book_tag (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   tag_id     BIGINT UNSIGNED NOT NULL COMMENT '标签 ID',
   created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS novel_book_tag (
 -- 评论表：书籍/章节评论，支持楼中楼回复
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_comment (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   chapter_id BIGINT UNSIGNED NULL COMMENT '章节 ID，NULL=书籍评论',
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '评论人',
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS novel_comment (
 -- 点赞表：多态目标（书/评论/章节）
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_like (
-  id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id          BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id     BIGINT UNSIGNED NOT NULL COMMENT '点赞用户',
   target_type TINYINT         NOT NULL COMMENT '1书 2评论 3章节',
   target_id   BIGINT UNSIGNED NOT NULL COMMENT '目标 ID',
@@ -184,7 +184,7 @@ CREATE TABLE IF NOT EXISTS novel_like (
 -- 收藏表
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_favorite (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS novel_favorite (
 -- 书架表
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_bookshelf (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   sort_order INT             NOT NULL DEFAULT 0 COMMENT '书架内排序',
@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS novel_bookshelf (
 -- 阅读进度表：book_id + chapter_id + user_id 唯一
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_reading_progress (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   chapter_id BIGINT UNSIGNED NOT NULL COMMENT '章节 ID',
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS novel_reading_progress (
 -- 搜索日志表：搜索词分析 / 热词
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_search_log (
-  id           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id           BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id      BIGINT UNSIGNED NULL COMMENT '用户 ID（未登录为 NULL）',
   keyword      VARCHAR(255) NOT NULL COMMENT '搜索词',
   lang         CHAR(5)      NOT NULL DEFAULT 'zh-CN' COMMENT '搜索语言',
@@ -238,7 +238,7 @@ CREATE TABLE IF NOT EXISTS novel_search_log (
 -- 推荐日志表：推荐策略效果分析
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_recommend_log (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '推荐的书',
   strategy   VARCHAR(32)     NOT NULL COMMENT '策略：ai/hot/new/rule',
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS novel_recommend_log (
 -- 阅读事件日志表：保存进度时顺带记录，行为分析数据源
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_reading_log (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '书籍 ID',
   chapter_id BIGINT UNSIGNED NOT NULL COMMENT '章节 ID',
@@ -263,30 +263,10 @@ CREATE TABLE IF NOT EXISTS novel_reading_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='阅读事件日志表';
 
 -- ------------------------------------------------------------
--- 支付订单表：单章/整书购买
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS novel_payment_order (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  order_no   VARCHAR(64)    NOT NULL COMMENT '业务订单号',
-  user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
-  book_id    BIGINT UNSIGNED NULL COMMENT '购买的书（非书籍购买为 NULL）',
-  amount     DECIMAL(10,2)  NOT NULL COMMENT '金额',
-  currency   CHAR(3)        NOT NULL DEFAULT 'CNY' COMMENT '币种',
-  channel    VARCHAR(32)    NOT NULL DEFAULT '' COMMENT '渠道：wechat/alipay/stripe',
-  status     TINYINT        NOT NULL DEFAULT 0 COMMENT '0待支付 1已支付 2失败 3已退款',
-  paid_at    DATETIME       NULL COMMENT '支付时间',
-  created_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY uk_order_no (order_no),
-  KEY idx_user (user_id),
-  KEY idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='支付订单表';
-
--- ------------------------------------------------------------
 -- 会员订单表：套餐购买与有效期
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_vip_order (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   order_no   VARCHAR(64)    NOT NULL COMMENT '业务订单号',
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   plan       VARCHAR(32)    NOT NULL COMMENT '套餐：monthly/quarterly/yearly',
@@ -308,7 +288,7 @@ CREATE TABLE IF NOT EXISTS novel_vip_order (
 -- config 为 AES-GCM 加密的 JSON（密钥见 config.yaml payment.encrypt_key）
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_payment_provider (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   code       VARCHAR(32)    NOT NULL COMMENT '渠道码：stripe/np_usdt',
   lang       VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用语言: en 或 * 全局',
   region     VARCHAR(16)    NOT NULL DEFAULT '*' COMMENT '适用地区: US/CN 或 * 全局',
@@ -325,7 +305,7 @@ CREATE TABLE IF NOT EXISTS novel_payment_provider (
 -- 支付订单表：一次支付对应一行（VIP 套餐无 plan 列，plan 由金额反查）
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_payment_order (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   order_no   VARCHAR(64)    NOT NULL COMMENT '业务订单号',
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   amount     DECIMAL(10,2)  NOT NULL COMMENT '金额（分转元存储）',
@@ -345,7 +325,7 @@ CREATE TABLE IF NOT EXISTS novel_payment_order (
 -- VIP 套餐表：支付流程生效金额/天数数据源（T-P-13），表空/缺行回退内置默认
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_vip_plan (
-  id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id          BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   plan_code   VARCHAR(32)    NOT NULL COMMENT '套餐码：monthly/quarterly/yearly',
   days        INT            NOT NULL COMMENT '有效天数',
   amount_cents BIGINT       NOT NULL COMMENT '金额（分）',
@@ -362,7 +342,7 @@ CREATE TABLE IF NOT EXISTS novel_vip_plan (
 -- 审计日志表：登录 / 管理操作 / 支付审计
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_audit_log (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id    BIGINT UNSIGNED NULL COMMENT '操作用户 ID（匿名为 NULL）',
   action     VARCHAR(64)     NOT NULL COMMENT '动作：login/pay/book_update/...',
   target_type VARCHAR(32)    NOT NULL DEFAULT '' COMMENT '对象类型：user/book/order',
@@ -380,7 +360,7 @@ CREATE TABLE IF NOT EXISTS novel_audit_log (
 -- CDN 厂商表：多厂商 CDN 失效配置（config 列 AES-GCM 加密 JSON）
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_cdn_provider (
-  id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   code       VARCHAR(32)    NOT NULL COMMENT 'cloudflare/cloudfront/aliyun/tencent',
   enabled    TINYINT        NOT NULL DEFAULT 0 COMMENT '0禁用 1启用',
   sort       INT            NOT NULL DEFAULT 0 COMMENT '广播顺序（升序）',
@@ -390,3 +370,33 @@ CREATE TABLE IF NOT EXISTS novel_cdn_provider (
   UNIQUE KEY uk_code (code),
   KEY idx_enabled_sort (enabled, sort)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='CDN 厂商表';
+
+-- ------------------------------------------------------------
+-- 存量库幂等迁移（snowflake 主键化）：移除 id 自增。
+-- 新装库（上面建表已无 AUTO_INCREMENT）执行本段无副作用；
+-- 已上线库执行后 id 由应用层 snowflake 分配——旧数据 1..N 与
+-- snowflake ≥2^41 数值域不重叠，无需改写存量 id。每行可重复执行。
+-- ------------------------------------------------------------
+ALTER TABLE novel_user MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_book MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_book_translation MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_chapter MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_chapter_content MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_category MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_book_category MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_tag MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_book_tag MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_comment MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_like MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_favorite MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_bookshelf MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_reading_progress MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_search_log MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_recommend_log MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_reading_log MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_payment_order MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_vip_order MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_payment_provider MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_vip_plan MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_audit_log MODIFY id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE novel_cdn_provider MODIFY id BIGINT UNSIGNED NOT NULL;

@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.45.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.62
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.70.1
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/dgraph-io/ristretto v0.2.0
 	github.com/erikwang2013/security-go v1.0.16
 	github.com/go-kratos/kratos/v2 v2.9.2
