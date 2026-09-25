@@ -65,12 +65,13 @@ Sembilan tahap: perencanaan, desain, kode, uji, build, rilis, deployment, operas
 
 <p align="center"><img src="../pet.svg" alt="Pet proyek Open Novel Novi" width="200"/></p>
 
-Novi adalah pet proyek ini (versi statis: [docs/mascot.svg](../mascot.svg)): berkedip, mengepakkan sayap, dan tiga balon bahasa 文 / A / あ melayang di atasnya.
+Novi adalah pet proyek ini (versi statis: [docs/mascot.svg](../mascot.svg)): setetes tinta yang hidup, melayang di atas halaman terbuka — tinta yang dilempar dari ekornya jatuh ke kertas dan menjelma menjadi 文 / A / あ.
 
 | Di mana menemukannya | Apa yang menentukan suasana hatinya |
 | :--- | :--- |
 | Terminal: `bash scripts/pet.sh` (`--line` untuk satu baris) | Kebersihan working tree dan selisih maju / mundur dari remote |
 | Backend: `GET /api/pet.svg` (header `X-Api-Version: v1`) | Status MySQL / Redis / OpenSearch → happy / degraded / down |
+| Peramban / PWA: `web/favicon.svg` (vektor, berkedip di tab) + `web/icons/Icon-*.png` | Tampilan tetap (`bash scripts/gen-assets.sh` membuat ulang semua bitmap dari `docs/pet.svg`) |
 
 ## Struktur direktori
 
@@ -82,7 +83,7 @@ open-novel/
 ├─ kratos/                   # Kode sumber framework Go-Kratos (framework hulu, dipertahankan apa adanya, jangan diubah)
 │  └─ backend/               #   Backend bisnis proyek ini: entri cmd/server + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # Dokumentasi proyek (perencanaan, diagram arsitektur, README i18n, kode donasi)
-├─ scripts/                  # skrip build dan deployment (post-push.sh, install.sh, smoke.sh, pet.sh)
+├─ scripts/                  # skrip build dan deployment (post-push.sh, install.sh, smoke.sh, gen-assets.sh)
 ├─ docker-compose.yml        # Stack dependensi lokal: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # Pedoman kolaborasi proyek
 └─ README.md                 # Dokumen penjelasan proyek

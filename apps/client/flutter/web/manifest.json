@@ -1,11 +1,11 @@
 {
-    "name": "open_novel",
-    "short_name": "open_novel",
+    "name": "Open Novel",
+    "short_name": "Open Novel",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FDF3E3",
+    "theme_color": "#FDF3E3",
+    "description": "基于 Go-Kratos + Flutter / HarmonyOS 的全球多语言小说阅读平台，支持 12+ 语种。",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

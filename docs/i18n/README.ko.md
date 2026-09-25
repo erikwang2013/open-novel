@@ -65,12 +65,13 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 
 <p align="center"><img src="../pet.svg" alt="Open Novel 프로젝트 펫 Novi" width="200"/></p>
 
-Novi는 이 프로젝트의 펫입니다(정지 버전: [docs/mascot.svg](../mascot.svg)). 눈을 깜빡이고 날개를 펄럭이며 文 / A / あ 언어 버블이 떠다닙니다.
+Novi는 이 프로젝트의 펫입니다(정지 버전: [docs/mascot.svg](../mascot.svg)). 살아난 한 방울의 먹이 펼쳐진 종이 위에 떠 있고, 꼬리로 튀긴 먹이 종이에 떨어져 文 / A / あ 가 됩니다.
 
 | 어디서 만나나 | 상태 결정 기준 |
 | :--- | :--- |
 | 터미널: `bash scripts/pet.sh` (`--line`은 한 줄) | 작업 트리 청결 여부와 원격 대비 앞섬 / 뒤짐 |
 | 백엔드: `GET /api/pet.svg` (헤더 `X-Api-Version: v1`) | MySQL / Redis / OpenSearch 상태 → happy / degraded / down |
+| 브라우저 / PWA: `web/favicon.svg`(벡터, 탭에서 깜빡임) + `web/icons/Icon-*.png` | 고정 이미지 (`bash scripts/gen-assets.sh`가 `docs/pet.svg`에서 모든 비트맵을 생성) |
 
 ---
 
@@ -84,7 +85,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos 프레임워크 소스(업스트림 프레임워크, 원본 유지, 수정 금지)
 │  └─ backend/               #   본 프로젝트의 비즈니스 백엔드: cmd/server 엔트리 + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # 프로젝트 문서(기획, 아키텍처 다이어그램, i18n README, 후원 QR 코드)
-├─ scripts/                  # 빌드·배포 스크립트(post-push.sh 자동 릴리스, install.sh, smoke.sh, pet.sh)
+├─ scripts/                  # 빌드·배포 스크립트(post-push.sh 자동 릴리스, install.sh, smoke.sh, gen-assets.sh)
 ├─ docker-compose.yml        # 로컬 의존 스택: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # 프로젝트 협업 규칙
 └─ README.md                 # 프로젝트 설명 문서

@@ -21,7 +21,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **多语言**：i18n 资源动态加载，支持 12+ 语种（中文、英文、日文、韩文、法文、德文、西班牙文、俄文、阿拉伯文等）
 - **存储**：MySQL 8（主从读写分离）+ Redis（热点缓存 / 会话）+ ristretto（进程内 L1 二级缓存）+ OpenSearch（多语言搜索）
 - **运维**：Docker Compose 一键部署，Prometheus + Grafana 监控，GitHub Actions 持续集成
-- **项目宠物**：Novi（[docs/pet.svg](docs/pet.svg)，会眨眼 / 扇翅 / 浮语言气泡）—— 终端 `bash scripts/pet.sh` 看仓库心情，后端 `GET /api/pet.svg` 按依赖健康度换表情，客户端与管理端空状态也用它
+- **项目宠物**：Novi（[docs/pet.svg](docs/pet.svg)，会眨眼 / 甩尾凝字 / 墨身挤压）—— 终端 `bash scripts/pet.sh` 看仓库心情，后端 `GET /api/pet.svg` 按依赖健康度换表情，客户端与管理端空状态、两端网页外壳（标签页图标 / PWA 图标）也用它
 
 ## 功能特性
 
@@ -53,17 +53,18 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 <p align="center"><img src="docs/pet.svg" alt="Open Novel 项目宠物 Novi" width="220"/></p>
 
-**Novi** 是本项目的宠物（静止版为 [docs/mascot.svg](docs/mascot.svg)）：一只戴眼镜的猫头鹰，坐在翻开的书上，头顶浮着 文 / A / あ 三颗语言气泡——对应 12+ 语种与「阅读」两件事。源图是**会动**的 SVG（SMIL：呼吸浮动、眨眼、扇翅、气泡漂浮、光晕呼吸），不需要 JS，README 与浏览器里直接就能看到它在动。
+**Novi** 是本项目的宠物（静止版为 [docs/mascot.svg](docs/mascot.svg)）：一滴活过来的墨，悬在摊开的书页上方——尾巴甩出的墨迹落到纸面，凝成 文 / A / あ 三个字，对应 12+ 语种与「阅读」两件事。源图是**会动**的 SVG（SMIL：呼吸浮动、墨身挤压、眨眼、尾墨摇摆、墨点飞溅），不需要 JS，README 与浏览器里直接就能看到它在动。
 
-它有三个住处，都能反映项目当前状态：
+它有四个住处，其中三个能反映项目当前状态：
 
 | 在哪见 | 怎么看 | 状态由什么决定 |
 | :--- | :--- | :--- |
 | 文档 / README | `docs/pet.svg`（12 语言 README 共用，与语言无关） | 固定形象 |
 | 终端 | `bash scripts/pet.sh`（`--line` 只输出一行，可挂 pre-commit / CI 日志） | 工作区是否干净、领先 / 落后远端多少提交 |
 | 后端 | `GET /api/pet.svg`（请求头 `X-Api-Version: v1`，见 `internal/pkg/pet.go`） | MySQL / Redis / OpenSearch 探测结果 → `happy` / `degraded` / `down` 三态表情 + 状态牌（含运行时长与不可用依赖） |
+| 浏览器 / PWA | 客户端与管理端的 `web/favicon.svg`（矢量版，标签页里会眨眼）、`web/icons/Icon-*.png` | 固定形象（全部位图由 `bash scripts/gen-assets.sh` 从 `docs/pet.svg` 生成） |
 
-客户端与管理端也把它接进了产品：客户端「暂无数据」与加载态（`lib/widgets/novi_pet.dart`）、管理端登录页（`apps/admin/assets/pet.png`）显示同一只 Novi。`GET /api/pet.svg` 是活的——依赖探测失败的次数越多，它的表情越困。
+客户端与管理端也把它接进了产品：客户端「暂无数据」与加载态（`lib/widgets/novi_pet.dart`）、管理端登录页（`apps/admin/assets/pet.png`）显示同一只 Novi，两端的网页外壳（标签页图标 / PWA 图标 / 应用名）也一并换成了它——`docs/pet-icon.svg` 是裁剪到脸部的图标版，`favicon.png` 由它生成。`GET /api/pet.svg` 是活的——依赖探测失败的次数越多，它的表情越困。
 
 ## 项目规划
 
@@ -83,7 +84,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos 框架源码（上游框架，原样保留，勿改）
 │  └─ backend/               #   本项目业务后端：cmd/server 入口 + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # 项目文档（规划、架构 / 生命周期 / 宠物等 SVG 图、i18n README、打赏码）
-├─ scripts/                  # 构建与部署脚本（install.sh 一键安装、post-push.sh 自动发布、smoke.sh、pet.sh 终端宠物）
+├─ scripts/                  # 构建与部署脚本（install.sh 一键安装、post-push.sh 自动发布、smoke.sh、pet.sh 终端宠物、gen-assets.sh 宠物图生成）
 ├─ docker-compose.yml        # 本地依赖栈：MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # 项目协作规范
 └─ README.md                 # 项目说明文档

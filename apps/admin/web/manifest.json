@@ -1,11 +1,11 @@
 {
-    "name": "open_novel_admin",
-    "short_name": "open_novel_admin",
+    "name": "Open Novel 管理后台",
+    "short_name": "Novel 管理",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FDF3E3",
+    "theme_color": "#FDF3E3",
+    "description": "Open Novel 管理后台 — 内容审核、用户管理、报表统计、支付与 CDN 配置。",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

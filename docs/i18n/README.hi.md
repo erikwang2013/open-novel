@@ -65,12 +65,13 @@ Open Novel एक क्लाउड-नेटिव माइक्रोसर
 
 <p align="center"><img src="../pet.svg" alt="Open Novel परियोजना पेट Novi" width="200"/></p>
 
-Novi इस परियोजना का पेट है (स्थिर संस्करण: [docs/mascot.svg](../mascot.svg)): पलक झपकाता है, पंख फड़फड़ाता है, और सिर पर 文 / A / あ भाषा-बुलबुले तैरते हैं।
+Novi इस परियोजना का पेट है (स्थिर संस्करण: [docs/mascot.svg](../mascot.svg)): जीवित हो उठी स्याही की एक बूँद, खुले पन्ने के ऊपर तैरती हुई — अपनी पूँछ से उड़ाई स्याही कागज़ पर गिरती है और 文 / A / あ बन जाती है।
 
 | कहाँ मिलेगा | मन किस पर निर्भर है |
 | :--- | :--- |
 | टर्मिनल: `bash scripts/pet.sh` (`--line` एक पंक्ति हेतु) | वर्किंग ट्री साफ़ है या नहीं और रिमोट से आगे / पीछे |
 | बैकएंड: `GET /api/pet.svg` (हेडर `X-Api-Version: v1`) | MySQL / Redis / OpenSearch की स्थिति → happy / degraded / down |
+| ब्राउज़र / PWA: `web/favicon.svg` (वेक्टर, टैब में पलक झपकाता है) + `web/icons/Icon-*.png` | स्थिर रूप (`bash scripts/gen-assets.sh` `docs/pet.svg` से सभी बिटमैप फिर से बनाता है) |
 
 ## निर्देशिका संरचना
 
@@ -82,7 +83,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos फ्रेमवर्क स्रोत कोड (अपस्ट्रीम फ्रेमवर्क, यथावत रखें, न बदलें)
 │  └─ backend/               #   इस प्रोजेक्ट का बिज़नेस बैकएंड: cmd/server एंट्री + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # प्रोजेक्ट दस्तावेज़ (प्लानिंग, आर्किटेक्चर आरेख, i18n README, दान कोड)
-├─ scripts/                  # बिल्ड व परिनियोजन स्क्रिप्ट (post-push.sh, install.sh, smoke.sh, pet.sh)
+├─ scripts/                  # बिल्ड व परिनियोजन स्क्रिप्ट (post-push.sh, install.sh, smoke.sh, gen-assets.sh)
 ├─ docker-compose.yml        # लोकल डिपेंडेंसी स्टैक: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # प्रोजेक्ट सहयोग दिशानिर्देश
 └─ README.md                 # प्रोजेक्ट दस्तावेज़

@@ -66,12 +66,13 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 
 <p align="center"><img src="../pet.svg" alt="Open Novel のプロジェクトペット Novi" width="200"/></p>
 
-Novi は本プロジェクトのペットです（静止版は [docs/mascot.svg](../mascot.svg)）。まばたきし、翼を動かし、文 / A / あ の言語バブルがふわふわ浮きます。
+Novi は本プロジェクトのペットです（静止版は [docs/mascot.svg](../mascot.svg)）。命が宿った一滴の墨が、開いた紙の上に浮かんでいます。尾から飛ばした墨が紙に落ちて、文 / A / あ の文字になります。
 
 | どこで会えるか | 状態の決まり方 |
 | :--- | :--- |
 | ターミナル：`bash scripts/pet.sh`（`--line` で 1 行） | 作業ツリーがきれいか、リモートより先行 / 遅延しているか |
 | バックエンド：`GET /api/pet.svg`（ヘッダー `X-Api-Version: v1`） | MySQL / Redis / OpenSearch の死活 → happy / degraded / down |
+| ブラウザ / PWA：`web/favicon.svg`（ベクター版、タブでまばたき）+ `web/icons/Icon-*.png` | 固定の姿（`bash scripts/gen-assets.sh` が `docs/pet.svg` から全ビットマップを生成） |
 
 ---
 
@@ -85,7 +86,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos フレームワークソース（上流フレームワーク、そのまま保持、変更禁止）
 │  └─ backend/               #   本プロジェクトの業務バックエンド：cmd/server エントリ + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # プロジェクトドキュメント（計画、アーキテクチャ図、i18n README、寄付用 QR コード）
-├─ scripts/                  # ビルド・デプロイスクリプト（post-push.sh 自動リリース、install.sh、smoke.sh、pet.sh）
+├─ scripts/                  # ビルド・デプロイスクリプト（post-push.sh 自動リリース、install.sh、smoke.sh、gen-assets.sh）
 ├─ docker-compose.yml        # ローカル依存スタック：MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # プロジェクト協力規範
 └─ README.md                 # プロジェクト説明ドキュメント

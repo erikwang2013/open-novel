@@ -127,15 +127,24 @@ func Render(s PetStatus) string {
 	return strings.Replace(svg, badgeMarker, badgeSnippet(s), 1)
 }
 
-// faceSnippet 注入的表情：degraded 右眼半闭，down 双眼闭合 + 飘 z。
-// 裁剪路径 eye-l / eye-r 来自 pet.svg（眼睑严格落在眼球内，不外溢到脸部）。
+// faceSnippet 注入的表情叠加层（都画在墨身之上）：
+// degraded 蒙一层灰纱 + 右眼半垂，down 灰纱加重 + 双眼闭合 + 飘 z。
+//
+// 眼睑直接用弧线画，不依赖 pet.svg 里的 clipPath：墨灵眨眼靠的是整只眼纵向缩放，
+// 源图里没有眼睑裁剪路径可复用（不像上一版那只猫头鹰）。
 func faceSnippet(m Mood) string {
+	drop := `M256 96 Q344 186 344 224 A88 88 0 0 1 168 224 Q168 186 256 96 Z`
+	lid := func(class, d string) string {
+		return fmt.Sprintf(`<path class="%s" d="%s" fill="none" stroke="#1F2C3D" stroke-width="4" stroke-linecap="round"/>`, class, d)
+	}
 	switch m {
 	case MoodDegraded:
-		return `<g clip-path="url(#eye-r)"><rect x="265" y="155" width="58" height="30" fill="#FBDCA8"/></g>`
+		return fmt.Sprintf(`<path d="%s" fill="#90A4AE" opacity="0.28"/>`, drop) +
+			lid("lid-r", "M269 208 Q288 218 307 208") // 右眼半垂
 	case MoodDown:
-		return `<g clip-path="url(#eye-l)"><rect x="189" y="155" width="58" height="58" fill="#FBDCA8"/></g>` +
-			`<g clip-path="url(#eye-r)"><rect x="265" y="155" width="58" height="58" fill="#FBDCA8"/></g>` +
+		return fmt.Sprintf(`<path d="%s" fill="#90A4AE" opacity="0.46"/>`, drop) +
+			lid("lid-l", "M205 216 Q224 234 243 216") +
+			lid("lid-r", "M269 216 Q288 234 307 216") +
 			`<text x="352" y="146" font-size="24" font-weight="bold" fill="#90a4ae" font-family="sans-serif">z</text>` +
 			`<text x="378" y="118" font-size="17" font-weight="bold" fill="#b0bec5" font-family="sans-serif">z</text>`
 	default:

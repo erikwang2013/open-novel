@@ -65,12 +65,13 @@ Open Novel منصة عالمية للروايات متعددة اللغات بم
 
 <p align="center"><img src="../pet.svg" alt="حيوان مشروع Open Novel‏ Novi" width="200"/></p>
 
-‏Novi هو حيوان هذا المشروع (النسخة الثابتة: [docs/mascot.svg](../mascot.svg)): يرمش، ويحرّك جناحيه، وتطفو فوق رأسه ثلاث فقاعات لغات 文 / A / あ.
+‏Novi هو حيوان هذا المشروع (النسخة الثابتة: [docs/mascot.svg](../mascot.svg)): قطرة حبر صارت حيّة، تطفو فوق صفحة مفتوحة — الحبر الذي تنفضه بذيلها يسقط على الورق فيتحوّل إلى 文 / A / あ.
 
 | أين تراه | على ماذا تعتمد حالته |
 | :--- | :--- |
 | الطرفية: `bash scripts/pet.sh` (`--line` لسطر واحد) | نظافة شجرة العمل ومقدار التقدم/التأخر عن الفرع البعيد |
 | الخادم: `GET /api/pet.svg` (ترويسة `X-Api-Version: v1`) | حالة MySQL / Redis / OpenSearch ← happy / degraded / down |
+| المتصفح / PWA: `web/favicon.svg` (متجهي، يرمش في التبويب) + `web/icons/Icon-*.png` | شكل ثابت (`bash scripts/gen-assets.sh` يولّد كل الصور من `docs/pet.svg`) |
 
 ## هيكل الدليل
 
@@ -82,7 +83,7 @@ open-novel/
 ├─ kratos/                   # كود مصدر إطار Go-Kratos (الإطار المصدر، يُحفظ كما هو، لا يُعدَّل)
 │  └─ backend/               #   الواجهة الخلفية لأعمال هذا المشروع: نقطة دخول cmd/server + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # وثائق المشروع (التخطيط، مخططات المعمارية، README i18n، رموز التبرع)
-├─ scripts/                  # سكربتات البناء والنشر (post-push.sh، install.sh، smoke.sh، pet.sh)
+├─ scripts/                  # سكربتات البناء والنشر (post-push.sh، install.sh، smoke.sh، gen-assets.sh)
 ├─ docker-compose.yml        # مجموعة التبعيات المحلية: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # قواعد التعاون في المشروع
 └─ README.md                 # وثيقة شرح المشروع

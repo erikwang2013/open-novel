@@ -50,15 +50,15 @@ func TestRenderKeepsSVGWellFormed(t *testing.T) {
 			t.Errorf("mood %q: watermark missing", s.Mood)
 		}
 	}
-	// 表情注入量：happy 不注入，degraded 只压右眼，down 双眼闭合 + 飘 z
+	// 表情注入量：happy 不注入，degraded 只垂右眼，down 双眼闭合 + 飘 z
 	if got := faceSnippet(MoodHappy); got != "" {
 		t.Errorf("happy: expected no overlay, got %q", got)
 	}
-	if got := faceSnippet(MoodDegraded); !strings.Contains(got, "url(#eye-r)") || strings.Contains(got, "url(#eye-l)") {
-		t.Errorf("degraded: expected right-eye-only overlay, got %q", got)
+	if got := faceSnippet(MoodDegraded); !strings.Contains(got, `class="lid-r"`) || strings.Contains(got, `class="lid-l"`) {
+		t.Errorf("degraded: expected right-eye-only lid, got %q", got)
 	}
-	if got := faceSnippet(MoodDown); !strings.Contains(got, "url(#eye-l)") || !strings.Contains(got, "url(#eye-r)") || !strings.Contains(got, ">z<") {
-		t.Errorf("down: expected both eyes closed + z, got %q", got)
+	if got := faceSnippet(MoodDown); !strings.Contains(got, `class="lid-l"`) || !strings.Contains(got, `class="lid-r"`) || !strings.Contains(got, ">z<") {
+		t.Errorf("down: expected both lids + z, got %q", got)
 	}
 }
 

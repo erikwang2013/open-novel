@@ -65,12 +65,13 @@ Open Novel — это глобальная мультиязычная платф
 
 <p align="center"><img src="../pet.svg" alt="Питомец проекта Open Novel Novi" width="200"/></p>
 
-Novi — питомец проекта (статичная версия: [docs/mascot.svg](../mascot.svg)): моргает, машет крыльями, а над головой парят языковые пузыри 文 / A / あ.
+Novi — питомец проекта (статичная версия: [docs/mascot.svg](../mascot.svg)): ожившая капля туши, парящая над раскрытой страницей — тушь, которую она сбрасывает хвостом, падает на бумагу и превращается в 文 / A / あ.
 
 | Где его видно | От чего зависит настроение |
 | :--- | :--- |
 | Терминал: `bash scripts/pet.sh` (`--line` — одна строка) | Чистота рабочего дерева и отставание / опережение от remote |
 | Бэкенд: `GET /api/pet.svg` (заголовок `X-Api-Version: v1`) | Доступность MySQL / Redis / OpenSearch → happy / degraded / down |
+| Браузер / PWA: `web/favicon.svg` (векторный, мигает во вкладке) + `web/icons/Icon-*.png` | Фиксированный образ (`bash scripts/gen-assets.sh` пересобирает все растровые версии из `docs/pet.svg`) |
 
 ---
 
@@ -84,7 +85,7 @@ open-novel/
 ├─ kratos/                   # Исходный код фреймворка Go-Kratos (вышестоящий фреймворк, сохранять как есть, не изменять)
 │  └─ backend/               #   Бизнес-бэкенд проекта: точка входа cmd/server + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # Документация проекта (планирование, схемы архитектуры, i18n README, QR-коды для донатов)
-├─ scripts/                  # скрипты сборки и деплоя (post-push.sh авто-релиз, install.sh, smoke.sh, pet.sh)
+├─ scripts/                  # скрипты сборки и деплоя (post-push.sh авто-релиз, install.sh, smoke.sh, gen-assets.sh)
 ├─ docker-compose.yml        # Локальный стек зависимостей: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # Правила совместной работы над проектом
 └─ README.md                 # Документация проекта

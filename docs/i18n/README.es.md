@@ -65,12 +65,13 @@ Nueve pasos: planificación, diseño, código, pruebas, build, publicación, des
 
 <p align="center"><img src="../pet.svg" alt="Mascota del proyecto Open Novel Novi" width="200"/></p>
 
-Novi es la mascota del proyecto (versión fija: [docs/mascot.svg](../mascot.svg)): parpadea, mueve las alas y sobre su cabeza flotan tres burbujas de idiomas 文 / A / あ.
+Novi es la mascota del proyecto (versión fija: [docs/mascot.svg](../mascot.svg)): una gota de tinta que cobró vida, suspendida sobre una página abierta — la tinta que sacude con la cola cae sobre el papel y se cuaja en 文 / A / あ.
 
 | Dónde verla | De qué depende su ánimo |
 | :--- | :--- |
 | Terminal: `bash scripts/pet.sh` (`--line` para una línea) | Limpieza del árbol de trabajo y adelanto / retraso frente al remoto |
 | Backend: `GET /api/pet.svg` (cabecera `X-Api-Version: v1`) | Estado de MySQL / Redis / OpenSearch → happy / degraded / down |
+| Navegador / PWA: `web/favicon.svg` (vectorial, parpadea en la pestaña) + `web/icons/Icon-*.png` | Imagen fija (`bash scripts/gen-assets.sh` regenera todos los mapas de bits desde `docs/pet.svg`) |
 
 ## Estructura de directorios
 
@@ -82,7 +83,7 @@ open-novel/
 ├─ kratos/                   # Código fuente del framework Go-Kratos (framework ascendente, conservado tal cual, no modificar)
 │  └─ backend/               #   Backend de negocio del proyecto: entrada cmd/server + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # Documentación del proyecto (planificación, diagramas de arquitectura, README i18n, códigos de donación)
-├─ scripts/                  # scripts de compilación y despliegue (post-push.sh, install.sh, smoke.sh, pet.sh)
+├─ scripts/                  # scripts de compilación y despliegue (post-push.sh, install.sh, smoke.sh, gen-assets.sh)
 ├─ docker-compose.yml        # Pila de dependencias local: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # Normas de colaboración del proyecto
 └─ README.md                 # Documentación del proyecto

@@ -11,13 +11,13 @@ ahead=$(git rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
 behind=$(git rev-list --count 'HEAD..@{u}' 2>/dev/null || echo 0)
 
 if (( dirty > 0 )); then
-  mood="dirty";  face='( o  o )'; line="工作区有 ${dirty} 处未提交改动 —— Novi 盯着你的 diff"
+  mood="dirty";  face='o  o'; line="工作区有 ${dirty} 处未提交改动 —— Novi 盯着你的 diff"
 elif (( ahead > 0 )); then
-  mood="ahead";  face='( ^  ^ )'; line="领先远端 ${ahead} 个提交 —— Novi 在门口等着推送"
+  mood="ahead";  face='^  ^'; line="领先远端 ${ahead} 个提交 —— Novi 在门口等着推送"
 elif (( behind > 0 )); then
-  mood="behind"; face='( .  . )'; line="落后远端 ${behind} 个提交 —— Novi 饿了，想拉取"
+  mood="behind"; face='.  .'; line="落后远端 ${behind} 个提交 —— Novi 饿了，想拉取"
 else
-  mood="happy";  face='( ^  ^ )'; line="工作区干净、与远端同步 —— Novi 神清气爽"
+  mood="happy";  face='^  ^'; line="工作区干净、与远端同步 —— Novi 神清气爽"
 fi
 
 if [[ "${1:-}" == "--line" ]]; then
@@ -27,12 +27,18 @@ fi
 
 color=32 # 绿
 case "$mood" in dirty) color=33 ;; behind) color=31 ;; esac # 黄 / 红
+ink='\033[1;36m' # 墨色
+esc='\033[0m'
 
+# 墨灵：一滴墨悬在纸面上，尾巴甩出的墨迹落下去凝成字。
+# 各行按中心线对齐（col 6.5），宽窄 2→4→8→8→6 才收得出水滴形，等宽会读成方桶。
 printf '\n'
-printf '   \033[33m/\\   /\\\033[0m\n'
-printf '  \033[33m/  \\_/  \\\033[0m      \033[1;%smNovi\033[0m  \033[%sm%s\033[0m\n' "$color" "$color" "$mood"
-printf '  \033[1;37m%s\033[0m      \033[2m%s\033[0m\n' "$face" "$line"
-printf '   \033[33m\\  %s  /\033[0m\n' '▽'
-printf '  \033[1;37m__/_______\\__\033[0m\n'
-printf '   \033[36m^  ^  ^  ^  ^\033[0m\n'
+printf "      ${ink}/\\\\${esc}\n"
+printf "     ${ink}/  \\\\${esc}          \033[1;%smNovi\033[0m  \033[%sm%s\033[0m\n" "$color" "$color" "$mood"
+printf "   ${ink}| %s |${esc}         \033[2m%s\033[0m\n" "$face" "$line"
+printf "   ${ink}|  %s   |${esc}\n" '▽'
+printf "    ${ink}\\\\____/${esc}\n"
+printf "     ${ink}\\\\  \\\\____${esc}\n"
+printf '  \033[1;37m____________\033[0m\n'
+printf '     \033[36m文  A  あ\033[0m\n'
 printf '\n'
