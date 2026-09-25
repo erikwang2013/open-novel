@@ -62,8 +62,7 @@ class _LoginPageState extends State<LoginPage> {
             padding: const EdgeInsets.all(24),
             children: [
               Center(
-                  child:
-                      Image.asset('assets/mascot.png', width: 140, height: 140)),
+                  child: Image.asset('assets/pet.png', width: 140, height: 140)),
               const SizedBox(height: 8),
               const Center(
                 child: Text('Open Novel 管理后台',

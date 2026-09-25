@@ -5,6 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../models/models.dart';
 import '../widgets/book_card.dart';
+import '../widgets/novi_pet.dart';
 
 /// 首页 tab：推荐列表（GET /api/recommend?strategy=hot）。
 class HomeTab extends StatefulWidget {
@@ -64,8 +65,8 @@ class _HomeTabState extends State<HomeTab> {
       );
     }
     final items = _items;
-    if (items == null) return const Center(child: CircularProgressIndicator());
-    if (items.isEmpty) return Center(child: Text(l10n.empty));
+    if (items == null) return const NoviPet(busy: true);
+    if (items.isEmpty) return NoviPet(text: l10n.empty);
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView.builder(

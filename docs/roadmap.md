@@ -33,6 +33,7 @@
 | 支付 | 下单 / 查单 / 公开套餐 / VIP 状态 / 方式列表 / Webhook（11 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global / UnionPay-RSA）/ 管理端流水·方式·套餐 | ✅ |
 | 管理 | 仪表盘统计（GET /api/stats/overview）/ 分类标签 CRUD / 审计日志查询（GET /api/admin/audit-logs，分页 + user_id/action/target_type/target_id/时间范围筛选） | ✅ |
 | CDN | 多厂商 CDN 加速（章节静态化）：Cloudflare / AWS CloudFront 全球线 + 阿里云 / 腾讯云中国线，`internal/cdn` Provider 抽象 + 5 adapter（含 generic 兼容路径）、purge 广播（key `chapter/{id}?lang={lang}`）、DB 配置 + 管理端 CRUD（/api/cdn/admin/providers*）/ 热更新 | ✅ 已完成（2026-08-29，T-7.5） |
+| 项目宠物 | `GET /api/pet.svg`：非 proto 路由（`internal/pkg/pet.go` + `internal/server/server.go`），探测 MySQL / Redis / OpenSearch（各 2s 预算）→ happy / degraded / down 三态，注入 SVG 表情与状态牌；需 `X-Api-Version: v1`，`Cache-Control: no-store` | ✅ 已完成（2026-09-26） |
 
 基础设施：JWT + Refresh 轮换（Redis GETDEL 防重放）、可选鉴权中间件 + requireAdmin（RBAC，role=3）、按路径限流（登录 10/min、评论发布 10/min、举报 5/min、搜索 10/min、支付回调 30/min）、业务错误码（11xxxx 用户 / 12xxxx 书籍 / 14xxxx 章节 / 15xxxx 评论 / 16xxxx 搜索 / 17xxxx 推荐 / 18xxxx 管理 / 19xxxx 支付，HTTP 200 + `{code,reason,message}`）、Redis 缓存（5min±30s 抖动 / 空值防穿透 / SETNX 单飞）+ ristretto 进程内 L1 二级缓存（128MB / 30s TTL / 写路径双删）、读写分离（FORCE_MASTER）、OpenSearch 多语言索引（zh/en/ja kuromoji / ko nori）、API 版本协商、支付渠道密钥 AES-GCM 加密存储、回调验签（Stripe / NOWPayments HMAC / Alipay RSA2 / WeChat Pay Global 平台公钥 + AES-GCM 解密）+ 金额强校验 + 幂等 settle。
 
@@ -49,6 +50,7 @@
 | 我的（书架 / 收藏 / 最近进度 / VIP 卡片） | ✅ | ✅ |
 | VIP 购买 / 支付结果页（套餐 + 按语言支付方式 + 3 秒轮询三态） | ✅ | ✅ |
 | i18n | 13 ARB（zh-CN / en / ja / ko / fr / de / es / ru / pt / hi / ar / bn / id） | 13 语种资源 |
+| 项目宠物 Novi | ✅ 加载态 / 空状态插图（`assets/pet.png` + `lib/widgets/novi_pet.dart`，2026-09-26） | — |
 
 ### 管理端（`apps/admin/`）
 
@@ -68,6 +70,7 @@
 
 - `.github/workflows/release.yml`：push main 自动递增 v* tag + 增量 changelog 发 Release（幂等）
 - `scripts/post-push.sh`：本地手动兜底；`scripts/smoke.sh`：核心接口冒烟测试
+- `scripts/install.sh`：一键环境检查 + 依赖栈启动；`scripts/pet.sh`：终端项目宠物（按工作区 / 远端状态显示心情，`--line` 供脚本消费）
 
 ---
 

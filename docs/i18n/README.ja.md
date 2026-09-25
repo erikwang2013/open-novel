@@ -8,7 +8,7 @@
 
 > **Go-Kratos** マイクロサービスアーキテクチャ + **Flutter / HarmonyOS** マルチクライアントフロントエンドに基づく、世界多言語対応の小説読書プラットフォームです。**12 以上の主要言語**に対応し、世界中のユーザーに読書・交流・検索・パーソナライズレコメンド機能を提供します。
 
-<div align="center"><img src="../mascot.svg" alt="Open Novel のマスコット Novi" width="150"/></div>
+<div align="center"><img src="../pet.svg" alt="Open Novel のプロジェクトペット Novi" width="150"/></div>
 
 ---
 
@@ -21,6 +21,7 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 - **多言語対応**：i18n リソースを動的にロードし、12 以上の言語に対応（中国語、英語、日本語、韓国語、フランス語、ドイツ語、スペイン語、ロシア語、アラビア語など）
 - **ストレージ**：MySQL 8（マスタースレーブ読み書き分離）+ Redis（ホットキャッシュ / セッション）+ OpenSearch（多言語検索）
 - **運用**：Docker Compose によるワンクリックデプロイ、Prometheus + Grafana モニタリング、GitHub Actions 継続的インテグレーション
+- **プロジェクトのペット**：Novi — アニメーション原図は `docs/pet.svg`（ターミナルは `bash scripts/pet.sh`、バックエンドは `GET /api/pet.svg`）
 
 
 ## 機能一覧
@@ -41,7 +42,7 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 
 全体は Go-Kratos マイクロサービスアーキテクチャです。Flutter / HarmonyOS クライアントは Nginx + マルチベンダー CDN（Cloudflare / CloudFront はグローバル回線、阿里云 / 腾讯云は中国回線。管理側で設定可能、設定フィンガープリントのホットリロードで即時反映）を経由して API ゲートウェイとやり取りし、ゲートウェイはドメインごとにユーザー、書籍、チャプター、コメント、検索、レコメンドなどのバックエンドサービスへルーティングします。データ層は MySQL マスタースレーブ（読み書き分離）+ Redis キャッシュ + OpenSearch 検索インデックスです。サービス間は gRPC で通信し、外部向け HTTP インターフェースは統一プレフィックス `/api` を使用します。
 
-その他の設計図：プロジェクト全景 [docs/project.svg](../../docs/project.svg) · リクエストサイクル [docs/request-cycle.svg](../../docs/request-cycle.svg) · セキュリティアーキテクチャ [docs/security.svg](../../docs/security.svg) · プロジェクト構成 [docs/structure.svg](../../docs/structure.svg)。
+その他の設計図：プロジェクト全景 [docs/project.svg](../../docs/project.svg) · リクエストサイクル [docs/request-cycle.svg](../../docs/request-cycle.svg) · セキュリティアーキテクチャ [docs/security.svg](../../docs/security.svg) · プロジェクト構成 [docs/structure.svg](../../docs/structure.svg) · プロジェクトライフサイクル [docs/lifecycle.svg](../../docs/lifecycle.svg).
 
 ## プロジェクト全景
 
@@ -55,6 +56,23 @@ Open Novel は、クラウドネイティブなマイクロサービスアーキ
 
 <p align="center"><img src="images/ja/security.svg" alt="セキュリティアーキテクチャ図" width="860"/></p>
 
+## プロジェクトライフサイクル
+
+<p align="center"><img src="images/ja/lifecycle.svg" alt="プロジェクトライフサイクル" width="860"/></p>
+
+計画・設計・実装・テスト・ビルド・リリース・デプロイ・運用・改善の 9 ステップ。改善は次の計画に還流します。
+
+## プロジェクトのペット Novi
+
+<p align="center"><img src="../pet.svg" alt="Open Novel のプロジェクトペット Novi" width="200"/></p>
+
+Novi は本プロジェクトのペットです（静止版は [docs/mascot.svg](../mascot.svg)）。まばたきし、翼を動かし、文 / A / あ の言語バブルがふわふわ浮きます。
+
+| どこで会えるか | 状態の決まり方 |
+| :--- | :--- |
+| ターミナル：`bash scripts/pet.sh`（`--line` で 1 行） | 作業ツリーがきれいか、リモートより先行 / 遅延しているか |
+| バックエンド：`GET /api/pet.svg`（ヘッダー `X-Api-Version: v1`） | MySQL / Redis / OpenSearch の死活 → happy / degraded / down |
+
 ---
 
 ## ディレクトリ構成
@@ -67,7 +85,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos フレームワークソース（上流フレームワーク、そのまま保持、変更禁止）
 │  └─ backend/               #   本プロジェクトの業務バックエンド：cmd/server エントリ + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # プロジェクトドキュメント（計画、アーキテクチャ図、i18n README、寄付用 QR コード）
-├─ scripts/                  # ビルド・デプロイスクリプト（post-push.sh 自動リリース、smoke.sh）
+├─ scripts/                  # ビルド・デプロイスクリプト（post-push.sh 自動リリース、install.sh、smoke.sh、pet.sh）
 ├─ docker-compose.yml        # ローカル依存スタック：MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # プロジェクト協力規範
 └─ README.md                 # プロジェクト説明ドキュメント

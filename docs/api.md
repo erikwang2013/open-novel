@@ -214,6 +214,22 @@ zh-CN 支付宝已实现（沙箱可配置）；微信支付国际版（wechatpa
 
 超限返回 `140429 TOO_MANY_REQUESTS`。
 
+## 项目宠物（2026-09 新增）
+
+`GET /api/pet.svg` —— 返回项目宠物 Novi 的活体状态图（`image/svg+xml`，非 proto 路由，注册于 `internal/server/server.go`，实现见 `internal/pkg/pet.go`）。与其它接口一致，需要 `X-Api-Version: v1`；响应不缓存（`Cache-Control: no-store`）。
+
+心情由三项依赖探测（各 2s 预算）决定，并注入 SVG 的表情与状态牌：
+
+| 探测结果 | `mood` | 表情 |
+| :--- | :--- | :--- |
+| MySQL + Redis + OpenSearch 全通 | `happy` | 睁眼微笑，状态牌 `up 3h12m` |
+| 部分不可用（降级运行） | `degraded` | 右眼半闭，状态牌 `down: redis` |
+| 三项全不可用 | `down` | 双眼闭合 + 飘 `z`，状态牌列出全部不可用依赖 |
+
+```bash
+curl -H 'X-Api-Version: v1' http://localhost:8000/api/pet.svg > pet.svg
+```
+
 ## 客户端示例
 
 ```bash

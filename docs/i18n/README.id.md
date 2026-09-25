@@ -8,7 +8,7 @@
 
 > Platform membaca novel multibahasa global berbasis arsitektur mikroservis **Go-Kratos** dengan frontend multi-platform **Flutter / HarmonyOS**, mendukung **lebih dari 12 bahasa utama**, dan dirancang untuk memberikan kemampuan membaca, interaksi, pencarian, dan rekomendasi personal kepada pengguna di seluruh dunia.
 
-<div align="center"><img src="../mascot.svg" alt="Maskot Open Novel, Novi" width="150"/></div>
+<div align="center"><img src="../pet.svg" alt="Pet proyek Open Novel Novi" width="150"/></div>
 
 ---
 
@@ -21,6 +21,7 @@ Open Novel adalah platform novel multibahasa global dengan arsitektur mikroservi
 - **Multibahasa**: pemuatan dinamis sumber daya i18n, mendukung lebih dari 12 bahasa (Mandarin, Inggris, Jepang, Korea, Prancis, Jerman, Spanyol, Rusia, Arab, dll.)
 - **Penyimpanan**: MySQL 8 (master-slave dengan pemisahan baca/tulis) + Redis (cache data panas / sesi) + OpenSearch (pencarian multibahasa)
 - **Operasional**: deployment satu klik dengan Docker Compose, pemantauan Prometheus + Grafana, integrasi berkelanjutan GitHub Actions
+- **Pet proyek**: Novi — sumber animasi `docs/pet.svg` (terminal: `bash scripts/pet.sh`, backend: `GET /api/pet.svg`)
 
 ## Fitur
 
@@ -54,6 +55,23 @@ Diagram desain lainnya: gambaran umum proyek [../project.svg](../project.svg) ·
 
 <p align="center"><img src="images/id/security.svg" alt="Arsitektur keamanan" width="860"/></p>
 
+## Siklus hidup proyek
+
+<p align="center"><img src="images/id/lifecycle.svg" alt="Siklus hidup proyek" width="860"/></p>
+
+Sembilan tahap: perencanaan, desain, kode, uji, build, rilis, deployment, operasi, iterasi — umpan balik kembali ke perencanaan berikutnya.
+
+## Pet proyek Novi
+
+<p align="center"><img src="../pet.svg" alt="Pet proyek Open Novel Novi" width="200"/></p>
+
+Novi adalah pet proyek ini (versi statis: [docs/mascot.svg](../mascot.svg)): berkedip, mengepakkan sayap, dan tiga balon bahasa 文 / A / あ melayang di atasnya.
+
+| Di mana menemukannya | Apa yang menentukan suasana hatinya |
+| :--- | :--- |
+| Terminal: `bash scripts/pet.sh` (`--line` untuk satu baris) | Kebersihan working tree dan selisih maju / mundur dari remote |
+| Backend: `GET /api/pet.svg` (header `X-Api-Version: v1`) | Status MySQL / Redis / OpenSearch → happy / degraded / down |
+
 ## Struktur direktori
 
 ```
@@ -64,7 +82,7 @@ open-novel/
 ├─ kratos/                   # Kode sumber framework Go-Kratos (framework hulu, dipertahankan apa adanya, jangan diubah)
 │  └─ backend/               #   Backend bisnis proyek ini: entri cmd/server + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # Dokumentasi proyek (perencanaan, diagram arsitektur, README i18n, kode donasi)
-├─ scripts/                  # Skrip build dan deployment (rilis otomatis post-push.sh, smoke.sh)
+├─ scripts/                  # skrip build dan deployment (post-push.sh, install.sh, smoke.sh, pet.sh)
 ├─ docker-compose.yml        # Stack dependensi lokal: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # Pedoman kolaborasi proyek
 └─ README.md                 # Dokumen penjelasan proyek

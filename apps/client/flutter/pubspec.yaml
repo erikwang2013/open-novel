@@ -59,6 +59,8 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   generate: true
+  assets:
+    - assets/pet.png # 项目宠物 Novi（源图 docs/pet.svg，见 lib/widgets/novi_pet.dart）
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

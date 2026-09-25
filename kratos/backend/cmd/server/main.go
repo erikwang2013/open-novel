@@ -69,7 +69,8 @@ func main() {
 	cdnSvc := service.NewCdnService(biz.NewCdnAdminUsecase(d, cr))
 
 	httpSrv := server.NewHTTPServer(cfg.Server, am, logger,
-		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, behaviorSvc, cdnSvc)
+		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, behaviorSvc, cdnSvc,
+		pkg.NewPet(d.DB, d.RDB, cfg.Data.OpensearchAddr))
 	grpcSrv := server.NewGRPCServer(cfg.Server, am, logger,
 		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, behaviorSvc, cdnSvc)
 

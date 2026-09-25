@@ -8,7 +8,7 @@
 
 > A global multilingual novel reading platform built on the **Go-Kratos** microservice architecture with **Flutter / HarmonyOS** multi-client frontends, supporting **12+ major languages** and delivering reading, interaction, search and personalized recommendation capabilities to users worldwide.
 
-<div align="center"><img src="../mascot.svg" alt="Open Novel mascot Novi" width="150"/></div>
+<div align="center"><img src="../pet.svg" alt="Open Novel project pet Novi" width="150"/></div>
 
 ---
 
@@ -21,6 +21,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 - **Multilingual**: Dynamically loaded i18n resources, supporting 12+ languages (Chinese, English, Japanese, Korean, French, German, Spanish, Russian, Arabic, etc.)
 - **Storage**: MySQL 8 (master-slave read/write separation) + Redis (hot cache / sessions) + OpenSearch (multilingual search)
 - **Operations**: Docker Compose one-click deployment, Prometheus + Grafana monitoring, GitHub Actions continuous integration
+- **Project pet**: Novi — animated source in `docs/pet.svg` (terminal mood: `bash scripts/pet.sh`, live status: `GET /api/pet.svg`)
 
 
 ## Features
@@ -41,7 +42,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 
 Overall Go-Kratos microservice architecture: Flutter / HarmonyOS clients interact with the API gateway via Nginx + a multi-vendor CDN (Cloudflare / CloudFront on the global route, Aliyun / Tencent Cloud on the China route; admin-configurable, config changes apply instantly via hot reload); the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api` prefix.
 
-Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · request cycle [docs/request-cycle.svg](../../docs/request-cycle.svg) · security architecture [docs/security.svg](../../docs/security.svg) · project structure [docs/structure.svg](../../docs/structure.svg).
+Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · request cycle [docs/request-cycle.svg](../../docs/request-cycle.svg) · security architecture [docs/security.svg](../../docs/security.svg) · project structure [docs/structure.svg](../../docs/structure.svg). · project lifecycle [docs/lifecycle.svg](../../docs/lifecycle.svg)
 
 ## Project Panorama
 
@@ -55,6 +56,23 @@ Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · r
 
 <p align="center"><img src="images/en/security.svg" alt="Security architecture diagram" width="860"/></p>
 
+## Project Lifecycle
+
+<p align="center"><img src="images/en/lifecycle.svg" alt="Project Lifecycle" width="860"/></p>
+
+Nine steps — plan, design, code, test, build, release, deploy, operate, iterate — and feedback always flows back into the next planning round.
+
+## Project Pet Novi
+
+<p align="center"><img src="../pet.svg" alt="Open Novel project pet Novi" width="200"/></p>
+
+Novi is the project pet (still version: [docs/mascot.svg](../mascot.svg)): it blinks, flaps its wings, and three language bubbles 文 / A / あ float above its head.
+
+| Where to meet Novi | What its mood reflects |
+| :--- | :--- |
+| Terminal: `bash scripts/pet.sh` (`--line` for a single line) | Whether the working tree is clean and how far ahead/behind the remote it is |
+| Backend: `GET /api/pet.svg` (header `X-Api-Version: v1`) | MySQL / Redis / OpenSearch health → happy / degraded / down |
+
 ---
 
 ## Directory Structure
@@ -67,7 +85,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos framework source (upstream framework, keep as-is, do not modify)
 │  └─ backend/               #   Business backend of this project: cmd/server entry + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # Project documentation (planning, architecture diagrams, i18n READMEs, reward QR codes)
-├─ scripts/                  # Build and deployment scripts (post-push.sh auto release, smoke.sh)
+├─ scripts/                  # build & deploy scripts (post-push.sh auto release, install.sh, smoke.sh, pet.sh)
 ├─ docker-compose.yml        # Local dependency stack: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # Project collaboration conventions
 └─ README.md                 # Project documentation

@@ -8,7 +8,7 @@
 
 > Plataforma global de leitura de romances multilíngue baseada na arquitetura de microsserviços **Go-Kratos** com frontends multiplataforma **Flutter / HarmonyOS**, compatível com **mais de 12 idiomas principais**, oferecendo a usuários do mundo todo leitura, interação, busca e recomendações personalizadas.
 
-<div align="center"><img src="../mascot.svg" alt="Mascote do Open Novel, Novi" width="150"/></div>
+<div align="center"><img src="../pet.svg" alt="Pet do projeto Open Novel Novi" width="150"/></div>
 
 ---
 
@@ -21,6 +21,7 @@ Open Novel é uma plataforma global de romances multilíngue com arquitetura de 
 - **Multilíngue**: carregamento dinâmico de recursos i18n, compatível com mais de 12 idiomas (chinês, inglês, japonês, coreano, francês, alemão, espanhol, russo, árabe etc.)
 - **Armazenamento**: MySQL 8 (mestre-escravo com separação de leitura/escrita) + Redis (cache de dados quentes / sessões) + OpenSearch (busca multilíngue)
 - **Operações**: implantação com um clique via Docker Compose, monitoramento com Prometheus + Grafana, integração contínua com GitHub Actions
+- **Pet do projeto**: Novi — fonte animada em `docs/pet.svg` (terminal: `bash scripts/pet.sh`, backend: `GET /api/pet.svg`)
 
 ## Funcionalidades
 
@@ -54,6 +55,23 @@ Outros diagramas: visão geral do projeto [../project.svg](../project.svg) · ci
 
 <p align="center"><img src="images/pt/security.svg" alt="Arquitetura de segurança" width="860"/></p>
 
+## Ciclo de vida do projeto
+
+<p align="center"><img src="images/pt/lifecycle.svg" alt="Ciclo de vida do projeto" width="860"/></p>
+
+Nove etapas: planejamento, design, código, testes, build, publicação, implantação, operação e iteração — o retorno alimenta o próximo planejamento.
+
+## O pet do projeto: Novi
+
+<p align="center"><img src="../pet.svg" alt="Pet do projeto Open Novel Novi" width="200"/></p>
+
+Novi é o pet do projeto (versão estática: [docs/mascot.svg](../mascot.svg)): pisca, bate as asas e três balões de idioma 文 / A / あ flutuam sobre a cabeça.
+
+| Onde encontrá-lo | Do que depende o humor |
+| :--- | :--- |
+| Terminal: `bash scripts/pet.sh` (`--line` para uma linha) | Limpeza da árvore de trabalho e adiantamento / atraso em relação ao remoto |
+| Backend: `GET /api/pet.svg` (cabeçalho `X-Api-Version: v1`) | Saúde de MySQL / Redis / OpenSearch → happy / degraded / down |
+
 ## Estrutura de diretórios
 
 ```
@@ -64,7 +82,7 @@ open-novel/
 ├─ kratos/                   # Código-fonte do framework Go-Kratos (framework upstream, mantido intacto, não modificar)
 │  └─ backend/               #   Backend de negócios do projeto: entrada cmd/server + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # Documentação do projeto (planejamento, diagramas de arquitetura, READMEs i18n, códigos de doação)
-├─ scripts/                  # Scripts de build e implantação (post-push.sh para releases automáticas, smoke.sh)
+├─ scripts/                  # scripts de build e implantação (post-push.sh, install.sh, smoke.sh, pet.sh)
 ├─ docker-compose.yml        # Pilha de dependências local: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # Regras de colaboração do projeto
 └─ README.md                 # Documentação do projeto

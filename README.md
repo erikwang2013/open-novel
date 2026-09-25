@@ -8,7 +8,7 @@
 
 > 基于 **Go-Kratos** 微服务架构 + **Flutter / HarmonyOS** 多端前端的全球多语言小说阅读平台，支持 **12+ 种主要语种**，面向全球用户提供阅读、互动、搜索与个性化推荐能力。
 
-<div align="center"><img src="docs/mascot.svg" alt="Open Novel 吉祥物 Novi" width="150"/></div>
+<div align="center"><img src="docs/pet.svg" alt="Open Novel 项目宠物 Novi" width="150"/></div>
 
 ---
 
@@ -21,6 +21,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **多语言**：i18n 资源动态加载，支持 12+ 语种（中文、英文、日文、韩文、法文、德文、西班牙文、俄文、阿拉伯文等）
 - **存储**：MySQL 8（主从读写分离）+ Redis（热点缓存 / 会话）+ ristretto（进程内 L1 二级缓存）+ OpenSearch（多语言搜索）
 - **运维**：Docker Compose 一键部署，Prometheus + Grafana 监控，GitHub Actions 持续集成
+- **项目宠物**：Novi（[docs/pet.svg](docs/pet.svg)，会眨眼 / 扇翅 / 浮语言气泡）—— 终端 `bash scripts/pet.sh` 看仓库心情，后端 `GET /api/pet.svg` 按依赖健康度换表情，客户端与管理端空状态也用它
 
 ## 功能特性
 
@@ -40,9 +41,33 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + 多厂商 CDN（Cloudflare / CloudFront 全球线，阿里云 / 腾讯云中国线；管理端可配置、指纹热更新即时生效）与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
 
-其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg)。
+其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg) · 项目生命周期 [docs/lifecycle.svg](docs/lifecycle.svg)。
 
-项目规划：架构设计 [docs/novel-project-planning.md](docs/novel-project-planning.md) · 现状盘点与阶段路线 [docs/roadmap.md](docs/roadmap.md) · 详细任务分解 [docs/tasks.md](docs/tasks.md) · 支付渠道上线配置 [docs/merchant-config.md](docs/merchant-config.md)。
+## 项目生命周期
+
+<p align="center"><img src="docs/lifecycle.svg" alt="项目生命周期图" width="860"/></p>
+
+从**规划 → 架构设计 → 编码 → 测试 → 构建 → 发布 → 部署 → 监控 → 迭代**九个环节串成闭环：规划落地在 `planning / roadmap / tasks` 三件套；发布环节由 GitHub Actions 在 push `main` 后自动递增 `v*` tag 并以增量 changelog 创建 Release（幂等）；迭代环节把行为埋点、报表统计与搜索日志回流到需求池，进入下一轮规划。底部为已交付里程碑（后端基础 / 多端前端 / 安全加固 / CDN 全站加速 / 管理后台 / VIP 与支付）。
+
+## 项目宠物 Novi
+
+<p align="center"><img src="docs/pet.svg" alt="Open Novel 项目宠物 Novi" width="220"/></p>
+
+**Novi** 是本项目的宠物（静止版为 [docs/mascot.svg](docs/mascot.svg)）：一只戴眼镜的猫头鹰，坐在翻开的书上，头顶浮着 文 / A / あ 三颗语言气泡——对应 12+ 语种与「阅读」两件事。源图是**会动**的 SVG（SMIL：呼吸浮动、眨眼、扇翅、气泡漂浮、光晕呼吸），不需要 JS，README 与浏览器里直接就能看到它在动。
+
+它有三个住处，都能反映项目当前状态：
+
+| 在哪见 | 怎么看 | 状态由什么决定 |
+| :--- | :--- | :--- |
+| 文档 / README | `docs/pet.svg`（12 语言 README 共用，与语言无关） | 固定形象 |
+| 终端 | `bash scripts/pet.sh`（`--line` 只输出一行，可挂 pre-commit / CI 日志） | 工作区是否干净、领先 / 落后远端多少提交 |
+| 后端 | `GET /api/pet.svg`（请求头 `X-Api-Version: v1`，见 `internal/pkg/pet.go`） | MySQL / Redis / OpenSearch 探测结果 → `happy` / `degraded` / `down` 三态表情 + 状态牌（含运行时长与不可用依赖） |
+
+客户端与管理端也把它接进了产品：客户端「暂无数据」与加载态（`lib/widgets/novi_pet.dart`）、管理端登录页（`apps/admin/assets/pet.png`）显示同一只 Novi。`GET /api/pet.svg` 是活的——依赖探测失败的次数越多，它的表情越困。
+
+## 项目规划
+
+架构设计 [docs/novel-project-planning.md](docs/novel-project-planning.md) · 现状盘点与阶段路线 [docs/roadmap.md](docs/roadmap.md) · 详细任务分解 [docs/tasks.md](docs/tasks.md) · 支付渠道上线配置 [docs/merchant-config.md](docs/merchant-config.md)。
 
 ## 目录结构
 
@@ -51,13 +76,14 @@ open-novel/
 ├─ apps/                     # 多端前端
 │  ├─ client/                #   客户端（C 端）
 │  │  ├─ flutter/            #     Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
+│  │  │  └─ assets/pet.png   #       项目宠物贴图（源图 docs/pet.svg，空 / 加载态使用）
 │  │  └─ harmonyos/          #     HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
 │  └─ admin/                 #   管理端（Flutter Web，B 端后台）
 ├─ .github/                  # CI/CD：GitHub Actions 发布工作流（release.yml）
 ├─ kratos/                   # Go-Kratos 框架源码（上游框架，原样保留，勿改）
 │  └─ backend/               #   本项目业务后端：cmd/server 入口 + api/ + internal/ + sql/ + opensearch/
-├─ docs/                     # 项目文档（规划、架构图、i18n README、打赏码）
-├─ scripts/                  # 构建与部署脚本（post-push.sh 自动发布、smoke.sh）
+├─ docs/                     # 项目文档（规划、架构 / 生命周期 / 宠物等 SVG 图、i18n README、打赏码）
+├─ scripts/                  # 构建与部署脚本（install.sh 一键安装、post-push.sh 自动发布、smoke.sh、pet.sh 终端宠物）
 ├─ docker-compose.yml        # 本地依赖栈：MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # 项目协作规范
 └─ README.md                 # 项目说明文档
@@ -104,6 +130,7 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 | 推荐 | `/api/...` | `kratos/backend/api/recommendation/v1` |
 | 支付 | `/api/payments/...` | `kratos/backend/api/payment/v1` |
 | 管理 | `/api/stats/overview`、`/api/categories`、`/api/tags`、`/api/admin/audit-logs`（审计日志，分页 + 多条件筛选） | `kratos/backend/api/admin/v1` |
+| 项目宠物 | `/api/pet.svg`（活体状态图，非 proto 路由，需 `X-Api-Version: v1`） | `kratos/backend/internal/pkg/pet.go` |
 
 详细路由见各 proto 文件 `option (google.api.http)` 声明。
 
@@ -149,6 +176,7 @@ bash scripts/install.sh
 ## 使用说明
 
 - **后端**：HTTP `http://localhost:8000`（gRPC `:9000`），接口统一前缀 `/api`，版本经请求头 `X-Api-Version: v1` 协商
+- **项目宠物**：`curl -H 'X-Api-Version: v1' http://localhost:8000/api/pet.svg > pet.svg` 取活体状态图；终端看仓库心情用 `bash scripts/pet.sh`（`--line` 只输出一行）
 - **客户端**：`cd apps/client/flutter && flutter pub get && flutter run -d chrome`（默认连 localhost:8000）
 - **管理端**：`cd apps/admin && flutter pub get && flutter run -d chrome`，端口由 Flutter 随机分配并打印在控制台（可用 `--web-port` 固定）
 - **依赖栈端口映射**：MySQL `3307`、Redis `6380`、OpenSearch `9200`

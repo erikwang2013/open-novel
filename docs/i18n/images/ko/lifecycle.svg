@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="640" viewBox="0 0 1000 640" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#00897b"/>
+    </marker>
+  </defs>
+
+  <text x="44" y="34" font-size="22" font-weight="700" fill="#263238">Open Novel — 프로젝트 라이프사이클</text>
+  <text x="44" y="54" font-size="12" fill="#78909c">Project Lifecycle · Plan → Design → Code → Test → Build → Release → Deploy → Operate → Iterate</text>
+
+  <!-- 阶段图例：独占一行，给非中文语种留足宽度 -->
+  <g font-size="11" fill="#546e7a">
+    <circle cx="612" cy="72" r="5" fill="#1e88e5"/>
+    <text x="622" y="76">기획과 구현</text>
+    <circle cx="752" cy="72" r="5" fill="#5e35b1"/>
+    <text x="762" y="76">검증과 릴리스</text>
+    <circle cx="872" cy="72" r="5" fill="#00897b"/>
+    <text x="882" y="76">운영과 개선</text>
+  </g>
+
+  <!-- ================= 步骤 1-3 / plan ================= -->
+  <g>
+    <rect x="50" y="92" width="280" height="88" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <circle cx="76" cy="120" r="13" fill="#1e88e5"/>
+    <text x="76" y="125" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+    <text x="98" y="125" font-size="13.5" font-weight="700" fill="#37474f">요구사항 기획</text>
+    <text x="310" y="125" font-size="10" fill="#90a4ae" text-anchor="end">Plan</text>
+    <text x="70" y="150" font-size="10.5" fill="#546e7a">프로젝트 정체성 · 대상 언어 · 마일스톤 분해</text>
+    <text x="70" y="167" font-size="10.5" fill="#78909c">planning / roadmap / tasks 3종 세트</text>
+  </g>
+  <g>
+    <rect x="360" y="92" width="280" height="88" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <circle cx="386" cy="120" r="13" fill="#1e88e5"/>
+    <text x="386" y="125" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">2</text>
+    <text x="408" y="125" font-size="13.5" font-weight="700" fill="#37474f">아키텍처 설계</text>
+    <text x="620" y="125" font-size="10" fill="#90a4ae" text-anchor="end">Design</text>
+    <text x="380" y="150" font-size="10.5" fill="#546e7a">proto 우선 · 도메인별 마이크로서비스</text>
+    <text x="380" y="167" font-size="10.5" fill="#78909c">데이터 모델 23 테이블 · i18n 언어 규범</text>
+  </g>
+  <g>
+    <rect x="670" y="92" width="280" height="88" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
+    <circle cx="696" cy="120" r="13" fill="#1e88e5"/>
+    <text x="696" y="125" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+    <text x="718" y="125" font-size="13.5" font-weight="700" fill="#37474f">구현</text>
+    <text x="930" y="125" font-size="10" fill="#90a4ae" text-anchor="end">Code</text>
+    <text x="690" y="150" font-size="10.5" fill="#546e7a">백엔드 8개 서비스 · 클라이언트 13 ARB</text>
+    <text x="690" y="167" font-size="10.5" fill="#78909c">관리자 10개 모듈 · CDN 멀티벤더 기반</text>
+  </g>
+
+  <line x1="332" y1="136" x2="356" y2="136" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="642" y1="136" x2="666" y2="136" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- 第 1 行 → 第 2 行（右端折返） -->
+  <polyline points="810,180 810,196 810,210" fill="none" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ================= 步骤 4-6 / verify (right-to-left) ================= -->
+  <g>
+    <rect x="670" y="214" width="280" height="88" rx="12" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+    <circle cx="696" cy="242" r="13" fill="#5e35b1"/>
+    <text x="696" y="247" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+    <text x="718" y="247" font-size="13.5" font-weight="700" fill="#37474f">테스트 검증</text>
+    <text x="930" y="247" font-size="10" fill="#90a4ae" text-anchor="end">Test</text>
+    <text x="690" y="272" font-size="10.5" fill="#546e7a">go test · flutter test · 제한·서명 단위 테스트</text>
+    <text x="690" y="289" font-size="10.5" fill="#78909c">scripts/smoke.sh 핵심 API 스모크</text>
+  </g>
+  <g>
+    <rect x="360" y="214" width="280" height="88" rx="12" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+    <circle cx="386" cy="242" r="13" fill="#5e35b1"/>
+    <text x="386" y="247" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+    <text x="408" y="247" font-size="13.5" font-weight="700" fill="#37474f">빌드와 패키징</text>
+    <text x="620" y="247" font-size="10" fill="#90a4ae" text-anchor="end">Build</text>
+    <text x="380" y="272" font-size="10.5" fill="#546e7a">go build (HTTP 8000 / gRPC 9000)</text>
+    <text x="380" y="289" font-size="10.5" fill="#78909c">flutter build web/데스크톱/모바일 + 하모니</text>
+  </g>
+  <g>
+    <rect x="50" y="214" width="280" height="88" rx="12" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
+    <circle cx="76" cy="242" r="13" fill="#5e35b1"/>
+    <text x="76" y="247" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">6</text>
+    <text x="98" y="247" font-size="13.5" font-weight="700" fill="#37474f">버전 릴리스</text>
+    <text x="310" y="247" font-size="10" fill="#90a4ae" text-anchor="end">Release</text>
+    <text x="70" y="272" font-size="10.5" fill="#546e7a">push main → CI가 v* tag 자동 증가</text>
+    <text x="70" y="289" font-size="10.5" fill="#78909c">증분 changelog로 Release 생성(멱등)</text>
+  </g>
+
+  <line x1="668" y1="258" x2="644" y2="258" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="358" y1="258" x2="334" y2="258" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- 第 2 行 → 第 3 行（左端折返） -->
+  <polyline points="190,302 190,318 190,332" fill="none" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ================= 步骤 7-9 / operate ================= -->
+  <g>
+    <rect x="50" y="336" width="280" height="88" rx="12" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <circle cx="76" cy="364" r="13" fill="#00897b"/>
+    <text x="76" y="369" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">7</text>
+    <text x="98" y="369" font-size="13.5" font-weight="700" fill="#37474f">배포와 전달</text>
+    <text x="310" y="369" font-size="10" fill="#90a4ae" text-anchor="end">Deploy</text>
+    <text x="70" y="394" font-size="10.5" fill="#546e7a">docker compose 의존 스택 · Nginx 원본</text>
+    <text x="70" y="411" font-size="10.5" fill="#78909c">멀티벤더 CDN 전 사이트 가속(설정 핫리로드)</text>
+  </g>
+  <g>
+    <rect x="360" y="336" width="280" height="88" rx="12" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <circle cx="386" cy="364" r="13" fill="#00897b"/>
+    <text x="386" y="369" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">8</text>
+    <text x="408" y="369" font-size="13.5" font-weight="700" fill="#37474f">운영 모니터링</text>
+    <text x="620" y="369" font-size="10" fill="#90a4ae" text-anchor="end">Operate</text>
+    <text x="380" y="394" font-size="10.5" fill="#546e7a">Prometheus · Grafana · ELK 로그</text>
+    <text x="380" y="411" font-size="10.5" fill="#78909c">감사 로그 조회 · 라이브 펫 엔드포인트</text>
+    <!-- 宠物贴纸：Novi 常驻运维节点 -->
+    <g transform="translate(596,406)">
+      <circle cx="0" cy="0" r="22" fill="#FDF3E3" stroke="#00897b" stroke-width="1.5"/>
+      <path d="M-11 -6 L-15 -17 L-4 -10 Z" fill="#E8923F"/>
+      <path d="M11 -6 L15 -17 L4 -10 Z" fill="#E8923F"/>
+      <ellipse cx="0" cy="0" rx="14" ry="13" fill="#F0A04B"/>
+      <ellipse cx="0" cy="2" rx="10" ry="9" fill="#FBDCA8"/>
+      <circle cx="-5" cy="-1" r="4.6" fill="#FFFFFF" stroke="#2E4057" stroke-width="1.2"/>
+      <circle cx="5" cy="-1" r="4.6" fill="#FFFFFF" stroke="#2E4057" stroke-width="1.2"/>
+      <circle cx="-5" cy="-1" r="1.9" fill="#2E4057"/>
+      <circle cx="5" cy="-1" r="1.9" fill="#2E4057"/>
+      <path d="M-0.5 4 L-3 8 Q0 10 3 8 Z" fill="#E2725B"/>
+    </g>
+  </g>
+  <g>
+    <rect x="670" y="336" width="280" height="88" rx="12" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
+    <circle cx="696" cy="364" r="13" fill="#00897b"/>
+    <text x="696" y="369" font-size="13" font-weight="700" fill="#ffffff" text-anchor="middle">9</text>
+    <text x="718" y="369" font-size="13.5" font-weight="700" fill="#37474f">피드백 반복</text>
+    <text x="930" y="369" font-size="10" fill="#90a4ae" text-anchor="end">Iterate</text>
+    <text x="690" y="394" font-size="10.5" fill="#546e7a">행동 추적 · 리포트 · 검색 로그</text>
+    <text x="690" y="411" font-size="10.5" fill="#78909c">요구사항 풀에 환류, 다음 사이클로</text>
+  </g>
+
+  <line x1="332" y1="380" x2="356" y2="380" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="642" y1="380" x2="666" y2="380" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ================= loop back ================= -->
+  <path d="M810 424 L810 446 L28 446 L28 136 L46 136" fill="none" stroke="#00897b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-teal)"/>
+  <rect x="330" y="432" width="280" height="28" rx="14" fill="#e0f2f1" stroke="#00897b" stroke-width="1.5"/>
+  <text x="470" y="451" font-size="11.5" font-weight="600" fill="#00695c" text-anchor="middle">피드백 환류 · 지속 개선 루프</text>
+
+  <!-- ================= milestones ================= -->
+  <rect x="30" y="478" width="940" height="92" rx="12" fill="#eceff1" stroke="#b0bec5" stroke-width="1.5"/>
+  <rect x="46" y="490" width="104" height="24" rx="6" fill="#546e7a"/>
+  <text x="98" y="506" font-size="11.5" font-weight="600" fill="#ffffff" text-anchor="middle">마일스톤</text>
+  <text x="164" y="506" font-size="10.5" fill="#78909c">MILESTONES · 모두 납품 완료 및 tag 발행</text>
+
+  <g font-size="11.5" font-weight="600" fill="#37474f" text-anchor="middle">
+    <rect x="44" y="522" width="146" height="36" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="1.5"/>
+    <text x="117" y="538">백엔드 기반</text>
+    <text x="117" y="551" font-size="9.5" font-weight="400" fill="#78909c">Kratos 8개 서비스</text>
+
+    <rect x="194" y="522" width="146" height="36" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="1.5"/>
+    <text x="267" y="538">멀티 클라이언트</text>
+    <text x="267" y="551" font-size="9.5" font-weight="400" fill="#78909c">Flutter · 하모니</text>
+
+    <rect x="344" y="522" width="146" height="36" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="1.5"/>
+    <text x="417" y="538">보안 강화</text>
+    <text x="417" y="551" font-size="9.5" font-weight="400" fill="#78909c">JWT · RBAC · 요청 제한</text>
+
+    <rect x="494" y="522" width="146" height="36" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="1.5"/>
+    <text x="567" y="538">CDN 전 사이트 가속</text>
+    <text x="567" y="551" font-size="9.5" font-weight="400" fill="#78909c">Cloudflare 등 4개 사</text>
+
+    <rect x="644" y="522" width="146" height="36" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="1.5"/>
+    <text x="717" y="538">관리자 콘솔</text>
+    <text x="717" y="551" font-size="9.5" font-weight="400" fill="#78909c">10개 기능 모듈</text>
+
+    <rect x="794" y="522" width="146" height="36" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="1.5"/>
+    <text x="867" y="538">VIP와 결제</text>
+    <text x="867" y="551" font-size="9.5" font-weight="400" fill="#78909c">11개 결제 채널</text>
+  </g>
+
+  <!-- ================= footer ================= -->
+  <text x="44" y="596" font-size="11" fill="#78909c">자동화: push main → GitHub Actions가 v* tag + changelog Release 자동 생성(멱등) · install.sh 원클릭 · smoke.sh · docker compose</text>
+  <text x="44" y="616" font-size="11" fill="#00897b">라이브 펫: GET /api/pet.svg (헤더 X-Api-Version: v1) — MySQL / Redis / OpenSearch 탐지, happy / degraded / down 렌더</text>
+  <text x="988" y="634" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+</svg>

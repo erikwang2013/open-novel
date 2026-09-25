@@ -8,7 +8,7 @@
 
 > **Go-Kratos** माइक्रोसर्विस आर्किटेक्चर + **Flutter / HarmonyOS** मल्टी-प्लेटफ़ॉर्म फ्रंटएंड पर आधारित वैश्विक बहुभाषी उपन्यास पठन मंच, जो **12+ प्रमुख भाषाओं** का समर्थन करता है और दुनिया भर के उपयोगकर्ताओं को पठन, इंटरैक्शन, खोज और व्यक्तिगत अनुशंसा क्षमताएँ प्रदान करता है।
 
-<div align="center"><img src="../mascot.svg" alt="Open Novel का शुभंकर Novi" width="150"/></div>
+<div align="center"><img src="../pet.svg" alt="Open Novel परियोजना पेट Novi" width="150"/></div>
 
 ---
 
@@ -21,6 +21,7 @@ Open Novel एक क्लाउड-नेटिव माइक्रोसर
 - **बहुभाषी**: i18n संसाधन डायनामिक रूप से लोड होते हैं, 12+ भाषाओं का समर्थन (चीनी, अंग्रेज़ी, जापानी, कोरियाई, फ्रेंच, जर्मन, स्पेनिश, रूसी, अरबी आदि)
 - **स्टोरेज**: MySQL 8 (मास्टर-स्लेव रीड-राइट सेपरेशन) + Redis (हॉट कैश / सत्र) + OpenSearch (बहुभाषी खोज)
 - **ऑप्स**: Docker Compose एक-क्लिक डिप्लॉयमेंट, Prometheus + Grafana मॉनिटरिंग, GitHub Actions निरंतर एकीकरण
+- **परियोजना पेट**: Novi — एनिमेटेड स्रोत `docs/pet.svg` (टर्मिनल: `bash scripts/pet.sh`, बैकएंड: `GET /api/pet.svg`)
 
 ## विशेषताएँ
 
@@ -54,6 +55,23 @@ Open Novel एक क्लाउड-नेटिव माइक्रोसर
 
 <p align="center"><img src="images/hi/security.svg" alt="सुरक्षा आर्किटेक्चर" width="860"/></p>
 
+## परियोजना जीवनचक्र
+
+<p align="center"><img src="images/hi/lifecycle.svg" alt="परियोजना जीवनचक्र" width="860"/></p>
+
+नौ चरण: योजना, डिज़ाइन, कोड, परीक्षण, बिल्ड, रिलीज़, परिनियोजन, संचालन, पुनरावृत्ति — फ़ीडबैक अगली योजना में लौटता है।
+
+## परियोजना पेट Novi
+
+<p align="center"><img src="../pet.svg" alt="Open Novel परियोजना पेट Novi" width="200"/></p>
+
+Novi इस परियोजना का पेट है (स्थिर संस्करण: [docs/mascot.svg](../mascot.svg)): पलक झपकाता है, पंख फड़फड़ाता है, और सिर पर 文 / A / あ भाषा-बुलबुले तैरते हैं।
+
+| कहाँ मिलेगा | मन किस पर निर्भर है |
+| :--- | :--- |
+| टर्मिनल: `bash scripts/pet.sh` (`--line` एक पंक्ति हेतु) | वर्किंग ट्री साफ़ है या नहीं और रिमोट से आगे / पीछे |
+| बैकएंड: `GET /api/pet.svg` (हेडर `X-Api-Version: v1`) | MySQL / Redis / OpenSearch की स्थिति → happy / degraded / down |
+
 ## निर्देशिका संरचना
 
 ```
@@ -64,7 +82,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos फ्रेमवर्क स्रोत कोड (अपस्ट्रीम फ्रेमवर्क, यथावत रखें, न बदलें)
 │  └─ backend/               #   इस प्रोजेक्ट का बिज़नेस बैकएंड: cmd/server एंट्री + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # प्रोजेक्ट दस्तावेज़ (प्लानिंग, आर्किटेक्चर आरेख, i18n README, दान कोड)
-├─ scripts/                  # बिल्ड और डिप्लॉय स्क्रिप्ट (post-push.sh ऑटो रिलीज़, smoke.sh)
+├─ scripts/                  # बिल्ड व परिनियोजन स्क्रिप्ट (post-push.sh, install.sh, smoke.sh, pet.sh)
 ├─ docker-compose.yml        # लोकल डिपेंडेंसी स्टैक: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # प्रोजेक्ट सहयोग दिशानिर्देश
 └─ README.md                 # प्रोजेक्ट दस्तावेज़

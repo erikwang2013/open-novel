@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Open Novel 项目宠物 Novi（书灵）。
+  动效：呼吸浮动 / 眨眼 / 扇翅 / 语言气泡漂浮 / 光晕呼吸（SMIL，浏览器与 GitHub README 直接可见）。
+  标记位：MOOD_FACE 与 MOOD_BADGE 两处空区域，由后端 GET /api/pet.svg 按实时心情注入
+  （内部区块），见 kratos/backend/internal/pkg/pet.go。本文件为纯角色图，标记位留空。
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title desc">
+  <title id="title">Novi — Open Novel 项目宠物</title>
+  <desc id="desc">一只戴眼镜的猫头鹰坐在翻开的书上，头顶三颗语言气泡（文 / A / あ），象征全球多语言小说平台；会呼吸浮动、眨眼、扇翅。后端 /api/pet.svg 按实时服务状态注入心情。</desc>
+
+  <defs>
+    <!-- 眨眼裁剪：眼睑严格落在眼球范围内，不外溢到脸/头顶 -->
+    <clipPath id="eye-l"><circle cx="218" cy="184" r="28.5"/></clipPath>
+    <clipPath id="eye-r"><circle cx="294" cy="184" r="28.5"/></clipPath>
+    <radialGradient id="ground" cx="50%" cy="45%" r="62%">
+      <stop offset="0%" stop-color="#FFF9EF"/>
+      <stop offset="100%" stop-color="#FDF3E3"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <circle cx="256" cy="256" r="240" fill="url(#ground)"/>
+  <!-- 光晕呼吸 -->
+  <ellipse cx="256" cy="286" rx="152" ry="140" fill="#F0A04B" opacity="0.12">
+    <animate attributeName="opacity" values="0.08;0.18;0.08" dur="4.2s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- 语言气泡：缓慢漂浮 -->
+  <g font-family="'Noto Sans','PingFang SC','Microsoft YaHei',sans-serif" font-weight="bold" text-anchor="middle">
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -8; 0 0" dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+      <circle cx="132" cy="74" r="30" fill="#E8F1FA"/>
+      <text x="132" y="76" font-size="26" fill="#2E4057">文</text>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -10; 0 0" dur="4.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+      <circle cx="256" cy="50" r="33" fill="#FBEED7"/>
+      <text x="256" y="52" font-size="28" fill="#2E4057">A</text>
+    </g>
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="0 0; 0 -7; 0 0" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+      <circle cx="380" cy="74" r="30" fill="#F7E7EA"/>
+      <text x="380" y="76" font-size="26" fill="#2E4057">あ</text>
+    </g>
+  </g>
+
+  <!-- 猫头鹰本体：呼吸浮动 -->
+  <g>
+    <animateTransform attributeName="transform" type="translate" values="0 0; 0 -6; 0 0" dur="3.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+
+    <!-- 耳羽 -->
+    <path d="M184 132 L168 82 L226 118 Z" fill="#E8923F"/>
+    <path d="M328 132 L344 82 L286 118 Z" fill="#E8923F"/>
+
+    <!-- 头 -->
+    <ellipse cx="256" cy="188" rx="90" ry="82" fill="#F0A04B"/>
+    <ellipse cx="256" cy="206" rx="64" ry="56" fill="#FBDCA8"/>
+
+    <!-- 眼睛 -->
+    <circle cx="218" cy="184" r="27" fill="#FFFFFF" stroke="#2E4057" stroke-width="3"/>
+    <circle cx="294" cy="184" r="27" fill="#FFFFFF" stroke="#2E4057" stroke-width="3"/>
+    <circle cx="218" cy="184" r="11" fill="#2E4057"/>
+    <circle cx="294" cy="184" r="11" fill="#2E4057"/>
+    <circle cx="214" cy="180" r="3.5" fill="#FFFFFF"/>
+    <circle cx="290" cy="180" r="3.5" fill="#FFFFFF"/>
+
+    <!-- 眨眼：眼睑自上而下扫过，裁剪在眼球内 -->
+    <g clip-path="url(#eye-l)">
+      <rect x="189" y="155" width="58" height="58" fill="#FBDCA8" transform="translate(0,-58)">
+        <animateTransform attributeName="transform" type="translate" values="0 -58; 0 -58; 0 0; 0 -58; 0 -58" keyTimes="0;0.9;0.94;0.98;1" dur="4.6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <g clip-path="url(#eye-r)">
+      <rect x="265" y="155" width="58" height="58" fill="#FBDCA8" transform="translate(0,-58)">
+        <animateTransform attributeName="transform" type="translate" values="0 -58; 0 -58; 0 0; 0 -58; 0 -58" keyTimes="0;0.9;0.94;0.98;1" dur="4.6s" begin="0.12s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+
+    <!--MOOD_FACE_START--><!--MOOD_FACE_END-->
+
+    <!-- 眼镜 -->
+    <circle cx="218" cy="184" r="33" fill="none" stroke="#2E4057" stroke-width="7"/>
+    <circle cx="294" cy="184" r="33" fill="none" stroke="#2E4057" stroke-width="7"/>
+    <path d="M251 184 L261 184" stroke="#2E4057" stroke-width="7" stroke-linecap="round"/>
+    <path d="M185 180 L158 171" stroke="#2E4057" stroke-width="7" stroke-linecap="round"/>
+    <path d="M327 180 L354 171" stroke="#2E4057" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- 喙 -->
+    <path d="M256 200 L243 222 Q256 230 269 222 Z" fill="#E2725B"/>
+
+    <!-- 身体 -->
+    <ellipse cx="256" cy="302" rx="78" ry="86" fill="#F0A04B"/>
+    <!-- 翅膀（扇动） -->
+    <ellipse cx="174" cy="300" rx="22" ry="48" fill="#D98A35" transform="rotate(-20 174 300)">
+      <animateTransform attributeName="transform" type="rotate" values="-20 174 300; -28 174 300; -20 174 300" dur="2.8s" repeatCount="indefinite" additive="sum" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    </ellipse>
+    <ellipse cx="338" cy="300" rx="22" ry="48" fill="#D98A35" transform="rotate(20 338 300)">
+      <animateTransform attributeName="transform" type="rotate" values="20 338 300; 28 338 300; 20 338 300" dur="2.8s" repeatCount="indefinite" additive="sum" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.42 0 0.58 1;0.42 0 0.58 1"/>
+    </ellipse>
+    <!-- 肚皮 -->
+    <ellipse cx="256" cy="316" rx="50" ry="58" fill="#FDF0D5"/>
+
+    <!-- 脚 -->
+    <ellipse cx="230" cy="394" rx="14" ry="9" fill="#E2725B"/>
+    <ellipse cx="282" cy="394" rx="14" ry="9" fill="#E2725B"/>
+  </g>
+
+  <!-- 翻开书 -->
+  <path d="M106 476 Q 158 442 234 458 L 234 506 Q 160 488 106 504 Z" fill="#2E4057"/>
+  <path d="M406 476 Q 354 442 278 458 L 278 506 Q 352 488 406 504 Z" fill="#2E4057"/>
+  <path d="M118 468 Q 156 434 232 450 L 232 500 Q 160 482 118 500 Z" fill="#FFFFFF"/>
+  <path d="M394 468 Q 356 434 280 450 L 280 500 Q 352 482 394 500 Z" fill="#FFFFFF"/>
+  <path d="M256 456 Q 252 480 256 500" stroke="#C9B8A0" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!--MOOD_BADGE_START--><!--MOOD_BADGE_END-->
+
+  <!-- 水印 -->
+  <text x="506" y="506" text-anchor="end" font-size="14" font-family="sans-serif" fill="#8A93A3" opacity="0.75">https://erik.xyz</text>
+</svg>

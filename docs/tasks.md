@@ -287,4 +287,14 @@
 
 **管理端**：「行为分析」页：数字卡（当日/7 天阅读用户）+ 热门书籍 TOP10 表格 + 24 小时横向条形分布（无图表库依赖）。
 
-**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已实现（2026-08-29，均配置门控默认关闭，仅启用后才生效）；7.6 人工回归按需执行；7.7/7.8 已实现（2026-08-29）。
+### 7.9 项目宠物 Novi（方向 9，2026-09-26）
+
+**状态**：✅ 已实现。宠物形象 `docs/pet.svg`（SMIL 动效：呼吸浮动 / 眨眼 / 扇翅 / 语言气泡漂浮 / 光晕呼吸，无 JS），配套 12 语言 README 共用，另出 `docs/lifecycle.svg` 项目生命周期图（9 环节闭环 + 已交付里程碑，12 语言本地化副本于 `docs/i18n/images/<lang>/`）。
+
+**后端**：`GET /api/pet.svg`（非 proto 路由，`internal/pkg/pet.go` + `internal/server/server.go`）——探测 MySQL / Redis / OpenSearch（各 2s 预算）→ `happy` / `degraded` / `down`，通过替换 SVG 内 `MOOD_FACE` / `MOOD_BADGE` 标记位注入表情与状态牌（含运行时长、不可用依赖列表）；`Cache-Control: no-store`，需 `X-Api-Version: v1`。单测覆盖心情分类、注入合法性（XML 可解析 + 水印保留）、时长格式与「两份 pet.svg 不漂移」。
+
+**前端 / 脚本**：客户端加载态与空状态用 `NoviPet`（`lib/widgets/novi_pet.dart` + `assets/pet.png`，接首页 / 书籍详情 / 我的 5 处）；管理端登录页换用 `assets/pet.png`；终端 `scripts/pet.sh` 按工作区 / 远端状态显示心情（`--line` 供 pre-commit / CI 消费）。
+
+**生成链路**：`rsvg-convert -w 420 -h 420 docs/pet.svg -o apps/<端>/assets/pet.png`（贴图取动画首帧）；README 直接引用 `docs/pet.svg`，浏览器内可见动效。
+
+**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已实现（2026-08-29，均配置门控默认关闭，仅启用后才生效）；7.6 人工回归按需执行；7.7/7.8 已实现（2026-08-29）；7.9 已实现（2026-09-26，含 12 语言生命周期图与 README 同步）。

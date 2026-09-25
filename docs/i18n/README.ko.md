@@ -8,7 +8,7 @@
 
 > **Go-Kratos** 마이크로서비스 아키텍처 + **Flutter / HarmonyOS** 멀티 클라이언트 프런트엔드 기반의 글로벌 다국어 소설 읽기 플랫폼으로, **12개 이상의 주요 언어**를 지원하며 전 세계 사용자에게 읽기, 상호작용, 검색 및 개인화 추천 기능을 제공합니다.
 
-<div align="center"><img src="../mascot.svg" alt="Open Novel 마스코트 Novi" width="150"/></div>
+<div align="center"><img src="../pet.svg" alt="Open Novel 프로젝트 펫 Novi" width="150"/></div>
 
 ---
 
@@ -21,6 +21,7 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 - **다국어 지원**: i18n 리소스 동적 로드, 12개 이상의 언어 지원(중국어, 영어, 일본어, 한국어, 프랑스어, 독일어, 스페인어, 러시아어, 아랍어 등)
 - **스토리지**: MySQL 8(마스터-슬레이브 읽기/쓰기 분리) + Redis(핫 캐시 / 세션) + OpenSearch(다국어 검색)
 - **운영**: Docker Compose 원클릭 배포, Prometheus + Grafana 모니터링, GitHub Actions 지속적 통합
+- **프로젝트 펫**: Novi — 애니메이션 원본은 `docs/pet.svg` (터미널 `bash scripts/pet.sh`, 백엔드 `GET /api/pet.svg`)
 
 ## 기능 및 특징
 
@@ -40,7 +41,7 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 
 전체는 Go-Kratos 마이크로서비스 아키텍처입니다. Flutter / HarmonyOS 클라이언트는 Nginx + 멀티 벤더 CDN(Cloudflare / CloudFront는 글로벌 라인, Aliyun / Tencent Cloud는 중국 라인. 관리자에서 설정 가능, 구성 핑거프린트 핫 리로드로 즉시 반영)을 거쳐 API 게이트웨이와 상호작용하며, 게이트웨이는 도메인별로 사용자, 도서, 챕터, 댓글, 검색, 추천 등의 백엔드 서비스로 라우팅합니다. 데이터 계층은 MySQL 마스터-슬레이브(읽기/쓰기 분리) + Redis 캐시 + OpenSearch 검색 인덱스입니다. 서비스 간 gRPC 통신, 외부 HTTP 인터페이스는 통일 접두사 `/api`을 사용합니다.
 
-기타 설계도: 프로젝트 전체 구조 [docs/project.svg](../../docs/project.svg) · 요청 주기 [docs/request-cycle.svg](../../docs/request-cycle.svg) · 보안 아키텍처 [docs/security.svg](../../docs/security.svg) · 프로젝트 구조 [docs/structure.svg](../../docs/structure.svg).
+기타 설계도: 프로젝트 전체 구조 [docs/project.svg](../../docs/project.svg) · 요청 주기 [docs/request-cycle.svg](../../docs/request-cycle.svg) · 보안 아키텍처 [docs/security.svg](../../docs/security.svg) · 프로젝트 구조 [docs/structure.svg](../../docs/structure.svg). · 프로젝트 라이프사이클 [docs/lifecycle.svg](../../docs/lifecycle.svg)
 
 ## 프로젝트 전체 구조
 
@@ -54,6 +55,23 @@ Open Novel은 클라우드 네이티브 마이크로서비스 아키텍처의 �
 
 <p align="center"><img src="images/ko/security.svg" alt="보안 아키텍처 다이어그램" width="860"/></p>
 
+## 프로젝트 라이프사이클
+
+<p align="center"><img src="images/ko/lifecycle.svg" alt="프로젝트 라이프사이클" width="860"/></p>
+
+기획·설계·구현·테스트·빌드·릴리스·배포·운영·개선 9단계. 개선 결과는 다음 기획으로 환류됩니다.
+
+## 프로젝트 펫 Novi
+
+<p align="center"><img src="../pet.svg" alt="Open Novel 프로젝트 펫 Novi" width="200"/></p>
+
+Novi는 이 프로젝트의 펫입니다(정지 버전: [docs/mascot.svg](../mascot.svg)). 눈을 깜빡이고 날개를 펄럭이며 文 / A / あ 언어 버블이 떠다닙니다.
+
+| 어디서 만나나 | 상태 결정 기준 |
+| :--- | :--- |
+| 터미널: `bash scripts/pet.sh` (`--line`은 한 줄) | 작업 트리 청결 여부와 원격 대비 앞섬 / 뒤짐 |
+| 백엔드: `GET /api/pet.svg` (헤더 `X-Api-Version: v1`) | MySQL / Redis / OpenSearch 상태 → happy / degraded / down |
+
 ---
 
 ## 디렉터리 구조
@@ -66,7 +84,7 @@ open-novel/
 ├─ kratos/                   # Go-Kratos 프레임워크 소스(업스트림 프레임워크, 원본 유지, 수정 금지)
 │  └─ backend/               #   본 프로젝트의 비즈니스 백엔드: cmd/server 엔트리 + api/ + internal/ + sql/ + opensearch/
 ├─ docs/                     # 프로젝트 문서(기획, 아키텍처 다이어그램, i18n README, 후원 QR 코드)
-├─ scripts/                  # 빌드·배포 스크립트(post-push.sh 자동 릴리스, smoke.sh)
+├─ scripts/                  # 빌드·배포 스크립트(post-push.sh 자동 릴리스, install.sh, smoke.sh, pet.sh)
 ├─ docker-compose.yml        # 로컬 의존 스택: MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # 프로젝트 협업 규칙
 └─ README.md                 # 프로젝트 설명 문서

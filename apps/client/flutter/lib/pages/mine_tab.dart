@@ -4,6 +4,7 @@ import '../api/api_client.dart';
 import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../models/models.dart';
+import '../widgets/novi_pet.dart';
 import 'login_page.dart';
 import 'reader_page.dart';
 import 'vip_page.dart';
@@ -148,7 +149,7 @@ class _MineTabState extends State<MineTab> {
     final shelf = _shelf;
     final favorites = _favorites;
     if (shelf == null || favorites == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const NoviPet(busy: true);
     }
     return RefreshIndicator(
       onRefresh: _load,

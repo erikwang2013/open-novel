@@ -60,6 +60,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/mascot.png
+    - assets/pet.png # 项目宠物 Novi（源图 docs/pet.svg），管理端登录页
 
   # To add assets to your application, add an assets section, like this:
   # assets:
