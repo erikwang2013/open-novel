@@ -66,6 +66,30 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 客户端与管理端也把它接进了产品：客户端「暂无数据」与加载态（`lib/widgets/novi_pet.dart`）、管理端登录页（`apps/admin/assets/pet.png`）显示同一只 Novi，两端的网页外壳（标签页图标 / PWA 图标 / 应用名）也一并换成了它——`docs/pet-icon.svg` 是裁剪到脸部的图标版，`favicon.png` 由它生成。`GET /api/pet.svg` 是活的——依赖探测失败的次数越多，它的表情越困。
 
+
+<!-- pet-expressions:start -->
+## 项目宠物表情形态 · Novi
+
+<table align="center">
+<tr><td align="center"><img src="docs/pet-expressions/smile.svg" width="88" alt="笑"><br><b>笑</b><br><code>:emoji-smile:</code></td><td align="center"><img src="docs/pet-expressions/joy.svg" width="88" alt="欢乐"><br><b>欢乐</b><br><code>:emoji-joy:</code></td><td align="center"><img src="docs/pet-expressions/cry.svg" width="88" alt="哭"><br><b>哭</b><br><code>:emoji-cry:</code></td><td align="center"><img src="docs/pet-expressions/depressed.svg" width="88" alt="沮丧"><br><b>沮丧</b><br><code>:emoji-depressed:</code></td><td align="center"><img src="docs/pet-expressions/terrified.svg" width="88" alt="惊恐"><br><b>惊恐</b><br><code>:emoji-terrified:</code></td><td align="center"><img src="docs/pet-expressions/angry.svg" width="88" alt="愤怒"><br><b>愤怒</b><br><code>:emoji-angry:</code></td></tr>
+<tr><td align="center"><img src="docs/pet-expressions/coquettish.svg" width="88" alt="撒娇"><br><b>撒娇</b><br><code>:emoji-coquettish:</code></td><td align="center"><img src="docs/pet-expressions/cute.svg" width="88" alt="卖萌"><br><b>卖萌</b><br><code>:emoji-cute:</code></td><td align="center"><img src="docs/pet-expressions/pleasing.svg" width="88" alt="讨好"><br><b>讨好</b><br><code>:emoji-pleasing:</code></td><td align="center"><img src="docs/pet-expressions/knocking.svg" width="88" alt="敲打"><br><b>敲打</b><br><code>:emoji-knocking:</code></td><td align="center"><img src="docs/pet-expressions/facepalm.svg" width="88" alt="捂脸"><br><b>捂脸</b><br><code>:emoji-facepalm:</code></td><td align="center"><img src="docs/pet-expressions/tongue.svg" width="88" alt="吐舌头"><br><b>吐舌头</b><br><code>:emoji-tongue:</code></td></tr>
+</table>
+
+> 12 种彩色动态形态：笑 / 欢乐 / 哭 / 沮丧 / 惊恐 / 愤怒 / 撒娇 / 卖萌 / 讨好 / 敲打 / 捂脸 / 吐舌头。每个 SVG 自带表情、情绪特效与整体动效，并遵循 `prefers-reduced-motion`。
+<!-- pet-expressions:end -->
+
+<!-- assets-license:start -->
+## 视觉资产授权 / Visual Assets License
+
+本项目的项目宠物、图片、图标、表情（包括 `docs/pet-expressions/` 等目录下的
+SVG / PNG）**不是开源资产**，版权归作者所有。未经书面许可不得复制、修改、再分发或
+用于商业用途；商业使用需取得商业授权，联系 **erik@erik.xyz**。详见
+[ASSETS-LICENSE.md](ASSETS-LICENSE.md)。
+
+> 代码部分仍遵循仓库原有 `LICENSE`；第三方素材（如明确标注的 Go Gopher 等）仍遵循其原许可证。
+<!-- assets-license:end -->
+
+
 ## 项目规划
 
 架构设计 [docs/novel-project-planning.md](docs/novel-project-planning.md) · 现状盘点与阶段路线 [docs/roadmap.md](docs/roadmap.md) · 详细任务分解 [docs/tasks.md](docs/tasks.md) · 支付渠道上线配置 [docs/merchant-config.md](docs/merchant-config.md)。
