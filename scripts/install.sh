@@ -92,7 +92,6 @@ echo "    （HTTP http://localhost:8000，gRPC :9000；配置在 kratos/backend/
 echo "[install] ⑤ 启动前端与访问地址"
 echo "    客户端: cd apps/client/flutter && flutter pub get && flutter run -d chrome"
 echo "    管理端: cd apps/admin && flutter pub get && flutter run -d chrome"
-echo "    HarmonyOS: 用 DevEco Studio 打开 apps/client/harmonyos 运行"
 echo "    后端 HTTP: http://localhost:8000（接口前缀 /api，版本头 X-Api-Version: v1）"
 echo "    客户端/管理端端口由 flutter run 随机分配并打印在控制台（可用 --web-port 固定）"
 echo "    依赖栈端口映射: MySQL 3307 / Redis 6380 / OpenSearch 9200"

@@ -7,7 +7,6 @@ apps/
 ├─ client/     # 客户端多端（C 端）
 │  ├─ flutter/     # Flutter 全平台（Web / Desktop / Mobile）
 │  │  └─ assets/   #   静态资源：pet.png（项目宠物 Novi，源图 docs/pet.svg）
-│  ├─ harmonyos/   # HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
 │  └─ README.md    # 客户端目录说明
 └─ admin/      # 管理端（Flutter Web，B 端后台），assets/ 同为宠物贴图
 ```
@@ -47,12 +46,11 @@ bash scripts/install.sh
 
 - 客户端：`cd apps/client/flutter && flutter pub get && flutter run -d chrome`
 - 管理端：`cd apps/admin && flutter pub get && flutter run -d chrome`（端口由 Flutter 随机分配并打印在控制台，可用 `--web-port` 固定）
-- HarmonyOS：用 DevEco Studio 打开 `apps/client/harmonyos` 运行
-- 三个端共用同一套后端 API（默认连 `http://localhost:8000`，接口前缀 `/api`，版本头 `X-Api-Version: v1`）；连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`
+- 两个端共用同一套后端 API（默认连 `http://localhost:8000`，接口前缀 `/api`，版本头 `X-Api-Version: v1`）；连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`
 - 常见问题：端口占用用 `lsof -i :8000` 排查；数据库连接失败先 `docker compose ps` 确认 mysql 为 healthy
 
 ## 目录约定
 
-- 每个端独立成目录，自带依赖锁文件（`pubspec.lock` / `oh-package-lock.json5`）
+- 每个端独立成目录，自带依赖锁文件（`pubspec.lock`）
 - 多端共用后端 API（前缀 `/api`），接口定义（proto）维护在 `kratos/backend/api/`
 - 项目宠物贴图 `assets/pet.png`（客户端与管理端各一份）由根目录 `docs/pet.svg` 光栅化而来，改图后重新生成：`rsvg-convert -w 420 -h 420 docs/pet.svg -o apps/<端>/assets/pet.png`

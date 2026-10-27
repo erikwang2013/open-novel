@@ -37,7 +37,7 @@
 
 ```mermaid
 flowchart TB
-    subgraph Clients["客户端（Flutter / HarmonyOS）"]
+    subgraph Clients["客户端（Flutter）"]
         CN["中国用户"]
         GLOBAL["海外用户"]
     end
