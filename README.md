@@ -226,6 +226,21 @@ bash scripts/install.sh
 | 自动化测试 | 23 个测试文件 | 34 个测试文件 |
 | 授权 | 仅个人学习/研究，商业使用需书面授权 | 商业授权与交付条款请联系 **erik@erik.xyz** |
 
+### 多维度对比
+
+| 维度 | 开源版（本仓库） | 商业版 |
+| :--- | :--- | :--- |
+| 功能覆盖 | 8 个 proto service、70 个 RPC、22 张表、16 个管理端页面；Flutter 客户端 9 页 | 10 个 proto service、78 个 RPC、23 张表、18 个管理端页面；Flutter + HarmonyOS 15 页；新增多 CDN、行为分析、AI 推荐、Novi 宠物 |
+| 安全防护 | JWT/OptionalAuth、限流、Security、RawBody、API 版本中间件；RBAC、审计、加密逻辑 | 同一套中间件链与安全逻辑（`internal/middleware` 文件一致）；新增 Behavior/Cdn 接口沿用相同 JWT、限流与安全中间件，未新增独立安全层 |
+| 性能与规模 | Go-Kratos + MySQL + Redis + OpenSearch；单服务端多模块 | 同一技术栈与部署形态；增加 AI 推荐缓存与多 CDN 缓存失效/预热能力，无架构级差异 |
+| 数据与检索 | 22 张表；OpenSearch 全文检索 + MySQL 主数据 | 23 张表（新增 `novel_cdn_provider`）；同样使用 OpenSearch + MySQL，另有多厂商 CDN 管理 |
+| 测试与质量 | 23 个 Go 测试文件 / 70 个测试函数；覆盖 biz/service/data/middleware/cdn/pkg | 34 个测试文件 / 107 个测试函数；新增模块带对应测试。两版均只有 release 工作流，没有自动测试门禁 |
+| 部署与运维 | Docker Compose：MySQL、Redis、OpenSearch；Kratos 服务端 + Flutter 构建脚本 | 同一套 Compose 与 Kratos 服务端；新增 Behavior/Cdn 模块随主服务部署；额外提供 HarmonyOS 打包 |
+| 多端与国际化 | Flutter 客户端 9 页 + 管理端 16 页；13 个 ARB 语言包 | Flutter 客户端 9 页 + 管理端 18 页；13 个 ARB 语言包；另有 HarmonyOS 15 页及对应多语言资源 |
+| 扩展性与二次开发 | Kratos 分层（api/biz/data/service/middleware），8 个 proto service；新增模块按同一 proto + service 模式扩展 | 同一套分层与扩展方式，10 个 proto service / 78 RPC；Behavior、Cdn 可直接作为新增模块的参考实现 |
+| 授权与商业支持 | LICENSE 仅限个人学习/研究，商业使用需书面授权 | LICENSE 文本与开源版一致；商业授权、交付与支持条款请联系 **erik@erik.xyz** |
+| 适用场景 | 个人学习、研究、二次开发；Flutter 单端自建 | 商业运营、内容平台交付；需要多 CDN、行为分析、AI 推荐、HarmonyOS 原生端与更大测试覆盖的团队 |
+
 **商业版额外能力：**
 
 - **多厂商 CDN 管理**：Cloudflare / CloudFront / 阿里云 / 腾讯云适配器，后台厂商配置、启停、排序与热更新，配套 `novel_cdn_provider` 表。

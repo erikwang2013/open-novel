@@ -204,7 +204,7 @@ If this project has helped you, feel free to **Star** and **Fork** it; you are a
 
 ## Open Source vs Commercial Edition
 
-This repository is the open-source edition for personal study and research. The commercial edition lives in `open-project/open-novel` and extends the same codebase with multi-CDN management, behavior analytics, AI recommendations, the Novi pet subsystem and a native HarmonyOS client, plus a larger automated test suite.
+This repository is the open-source edition for personal study and research. The commercial edition is available separately and extends the same codebase with multi-CDN management, behavior analytics, AI recommendations, the Novi pet subsystem and a native HarmonyOS client, plus a larger automated test suite.
 
 | Dimension | Open source (this repo) | Commercial (`open-project/open-novel`) |
 | :--- | :--- | :--- |
@@ -217,6 +217,21 @@ This repository is the open-source edition for personal study and research. The 
 | Clients | Flutter (9 pages) | Flutter + native HarmonyOS (15 ArkTS pages) |
 | Automated tests | 23 test files | 34 test files |
 | License | Personal study/research only; commercial use requires written authorization | Commercial licensing and delivery: **erik@erik.xyz** |
+
+### Multi-dimensional comparison
+
+| Dimension | Open source (this repo) | Commercial edition |
+| :--- | :--- | :--- |
+| Feature coverage | 8 proto services, 70 RPCs, 22 tables, 16 admin pages; Flutter client with 9 pages | 10 proto services, 78 RPCs, 23 tables, 18 admin pages; Flutter + HarmonyOS (15 pages); adds multi-CDN, behavior analytics, AI recommendations, Novi pet |
+| Security | JWT/OptionalAuth, rate limiting, security, raw-body and API-version middleware; RBAC, audit and encryption logic | Same middleware chain and security logic (identical `internal/middleware` files); new Behavior/Cdn endpoints use the same JWT, rate-limit and security middleware; no separate security layer |
+| Performance and scale | Go-Kratos + MySQL + Redis + OpenSearch; one server process hosting multiple modules | Same stack and deployment shape; adds AI recommendation cache and multi-CDN purge/preload, with no architectural difference |
+| Data and search | 22 tables; OpenSearch full-text search + MySQL primary data | 23 tables (adds `novel_cdn_provider`); same OpenSearch + MySQL, plus multi-vendor CDN management |
+| Testing and quality | 23 Go test files / 70 test functions across biz/service/data/middleware/cdn/pkg | 34 test files / 107 test functions; new modules include tests. Both editions only have a release workflow, with no automated test gate |
+| Deployment and ops | Docker Compose: MySQL, Redis, OpenSearch; Kratos server + Flutter build scripts | Same Compose and Kratos server; Behavior/Cdn ship with the main service; additionally provides HarmonyOS packaging |
+| Clients and i18n | Flutter client 9 pages + 16 admin pages; 13 ARB locales | Flutter client 9 pages + 18 admin pages; 13 ARB locales; plus HarmonyOS 15 pages and matching locale resources |
+| Extensibility | Kratos layers (api/biz/data/service/middleware), 8 proto services; new modules follow the same proto + service pattern | Same layering and extension pattern, 10 proto services / 78 RPCs; Behavior and Cdn serve as reference implementations for new modules |
+| License and commercial support | Personal study/research only; commercial use requires written authorization | Same LICENSE text as the open edition; commercial licensing, delivery and support: **erik@erik.xyz** |
+| Fit | Personal study, research, secondary development; single-client Flutter self-hosting | Commercial operations and content-platform delivery; teams needing multi-CDN, behavior analytics, AI recommendations, native HarmonyOS and larger test coverage |
 
 **Commercial-only capabilities:**
 
