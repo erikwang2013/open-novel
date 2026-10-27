@@ -124,8 +124,6 @@
 | GET | `/api/search/hot` | 热门书籍榜（BookDoc 列表） | 无 |
 | GET | `/api/search/hot-keywords` | 热搜词榜 `{list:[{keyword,count}]}`，搜索日志聚合 TOP 10 | 无 |
 | GET | `/api/search/suggest` | 搜索建议 `q` 前缀补全 `{keywords:[...]}`，搜索日志聚合 TOP 10，缓存 1s | 无 |
-| POST | `/api/search/index/{book_id}` | 重建单本书搜索索引 | Bearer（管理） |
-| DELETE | `/api/search/index/{book_id}` | 删除单本书搜索索引 | Bearer（管理） |
 | GET | `/api/recommend` | 推荐 `strategy=hot|new` + `page_size` + `lang` | 无 |
 
 ## 支付（T-P-01~18 已完成）

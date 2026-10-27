@@ -658,302 +658,6 @@ func (x *SuggestReply) GetKeywords() []string {
 	return nil
 }
 
-type SyncIndexReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"` // 路径传入，覆盖 body
-	Lang          string                 `protobuf:"bytes,2,opt,name=lang,proto3" json:"lang,omitempty"`
-	Status        int32                  `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`
-	Hot           int64                  `protobuf:"varint,4,opt,name=hot,proto3" json:"hot,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	TitleZh       string                 `protobuf:"bytes,6,opt,name=title_zh,json=titleZh,proto3" json:"title_zh,omitempty"`
-	TitleEn       string                 `protobuf:"bytes,7,opt,name=title_en,json=titleEn,proto3" json:"title_en,omitempty"`
-	TitleJa       string                 `protobuf:"bytes,8,opt,name=title_ja,json=titleJa,proto3" json:"title_ja,omitempty"`
-	TitleKo       string                 `protobuf:"bytes,15,opt,name=title_ko,json=titleKo,proto3" json:"title_ko,omitempty"`
-	SummaryZh     string                 `protobuf:"bytes,9,opt,name=summary_zh,json=summaryZh,proto3" json:"summary_zh,omitempty"`
-	SummaryEn     string                 `protobuf:"bytes,10,opt,name=summary_en,json=summaryEn,proto3" json:"summary_en,omitempty"`
-	SummaryJa     string                 `protobuf:"bytes,11,opt,name=summary_ja,json=summaryJa,proto3" json:"summary_ja,omitempty"`
-	SummaryKo     string                 `protobuf:"bytes,16,opt,name=summary_ko,json=summaryKo,proto3" json:"summary_ko,omitempty"`
-	AuthorZh      string                 `protobuf:"bytes,12,opt,name=author_zh,json=authorZh,proto3" json:"author_zh,omitempty"`
-	AuthorEn      string                 `protobuf:"bytes,13,opt,name=author_en,json=authorEn,proto3" json:"author_en,omitempty"`
-	AuthorJa      string                 `protobuf:"bytes,14,opt,name=author_ja,json=authorJa,proto3" json:"author_ja,omitempty"`
-	AuthorKo      string                 `protobuf:"bytes,17,opt,name=author_ko,json=authorKo,proto3" json:"author_ko,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SyncIndexReq) Reset() {
-	*x = SyncIndexReq{}
-	mi := &file_search_v1_search_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SyncIndexReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SyncIndexReq) ProtoMessage() {}
-
-func (x *SyncIndexReq) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SyncIndexReq.ProtoReflect.Descriptor instead.
-func (*SyncIndexReq) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *SyncIndexReq) GetBookId() int64 {
-	if x != nil {
-		return x.BookId
-	}
-	return 0
-}
-
-func (x *SyncIndexReq) GetLang() string {
-	if x != nil {
-		return x.Lang
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetStatus() int32 {
-	if x != nil {
-		return x.Status
-	}
-	return 0
-}
-
-func (x *SyncIndexReq) GetHot() int64 {
-	if x != nil {
-		return x.Hot
-	}
-	return 0
-}
-
-func (x *SyncIndexReq) GetCreatedAt() string {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetTitleZh() string {
-	if x != nil {
-		return x.TitleZh
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetTitleEn() string {
-	if x != nil {
-		return x.TitleEn
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetTitleJa() string {
-	if x != nil {
-		return x.TitleJa
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetTitleKo() string {
-	if x != nil {
-		return x.TitleKo
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetSummaryZh() string {
-	if x != nil {
-		return x.SummaryZh
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetSummaryEn() string {
-	if x != nil {
-		return x.SummaryEn
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetSummaryJa() string {
-	if x != nil {
-		return x.SummaryJa
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetSummaryKo() string {
-	if x != nil {
-		return x.SummaryKo
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetAuthorZh() string {
-	if x != nil {
-		return x.AuthorZh
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetAuthorEn() string {
-	if x != nil {
-		return x.AuthorEn
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetAuthorJa() string {
-	if x != nil {
-		return x.AuthorJa
-	}
-	return ""
-}
-
-func (x *SyncIndexReq) GetAuthorKo() string {
-	if x != nil {
-		return x.AuthorKo
-	}
-	return ""
-}
-
-type SyncIndexReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SyncIndexReply) Reset() {
-	*x = SyncIndexReply{}
-	mi := &file_search_v1_search_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SyncIndexReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SyncIndexReply) ProtoMessage() {}
-
-func (x *SyncIndexReply) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SyncIndexReply.ProtoReflect.Descriptor instead.
-func (*SyncIndexReply) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *SyncIndexReply) GetBookId() int64 {
-	if x != nil {
-		return x.BookId
-	}
-	return 0
-}
-
-type DeleteIndexReq struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteIndexReq) Reset() {
-	*x = DeleteIndexReq{}
-	mi := &file_search_v1_search_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteIndexReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteIndexReq) ProtoMessage() {}
-
-func (x *DeleteIndexReq) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteIndexReq.ProtoReflect.Descriptor instead.
-func (*DeleteIndexReq) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *DeleteIndexReq) GetBookId() int64 {
-	if x != nil {
-		return x.BookId
-	}
-	return 0
-}
-
-type DeleteIndexReply struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *DeleteIndexReply) Reset() {
-	*x = DeleteIndexReply{}
-	mi := &file_search_v1_search_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *DeleteIndexReply) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*DeleteIndexReply) ProtoMessage() {}
-
-func (x *DeleteIndexReply) ProtoReflect() protoreflect.Message {
-	mi := &file_search_v1_search_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use DeleteIndexReply.ProtoReflect.Descriptor instead.
-func (*DeleteIndexReply) Descriptor() ([]byte, []int) {
-	return file_search_v1_search_proto_rawDescGZIP(), []int{13}
-}
-
 var File_search_v1_search_proto protoreflect.FileDescriptor
 
 const file_search_v1_search_proto_rawDesc = "" +
@@ -1010,43 +714,12 @@ const file_search_v1_search_proto_rawDesc = "" +
 	"SuggestReq\x12\f\n" +
 	"\x01q\x18\x01 \x01(\tR\x01q\"*\n" +
 	"\fSuggestReply\x12\x1a\n" +
-	"\bkeywords\x18\x01 \x03(\tR\bkeywords\"\xe0\x03\n" +
-	"\fSyncIndexReq\x12\x17\n" +
-	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x12\n" +
-	"\x04lang\x18\x02 \x01(\tR\x04lang\x12\x16\n" +
-	"\x06status\x18\x03 \x01(\x05R\x06status\x12\x10\n" +
-	"\x03hot\x18\x04 \x01(\x03R\x03hot\x12\x1d\n" +
-	"\n" +
-	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12\x19\n" +
-	"\btitle_zh\x18\x06 \x01(\tR\atitleZh\x12\x19\n" +
-	"\btitle_en\x18\a \x01(\tR\atitleEn\x12\x19\n" +
-	"\btitle_ja\x18\b \x01(\tR\atitleJa\x12\x19\n" +
-	"\btitle_ko\x18\x0f \x01(\tR\atitleKo\x12\x1d\n" +
-	"\n" +
-	"summary_zh\x18\t \x01(\tR\tsummaryZh\x12\x1d\n" +
-	"\n" +
-	"summary_en\x18\n" +
-	" \x01(\tR\tsummaryEn\x12\x1d\n" +
-	"\n" +
-	"summary_ja\x18\v \x01(\tR\tsummaryJa\x12\x1d\n" +
-	"\n" +
-	"summary_ko\x18\x10 \x01(\tR\tsummaryKo\x12\x1b\n" +
-	"\tauthor_zh\x18\f \x01(\tR\bauthorZh\x12\x1b\n" +
-	"\tauthor_en\x18\r \x01(\tR\bauthorEn\x12\x1b\n" +
-	"\tauthor_ja\x18\x0e \x01(\tR\bauthorJa\x12\x1b\n" +
-	"\tauthor_ko\x18\x11 \x01(\tR\bauthorKo\")\n" +
-	"\x0eSyncIndexReply\x12\x17\n" +
-	"\abook_id\x18\x01 \x01(\x03R\x06bookId\")\n" +
-	"\x0eDeleteIndexReq\x12\x17\n" +
-	"\abook_id\x18\x01 \x01(\x03R\x06bookId\"\x12\n" +
-	"\x10DeleteIndexReply2\xda\x04\n" +
+	"\bkeywords\x18\x01 \x03(\tR\bkeywords2\x85\x03\n" +
 	"\x06Search\x12Z\n" +
 	"\vSearchBooks\x12\x19.search.v1.SearchBooksReq\x1a\x1b.search.v1.SearchBooksReply\"\x13\x82\xd3\xe4\x93\x02\r\x12\v/api/search\x12^\n" +
 	"\vHotSearches\x12\x19.search.v1.HotSearchesReq\x1a\x1b.search.v1.HotSearchesReply\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/api/search/hot\x12g\n" +
 	"\vHotKeywords\x12\x19.search.v1.HotKeywordsReq\x1a\x1b.search.v1.HotKeywordsReply\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/search/hot-keywords\x12V\n" +
-	"\aSuggest\x12\x15.search.v1.SuggestReq\x1a\x17.search.v1.SuggestReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/search/suggest\x12g\n" +
-	"\tSyncIndex\x12\x17.search.v1.SyncIndexReq\x1a\x19.search.v1.SyncIndexReply\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/api/search/index/{book_id}\x12j\n" +
-	"\vDeleteIndex\x12\x19.search.v1.DeleteIndexReq\x1a\x1b.search.v1.DeleteIndexReply\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/api/search/index/{book_id}B%Z#open-novel/backend/api/search/v1;v1b\x06proto3"
+	"\aSuggest\x12\x15.search.v1.SuggestReq\x1a\x17.search.v1.SuggestReply\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/search/suggestB%Z#open-novel/backend/api/search/v1;v1b\x06proto3"
 
 var (
 	file_search_v1_search_proto_rawDescOnce sync.Once
@@ -1060,7 +733,7 @@ func file_search_v1_search_proto_rawDescGZIP() []byte {
 	return file_search_v1_search_proto_rawDescData
 }
 
-var file_search_v1_search_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_search_v1_search_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_search_v1_search_proto_goTypes = []any{
 	(*BookDoc)(nil),          // 0: search.v1.BookDoc
 	(*SearchBooksReq)(nil),   // 1: search.v1.SearchBooksReq
@@ -1072,32 +745,24 @@ var file_search_v1_search_proto_goTypes = []any{
 	(*HotKeyword)(nil),       // 7: search.v1.HotKeyword
 	(*SuggestReq)(nil),       // 8: search.v1.SuggestReq
 	(*SuggestReply)(nil),     // 9: search.v1.SuggestReply
-	(*SyncIndexReq)(nil),     // 10: search.v1.SyncIndexReq
-	(*SyncIndexReply)(nil),   // 11: search.v1.SyncIndexReply
-	(*DeleteIndexReq)(nil),   // 12: search.v1.DeleteIndexReq
-	(*DeleteIndexReply)(nil), // 13: search.v1.DeleteIndexReply
 }
 var file_search_v1_search_proto_depIdxs = []int32{
-	0,  // 0: search.v1.SearchBooksReply.list:type_name -> search.v1.BookDoc
-	0,  // 1: search.v1.HotSearchesReply.list:type_name -> search.v1.BookDoc
-	7,  // 2: search.v1.HotKeywordsReply.list:type_name -> search.v1.HotKeyword
-	1,  // 3: search.v1.Search.SearchBooks:input_type -> search.v1.SearchBooksReq
-	3,  // 4: search.v1.Search.HotSearches:input_type -> search.v1.HotSearchesReq
-	5,  // 5: search.v1.Search.HotKeywords:input_type -> search.v1.HotKeywordsReq
-	8,  // 6: search.v1.Search.Suggest:input_type -> search.v1.SuggestReq
-	10, // 7: search.v1.Search.SyncIndex:input_type -> search.v1.SyncIndexReq
-	12, // 8: search.v1.Search.DeleteIndex:input_type -> search.v1.DeleteIndexReq
-	2,  // 9: search.v1.Search.SearchBooks:output_type -> search.v1.SearchBooksReply
-	4,  // 10: search.v1.Search.HotSearches:output_type -> search.v1.HotSearchesReply
-	6,  // 11: search.v1.Search.HotKeywords:output_type -> search.v1.HotKeywordsReply
-	9,  // 12: search.v1.Search.Suggest:output_type -> search.v1.SuggestReply
-	11, // 13: search.v1.Search.SyncIndex:output_type -> search.v1.SyncIndexReply
-	13, // 14: search.v1.Search.DeleteIndex:output_type -> search.v1.DeleteIndexReply
-	9,  // [9:15] is the sub-list for method output_type
-	3,  // [3:9] is the sub-list for method input_type
-	3,  // [3:3] is the sub-list for extension type_name
-	3,  // [3:3] is the sub-list for extension extendee
-	0,  // [0:3] is the sub-list for field type_name
+	0, // 0: search.v1.SearchBooksReply.list:type_name -> search.v1.BookDoc
+	0, // 1: search.v1.HotSearchesReply.list:type_name -> search.v1.BookDoc
+	7, // 2: search.v1.HotKeywordsReply.list:type_name -> search.v1.HotKeyword
+	1, // 3: search.v1.Search.SearchBooks:input_type -> search.v1.SearchBooksReq
+	3, // 4: search.v1.Search.HotSearches:input_type -> search.v1.HotSearchesReq
+	5, // 5: search.v1.Search.HotKeywords:input_type -> search.v1.HotKeywordsReq
+	8, // 6: search.v1.Search.Suggest:input_type -> search.v1.SuggestReq
+	2, // 7: search.v1.Search.SearchBooks:output_type -> search.v1.SearchBooksReply
+	4, // 8: search.v1.Search.HotSearches:output_type -> search.v1.HotSearchesReply
+	6, // 9: search.v1.Search.HotKeywords:output_type -> search.v1.HotKeywordsReply
+	9, // 10: search.v1.Search.Suggest:output_type -> search.v1.SuggestReply
+	7, // [7:11] is the sub-list for method output_type
+	3, // [3:7] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_search_v1_search_proto_init() }
@@ -1111,7 +776,7 @@ func file_search_v1_search_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_search_v1_search_proto_rawDesc), len(file_search_v1_search_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

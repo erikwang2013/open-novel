@@ -26,8 +26,6 @@ const (
 	Search_HotSearches_FullMethodName = "/search.v1.Search/HotSearches"
 	Search_HotKeywords_FullMethodName = "/search.v1.Search/HotKeywords"
 	Search_Suggest_FullMethodName     = "/search.v1.Search/Suggest"
-	Search_SyncIndex_FullMethodName   = "/search.v1.Search/SyncIndex"
-	Search_DeleteIndex_FullMethodName = "/search.v1.Search/DeleteIndex"
 )
 
 // SearchClient is the client API for Search service.
@@ -42,9 +40,6 @@ type SearchClient interface {
 	HotKeywords(ctx context.Context, in *HotKeywordsReq, opts ...grpc.CallOption) (*HotKeywordsReply, error)
 	// 搜索建议（前缀补全，缓存 suggest:{q} 1s）
 	Suggest(ctx context.Context, in *SuggestReq, opts ...grpc.CallOption) (*SuggestReply, error)
-	// 索引同步（书籍服务在新建/更新书籍或翻译时调用）
-	SyncIndex(ctx context.Context, in *SyncIndexReq, opts ...grpc.CallOption) (*SyncIndexReply, error)
-	DeleteIndex(ctx context.Context, in *DeleteIndexReq, opts ...grpc.CallOption) (*DeleteIndexReply, error)
 }
 
 type searchClient struct {
@@ -95,26 +90,6 @@ func (c *searchClient) Suggest(ctx context.Context, in *SuggestReq, opts ...grpc
 	return out, nil
 }
 
-func (c *searchClient) SyncIndex(ctx context.Context, in *SyncIndexReq, opts ...grpc.CallOption) (*SyncIndexReply, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncIndexReply)
-	err := c.cc.Invoke(ctx, Search_SyncIndex_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *searchClient) DeleteIndex(ctx context.Context, in *DeleteIndexReq, opts ...grpc.CallOption) (*DeleteIndexReply, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteIndexReply)
-	err := c.cc.Invoke(ctx, Search_DeleteIndex_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // SearchServer is the server API for Search service.
 // All implementations must embed UnimplementedSearchServer
 // for forward compatibility.
@@ -127,9 +102,6 @@ type SearchServer interface {
 	HotKeywords(context.Context, *HotKeywordsReq) (*HotKeywordsReply, error)
 	// 搜索建议（前缀补全，缓存 suggest:{q} 1s）
 	Suggest(context.Context, *SuggestReq) (*SuggestReply, error)
-	// 索引同步（书籍服务在新建/更新书籍或翻译时调用）
-	SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error)
-	DeleteIndex(context.Context, *DeleteIndexReq) (*DeleteIndexReply, error)
 	mustEmbedUnimplementedSearchServer()
 }
 
@@ -151,12 +123,6 @@ func (UnimplementedSearchServer) HotKeywords(context.Context, *HotKeywordsReq) (
 }
 func (UnimplementedSearchServer) Suggest(context.Context, *SuggestReq) (*SuggestReply, error) {
 	return nil, status.Error(codes.Unimplemented, "method Suggest not implemented")
-}
-func (UnimplementedSearchServer) SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error) {
-	return nil, status.Error(codes.Unimplemented, "method SyncIndex not implemented")
-}
-func (UnimplementedSearchServer) DeleteIndex(context.Context, *DeleteIndexReq) (*DeleteIndexReply, error) {
-	return nil, status.Error(codes.Unimplemented, "method DeleteIndex not implemented")
 }
 func (UnimplementedSearchServer) mustEmbedUnimplementedSearchServer() {}
 func (UnimplementedSearchServer) testEmbeddedByValue()                {}
@@ -251,42 +217,6 @@ func _Search_Suggest_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Search_SyncIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncIndexReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchServer).SyncIndex(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Search_SyncIndex_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServer).SyncIndex(ctx, req.(*SyncIndexReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Search_DeleteIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteIndexReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchServer).DeleteIndex(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Search_DeleteIndex_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchServer).DeleteIndex(ctx, req.(*DeleteIndexReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Search_ServiceDesc is the grpc.ServiceDesc for Search service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -309,14 +239,6 @@ var Search_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Suggest",
 			Handler:    _Search_Suggest_Handler,
-		},
-		{
-			MethodName: "SyncIndex",
-			Handler:    _Search_SyncIndex_Handler,
-		},
-		{
-			MethodName: "DeleteIndex",
-			Handler:    _Search_DeleteIndex_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

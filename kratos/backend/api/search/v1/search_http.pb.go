@@ -19,15 +19,12 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationSearchDeleteIndex = "/search.v1.Search/DeleteIndex"
 const OperationSearchHotKeywords = "/search.v1.Search/HotKeywords"
 const OperationSearchHotSearches = "/search.v1.Search/HotSearches"
 const OperationSearchSearchBooks = "/search.v1.Search/SearchBooks"
 const OperationSearchSuggest = "/search.v1.Search/Suggest"
-const OperationSearchSyncIndex = "/search.v1.Search/SyncIndex"
 
 type SearchHTTPServer interface {
-	DeleteIndex(context.Context, *DeleteIndexReq) (*DeleteIndexReply, error)
 	// HotKeywords 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
 	HotKeywords(context.Context, *HotKeywordsReq) (*HotKeywordsReply, error)
 	// HotSearches 热门榜单（缓存 search:hot）
@@ -36,8 +33,6 @@ type SearchHTTPServer interface {
 	SearchBooks(context.Context, *SearchBooksReq) (*SearchBooksReply, error)
 	// Suggest 搜索建议（前缀补全，缓存 suggest:{q} 1s）
 	Suggest(context.Context, *SuggestReq) (*SuggestReply, error)
-	// SyncIndex 索引同步（书籍服务在新建/更新书籍或翻译时调用）
-	SyncIndex(context.Context, *SyncIndexReq) (*SyncIndexReply, error)
 }
 
 func RegisterSearchHTTPServer(s *http.Server, srv SearchHTTPServer) {
@@ -46,8 +41,6 @@ func RegisterSearchHTTPServer(s *http.Server, srv SearchHTTPServer) {
 	r.GET("/api/search/hot", _Search_HotSearches0_HTTP_Handler(srv))
 	r.GET("/api/search/hot-keywords", _Search_HotKeywords0_HTTP_Handler(srv))
 	r.GET("/api/search/suggest", _Search_Suggest0_HTTP_Handler(srv))
-	r.POST("/api/search/index/{book_id}", _Search_SyncIndex0_HTTP_Handler(srv))
-	r.DELETE("/api/search/index/{book_id}", _Search_DeleteIndex0_HTTP_Handler(srv))
 }
 
 func _Search_SearchBooks0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) error {
@@ -126,55 +119,7 @@ func _Search_Suggest0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) 
 	}
 }
 
-func _Search_SyncIndex0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in SyncIndexReq
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationSearchSyncIndex)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.SyncIndex(ctx, req.(*SyncIndexReq))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*SyncIndexReply)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _Search_DeleteIndex0_HTTP_Handler(srv SearchHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in DeleteIndexReq
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationSearchDeleteIndex)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.DeleteIndex(ctx, req.(*DeleteIndexReq))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*DeleteIndexReply)
-		return ctx.Result(200, reply)
-	}
-}
-
 type SearchHTTPClient interface {
-	DeleteIndex(ctx context.Context, req *DeleteIndexReq, opts ...http.CallOption) (rsp *DeleteIndexReply, err error)
 	// HotKeywords 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
 	HotKeywords(ctx context.Context, req *HotKeywordsReq, opts ...http.CallOption) (rsp *HotKeywordsReply, err error)
 	// HotSearches 热门榜单（缓存 search:hot）
@@ -183,8 +128,6 @@ type SearchHTTPClient interface {
 	SearchBooks(ctx context.Context, req *SearchBooksReq, opts ...http.CallOption) (rsp *SearchBooksReply, err error)
 	// Suggest 搜索建议（前缀补全，缓存 suggest:{q} 1s）
 	Suggest(ctx context.Context, req *SuggestReq, opts ...http.CallOption) (rsp *SuggestReply, err error)
-	// SyncIndex 索引同步（书籍服务在新建/更新书籍或翻译时调用）
-	SyncIndex(ctx context.Context, req *SyncIndexReq, opts ...http.CallOption) (rsp *SyncIndexReply, err error)
 }
 
 type SearchHTTPClientImpl struct {
@@ -193,19 +136,6 @@ type SearchHTTPClientImpl struct {
 
 func NewSearchHTTPClient(client *http.Client) SearchHTTPClient {
 	return &SearchHTTPClientImpl{client}
-}
-
-func (c *SearchHTTPClientImpl) DeleteIndex(ctx context.Context, in *DeleteIndexReq, opts ...http.CallOption) (*DeleteIndexReply, error) {
-	var out DeleteIndexReply
-	pattern := "/api/search/index/{book_id}"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationSearchDeleteIndex))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
 }
 
 // HotKeywords 热搜词榜（搜索日志聚合，TOP 10，无鉴权）
@@ -258,20 +188,6 @@ func (c *SearchHTTPClientImpl) Suggest(ctx context.Context, in *SuggestReq, opts
 	opts = append(opts, http.Operation(OperationSearchSuggest))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-// SyncIndex 索引同步（书籍服务在新建/更新书籍或翻译时调用）
-func (c *SearchHTTPClientImpl) SyncIndex(ctx context.Context, in *SyncIndexReq, opts ...http.CallOption) (*SyncIndexReply, error) {
-	var out SyncIndexReply
-	pattern := "/api/search/index/{book_id}"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationSearchSyncIndex))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

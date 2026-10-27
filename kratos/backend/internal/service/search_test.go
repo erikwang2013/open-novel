@@ -10,7 +10,6 @@ import (
 	"open-novel/backend/internal/biz"
 	"open-novel/backend/internal/conf"
 	"open-novel/backend/internal/data"
-	"open-novel/backend/internal/pkg"
 )
 
 func newTestSearch(t *testing.T) (*SearchService, *data.Data) {
@@ -39,25 +38,16 @@ func TestSearchFlow(t *testing.T) {
 		t.Fatalf("want 160400, got %d", kerrors.FromError(err).Code)
 	}
 
-	// index writes require auth + author role (审查 P1)
-	req := &searchv1.SyncIndexReq{
-		BookId: bid, Lang: "ja", Status: 1, Hot: 1_000_000_000, CreatedAt: "2026-08-28",
+	doc := data.SearchDoc{
+		BookID: bid, Lang: "ja", Status: 1, Hot: 1_000_000_000, CreatedAt: "2026-08-28",
 		TitleZh: "星海旅人", TitleEn: "Star Sea Wanderer", TitleJa: "星海の旅人",
 		SummaryZh: "星际旅行者的冒险", SummaryJa: "仮想世界の冒険譚",
 		AuthorZh: "svc3测试", AuthorJa: "svc3テスト",
 	}
-	if _, err := s.SyncIndex(ctx, req); kerrors.FromError(err).Code != 140401 {
-		t.Fatalf("anonymous sync: want 140401, got %d", kerrors.FromError(err).Code)
-	}
-	userCtx := pkg.WithClaims(ctx, pkg.Claims{UID: 42, Role: 1})
-	if _, err := s.SyncIndex(userCtx, req); kerrors.FromError(err).Code != 140403 {
-		t.Fatalf("reader sync: want 140403, got %d", kerrors.FromError(err).Code)
-	}
-	authorCtx := pkg.WithClaims(ctx, pkg.Claims{UID: 42, Role: 2})
-	if _, err := s.SyncIndex(authorCtx, req); err != nil {
+	if err := s.uc.SyncIndex(ctx, doc); err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { s.DeleteIndex(authorCtx, &searchv1.DeleteIndexReq{BookId: bid}) })
+	t.Cleanup(func() { s.uc.DeleteIndex(ctx, bid) })
 
 	// ja search (kuromoji); 索引可能含真实书籍，断言 fixture 命中而非总数
 	ja, err := s.SearchBooks(ctx, &searchv1.SearchBooksReq{Q: "仮想世界", Lang: "ja"})
@@ -115,7 +105,7 @@ func TestSearchFlow(t *testing.T) {
 	}
 
 	// delete → gone; delete again is idempotent
-	if _, err := s.DeleteIndex(authorCtx, &searchv1.DeleteIndexReq{BookId: bid}); err != nil {
+	if err := s.uc.DeleteIndex(ctx, bid); err != nil {
 		t.Fatal(err)
 	}
 	after, err := s.SearchBooks(ctx, &searchv1.SearchBooksReq{Q: "仮想世界", Lang: "ja"})
@@ -125,7 +115,7 @@ func TestSearchFlow(t *testing.T) {
 	if after.Total != 0 {
 		t.Fatalf("after delete: want 0 hits, got %d", after.Total)
 	}
-	if _, err := s.DeleteIndex(authorCtx, &searchv1.DeleteIndexReq{BookId: bid}); err != nil {
+	if err := s.uc.DeleteIndex(ctx, bid); err != nil {
 		t.Fatalf("second delete should be idempotent: %v", err)
 	}
 }

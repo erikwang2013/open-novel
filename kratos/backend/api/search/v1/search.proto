@@ -33,18 +33,6 @@ service Search {
       get: "/api/search/suggest"
     };
   }
-  // 索引同步（书籍服务在新建/更新书籍或翻译时调用）
-  rpc SyncIndex(SyncIndexReq) returns (SyncIndexReply) {
-    option (google.api.http) = {
-      post: "/api/search/index/{book_id}"
-      body: "*"
-    };
-  }
-  rpc DeleteIndex(DeleteIndexReq) returns (DeleteIndexReply) {
-    option (google.api.http) = {
-      delete: "/api/search/index/{book_id}"
-    };
-  }
 }
 
 // 搜索索引文档（每书一文档，book_id 为文档 id）
@@ -109,33 +97,3 @@ message SuggestReq {
 message SuggestReply {
   repeated string keywords = 1;
 }
-
-message SyncIndexReq {
-  int64 book_id = 1; // 路径传入，覆盖 body
-  string lang = 2;
-  int32 status = 3;
-  int64 hot = 4;
-  string created_at = 5;
-  string title_zh = 6;
-  string title_en = 7;
-  string title_ja = 8;
-  string title_ko = 15;
-  string summary_zh = 9;
-  string summary_en = 10;
-  string summary_ja = 11;
-  string summary_ko = 16;
-  string author_zh = 12;
-  string author_en = 13;
-  string author_ja = 14;
-  string author_ko = 17;
-}
-
-message SyncIndexReply {
-  int64 book_id = 1;
-}
-
-message DeleteIndexReq {
-  int64 book_id = 1;
-}
-
-message DeleteIndexReply {}
