@@ -44,12 +44,12 @@
   <g>
     <rect x="120" y="382" width="96" height="28" rx="6" fill="#263238"/>
     <text x="168" y="401" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">docs/</text>
-    <text x="248" y="401" font-size="12" fill="#78909c"># 项目文档（架构 / 生命周期 / 宠物 SVG 图、规划、i18n README、打赏码）</text>
+    <text x="248" y="401" font-size="12" fill="#78909c"># 项目文档（架构 / 生命周期 SVG 图、规划、i18n README、打赏码）</text>
   </g>
   <g>
     <rect x="120" y="426" width="96" height="28" rx="6" fill="#263238"/>
     <text x="168" y="445" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">scripts/</text>
-    <text x="248" y="445" font-size="12" fill="#78909c"># 构建与部署脚本（install.sh、post-push.sh、smoke.sh、pet.sh 终端宠物、gen-assets.sh 宠物图）</text>
+    <text x="248" y="445" font-size="12" fill="#78909c"># 构建与部署脚本（install.sh、post-push.sh、smoke.sh）</text>
   </g>
   <g>
     <rect x="120" y="470" width="96" height="28" rx="6" fill="#263238"/>
@@ -65,8 +65,8 @@
   </g>
   <g>
     <rect x="140" y="218" width="96" height="28" rx="6" fill="#263238"/>
-    <text x="188" y="237" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">harmonyos/</text>
-    <text x="268" y="237" font-size="12" fill="#78909c"># HarmonyOS NEXT（ArkTS / ArkUI）</text>
+    <text x="188" y="237" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle"></text>
+    <text x="268" y="237" font-size="12" fill="#78909c"># Flutter（ArkTS / ArkUI）</text>
   </g>
   <g>
     <rect x="140" y="306" width="96" height="28" rx="6" fill="#263238"/>
@@ -82,8 +82,8 @@
   </g>
   <g>
     <rect x="228" y="370" width="160" height="28" rx="6" fill="#37474f"/>
-    <text x="308" y="389" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">biz/cdn_admin.go</text>
-    <text x="420" y="389" font-size="12" fill="#78909c"># 管理端 CDN 配置 CRUD（启停热更新 · AES-GCM 加密）</text>
+    <text x="308" y="389" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle"></text>
+    <text x="420" y="389" font-size="12" fill="#78909c"># CDN 多厂商管理已移除</text>
   </g>
 
   <!-- 文件 -->

@@ -1,6 +1,6 @@
 # Open Novel 项目规划（2026-08 修订）
 
-> 全球多语言小说平台：**Go-Kratos** 后端 + **Flutter / HarmonyOS** 多端客户端 + **Flutter Web 管理端**，支持 12+ 语种。
+> 全球多语言小说平台：**Go-Kratos** 后端 + **Flutter** 多端客户端 + **Flutter Web 管理端**，支持 12+ 语种。
 > 本文档基于当前已实现功能与 [novel-project-planning.md](novel-project-planning.md)（架构设计）补充，聚焦「现状盘点 + 后续执行规划」。
 
 ---
@@ -10,7 +10,7 @@
 | 维度 | 定位 |
 | :--- | :--- |
 | 产品 | 全球多语言小说阅读平台，面向全球读者 |
-| 客户端（C 端） | Flutter（Web / Desktop / Mobile）+ HarmonyOS NEXT，共用一套后端 API |
+| 客户端（C 端） | Flutter（Web / Desktop / Mobile），共用一套后端 API |
 | 管理端（B 端） | Flutter Web（`apps/admin/`），运营/内容/用户/数据管理 |
 | 后端 | Go-Kratos v2.9.2 微服务，gRPC 内部 + HTTP/JSON 对外（`/api` 前缀，`X-Api-Version: v1` 协商） |
 | 存储 | MySQL 8（读写分离）+ Redis 7（热点缓存/会话）+ OpenSearch 2（多语言搜索） |
@@ -28,29 +28,27 @@
 | 书籍 | 列表 / 详情 / 创建 / 翻译更新 / 上下架（管理）/ categories / tags | ✅ |
 | 章节 | 章节 CRUD / 正文 / 进度（段落级 position）/ 书架 / 禁用（管理） | ✅ |
 | 评论 | 列表 / 发布 / 点赞 / 取消点赞 / 举报 / 举报列表与处理（管理）/ 收藏 | ✅ |
-| 搜索 | 搜索 / 热搜词榜（/api/search/hot-keywords）/ 搜索建议（/api/search/suggest）/ 索引同步 / 索引删除 | ✅ |
+| 搜索 | 搜索 / 热搜词榜（/api/search/hot-keywords）/ 搜索建议（/api/search/suggest） | ✅ |
 | 推荐 | recommend（strategy=hot / new） | ✅ |
 | 支付 | 下单 / 查单 / 公开套餐 / VIP 状态 / 方式列表 / Webhook（11 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global / UnionPay-RSA）/ 管理端流水·方式·套餐 | ✅ |
 | 管理 | 仪表盘统计（GET /api/stats/overview）/ 分类标签 CRUD / 审计日志查询（GET /api/admin/audit-logs，分页 + user_id/action/target_type/target_id/时间范围筛选） | ✅ |
-| CDN | 多厂商 CDN 加速（章节静态化）：Cloudflare / AWS CloudFront 全球线 + 阿里云 / 腾讯云中国线，`internal/cdn` Provider 抽象 + 5 adapter（含 generic 兼容路径）、purge 广播（key `chapter/{id}?lang={lang}`）、DB 配置 + 管理端 CRUD（/api/cdn/admin/providers*）/ 热更新 | ✅ 已完成（2026-08-29，T-7.5） |
-| 项目宠物 | `GET /api/pet.svg`：非 proto 路由（`internal/pkg/pet.go` + `internal/server/server.go`），探测 MySQL / Redis / OpenSearch（各 2s 预算）→ happy / degraded / down 三态，注入 SVG 表情与状态牌；需 `X-Api-Version: v1`，`Cache-Control: no-store` | ✅ 已完成（2026-09-26） |
+| CDN | 章节静态化 + generic purge（`internal/cdn`，`CDN_BASE_URL` / `CDN_PURGE_URL`）；免费章节 `s-maxage=3600`，VIP `no-store` | ✅ 已完成 |
 
 基础设施：JWT + Refresh 轮换（Redis GETDEL 防重放）、可选鉴权中间件 + requireAdmin（RBAC，role=3）、按路径限流（登录 10/min、评论发布 10/min、举报 5/min、搜索 10/min、支付回调 30/min）、业务错误码（11xxxx 用户 / 12xxxx 书籍 / 14xxxx 章节 / 15xxxx 评论 / 16xxxx 搜索 / 17xxxx 推荐 / 18xxxx 管理 / 19xxxx 支付，HTTP 200 + `{code,reason,message}`）、Redis 缓存（5min±30s 抖动 / 空值防穿透 / SETNX 单飞）+ ristretto 进程内 L1 二级缓存（128MB / 30s TTL / 写路径双删）、读写分离（FORCE_MASTER）、OpenSearch 多语言索引（zh/en/ja kuromoji / ko nori）、API 版本协商、支付渠道密钥 AES-GCM 加密存储、回调验签（Stripe / NOWPayments HMAC / Alipay RSA2 / WeChat Pay Global 平台公钥 + AES-GCM 解密）+ 金额强校验 + 幂等 settle。
 
 ### 客户端（`apps/client/`）
 
-| 功能 | Flutter | HarmonyOS |
-| :--- | :---: | :---: |
-| 登录 / 注册 / 退出 | ✅ | ✅ |
-| 首页推荐 + 语言切换（12+ 语种） | ✅ | ✅ |
-| 书库列表 + 搜索 | ✅ | ✅（含分页加载更多） |
-| 书籍详情（收藏 / 书架 / 评论入口） | ✅ | ✅ |
-| 阅读器（正文 + 上/下一章 + 字号行距 13~26 / 1.2~2.6 + 深浅主题 + 上下滚动/左右翻页 + 离线缓存 + 段落级进度 + VIP 引导） | ✅ | ✅ |
-| 评论区（列表 / 发布 / 点赞） | ✅ | ✅ |
-| 我的（书架 / 收藏 / 最近进度 / VIP 卡片） | ✅ | ✅ |
-| VIP 购买 / 支付结果页（套餐 + 按语言支付方式 + 3 秒轮询三态） | ✅ | ✅ |
-| i18n | 13 ARB（zh-CN / en / ja / ko / fr / de / es / ru / pt / hi / ar / bn / id） | 13 语种资源 |
-| 项目宠物 Novi | ✅ 加载态 / 空状态插图（`assets/pet.png` + `lib/widgets/novi_pet.dart`，2026-09-26） | — |
+| 功能 | Flutter |
+| :--- | :---: |
+| 登录 / 注册 / 退出 | ✅ |
+| 首页推荐 + 语言切换（12+ 语种） | ✅ |
+| 书库列表 + 搜索 | ✅ |
+| 书籍详情（收藏 / 书架 / 评论入口） | ✅ |
+| 阅读器（正文 + 上/下一章 + 字号行距 13~26 / 1.2~2.6 + 深浅主题 + 上下滚动/左右翻页 + 离线缓存 + 段落级进度 + VIP 引导） | ✅ |
+| 评论区（列表 / 发布 / 点赞） | ✅ |
+| 我的（书架 / 收藏 / 最近进度 / VIP 卡片） | ✅ |
+| VIP 购买 / 支付结果页（套餐 + 按语言支付方式 + 3 秒轮询三态） | ✅ |
+| i18n | 13 ARB（zh-CN / en / ja / ko / fr / de / es / ru / pt / hi / ar / bn / id） |
 
 ### 管理端（`apps/admin/`）
 
@@ -70,7 +68,7 @@
 
 - `.github/workflows/release.yml`：push main 自动递增 v* tag + 增量 changelog 发 Release（幂等）
 - `scripts/post-push.sh`：本地手动兜底；`scripts/smoke.sh`：核心接口冒烟测试
-- `scripts/install.sh`：一键环境检查 + 依赖栈启动；`scripts/pet.sh`：终端项目宠物（按工作区 / 远端状态显示心情，`--line` 供脚本消费）
+- `scripts/install.sh`：一键环境检查 + 依赖栈启动
 
 ---
 
@@ -78,11 +76,11 @@
 
 | 规划项（原规划文档） | 现状 | 优先级 |
 | :--- | :--- | :--- |
-| 12+ 语种 i18n | ✅ 完成：后端 lang 规范（zh-CN/en/ja/ko…13 语种）、OpenSearch ko nori 分词、Flutter 13 ARB、HarmonyOS 13 语种资源 | ✅ |
+| 12+ 语种 i18n | ✅ 完成：后端 lang 规范（zh-CN/en/ja/ko…13 语种）、OpenSearch ko nori 分词、Flutter 13 ARB | ✅ |
 | 管理端 | ✅ 完成：审核 / 用户 / 统计 / 配置 / 支付管理 / 审计日志（10 tab），后端 admin 领域 + requireAdmin | ✅ |
 | VIP / 支付链路 | ✅ 完成：10 支付渠道（Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay，支付宝 RSA2 验签 / WeChat Pay Global，平台公钥 RSA-SHA256 验签）、下单/查单/Webhook、VIP 套餐订阅续期、管理端流水/方式/套餐（T-P-01~21）；国内微信支付未接入（需大陆商户资质） | ✅ |
-| 字体字号 / 深浅主题 / 翻页动画 | ✅ 完成：字号 13~26 / 行距 1.2~2.6 持久化、Material3 深浅主题（跟随系统/浅/深）+ HarmonyOS dark、上下滚动/左右翻页双模式 | ✅ |
-| 离线缓存（flutter_cache_manager） | ✅ 完成：Flutter flutter_cache_manager LRU；HarmonyOS 沙箱 50 篇 | ✅ |
+| 字体字号 / 深浅主题 / 翻页动画 | ✅ 完成：字号 13~26 / 行距 1.2~2.6 持久化、Material3 深浅主题（跟随系统/浅/深）、上下滚动/左右翻页双模式 | ✅ |
+| 离线缓存（flutter_cache_manager） | ✅ 完成：Flutter flutter_cache_manager LRU | ✅ |
 | 阅读进度精确化 | ✅ 完成：进度精确到段落/滚动位置（复用后端 progress 端点 position 字段） | ✅ |
 | 桌面端自适应布局 | ✅ 已实现（T-C-20/21） | ✅ |
 | 分页策略统一 / token 持久化 | ✅ 已实现（T-C-16~19、T-A-17） | ✅ |
@@ -122,17 +120,16 @@
 
 ### 阶段 C1：多语言补齐（✅ 已完成，T-C-01~04）
 - Flutter：ARB 13 语种（zh-CN / en / ja / ko / fr / de / es / ru / pt / hi / ar / bn / id）
-- HarmonyOS：13 语种资源目录
 - 后端：`lang` 参数规范统一（`zh-CN` / `en` / `ja`…），`langCode()` 映射对齐；OpenSearch 补 ko（nori 分词）
 
 ### 阶段 C2：阅读体验增强（✅ 已完成，T-C-05~12）
-- 字号 13~26 / 行距 1.2~2.6 调节并持久化（两端）
-- 深浅主题（Material 3 ThemeMode：跟随系统 / 浅 / 深 + HarmonyOS dark 资源）
-- 翻页方向（上下滚动 / 左右翻页双模式）；章节离线缓存（Flutter `flutter_cache_manager` LRU、HarmonyOS 沙箱 50 篇）
+- 字号 13~26 / 行距 1.2~2.6 调节并持久化（Flutter）
+- 深浅主题（Material 3 ThemeMode：跟随系统 / 浅 / 深）
+- 翻页方向（上下滚动 / 左右翻页双模式）；章节离线缓存（Flutter `flutter_cache_manager` LRU）
 - 阅读进度精确到段落/滚动位置（复用 progress 端点 `position` 字段，后端未改）
 
 ### 阶段 C3：社区与发现（✅ 已完成，T-C-13~15）
-- 评论增强：取消点赞、举报入口（两端对齐）
+- 评论增强：取消点赞、举报入口（Flutter）
 - 分类浏览 Tab（`/api/categories`）+ 热搜词榜（`/api/search/hot-keywords`）
 - 搜索建议（`/api/search/suggest`，本地历史 20 条可清空 + 200ms 防抖）
 
@@ -161,7 +158,7 @@
 | 阶段 | 周期 | 内容 | 状态 |
 | :--- | :--- | :--- | :--- |
 | M2 内容审核 | 1-2 周 | 管理端书籍/章节/评论审核 + 后端审核端点 + RBAC | ✅ 已完成 |
-| C1 多语言补齐 | 1-2 周 | ARB 13 语种、HarmonyOS 资源、后端 lang 对齐、ko nori | ✅ 已完成 |
+| C1 多语言补齐 | 1-2 周 | ARB 13 语种、后端 lang 对齐、ko nori | ✅ 已完成 |
 | M3 用户管理 | 1 周 | 管理端用户模块 + admin API + 审计 | ✅ 已完成 |
 | C2 阅读体验 | 1-2 周 | 字号/主题/翻页/离线缓存/进度精确化 | ✅ 已完成 |
 | M4/M5 统计配置 | 1 周 | 仪表盘、分类/标签管理 | ✅ 已完成 |
@@ -170,7 +167,7 @@
 | 多端统一 / 收尾 | 1-2 周 | 分页统一、token 持久化、桌面布局（T-C-16~23、T-A-17） | ✅ 已完成 |
 | 二期支付 | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal（T-P-19~20） | ✅ 已完成 |
 
-**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4/7.5 已实现（2026-08-29，7.5 多厂商 CDN 完成，7.4 AI 推荐已移除），仅剩 T-C-23 人工回归按需执行。
+**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4 已移除；7.5 仅保留 generic CDN purge，仅剩 T-C-23 人工回归按需执行。
 
 ---
 

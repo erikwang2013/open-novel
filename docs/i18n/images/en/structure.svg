@@ -67,8 +67,8 @@
   </g>
   <g>
     <rect x="140" y="218" width="96" height="28" rx="6" fill="#263238"/>
-    <text x="188" y="237" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">harmonyos/</text>
-    <text x="268" y="237" font-size="12" fill="#78909c"># HarmonyOS NEXT (ArkTS / ArkUI)</text>
+    <text x="188" y="237" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle"></text>
+    <text x="268" y="237" font-size="12" fill="#78909c"># Flutter (ArkTS / ArkUI)</text>
   </g>
 
   <!-- 文件 -->

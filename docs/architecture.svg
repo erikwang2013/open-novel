@@ -30,7 +30,7 @@
     </g>
     <g>
       <rect x="718" y="120" width="208" height="34" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
-      <text x="822" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">HarmonyOS App</text>
+      <text x="822" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Flutter App</text>
     </g>
   </g>
 
@@ -45,22 +45,22 @@
 
     <!-- CDN 子层：GeoDNS 双线 + 4 厂商 -->
     <rect x="46" y="250" width="560" height="84" rx="8" fill="#d1c4e9" stroke="#5e35b1" stroke-width="1.5"/>
-    <text x="58" y="266" font-size="11" fill="#4527a0">CDN 层 · GeoDNS 双线分流（CNAME）</text>
+    <text x="58" y="266" font-size="11" fill="#4527a0">CDN 层 · 缓存加速</text>
     <g>
       <rect x="56" y="272" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="187" y="291" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Cloudflare · 海外线</text>
+      <text x="187" y="291" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CDN 缓存</text>
     </g>
     <g>
       <rect x="334" y="272" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="465" y="291" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">AWS CloudFront · 海外线</text>
+      <text x="465" y="291" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle"></text>
     </g>
     <g>
       <rect x="56" y="306" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="187" y="325" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">阿里云 CDN · 中国线</text>
+      <text x="187" y="325" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle"></text>
     </g>
     <g>
       <rect x="334" y="306" width="262" height="30" rx="6" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="465" y="325" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">腾讯云 CDN · 中国线</text>
+      <text x="465" y="325" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle"></text>
     </g>
 
     <!-- 源站：Nginx → Go-Kratos -->
@@ -113,7 +113,7 @@
     <g>
       <rect x="678" y="464" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
       <text x="828" y="481" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">推荐服务 Recommendation Service</text>
-      <text x="828" y="496" font-size="10" fill="#78909c" text-anchor="middle">AI 推荐 · 用户行为分析</text>
+      <text x="828" y="496" font-size="10" fill="#78909c" text-anchor="middle">热门 / 新书推荐</text>
     </g>
     <g>
       <rect x="46" y="512" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
@@ -123,12 +123,12 @@
     <g>
       <rect x="362" y="512" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
       <text x="512" y="529" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">管理服务 Admin Service</text>
-      <text x="512" y="544" font-size="10" fill="#78909c" text-anchor="middle">统计 · 分类标签 · RBAC · CDN 配置</text>
+      <text x="512" y="544" font-size="10" fill="#78909c" text-anchor="middle">统计 · 分类标签 · RBAC</text>
     </g>
     <!-- 失效编排：internal/cdn Manager → 各厂商 purge API -->
     <g>
       <rect x="678" y="512" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
-      <text x="828" y="529" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">CDN 失效编排 internal/cdn</text>
+      <text x="828" y="529" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">缓存失效编排 internal/cdn</text>
       <text x="828" y="544" font-size="10" fill="#78909c" text-anchor="middle">Manager 广播 4 厂商 purge API</text>
     </g>
   </g>
@@ -161,8 +161,8 @@
     </g>
     <g>
       <rect x="718" y="616" width="208" height="34" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="822" y="631" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">novel_cdn_provider</text>
-      <text x="822" y="645" font-size="10" fill="#78909c" text-anchor="middle">CDN 厂商配置 · AES-GCM 加密</text>
+      <text x="822" y="631" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CDN 缓存配置</text>
+      <text x="822" y="645" font-size="10" fill="#78909c" text-anchor="middle">CDN 缓存配置</text>
     </g>
   </g>
 

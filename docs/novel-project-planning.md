@@ -1,6 +1,6 @@
 # 全球多语言小说平台 — 项目规划
 
-全球多语言小说平台：**Go-Kratos** 后端 + **Flutter / HarmonyOS** 多端前端，支持 12+ 语种独立适配，云原生微服务架构。
+全球多语言小说平台：**Go-Kratos** 后端 + **Flutter** 多端前端，支持 12+ 语种独立适配，云原生微服务架构。
 
 ---
 
@@ -11,11 +11,10 @@
 ├─ Flutter Web App（Chrome）
 ├─ Flutter Desktop App（Windows / Mac / Linux）
 ├─ Flutter Mobile App（iOS / Android）
-├─ HarmonyOS NEXT App（ArkTS / ArkUI）
 └── [本地化引擎: i18n 路由 + 资源动态加载]
 
 [接入层]
-├─ Nginx（TLS 终结 / 静态资源 / CDN 加速 / 反向代理）
+├─ Nginx（TLS 终结 / 静态资源 / 反向代理）
 └─ HTTP 网关 → gRPC 服务（Go-Kratos v2.x，双协议）
 
 [服务层]
@@ -108,12 +107,11 @@ apps/
 │  │  ├─ screens/         # 书籍详情 / 阅读器 / 书架 ...
 │  │  └─ l10n/            # ARB 多语言文件（12+ 语种）
 │  └─ pubspec.yaml
-└─ harmonyos/      # HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
    ├─ entry/src/main/ets/ # 页面与组件
    └─ build-profile.json5 # hvigor 构建配置
 ```
 
-两端共享同一套后端 API（HTTP 网关 + gRPC），客户端只走 HTTP/JSON。
+客户端共享同一套后端 API（HTTP 网关 + gRPC），客户端只走 HTTP/JSON。
 
 ### 2. Go-Kratos 后端服务
 
@@ -292,7 +290,7 @@ services:
 
 ### CI/CD（GitHub Actions）
 
-1. Flutter Web 构建 → 静态产物 + HarmonyOS 签名打包。
+1. Flutter Web 构建 → 静态产物。
 2. Go-Kratos 单测 + golangci-lint + 镜像构建。
 3. 部署至 Kubernetes / 阿里云 ACK，镜像滚动更新。
 
@@ -303,16 +301,16 @@ services:
 | 阶段 | 周期 | 任务重点 | 状态 |
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | 2-3 周 | Kratos 基础服务 + MySQL 主从 / Redis / OpenSearch 集成，数据库建表 | ✅ 已完成 |
-| **Phase 2** | 3-4 周 | Flutter 多语言 ARB + 多端布局；HarmonyOS 基础壳工程 | ✅ 已完成 |
+| **Phase 2** | 3-4 周 | Flutter 多语言 ARB + 多端布局 | ✅ 已完成 |
 | **Phase 3** | 2 周 | 安全体系落地（JWT / 限流 / 校验 / 追踪）+ 压力测试 | ✅ 已完成 |
-| **Phase 4** | 1-2 周 | 全链路联调 + CDN（CloudFront / 阿里云 OSS）+ 监控告警 | ✅ 已完成 |
+| **Phase 4** | 1-2 周 | 全链路联调 + CDN 缓存 + 监控告警 | ✅ 已完成 |
 | **Phase 5** | 持续迭代 | 用户行为埋点分析、搜索优化 | ⏳ 进行中 |
 | **商业化** | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、支付与 VIP（11 渠道） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~22） |
 | **二期** | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal、微信支付国际版（WeChat Pay Global）、多端体验统一（C4） | ✅ 已完成（国内微信支付未接入，需大陆商户资质） |
 
 ### 关键资源清单
 
-- **开发环境**：Go 1.22+、Flutter SDK、DevEco Studio（HarmonyOS）、MySQL 8.0、Redis 7.x、OpenSearch 2.x。
+- **开发环境**：Go 1.22+、Flutter SDK、MySQL 8.0、Redis 7.x、OpenSearch 2.x。
 - **云服务建议**：AWS EC2 (t3.large) + RDS + ElastiCache；或阿里云 ECS + RDS + Redis。
 - **成本估算（首年）**：约 $5000–$10000，初期可先使用云免费额度。
 

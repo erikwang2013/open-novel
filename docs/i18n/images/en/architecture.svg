@@ -30,7 +30,7 @@
     </g>
     <g>
       <rect x="718" y="120" width="208" height="34" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
-      <text x="822" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">HarmonyOS App</text>
+      <text x="822" y="142" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Flutter App</text>
     </g>
   </g>
 
@@ -90,7 +90,7 @@
     <g>
       <rect x="678" y="420" width="300" height="40" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="2"/>
       <text x="828" y="437" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Recommendation Service</text>
-      <text x="828" y="452" font-size="10" fill="#78909c" text-anchor="middle">AI recommendations · User behavior analysis</text>
+      <text x="828" y="452" font-size="10" fill="#78909c" text-anchor="middle">Hot / new recommendations</text>
     </g>
   </g>
 

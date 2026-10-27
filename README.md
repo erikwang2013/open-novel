@@ -2,13 +2,12 @@
 
 <div align="center">
 
-**中文** · [English](docs/i18n/README.en.md) · [日本語](docs/i18n/README.ja.md) · [한국어](docs/i18n/README.ko.md) · [Русский](docs/i18n/README.ru.md) · [Deutsch](docs/i18n/README.de.md) · [Français](docs/i18n/README.fr.md) · [Español](docs/i18n/README.es.md) · [Português](docs/i18n/README.pt.md) · [हिन्दी](docs/i18n/README.hi.md) · [العربية](docs/i18n/README.ar.md) · [বাংলা](docs/i18n/README.bn.md) · [Bahasa Indonesia](docs/i18n/README.id.md)
+**中文** · [English](docs/i18n/README.en.md)
 
 </div>
 
-> 基于 **Go-Kratos** 微服务架构 + **Flutter / HarmonyOS** 多端前端的全球多语言小说阅读平台，支持 **12+ 种主要语种**，面向全球用户提供阅读、互动、搜索与个性化推荐能力。
+> 基于 **Go-Kratos** 微服务架构 + **Flutter** 多端前端的全球多语言小说阅读平台，支持 **12+ 种主要语种**，面向全球用户提供阅读、互动、搜索与个性化推荐能力。
 
-<div align="center"><img src="docs/pet.svg" alt="Open Novel 项目宠物 Novi" width="150"/></div>
 
 ---
 
@@ -17,11 +16,10 @@
 Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 - **后端**：Go-Kratos v2（gRPC / HTTP 双协议），微服务按领域拆分（用户、书籍、章节、评论、搜索、推荐）
-- **前端**：Flutter 全平台（Web / Desktop / Mobile）+ HarmonyOS NEXT 原生应用，共用同一套后端 API
+- **前端**：Flutter 全平台（Web / Desktop / Mobile），共用同一套后端 API
 - **多语言**：i18n 资源动态加载，支持 12+ 语种（中文、英文、日文、韩文、法文、德文、西班牙文、俄文、阿拉伯文等）
 - **存储**：MySQL 8（主从读写分离）+ Redis（热点缓存 / 会话）+ ristretto（进程内 L1 二级缓存）+ OpenSearch（多语言搜索）
 - **运维**：Docker Compose 一键部署，Prometheus + Grafana 监控，GitHub Actions 持续集成
-- **项目宠物**：Novi（[docs/pet.svg](docs/pet.svg)，会眨眼 / 甩尾凝字 / 墨身挤压）—— 终端 `bash scripts/pet.sh` 看仓库心情，后端 `GET /api/pet.svg` 按依赖健康度换表情，客户端与管理端空状态、两端网页外壳（标签页图标 / PWA 图标）也用它
 
 ## 功能特性
 
@@ -31,15 +29,15 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **阅读体验**：分章阅读、字体字号切换、深浅主题、离线缓存、翻页动画
 - **书籍内容**：书籍元数据、章节管理、分类标签、连载更新、多语言翻译
 - **互动社区**：评论书评、点赞、收藏、举报审核
-- **搜索发现**：多语言分词搜索、热搜词榜（/api/search/hot-keywords）、搜索建议（/api/search/suggest，本地历史 20 条可清空 + 200ms 防抖）、热门榜单、AI 推荐、分类浏览
-- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单 / 行为分析 /api/stats/behavior）、配置管理（分类标签）、机器翻译工作流（DeepL，/api/admin/translate/*，管理端「翻译」页 + 人工编辑）、审计日志查询（/api/admin/audit-logs）、CDN 厂商管理（多厂商配置 / 启停 / 排序，指纹热更新即时生效）
+- **搜索发现**：多语言分词搜索、热搜词榜（/api/search/hot-keywords）、搜索建议（/api/search/suggest，本地历史 20 条可清空 + 200ms 防抖）、热门榜单、分类浏览
+- **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）、机器翻译工作流（DeepL，/api/admin/translate/*，管理端「翻译」页 + 人工编辑）、审计日志查询（/api/admin/audit-logs）
 - **支付与会员**：11 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN) / WeChat Pay Global(国际版) / UnionPay(zh-CN)）、VIP 套餐订阅与续期、支付方式多语言路由
 
 ## 系统架构
 
 <p align="center"><img src="docs/architecture.svg" alt="系统架构图" width="860"/></p>
 
-整体为 Go-Kratos 微服务架构：Flutter / HarmonyOS 客户端经 Nginx + 多厂商 CDN（Cloudflare / CloudFront 全球线，阿里云 / 腾讯云中国线；管理端可配置、指纹热更新即时生效）与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
+整体为 Go-Kratos 微服务架构：Flutter 客户端经 CDN 缓存 + Nginx（TLS / 静态资源 / 反向代理）与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
 
 其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg) · 项目生命周期 [docs/lifecycle.svg](docs/lifecycle.svg)。
 
@@ -47,42 +45,13 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 <p align="center"><img src="docs/lifecycle.svg" alt="项目生命周期图" width="860"/></p>
 
-从**规划 → 架构设计 → 编码 → 测试 → 构建 → 发布 → 部署 → 监控 → 迭代**九个环节串成闭环：规划落地在 `planning / roadmap / tasks` 三件套；发布环节由 GitHub Actions 在 push `main` 后自动递增 `v*` tag 并以增量 changelog 创建 Release（幂等）；迭代环节把行为埋点、报表统计与搜索日志回流到需求池，进入下一轮规划。底部为已交付里程碑（后端基础 / 多端前端 / 安全加固 / CDN 全站加速 / 管理后台 / VIP 与支付）。
+从**规划 → 架构设计 → 编码 → 测试 → 构建 → 发布 → 部署 → 监控 → 迭代**九个环节串成闭环：规划落地在 `planning / roadmap / tasks` 三件套；发布环节由 GitHub Actions 在 push `main` 后自动递增 `v*` tag 并以增量 changelog 创建 Release（幂等）；迭代环节把报表统计与搜索数据回流到需求池，进入下一轮规划。底部为已交付里程碑（后端基础 / 多端前端 / 安全加固 / 缓存加速 / 管理后台 / VIP 与支付）。
 
-## 项目宠物 Novi
-
-<p align="center"><img src="docs/pet.svg" alt="Open Novel 项目宠物 Novi" width="220"/></p>
-
-**Novi** 是本项目的宠物（静止版为 [docs/mascot.svg](docs/mascot.svg)）：一滴活过来的墨，悬在摊开的书页上方——尾巴甩出的墨迹落到纸面，凝成 文 / A / あ 三个字，对应 12+ 语种与「阅读」两件事。源图是**会动**的 SVG（SMIL：呼吸浮动、墨身挤压、眨眼、尾墨摇摆、墨点飞溅），不需要 JS，README 与浏览器里直接就能看到它在动。
-
-它有四个住处，其中三个能反映项目当前状态：
-
-| 在哪见 | 怎么看 | 状态由什么决定 |
-| :--- | :--- | :--- |
-| 文档 / README | `docs/pet.svg`（12 语言 README 共用，与语言无关） | 固定形象 |
-| 终端 | `bash scripts/pet.sh`（`--line` 只输出一行，可挂 pre-commit / CI 日志） | 工作区是否干净、领先 / 落后远端多少提交 |
-| 后端 | `GET /api/pet.svg`（请求头 `X-Api-Version: v1`，见 `internal/pkg/pet.go`） | MySQL / Redis / OpenSearch 探测结果 → `happy` / `degraded` / `down` 三态表情 + 状态牌（含运行时长与不可用依赖） |
-| 浏览器 / PWA | 客户端与管理端的 `web/favicon.svg`（矢量版，标签页里会眨眼）、`web/icons/Icon-*.png` | 固定形象（全部位图由 `bash scripts/gen-assets.sh` 从 `docs/pet.svg` 生成） |
-
-客户端与管理端也把它接进了产品：客户端「暂无数据」与加载态（`lib/widgets/novi_pet.dart`）、管理端登录页（`apps/admin/assets/pet.png`）显示同一只 Novi，两端的网页外壳（标签页图标 / PWA 图标 / 应用名）也一并换成了它——`docs/pet-icon.svg` 是裁剪到脸部的图标版，`favicon.png` 由它生成。`GET /api/pet.svg` 是活的——依赖探测失败的次数越多，它的表情越困。
-
-
-<!-- pet-expressions:start -->
-## 项目宠物表情形态 · Novi
-
-<table align="center">
-<tr><td align="center"><img src="docs/pet-expressions/smile.svg" width="88" alt="笑"><br><b>笑</b><br><code>:emoji-smile:</code></td><td align="center"><img src="docs/pet-expressions/joy.svg" width="88" alt="欢乐"><br><b>欢乐</b><br><code>:emoji-joy:</code></td><td align="center"><img src="docs/pet-expressions/cry.svg" width="88" alt="哭"><br><b>哭</b><br><code>:emoji-cry:</code></td><td align="center"><img src="docs/pet-expressions/depressed.svg" width="88" alt="沮丧"><br><b>沮丧</b><br><code>:emoji-depressed:</code></td><td align="center"><img src="docs/pet-expressions/terrified.svg" width="88" alt="惊恐"><br><b>惊恐</b><br><code>:emoji-terrified:</code></td><td align="center"><img src="docs/pet-expressions/angry.svg" width="88" alt="愤怒"><br><b>愤怒</b><br><code>:emoji-angry:</code></td></tr>
-<tr><td align="center"><img src="docs/pet-expressions/coquettish.svg" width="88" alt="撒娇"><br><b>撒娇</b><br><code>:emoji-coquettish:</code></td><td align="center"><img src="docs/pet-expressions/cute.svg" width="88" alt="卖萌"><br><b>卖萌</b><br><code>:emoji-cute:</code></td><td align="center"><img src="docs/pet-expressions/pleasing.svg" width="88" alt="讨好"><br><b>讨好</b><br><code>:emoji-pleasing:</code></td><td align="center"><img src="docs/pet-expressions/knocking.svg" width="88" alt="敲打"><br><b>敲打</b><br><code>:emoji-knocking:</code></td><td align="center"><img src="docs/pet-expressions/facepalm.svg" width="88" alt="捂脸"><br><b>捂脸</b><br><code>:emoji-facepalm:</code></td><td align="center"><img src="docs/pet-expressions/tongue.svg" width="88" alt="吐舌头"><br><b>吐舌头</b><br><code>:emoji-tongue:</code></td></tr>
-</table>
-
-> 12 种彩色动态形态：笑 / 欢乐 / 哭 / 沮丧 / 惊恐 / 愤怒 / 撒娇 / 卖萌 / 讨好 / 敲打 / 捂脸 / 吐舌头。每个 SVG 自带表情、情绪特效与整体动效，并遵循 `prefers-reduced-motion`。
-<!-- pet-expressions:end -->
 
 <!-- assets-license:start -->
 ## 视觉资产授权 / Visual Assets License
 
-本项目的项目宠物、图片、图标、表情（包括 `docs/pet-expressions/` 等目录下的
-SVG / PNG）**不是开源资产**，版权归作者所有。未经书面许可不得复制、修改、再分发或
+本项目的图片、图标（包括 `docs/` 下的 SVG / PNG 图）**不是开源资产**，版权归作者所有。未经书面许可不得复制、修改、再分发或
 用于商业用途；商业使用需取得商业授权，联系 **erik@erik.xyz**。详见
 [ASSETS-LICENSE.md](ASSETS-LICENSE.md)。
 
@@ -101,14 +70,12 @@ open-novel/
 ├─ apps/                     # 多端前端
 │  ├─ client/                #   客户端（C 端）
 │  │  ├─ flutter/            #     Flutter 全平台（Web / Desktop / Mobile），i18n 多语言
-│  │  │  └─ assets/pet.png   #       项目宠物贴图（源图 docs/pet.svg，空 / 加载态使用）
-│  │  └─ harmonyos/          #     HarmonyOS NEXT 原生应用（ArkTS / ArkUI）
 │  └─ admin/                 #   管理端（Flutter Web，B 端后台）
 ├─ .github/                  # CI/CD：GitHub Actions 发布工作流（release.yml）
 ├─ kratos/                   # Go-Kratos 框架源码（上游框架，原样保留，勿改）
 │  └─ backend/               #   本项目业务后端：cmd/server 入口 + api/ + internal/ + sql/ + opensearch/
-├─ docs/                     # 项目文档（规划、架构 / 生命周期 / 宠物等 SVG 图、i18n README、打赏码）
-├─ scripts/                  # 构建与部署脚本（install.sh 一键安装、post-push.sh 自动发布、smoke.sh、pet.sh 终端宠物、gen-assets.sh 宠物图生成）
+├─ docs/                     # 项目文档（规划、架构 / 生命周期等 SVG 图、i18n README、打赏码）
+├─ scripts/                  # 构建与部署脚本（install.sh 一键安装、post-push.sh 自动发布、smoke.sh）
 ├─ docker-compose.yml        # 本地依赖栈：MySQL 8 + Redis 7 + OpenSearch 2
 ├─ CLAUDE.md                 # 项目协作规范
 └─ README.md                 # 项目说明文档
@@ -122,9 +89,9 @@ open-novel/
 
 | 层次 | 技术选型 |
 | :--- | :--- |
-| 客户端 | Flutter（Web / Desktop / Mobile，url_launcher / flutter_cache_manager）、HarmonyOS NEXT（ArkTS / ArkUI） |
+| 客户端 | Flutter（Web / Desktop / Mobile，url_launcher / flutter_cache_manager） |
 | 管理端 | Flutter Web（`apps/admin/`，B 端后台） |
-| 网关 | Nginx + 多厂商 CDN（Cloudflare / CloudFront / 阿里云 / 腾讯云）、Go-Kratos API 网关（gRPC / HTTP 双协议） |
+| 网关 | Nginx + CDN 缓存（generic purge）、Go-Kratos API 网关（gRPC / HTTP 双协议） |
 | 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC、stripe-go（Stripe 支付 SDK） |
 | 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、ristretto（进程内 L1 二级缓存，128MB / 30s TTL）、OpenSearch 2.x |
 | 可观测 | Prometheus、Grafana、ELK、OpenTelemetry 链路追踪 |
@@ -155,7 +122,6 @@ CREATE DATABASE novel DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 | 推荐 | `/api/...` | `kratos/backend/api/recommendation/v1` |
 | 支付 | `/api/payments/...` | `kratos/backend/api/payment/v1` |
 | 管理 | `/api/stats/overview`、`/api/categories`、`/api/tags`、`/api/admin/audit-logs`（审计日志，分页 + 多条件筛选） | `kratos/backend/api/admin/v1` |
-| 项目宠物 | `/api/pet.svg`（活体状态图，非 proto 路由，需 `X-Api-Version: v1`） | `kratos/backend/internal/pkg/pet.go` |
 
 详细路由见各 proto 文件 `option (google.api.http)` 声明。
 
@@ -201,7 +167,6 @@ bash scripts/install.sh
 ## 使用说明
 
 - **后端**：HTTP `http://localhost:8000`（gRPC `:9000`），接口统一前缀 `/api`，版本经请求头 `X-Api-Version: v1` 协商
-- **项目宠物**：`curl -H 'X-Api-Version: v1' http://localhost:8000/api/pet.svg > pet.svg` 取活体状态图；终端看仓库心情用 `bash scripts/pet.sh`（`--line` 只输出一行）
 - **客户端**：`cd apps/client/flutter && flutter pub get && flutter run -d chrome`（默认连 localhost:8000）
 - **管理端**：`cd apps/admin && flutter pub get && flutter run -d chrome`，端口由 Flutter 随机分配并打印在控制台（可用 `--web-port` 固定）
 - **依赖栈端口映射**：MySQL `3307`、Redis `6380`、OpenSearch `9200`
@@ -227,10 +192,10 @@ bash scripts/install.sh
 | 阶段 | 周期 | 任务重点 | 状态 |
 | :--- | :--- | :--- | :--- |
 | Phase 1 | 2-3 周 | Kratos 后端基础服务 + MySQL / Redis / OpenSearch 集成 | ✅ 已完成 |
-| Phase 2 | 3-4 周 | Flutter / HarmonyOS 多端前端 + 多语言 ARB 编写 | ✅ 已完成 |
+| Phase 2 | 3-4 周 | Flutter 多端前端 + 多语言 ARB 编写 | ✅ 已完成 |
 | Phase 3 | 2 周 | 安全加固（JWT / RBAC / 限流）+ 压力测试 | ✅ 已完成 |
-| Phase 4 | 1-2 周 | 全链路联调 + CDN 加速配置 | ✅ 已完成 |
-| Phase 5 | 持续 | AI 推荐算法接入、用户行为分析埋点 | ⏳ 进行中 |
+| Phase 4 | 1-2 周 | 全链路联调 + 缓存与静态资源加速 | ✅ 已完成 |
+| Phase 5 | 持续 | 搜索与推荐体验优化 | ⏳ 进行中 |
 | 商业化 | 2026-08 | 管理后台（审核/用户/统计/配置/审计日志）、多语言与阅读体验、VIP 与支付链（11 渠道，支付宝 / 微信支付国际版 / 银联 2026-08-29 接入） | ✅ 已完成（T-A-01~17 / T-C-01~23 / T-P-01~22） |
 
 ## 支持与打赏
@@ -245,59 +210,18 @@ bash scripts/install.sh
 
 </div>
 
-### 全球转账打赏（跨境汇款）
+## 项目授权 / Project License
 
-【收款人信息】
+Copyright (c) 2026 erik <erik@erik.xyz> — https://erik.xyz
 
-- 收款人姓名：WANG KEXUN
-- 收款账户号码：881015918251
+- 本项目仅供个人学习、研究使用。
+- 未经作者书面授权，禁止任何形式的商业使用（包括但不限于商业部署、付费服务、二次销售、SaaS 运营及以本项目为基础提供商业服务）。
+- 商业授权请联系 **erik@erik.xyz**。
+- 未经授权的商业使用，作者将在全球范围内依法追究法律责任，并保留终身追责的权利。
+- 第三方组件仍遵循其各自原有的许可证；视觉资产适用仓库内的 ASSETS-LICENSE.md（如适用）。
 
-【收款银行】
+**English:** This project is provided for personal study and research only. Commercial use of any kind requires prior written authorization from the author (erik@erik.xyz). Unauthorized commercial use will be pursued for legal liability worldwide, and the author reserves the right to pursue such liability for life. Third-party components remain under their original licenses; visual assets are governed by ASSETS-LICENSE.md where applicable.
 
-- ZA Bank SWIFT Code：AABLHKHHXXX
-- 银行名称：ZA Bank Limited
-- 银行编号：387
-- 银行地址：Core F, Cyberport 3, 100 Cyberport Road, Hong Kong
+**第三方代码**：`kratos/` 为 Kratos 框架上游源码，遵循其 [MIT License](kratos/LICENSE)。
 
-【跨境汇款代理银行（如需）】
-
-> 请留意，此为跨境汇款代理银行（中转银行）信息，非收款银行信息。请向汇款银行查询是否需要提供跨境汇款代理银行信息。
-
-**汇入港元、人民币及美元的代理银行为 Citibank**
-
-- 银行名称：Citibank N.A. Hong Kong
-- SWIFT Code：CITIHKHXXXX
-- 银行编号：006
-- 分行名称：Hong Kong Branch
-- 分行编号：391
-- 银行地址：Citibank Tower, Citibank Plaza, 3 Garden Road, Central, Hong Kong
-
-**汇入其他币种时的代理银行为 BNY Mellon**
-
-- 银行名称：THE BANK OF NEW YORK MELLON
-- SWIFT Code：IRVTUS3NXXX
-- 银行地址：THE BANK OF NEW YORK MELLON, 240 GREENWICH STREET, NEW YORK, United States
-
-### 虚拟币打赏 (Crypto Donation)
-
-如果这个项目对你有帮助，欢迎扫描二维码打赏支持，谢谢！
-
-| 主网 (Network) | 二维码 (QR Code) | 钱包地址 (Wallet Address) |
-|---|---|---|
-| BNB Smart Chain (BEP20) | [<img src="./docs/coin/1.jpg" width="150" alt="BNB Smart Chain (BEP20)">](./docs/coin/1.jpg) | `0x355d429f97511897ccb4e271ec888205f9ab6629` |
-| Tron (TRC20) | [<img src="./docs/coin/2.jpg" width="150" alt="Tron (TRC20)">](./docs/coin/2.jpg) | `TEdDHWLajt1XvqtPDWmQctdrJaC3pzZZzz` |
-| Ethereum (ERC20) | [<img src="./docs/coin/3.jpg" width="150" alt="Ethereum (ERC20)">](./docs/coin/3.jpg) | `0x355d429f97511897ccb4e271ec888205f9ab6629` |
-| Aptos | [<img src="./docs/coin/4.jpg" width="150" alt="Aptos">](./docs/coin/4.jpg) | `0x836e3780edfc3f7b2372b39e2a1a3a5d7adfaccd96c726f21cfde1b50dd68030` |
-| Plasma | [<img src="./docs/coin/5.jpg" width="150" alt="Plasma">](./docs/coin/5.jpg) | `0x355d429f97511897ccb4e271ec888205f9ab6629` |
-| Polygon POS | [<img src="./docs/coin/6.jpg" width="150" alt="Polygon POS">](./docs/coin/6.jpg) | `0x355d429f97511897ccb4e271ec888205f9ab6629` |
-| Solana | [<img src="./docs/coin/7.jpg" width="150" alt="Solana">](./docs/coin/7.jpg) | `2hfhboHdmdrYsY25XfQSsEWxq5ip4EQsR7f4AzSRMUyr` |
-| The Open Network (TON) | [<img src="./docs/coin/8.jpg" width="150" alt="The Open Network (TON)">](./docs/coin/8.jpg) | `UQB9kFQohzmXUir9QSSZq01iwl9aQZIDdBpNmDklljRtCoGK` |
-| Arbitrum One | [<img src="./docs/coin/9.jpg" width="150" alt="Arbitrum One">](./docs/coin/9.jpg) | `0x355d429f97511897ccb4e271ec888205f9ab6629` |
-| AVAX C-Chain | [<img src="./docs/coin/10.jpg" width="150" alt="AVAX C-Chain">](./docs/coin/10.jpg) | `0x355d429f97511897ccb4e271ec888205f9ab6629` |
-
----
-
-## License 与联系方式
-
-- **License**：仓库根目录无独立 LICENSE；`kratos/` 为 Kratos 框架上游源码，遵循其 [MIT License](kratos/LICENSE)。业务代码授权方式以项目后续声明为准。
-- **联系方式**：GitHub Issues / PR 交流；捐赠见上方「支持与打赏」。
+**联系方式**：GitHub Issues / PR 交流。

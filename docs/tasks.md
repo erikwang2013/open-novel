@@ -16,7 +16,7 @@
 | 管理端 | T-A-14~15 | 数据统计（API + 仪表盘） | M4 | ✅ 已完成 |
 | 管理端 | T-A-16 | 配置管理（分类 / 标签） | M5 | ✅ 已完成 |
 | 管理端 | T-A-17 | token 持久化（对齐 C4） | 收尾 | ✅ 已完成 |
-| 客户端 | T-C-01~04 | 多语言补齐（后端 lang 对齐 + 两端资源） | C1 | ✅ 已完成 |
+| 客户端 | T-C-01~04 | 多语言补齐（后端 lang 对齐 + Flutter 资源） | C1 | ✅ 已完成 |
 | 客户端 | T-C-05~12 | 阅读体验（字号 / 主题 / 翻页 / 缓存 / 进度） | C2 | ✅ 已完成 |
 | 客户端 | T-C-13~15 | 社区与发现（评论增强 / 分类 / 热搜） | C3 | ✅ 已完成 |
 | 客户端 | T-C-16~21 | 多端统一（分页 / token / 桌面布局） | C4 | ✅ 已完成 |
@@ -84,30 +84,26 @@
 
 | 编号 | 任务 | 说明 | 依赖 |
 | :--- | :--- | :--- | :--- |
-| T-C-01 | 后端 lang 规范统一 | `lang` 参数规范（`zh-CN` / `en` / `ja`…），`langCode()` 映射与两端对齐，文档同步 api.md | 无 |
+| T-C-01 | 后端 lang 规范统一 | `lang` 参数规范（`zh-CN` / `en` / `ja`…），`langCode()` 映射与 Flutter 对齐，文档同步 api.md | 无 |
 | T-C-02 | OpenSearch 分词补齐 | ko（nori）、通用 ICU 分词，索引模板 / 映射更新 + 重建脚本 | 无 |
 | T-C-03 | Flutter ARB 扩展 12+ 语种 | zh / en / ja / ko / fr / de / es / ru / ar / pt / hi / bn / id，每语种 ~40 键起步，L10n 生成接入 | 无 |
-| T-C-04 | HarmonyOS 资源按语种补齐 | `resources/<lang>/`（base/en_US 已有，补其余语种 string），运行时按 `lang` 切换 | 无 |
 
 ### 3.2 阅读体验（C2）
 
 | 编号 | 任务 | 说明 | 依赖 |
 | :--- | :--- | :--- | :--- |
 | T-C-05 | Flutter 字号 / 行距 | 设置项替换硬编码 `fontSize 17`，阅读页即时生效 + 持久化 | 无 |
-| T-C-06 | HarmonyOS 字号 / 行距 | 同 T-C-05，preferences 持久化 | 无 |
 | T-C-07 | 深浅主题 | Flutter Material 3 `ThemeMode`（跟随系统 / 浅 / 深）+ 阅读页适配 | 无 |
-| T-C-08 | HarmonyOS 深浅色 | 深浅色资源目录 + 跟随系统切换 | 无 |
-| T-C-09 | 翻页方向 | 上下滚动 / 左右翻页两种模式，两端对齐 | T-C-05/06 后 |
+| T-C-09 | 翻页方向 | 上下滚动 / 左右翻页两种模式，Flutter 对齐 | T-C-05/06 后 |
 | T-C-10 | Flutter 章节离线缓存 | 正文本地缓存（flutter_cache_manager），离线可读，缓存淘汰策略 | 无 |
-| T-C-11 | HarmonyOS 章节离线缓存 | 同 T-C-10（沙箱文件 / preferences） | 无 |
-| T-C-12 | 阅读进度精确化 | 进度精确到滚动位置（当前 `position=0` 章节粒度 → 段落粒度），两端对齐 | T-C-09 |
+| T-C-12 | 阅读进度精确化 | 进度精确到滚动位置（当前 `position=0` 章节粒度 → 段落粒度），Flutter 对齐 | T-C-09 |
 
 ### 3.3 社区与发现（C3）
 
 | 编号 | 任务 | 说明 | 依赖 |
 | :--- | :--- | :--- | :--- |
-| T-C-13 | 评论增强 | 取消点赞（后端已有 `/api/comments/{id}/unlike`，两端补齐入口）+ 举报入口（对接 T-A-06 的 status=2 举报表） | T-A-06 |
-| T-C-14 | 分类浏览 Tab | 首页 / 书库接入 `/api/categories` 分类筛选，两端对齐 | 无 |
+| T-C-13 | 评论增强 | 取消点赞（后端已有 `/api/comments/{id}/unlike`，Flutter 补齐入口）+ 举报入口（对接 T-A-06 的 status=2 举报表） | T-A-06 |
+| T-C-14 | 分类浏览 Tab | 首页 / 书库接入 `/api/categories` 分类筛选，Flutter 对齐 | 无 |
 | T-C-15 | 热门搜索词 | 搜索页展示 `/api/search/hot` 热搜词，点击即搜 | 无 |
 
 ### 3.4 多端统一（C4）
@@ -115,22 +111,18 @@
 | 编号 | 任务 | 说明 | 依赖 |
 | :--- | :--- | :--- | :--- |
 | T-C-16 | Flutter 分页统一 | 书架批量拉章节按 `total` 循环（消除 500 章上限） | 无 |
-| T-C-17 | HarmonyOS 分页统一 | 同 T-C-16（5000 章上限 → total 循环） | 无 |
 | T-C-18 | Flutter token 持久化 | shared_preferences 持久化，刷新页面免重登 | 无 |
-| T-C-19 | HarmonyOS token 恢复 | 启动时从 preferences 恢复会话（已有读写，补启动恢复流程） | 无 |
 | T-C-20 | 桌面端自适应 | Flutter `LayoutBuilder` 宽屏多列（书库 / 详情 / 阅读），移动端保持底部导航 | 无 |
-| T-C-21 | HarmonyOS 宽屏适配 | 平板 / 折叠屏布局检查与适配 | 无 |
 
 ### 3.5 收尾
 
 | 编号 | 任务 | 说明 | 依赖 |
 | :--- | :--- | :--- | :--- |
-| T-C-22 | 加载 / 空态统一 | 列表加载态、错误重试、空数据文案两端对齐 | 无 |
-| T-C-23 | 全链路回归 | `smoke.sh` 扩展覆盖新端点（status / audit / 举报 / 统计），两端手测清单 | T-A/T-C 主体 |
+| T-C-22 | 加载 / 空态统一 | 列表加载态、错误重试、空数据文案 Flutter 对齐 | 无 |
+| T-C-23 | 全链路回归 | `smoke.sh` 扩展覆盖新端点（status / audit / 举报 / 统计），Flutter 手测清单 | T-A/T-C 主体 |
 
-#### T-C-23 两端手测清单
+#### T-C-23 Flutter 手测清单
 
-- [ ] **登录**：Flutter 与 HarmonyOS 各自完成 注册→登录→退出→重新登录 全流程；token 重启 App 后仍有效
 - [ ] **书库分类筛选**：全部书籍 tab 顶部分类 chip 点击切换，列表随之刷新；宽屏（≥900vp）多列不回归
 - [ ] **热搜**：首页/书库热搜词点击触发搜索，结果正确
 - [ ] **评论点赞/取消**：评论区点赞后数字 +1 且图标变实心，再点取消 -1 恢复空心；重复请求不报错
@@ -138,7 +130,7 @@
 - [ ] **书架分页**：我的页书架加载正常（>20 本时翻页完整），移出书架后列表即时更新
 - [ ] **阅读器**：打开书详情 → 章节列表 → 进入阅读；章节翻页、进度保存（重新进入跳转上次章节）
 - [ ] **VIP 购买**：VIP 页套餐列表展示 → 下单跳转支付 → 返回后状态刷新为已开通；到期时间展示正确
-- [ ] **加载/错误/空态**：列表页三态两端一致——加载居中转圈、错误有重试按钮、空数据有文案（评论空态用 emptyComment）
+- [ ] **加载/错误/空态**：列表页三态Flutter 一致——加载居中转圈、错误有重试按钮、空数据有文案（评论空态用 emptyComment）
 
 ## 四、并行与调度建议
 
@@ -189,8 +181,8 @@
 | T-P-13 | 管理端 VIP 套餐配置 | 套餐 CRUD（时长 / 价格 / 币种 / 标签） | T-P-01 |
 | T-P-14 | 客户端 VIP 购买页 | 套餐列表 + 按语言推荐支付方式 + 下单 / 跳转 / 回跳 | T-P-06/07 |
 | T-P-15 | 支付结果页 | 成功 / 失败 / 待确认态 + 订单轮询 | T-P-14 |
-| T-P-16 | 阅读器 VIP 引导 | VIP 章节未订阅 → 引导购买（两端对齐） | T-P-08 |
-| T-P-17 | 我的-VIP 状态 | 到期时间 / 续费入口（两端） | T-P-08 |
+| T-P-16 | 阅读器 VIP 引导 | VIP 章节未订阅 → 引导购买（Flutter 对齐） | T-P-08 |
+| T-P-17 | 我的-VIP 状态 | 到期时间 / 续费入口（Flutter） | T-P-08 |
 | T-P-18 | 安全与合规 | 回调验签、金额防篡改、幂等、审计日志、日志脱敏 | T-P-04~07 |
 | T-P-19 | 本地支付补强（二期） | 按语言：hi→Razorpay、ja→KOMOJU、ko→PortOne、pt-BR→Mercado Pago、id/th/vn→Xendit、zh-CN→支付宝/微信（需 CN 资质） | T-P-03 后逐语言 |
 | T-P-20 | PayPal 接入（备选） | Stripe 未覆盖市场兜底 | T-P-03 |
@@ -249,25 +241,17 @@
 **工作量**：S（单文件 + 初始化，改动面 <50 行）。
 **风险**：中。L1 数据一致性——短 TTL（30s）兜底，写路径双删避免脏读；内存占用需监控（ristretto 超出容量会逐出，无溢出风险但有命中率下降）。**触发条件**：压测/线上 Redis 读 QPS 达到瓶颈（如 >10k QPS 且热点集中），否则不做。
 
-### 7.4 AI 推荐（方向 4，门槛项）
+### 7.4 AI 推荐（已移除）
 
 **状态**：❌ 已移除（2026-10-27，`strategy=ai` 无客户端使用，未接入第三方模型）。
 
-**触发条件**：`novel_recommend_log` + `novel_search_log` 累积 ≥ 阈值（如单语言 ≥ 10 万条有效行为），且业务侧确认第三方 API 预算。当前推荐为 `recommend.go` 仅 hot/new 策略，AI 属替代策略，不是补丁。
+### 7.5 CDN 缓存
 
-**方案草图（≤10 行）**：① 现有 `recommend.go` 的 `Log()` 已在写 impression 日志（`novel_recommend_log`，含 UserID/BookID/Strategy/RankNo），无需新埋点 → ② 批量导出行为数据 → ③ 第三方（如 OpenAI embeddings 或推荐 SaaS）离线训练/计算 → ④ `recommend.go` 新增 strategy 分支（如 `ai`），按语言路由 + 预热到 Redis → ⑤ `recommendation.proto` 无接口变更，策略参数走现有 `GetRecommendationsReq`；未达标前不接第三方 API（无账单、无数据泄露面）。数据量达标前，hot/new 策略 + 热搜词已够用。
-
-### 7.5 CDN 章节静态化（方向 5，门槛项）
-
-**状态**：✅ 已实现（2026-08-29，多厂商广播）。免费章节 `Cache-Control: public, s-maxage=3600`，VIP `no-store`；章节创建/状态变更 fire-and-forget purge 广播到全部启用厂商，key 约定 `chapter/{id}?lang={lang}`。4 厂商 adapter（Cloudflare / AWS CloudFront 全球线 + 阿里云 / 腾讯云中国线），配置存 `novel_cdn_provider` 表（AES-GCM 加密，复用 PAYMENT_ENCRYPT_KEY），管理端可增删改/启停/排序，指纹热更新即时生效无需重启（`internal/cdn` + `biz/cdn_admin.go` + 管理端 `cdn_providers_page.dart`）。
-
-**上线注意事项**：① 灰度时序：先全球线（Cloudflare → CloudFront），ICP 备案通过后加阿里云 / 腾讯云；② 区域分流在 DNS 层（GeoDNS 双线），中国线厂商需 ICP 备案；③ 各厂商需配置回源白名单（仅允许 CDN 节点 IP 回源，避免绕过静态化直连源站）；④ generic 兼容路径灰度完成后退役。
-
-**方案草图（≤10 行）**：① 章节内容为纯文本，天然可静态化 → ② 后端生成 HTML/纯文本静态文件推 CDN（或对象存储 + CDN 域名）→ ③ `chapter.proto` 读章节接口加 CDN 回退：CDN 未命中 → 源站 → 回源写 CDN（cache miss 回源模式，不阻塞主流程）→ ④ 章节发布时主动失效 CDN key（发布侧已有更新链路，加一个 invalidate 调用即可）→ ⑤ 需评估：付费章节鉴权与静态化冲突（VIP 章节无法走公开 CDN，只静态化免费章节或加签名 URL）。当前量级下直接做属于过度设计。
+**状态**：仅保留 generic CDN 缓存失效（`CDN_BASE_URL` / `CDN_PURGE_URL`，`internal/cdn`）；多厂商配置与管理端 CRUD 已移除（2026-10-27）。
 
 ### 7.6 人工回归 T-C-23（方向 6）
 
-引用 `docs/tasks.md` 上文 T-C-23（9 项两端手测清单，含搜索、推荐、评论、支付等两端对齐验证），按需执行，无开发工作。
+引用 `docs/tasks.md` 上文 T-C-23（9 项 Flutter 手测清单，含搜索、推荐、评论、支付等 Flutter 对齐验证），按需执行，无开发工作。
 
 ### 7.7 翻译工作流（管理端机器翻译 + 人工编辑）
 
@@ -279,22 +263,12 @@
 
 **已知局限**：`novel_chapter_content` 无标题列，章节标题不按语言存储；翻译状态为会话内跟踪（书籍详情接口无 translations 字段）。
 
-### 7.8 阅读行为埋点与分析（管理端行为分析页）
+### 7.8 阅读行为埋点与分析
 
-**状态**：✅ 已实现（2026-08-29）。`novel_reading_log` 表（阅读事件逐条），保存阅读进度时顺带写入（客户端零改动，失败仅告警不阻塞）。
+**状态**：❌ 已移除（2026-10-27，`/api/stats/behavior` 与管理端页面删除）。
 
-**后端**：`GET /api/stats/behavior`（requireAdmin）：当日/近 7 天 DISTINCT 阅读用户、近 7 天热门阅读书籍 TOP10（按 lang 本地化书名，无翻译回退主书名）、当日 0-23 时阅读事件分布。时间口径 UTC+8。
+### 7.9 项目宠物 Novi（已移除）
 
-**管理端**：「行为分析」页：数字卡（当日/7 天阅读用户）+ 热门书籍 TOP10 表格 + 24 小时横向条形分布（无图表库依赖）。
+**状态**：❌ 已移除（2026-10-27，宠物端点、Flutter 组件与素材删除）。
 
-### 7.9 项目宠物 Novi（方向 9，2026-09-26）
-
-**状态**：✅ 已实现（形象二次设计为**墨灵**：一滴活过来的墨悬在摊开的书页上，尾墨落到纸面凝成 文 / A / あ）。宠物形象 `docs/pet.svg`（SMIL 动效：呼吸浮动 / 墨身挤压 / 眨眼 / 尾墨摇摆 / 墨点飞溅，无 JS），配套 12 语言 README 共用，另出 `docs/lifecycle.svg` 项目生命周期图（9 环节闭环 + 已交付里程碑，12 语言本地化副本于 `docs/i18n/images/<lang>/`）。
-
-**后端**：`GET /api/pet.svg`（非 proto 路由，`internal/pkg/pet.go` + `internal/server/server.go`）——探测 MySQL / Redis / OpenSearch（各 2s 预算）→ `happy` / `degraded` / `down`，通过替换 SVG 内 `MOOD_FACE` / `MOOD_BADGE` 标记位注入表情与状态牌（含运行时长、不可用依赖列表）；`Cache-Control: no-store`，需 `X-Api-Version: v1`。单测覆盖心情分类、注入合法性（XML 可解析 + 水印保留）、时长格式与「两份 pet.svg 不漂移」。
-
-**前端 / 脚本**：客户端加载态与空状态用 `NoviPet`（`lib/widgets/novi_pet.dart` + `assets/pet.png`，接首页 / 书籍详情 / 我的 5 处）；管理端登录页换用 `assets/pet.png`；终端 `scripts/pet.sh` 按工作区 / 远端状态显示心情（`--line` 供 pre-commit / CI 消费）。
-
-**生成链路**：`bash scripts/gen-assets.sh` 以 `docs/pet.svg` 为唯一源图，一次产出静止版 `docs/mascot.svg`（摘除动画）、图标版 `docs/pet-icon.svg`（裁到脸部，favicon 用）、两端 favicon / PWA 图标与 `assets/pet.png`；README 直接引用 `docs/pet.svg`，浏览器内可见动效。
-
-**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已实现（2026-08-29，均配置门控默认关闭，仅启用后才生效）；7.6 人工回归按需执行；7.7/7.8 已实现（2026-08-29）；7.9 已实现（2026-09-26，含 12 语言生命周期图与 README 同步）。
+**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已移除或仅保留 generic CDN；7.6 人工回归按需执行；7.7 已实现；7.8/7.9 已移除。

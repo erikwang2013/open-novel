@@ -76,7 +76,7 @@
     <text x="169" y="480" font-size="13" font-weight="700" fill="#d81b60" text-anchor="middle">Search &amp; Discovery</text>
     <text x="169" y="502" font-size="11" fill="#546e7a" text-anchor="middle">Multilingual tokenized search</text>
     <text x="169" y="519" font-size="11" fill="#546e7a" text-anchor="middle">Trending rankings</text>
-    <text x="169" y="536" font-size="11" fill="#546e7a" text-anchor="middle">AI recommendations</text>
+    <text x="169" y="536" font-size="11" fill="#546e7a" text-anchor="middle">Hot recommendations</text>
     <text x="169" y="553" font-size="11" fill="#546e7a" text-anchor="middle">Category browsing</text>
     <text x="169" y="570" font-size="11" fill="#546e7a" text-anchor="middle">Hot searches / Search suggestions</text>
   </g>
