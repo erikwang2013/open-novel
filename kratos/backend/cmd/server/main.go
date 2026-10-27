@@ -65,14 +65,13 @@ func main() {
 	recSvc := service.NewRecommendationService(biz.NewRecommendUsecase(d))
 	paySvc := service.NewPaymentService(biz.NewPaymentUsecase(d, cfg.Payment))
 	adminSvc := service.NewAdminService(biz.NewAdminUsecase(d, searchUc))
-	behaviorSvc := service.NewBehaviorService(biz.NewBehaviorUsecase(d))
 	cdnSvc := service.NewCdnService(biz.NewCdnAdminUsecase(d, cr))
 
 	httpSrv := server.NewHTTPServer(cfg.Server, am, logger,
-		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, behaviorSvc, cdnSvc,
+		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, cdnSvc,
 		pkg.NewPet(d.DB, d.RDB, cfg.Data.OpensearchAddr))
 	grpcSrv := server.NewGRPCServer(cfg.Server, am, logger,
-		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, behaviorSvc, cdnSvc)
+		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, cdnSvc)
 
 	app := kratos.New(
 		kratos.Name("open-novel"),

@@ -16,7 +16,6 @@ import (
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 
 	adminv1 "open-novel/backend/api/admin/v1"
-	behaviorv1 "open-novel/backend/api/behavior/v1"
 	bookv1 "open-novel/backend/api/book/v1"
 	cdnv1 "open-novel/backend/api/cdn/v1"
 	chapterv1 "open-novel/backend/api/chapter/v1"
@@ -43,7 +42,7 @@ var rateLimits = map[string]int{
 func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
-	pay *service.PaymentService, admin *service.AdminService, behavior *service.BehaviorService,
+	pay *service.PaymentService, admin *service.AdminService,
 	cdn *service.CdnService, pet *pkg.Pet,
 ) *khttp.Server {
 	opts := []khttp.ServerOption{
@@ -70,7 +69,6 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	recommendationv1.RegisterRecommendationHTTPServer(srv, rec)
 	paymentv1.RegisterPaymentHTTPServer(srv, pay)
 	adminv1.RegisterAdminHTTPServer(srv, admin)
-	behaviorv1.RegisterBehaviorHTTPServer(srv, behavior)
 	cdnv1.RegisterCdnHTTPServer(srv, cdn)
 
 	// 项目宠物（非 proto 路由）：活体状态图，心情取自依赖探测。
@@ -88,7 +86,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
-	pay *service.PaymentService, admin *service.AdminService, behavior *service.BehaviorService,
+	pay *service.PaymentService, admin *service.AdminService,
 	cdn *service.CdnService,
 ) *grpc.Server {
 	opts := []grpc.ServerOption{
@@ -110,7 +108,6 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	recommendationv1.RegisterRecommendationServer(srv, rec)
 	paymentv1.RegisterPaymentServer(srv, pay)
 	adminv1.RegisterAdminServer(srv, admin)
-	behaviorv1.RegisterBehaviorServer(srv, behavior)
 	cdnv1.RegisterCdnServer(srv, cdn)
 	return srv
 }

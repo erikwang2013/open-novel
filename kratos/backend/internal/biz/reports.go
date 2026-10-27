@@ -1,7 +1,7 @@
 package biz
 
 // 报表用例：订单收入/用户增长/VIP 订阅/内容互动聚合（管理端报表页，requireAdmin）。
-// 时间口径 UTC+8（同 behavior.go cst）；金额一律整数分（库中 DECIMAL(10,2) 元×100）。
+// 时间口径 UTC+8；金额一律整数分（库中 DECIMAL(10,2) 元×100）。
 
 import (
 	"context"
@@ -10,6 +10,9 @@ import (
 
 	"open-novel/backend/internal/pkg"
 )
+
+// cst 固定 UTC+8；DATETIME 列无时区，MySQL CURRENT_TIMESTAMP 按服务端时区写入。
+var cst = time.FixedZone("CST", 8*3600)
 
 // Report 聚合报表。ByDate 缺日补零，按日期升序。
 type Report struct {

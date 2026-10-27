@@ -217,12 +217,6 @@ class ApiClient {
     return ReportsData.fromJson(d);
   }
 
-  /// 阅读行为统计（管理员）。
-  Future<BehaviorStats> behaviorStats() async {
-    return BehaviorStats.fromJson(
-        _data(await _dio.get('/api/stats/behavior')));
-  }
-
   // ---------- 分类 / 标签 ----------
 
   Future<(List<Category>, int)> categories() async {

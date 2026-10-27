@@ -1,6 +1,6 @@
 package biz
 
-// 报表聚合测试：真实 MySQL（对齐 behavior_test.go 模式）。
+// 报表聚合测试：真实 MySQL。
 // 断言窗口用 2015 年——平台数据均为 2026 年，窗口内只有本测试 fixture，保证精确断言；
 // 全局量（total_users/comment_count/report_count）与其他测试共享库，用 >= 断言。
 

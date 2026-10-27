@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../api/api_client.dart';
 import 'audit_logs_page.dart';
-import 'behavior_page.dart';
 import 'books_page.dart';
 import 'categories_page.dart';
 import 'cdn_providers_page.dart';
@@ -40,7 +39,6 @@ class _HomePageState extends State<HomePage> {
     '流水账单',
     'VIP套餐',
     '审计日志',
-    '行为分析',
     '报表',
     '翻译',
   ];
@@ -56,7 +54,6 @@ class _HomePageState extends State<HomePage> {
     Icons.receipt_long_outlined,
     Icons.workspace_premium_outlined,
     Icons.history_outlined,
-    Icons.insights_outlined,
     Icons.bar_chart,
     Icons.translate,
   ];
@@ -73,7 +70,6 @@ class _HomePageState extends State<HomePage> {
     OrdersPage(),
     PlansPage(),
     AuditLogsPage(),
-    BehaviorPage(),
     ReportPage(),
     TranslatePage(),
   ];
