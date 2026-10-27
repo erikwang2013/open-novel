@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 // 推荐服务：热门/最新榜单（任务 #15）
-// 业务码段 17xxxx；Phase 1 为 MySQL 榜单 stub，Phase 5 接入 AI 推荐（同一契约）
+// 业务码段 17xxxx；MySQL 榜单（hot/new）。
 package recommendation.v1;
 
 import "google/api/annotations.proto";

@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS novel_recommend_log (
   id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   user_id    BIGINT UNSIGNED NOT NULL COMMENT '用户 ID',
   book_id    BIGINT UNSIGNED NOT NULL COMMENT '推荐的书',
-  strategy   VARCHAR(32)     NOT NULL COMMENT '策略：ai/hot/new/rule',
+  strategy   VARCHAR(32)     NOT NULL COMMENT '策略：hot/new/rule',
   rank_no    INT UNSIGNED    NOT NULL DEFAULT 0 COMMENT '推荐位次',
   created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY idx_user_time (user_id, created_at)

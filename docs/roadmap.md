@@ -151,7 +151,7 @@
 | RBAC | requireAdmin（role=3 检查，service 层 helper），替换前端 role==3 硬编码 | ✅ 已完成 |
 | 审计 | 管理操作 / 审核操作 / 用户状态变更写 `novel_audit_log`；查询页 GET /api/admin/audit-logs（分页 + user_id/action/target_type/target_id/时间范围筛选） | ✅ 已完成 |
 | VIP / 支付 | `novel_payment_provider`（config AES-GCM 加密）/ `novel_payment_order` / `novel_vip_order` / `novel_vip_plan` 表 + Provider 抽象（11 渠道：Stripe / PayPal / NOWPayments-USDT / Razorpay / KOMOJU / PortOne / Mercado Pago / Xendit / Alipay-RSA2 / WeChat Pay Global / UnionPay-RSA）+ Webhook 验签 + 幂等 settle + 15min 超时关闭 + VIP 叠加续期；后台控制展示与流水 | ✅ 已完成（T-P-01~22） |
-| AI 推荐 | 基于阅读/搜索行为埋点（`novel_search_log` 已有）的启发式画像推荐（`strategy=ai`，候选 <5 回退 hot）；数据达标后换第三方模型 | ✅ 已实现（2026-08-29，配置门控） |
+| AI 推荐 | 曾为本地启发式画像推荐（`strategy=ai`），无客户端使用且未接入第三方模型 | ❌ 已移除（2026-10-27） |
 | 本地二级缓存 | ristretto 进程内 L1（128MB / 30s TTL / 写路径双删），Redis 之上 | ✅ 已完成 |
 
 ---
@@ -170,7 +170,7 @@
 | 多端统一 / 收尾 | 1-2 周 | 分页统一、token 持久化、桌面布局（T-C-16~23、T-A-17） | ✅ 已完成 |
 | 二期支付 | 按资质 | 本地支付逐语言（Razorpay/KOMOJU/PortOne/Mercado Pago/Xendit/Alipay）、PayPal（T-P-19~20） | ✅ 已完成 |
 
-**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4/7.5 已实现（2026-08-29，7.5 多厂商 CDN 完成，7.4 AI 推荐配置门控默认关闭），仅剩 T-C-23 人工回归按需执行。
+**里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4/7.5 已实现（2026-08-29，7.5 多厂商 CDN 完成，7.4 AI 推荐已移除），仅剩 T-C-23 人工回归按需执行。
 
 ---
 
