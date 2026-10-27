@@ -5,8 +5,7 @@
 ```
 apps/
 └─ client/        # 客户端（C 端），即本目录
-   ├─ flutter/    # Flutter 全平台应用
-   └─ harmonyos/  # HarmonyOS NEXT 原生应用
+   └─ flutter/    # Flutter 全平台应用
 ```
 
 ## flutter — Flutter 全平台
@@ -20,20 +19,9 @@ apps/
 cd flutter && flutter pub get && flutter run
 ```
 
-## harmonyos — HarmonyOS NEXT 原生应用
-
-- 目标平台：HarmonyOS NEXT（手机 / 平板 / 智慧屏等）
-- 语言框架：ArkTS + ArkUI，`hvigor` 构建
-- 多语言：`ohos i18n` 资源目录，`base/element/string.json` + 各语言目录
-
-```bash
-cd harmonyos && hvigorw assembleHap
-```
-
 ## 目录约定
 
-- 每个端独立成目录，自带依赖锁文件（`pubspec.lock` / `oh-package-lock.json5`）
+- 每个端独立成目录，自带依赖锁文件（`pubspec.lock`）
 - 多端共用后端 API（前缀 `/api`），接口定义（proto）维护在 `kratos/backend/api/`
 - 各端内部结构说明由各端自己的 README 负责：
   - [flutter/README.md](flutter/README.md) — 运行、构建、API_BASE_URL、l10n 使用说明
-  - [harmonyos/README.md](harmonyos/README.md) — 构建、BASE_URL（`common/Config.ets`）、unsigned hap 说明
