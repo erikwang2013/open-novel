@@ -1,10 +1,8 @@
 # Open Novel — Global Multilingual Novel Platform
 
-<div align="center">
 
 [中文](../../README.md) · **English**
 
-</div>
 
 > A global multilingual novel reading platform built on the **Go-Kratos** microservice architecture with **Flutter** multi-client frontends, supporting **12+ major languages** and delivering reading, interaction, search and personalized recommendation capabilities to users worldwide.
 
@@ -24,7 +22,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 
 ## Features
 
-<p align="center"><img src="images/en/features.svg" alt="Feature architecture diagram" width="860"/></p>
+![Feature architecture diagram](images/en/features.svg)
 
 - **User Center**: Registration and login (JWT), personal bookshelf, cross-device reading progress sync, multilingual profiles
 - **Reading Experience**: Chapter-by-chapter reading, font and size switching, light/dark themes, offline caching, page-turn animations
@@ -36,7 +34,7 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 
 ## System Architecture
 
-<p align="center"><img src="images/en/architecture.svg" alt="System architecture diagram" width="860"/></p>
+![System architecture diagram](images/en/architecture.svg)
 
 Overall Go-Kratos microservice architecture: Flutter clients interact with the API gateway via CDN cache + Nginx (TLS / static assets / reverse proxy); the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api` prefix.
 
@@ -44,19 +42,19 @@ Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · r
 
 ## Project Panorama
 
-<p align="center"><img src="images/en/project.svg" alt="Project panorama diagram" width="860"/></p>
+![Project panorama diagram](images/en/project.svg)
 
 ## Request Cycle
 
-<p align="center"><img src="images/en/request-cycle.svg" alt="Request cycle diagram" width="860"/></p>
+![Request cycle diagram](images/en/request-cycle.svg)
 
 ## Security Architecture
 
-<p align="center"><img src="images/en/security.svg" alt="Security architecture diagram" width="860"/></p>
+![Security architecture diagram](images/en/security.svg)
 
 ## Project Lifecycle
 
-<p align="center"><img src="images/en/lifecycle.svg" alt="Project Lifecycle" width="860"/></p>
+![Project Lifecycle](images/en/lifecycle.svg)
 
 Nine steps — plan, design, code, test, build, release, deploy, operate, iterate — and feedback always flows back into the next planning round.
 
@@ -75,7 +73,7 @@ open-novel/
 └─ README.md                 # Project documentation
 ```
 
-<p align="center"><img src="images/en/structure.svg" alt="Project structure diagram" width="860"/></p>
+![Project structure diagram](images/en/structure.svg)
 
 > Note: `kratos/` is the Kratos framework source (with its own README / LICENSE); all business code lives in `kratos/backend/`.
 
@@ -131,7 +129,7 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 - Dependency stack port mapping: MySQL `3307`, Redis `6380`, OpenSearch `9200` (host ports 3306/6379 are occupied by local services, see docker-compose.yml comments).
 - Backend address and secrets are configured in `kratos/backend/config/`, with environment variable overrides (e.g. `PORT`, `OPENSEARCH_ADDR`).
-- To connect Flutter to another backend: `flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`.
+- To connect Flutter to another backend: `flutter run -d chrome --dart-define=API_BASE_URL=http://host:8000`.
 
 See [apps/README.md](../../apps/README.md) and [apps/client/flutter/README.md](../../apps/client/flutter/README.md).
 
@@ -194,13 +192,11 @@ All task chains have been completed.
 
 If this project has helped you, feel free to **Star** and **Fork** it; you are also welcome to scan the QR codes to donate. Every bit of your support is my motivation to keep maintaining and updating the project. Thank you for your encouragement!
 
-<div align="center">
 
 **WeChat Reward** ｜ **Alipay Reward**
 
-<img src="../weixinpay.png" width="130" height="130" alt="WeChat reward QR code" />　<img src="../alipay.png" width="130" height="130" alt="Alipay reward QR code" />
+![WeChat reward QR code](../weixinpay.png)　![Alipay reward QR code](../alipay.png)
 
-</div>
 
 ## Open Source vs Commercial Edition
 
@@ -247,7 +243,7 @@ Before upgrading to the commercial edition, reconcile the schema against its `kr
 
 ## 项目授权 / Project License
 
-Copyright (c) 2026 erik <erik@erik.xyz> — https://erik.xyz
+Copyright (c) 2026 erik (erik@erik.xyz) — https://erik.xyz
 
 - 本项目仅供个人学习、研究使用。
 - 未经作者书面授权，禁止任何形式的商业使用（包括但不限于商业部署、付费服务、二次销售、SaaS 运营及以本项目为基础提供商业服务）。

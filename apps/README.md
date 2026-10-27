@@ -45,7 +45,7 @@ bash scripts/install.sh
 
 - 客户端：`cd apps/client/flutter && flutter pub get && flutter run -d chrome`
 - 管理端：`cd apps/admin && flutter pub get && flutter run -d chrome`（端口由 Flutter 随机分配并打印在控制台，可用 `--web-port` 固定）
-- 两个端共用同一套后端 API（默认连 `http://localhost:8000`，接口前缀 `/api`，版本头 `X-Api-Version: v1`）；连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`
+- 两个端共用同一套后端 API（默认连 `http://localhost:8000`，接口前缀 `/api`，版本头 `X-Api-Version: v1`）；连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://host:8000`
 - 常见问题：端口占用用 `lsof -i :8000` 排查；数据库连接失败先 `docker compose ps` 确认 mysql 为 healthy
 
 ## 目录约定

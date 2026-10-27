@@ -1,10 +1,8 @@
 # Open Novel — 全球多语言小说平台
 
-<div align="center">
 
 **中文** · [English](docs/i18n/README.en.md)
 
-</div>
 
 > 基于 **Go-Kratos** 微服务架构 + **Flutter** 多端前端的全球多语言小说阅读平台，支持 **12+ 种主要语种**，面向全球用户提供阅读、互动、搜索与个性化推荐能力。
 
@@ -23,7 +21,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 ## 功能特性
 
-<p align="center"><img src="docs/features.svg" alt="功能架构图" width="860"/></p>
+![功能架构图](docs/features.svg)
 
 - **用户中心**：注册登录（JWT）、个人书架、阅读进度跨端同步、多语言个人资料
 - **阅读体验**：分章阅读、字体字号切换、深浅主题、离线缓存、翻页动画
@@ -35,7 +33,7 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 ## 系统架构
 
-<p align="center"><img src="docs/architecture.svg" alt="系统架构图" width="860"/></p>
+![系统架构图](docs/architecture.svg)
 
 整体为 Go-Kratos 微服务架构：Flutter 客户端经 CDN 缓存 + Nginx（TLS / 静态资源 / 反向代理）与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
 
@@ -43,12 +41,11 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 
 ## 项目生命周期
 
-<p align="center"><img src="docs/lifecycle.svg" alt="项目生命周期图" width="860"/></p>
+![项目生命周期图](docs/lifecycle.svg)
 
 从**规划 → 架构设计 → 编码 → 测试 → 构建 → 发布 → 部署 → 监控 → 迭代**九个环节串成闭环：规划落地在 `planning / roadmap / tasks` 三件套；发布环节由 GitHub Actions 在 push `main` 后自动递增 `v*` tag 并以增量 changelog 创建 Release（幂等）；迭代环节把报表统计与搜索数据回流到需求池，进入下一轮规划。底部为已交付里程碑（后端基础 / 多端前端 / 安全加固 / 缓存加速 / 管理后台 / VIP 与支付）。
 
 
-<!-- assets-license:start -->
 ## 视觉资产授权 / Visual Assets License
 
 本项目的图片、图标（包括 `docs/` 下的 SVG / PNG 图）**不是开源资产**，版权归作者所有。未经书面许可不得复制、修改、再分发或
@@ -56,7 +53,6 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 [ASSETS-LICENSE.md](ASSETS-LICENSE.md)。
 
 > 代码部分仍遵循仓库原有 `LICENSE`；第三方素材（如明确标注的 Go Gopher 等）仍遵循其原许可证。
-<!-- assets-license:end -->
 
 
 ## 项目规划
@@ -81,7 +77,7 @@ open-novel/
 └─ README.md                 # 项目说明文档
 ```
 
-<p align="center"><img src="docs/structure.svg" alt="项目结构图" width="860"/></p>
+![项目结构图](docs/structure.svg)
 
 > 注意：`kratos/` 是 Kratos 框架源码（自带 README / LICENSE），业务代码全部在 `kratos/backend/`。
 
@@ -140,7 +136,7 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 - 依赖栈端口映射：MySQL `3307`、Redis `6380`、OpenSearch `9200`（宿主机 3306/6379 被本机服务占用，见 docker-compose.yml 注释）。
 - 后端地址与密钥在 `kratos/backend/config/` 配置，支持环境变量覆盖（如 `PORT`、`OPENSEARCH_ADDR`）。
-- Flutter 连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://<host>:8000`。
+- Flutter 连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://host:8000`。
 
 详见 [apps/README.md](apps/README.md) 与 [apps/client/flutter/README.md](apps/client/flutter/README.md)。
 
@@ -202,13 +198,11 @@ bash scripts/install.sh
 
 如果这个项目对你有帮助，欢迎 **Star**、**Fork** 支持；也欢迎扫码打赏，你的每一份支持都是我持续维护与更新的动力，感谢你的鼓励！
 
-<div align="center">
 
 **微信赞赏** ｜ **支付宝赞赏**
 
-<img src="docs/weixinpay.png" width="130" height="130" alt="微信赞赏码" />　<img src="docs/alipay.png" width="130" height="130" alt="支付宝赞赏码" />
+![微信赞赏码](docs/weixinpay.png)　![支付宝赞赏码](docs/alipay.png)
 
-</div>
 
 ## 开源版 vs 商业版
 
@@ -255,7 +249,7 @@ bash scripts/install.sh
 
 ## 项目授权 / Project License
 
-Copyright (c) 2026 erik <erik@erik.xyz> — https://erik.xyz
+Copyright (c) 2026 erik (erik@erik.xyz) — https://erik.xyz
 
 - 本项目仅供个人学习、研究使用。
 - 未经作者书面授权，禁止任何形式的商业使用（包括但不限于商业部署、付费服务、二次销售、SaaS 运营及以本项目为基础提供商业服务）。
