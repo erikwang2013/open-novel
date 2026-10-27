@@ -5,7 +5,7 @@
 ```
 apps/
 └─ client/        # 客户端（C 端），即本目录
-   ├─ flutter/    # Flutter 全平台应用（assets/pet.png：项目宠物贴图）
+   ├─ flutter/    # Flutter 全平台应用
    └─ harmonyos/  # HarmonyOS NEXT 原生应用
 ```
 

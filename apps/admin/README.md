@@ -9,4 +9,3 @@ cd apps/admin && flutter pub get && flutter run -d chrome
 - 构建：`flutter build web`
 - 后端地址配置同 Flutter 客户端（`--dart-define=API_BASE_URL=...`）
 - 管理端功能：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）、机器翻译工作流（DeepL，/api/admin/translate/*，管理端「翻译」页 + 人工编辑）、审计日志查询（/api/admin/audit-logs）
-- 登录页展示项目宠物 Novi（`assets/pet.png`，源图 `docs/pet.svg`）；后端 `GET /api/pet.svg` 为同一位宠物的活体状态图（依赖探测驱动表情，`kratos/backend/internal/pkg/pet.go`）

@@ -6,7 +6,6 @@ package server
 import (
 	"encoding/json"
 	"github.com/go-kratos/kratos/v2/log"
-	"io"
 	"net/http"
 
 	kerrors "github.com/go-kratos/kratos/v2/errors"
@@ -43,7 +42,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
 	pay *service.PaymentService, admin *service.AdminService,
-	cdn *service.CdnService, pet *pkg.Pet,
+	cdn *service.CdnService,
 ) *khttp.Server {
 	opts := []khttp.ServerOption{
 		khttp.Middleware(
@@ -71,15 +70,6 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	adminv1.RegisterAdminHTTPServer(srv, admin)
 	cdnv1.RegisterCdnHTTPServer(srv, cdn)
 
-	// 项目宠物（非 proto 路由）：活体状态图，心情取自依赖探测。
-	// 与其它接口一致，受 middleware 链约束（需 X-Api-Version: v1）。
-	if pet != nil {
-		srv.HandleFunc("/api/pet.svg", func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Content-Type", "image/svg+xml; charset=utf-8")
-			w.Header().Set("Cache-Control", "no-store")
-			_, _ = io.WriteString(w, pet.SVG(r.Context()))
-		})
-	}
 	return srv
 }
 

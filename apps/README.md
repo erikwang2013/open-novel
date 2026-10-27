@@ -6,9 +6,8 @@
 apps/
 ├─ client/     # 客户端多端（C 端）
 │  ├─ flutter/     # Flutter 全平台（Web / Desktop / Mobile）
-│  │  └─ assets/   #   静态资源：pet.png（项目宠物 Novi，源图 docs/pet.svg）
 │  └─ README.md    # 客户端目录说明
-└─ admin/      # 管理端（Flutter Web，B 端后台），assets/ 同为宠物贴图
+└─ admin/      # 管理端（Flutter Web，B 端后台）
 ```
 
 ## client — 客户端
@@ -53,4 +52,3 @@ bash scripts/install.sh
 
 - 每个端独立成目录，自带依赖锁文件（`pubspec.lock`）
 - 多端共用后端 API（前缀 `/api`），接口定义（proto）维护在 `kratos/backend/api/`
-- 项目宠物贴图 `assets/pet.png`（客户端与管理端各一份）由根目录 `docs/pet.svg` 光栅化而来，改图后重新生成：`rsvg-convert -w 420 -h 420 docs/pet.svg -o apps/<端>/assets/pet.png`

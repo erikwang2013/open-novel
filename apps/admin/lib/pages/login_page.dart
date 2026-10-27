@@ -61,8 +61,7 @@ class _LoginPageState extends State<LoginPage> {
             shrinkWrap: true,
             padding: const EdgeInsets.all(24),
             children: [
-              Center(
-                  child: Image.asset('assets/pet.png', width: 140, height: 140)),
+              const Center(child: Icon(Icons.auto_stories, size: 96)),
               const SizedBox(height: 8),
               const Center(
                 child: Text('Open Novel 管理后台',

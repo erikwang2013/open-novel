@@ -4,7 +4,6 @@ import '../api/api_client.dart';
 import '../l10n/app_localizations.dart';
 import '../main.dart';
 import '../models/models.dart';
-import '../widgets/novi_pet.dart';
 import 'comments_page.dart';
 import 'reader_page.dart';
 
@@ -163,7 +162,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
     final book = _book;
     final chapters = _chapters;
     if (book == null || chapters == null) {
-      return const NoviPet(busy: true);
+      return const Center(child: CircularProgressIndicator());
     }
     final info = _bookInfo(context, book);
     return LayoutBuilder(
@@ -178,7 +177,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
               Text(l10n.chapters, style: _chapterTitleStyle(context)),
               const SizedBox(height: 8),
               if (chapters.isEmpty)
-                NoviPet(text: l10n.empty, size: 96)
+                Center(child: Text(l10n.empty))
               else
                 ...chapters.map((ch) => _chapterTile(context, ch)),
             ],
@@ -207,7 +206,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                   ),
                   Expanded(
                     child: chapters.isEmpty
-                        ? NoviPet(text: l10n.empty, size: 96)
+                        ? Center(child: Text(l10n.empty))
                         : ListView.builder(
                             padding: const EdgeInsets.only(bottom: 16),
                             itemCount: chapters.length,

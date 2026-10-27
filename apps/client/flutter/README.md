@@ -47,13 +47,6 @@ flutter build windows             # Windows（需 Windows 环境）
 flutter build ipa                 # iOS（需 macOS + Xcode）
 ```
 
-## 项目宠物 Novi
-
-`assets/pet.png` 是项目宠物贴图，源图是根目录的 `docs/pet.svg`（自带 SMIL 动效；贴图取静止首帧）。改图后用 `rsvg-convert -w 420 -h 420 ../../../docs/pet.svg -o assets/pet.png` 重新生成。
-
-- 用法：`lib/widgets/novi_pet.dart` 的 `NoviPet`（`size` / `busy` / `text`），已接在首页与书籍详情的加载态、空状态（`busy: true` 时宠物下方带进度圈）。
-- 后端 `GET /api/pet.svg` 是同一位宠物的**活体**版本：按 MySQL / Redis / OpenSearch 探测结果返回 happy / degraded / down 三态表情，需请求头 `X-Api-Version: v1`。
-
 ## 多语言（l10n）
 
 - ARB 资源位于 `lib/l10n/`：`app_zh.arb`（模板）与 `app_en.arb` 等。

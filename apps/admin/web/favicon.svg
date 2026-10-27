@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  墨灵 —— Open Novel 项目宠物（墨滴悬在书页上，甩尾凝字）。
+  Open Novel 项目图标（墨滴悬在书页上，甩尾凝字）。
   动效：呼吸浮动 / 墨身挤压 / 眨眼 / 尾墨摇摆 / 墨点飞溅 / 光晕呼吸（SMIL，零 JS）。
-  标记位：MOOD_FACE / MOOD_BADGE，供后端 GET /api/pet.svg 按实时心情注入。
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="160 130 192 192" width="512" height="512" role="img" aria-labelledby="title desc">
-  <title id="title">墨灵 — Open Novel 项目宠物</title>
+  <title id="title">Open Novel</title>
   <desc id="desc">一滴活过来的墨，悬在摊开的书页上方；尾巴甩出的墨迹落到纸面，凝成 文 / A / あ 三个字，象征全球多语言小说平台。会呼吸浮动、眨眼、尾墨摇摆。</desc>
 
   <defs>
