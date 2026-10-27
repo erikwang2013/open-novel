@@ -206,7 +206,7 @@ If this project has helped you, feel free to **Star** and **Fork** it; you are a
 
 This repository is the open-source edition for personal study and research. The commercial edition is available separately and extends the same codebase with multi-CDN management, behavior analytics, AI recommendations, the Novi pet subsystem and a native HarmonyOS client, plus a larger automated test suite.
 
-| Dimension | Open source (this repo) | Commercial (`open-project/open-novel`) |
+| Dimension | Open source (this repo) | Commercial edition |
 | :--- | :--- | :--- |
 | Positioning | Personal study, research, secondary development | Complete edition for commercial operations |
 | Go code (non-test) | ~25.5k lines | ~29.1k lines |
