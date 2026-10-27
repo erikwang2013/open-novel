@@ -202,6 +202,34 @@ If this project has helped you, feel free to **Star** and **Fork** it; you are a
 
 </div>
 
+## Open Source vs Commercial Edition
+
+This repository is the open-source edition for personal study and research. The commercial edition lives in `open-project/open-novel` and extends the same codebase with multi-CDN management, behavior analytics, AI recommendations, the Novi pet subsystem and a native HarmonyOS client, plus a larger automated test suite.
+
+| Dimension | Open source (this repo) | Commercial (`open-project/open-novel`) |
+| :--- | :--- | :--- |
+| Positioning | Personal study, research, secondary development | Complete edition for commercial operations |
+| Go code (non-test) | ~25.5k lines | ~29.1k lines |
+| Backend proto services | 8 | 10 (adds Behavior, Cdn) |
+| RPCs | 70 | 78 |
+| Database tables | 22 | 23 (adds `novel_cdn_provider`) |
+| Admin pages | 16 | 18 (adds behavior analytics, CDN providers) |
+| Clients | Flutter (9 pages) | Flutter + native HarmonyOS (15 ArkTS pages) |
+| Automated tests | 23 test files | 34 test files |
+| License | Personal study/research only; commercial use requires written authorization | Commercial licensing and delivery: **erik@erik.xyz** |
+
+**Commercial-only capabilities:**
+
+- **Multi-CDN management** — Cloudflare / CloudFront / Aliyun / Tencent adapters, admin configuration, enable/disable, ordering and hot reload, backed by `novel_cdn_provider`.
+- **Behavior analytics** — `/api/stats/behavior`, behavior service and an admin analytics page, adding a user-behavior view on top of the dashboard/DAU/ranking reports.
+- **AI recommendations** — `strategy=ai` local heuristic ranking with `rec:ai:{uid}` cache; the open-source edition keeps only `hot` / `new`.
+- **Novi pet subsystem** — live `GET /api/pet.svg` status, 12 expression assets, client/admin widgets and PWA icons.
+- **Native HarmonyOS client** — 15 ArkTS pages covering home, bookshelf, reader, comments, VIP, payment, profile and login.
+
+**Retained in the open-source edition:** users/bookshelf/reading progress, books/chapters/categories/tags, comments/likes/favorites/reports, multilingual search/hot keywords/suggestions, hot rankings, 11 payment channels, VIP subscriptions, content moderation, user management, dashboard/DAU/rankings, translation workflow and audit logs, plus the Flutter client and admin console.
+
+Before upgrading to the commercial edition, reconcile the schema against its `kratos/backend/sql/init.sql`. Both editions evolve from the same codebase apart from the added modules. **Commercial licensing: erik@erik.xyz** (delivery scope, deployment support and license terms by email).
+
 ## 项目授权 / Project License
 
 Copyright (c) 2026 erik <erik@erik.xyz> — https://erik.xyz

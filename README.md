@@ -210,6 +210,34 @@ bash scripts/install.sh
 
 </div>
 
+## 开源版 vs 商业版
+
+本仓库是面向个人学习、研究的开源版；商业版位于 `open-project/open-novel`，在同一代码基线上扩展了多厂商 CDN、行为分析、AI 推荐、Novi 宠物子系统与 HarmonyOS 原生客户端，并包含更完整的自动化测试。两版共用同一套 API 与账号/阅读主链路，商业版是开源版的超集。
+
+| 维度 | 开源版（本仓库） | 商业版（open-project/open-novel） |
+| :--- | :--- | :--- |
+| 定位 | 个人学习、研究、二次开发 | 面向商业运营的完整交付版 |
+| Go 代码（非测试） | 约 2.55 万行 | 约 2.91 万行 |
+| 后端服务（proto service） | 8 个 | 10 个（新增 Behavior、Cdn） |
+| RPC 接口 | 70 个 | 78 个 |
+| 数据表 | 22 张 | 23 张（新增 `novel_cdn_provider`） |
+| 管理端页面 | 16 个 | 18 个（新增行为分析、CDN 厂商管理） |
+| 客户端 | Flutter（9 个页面） | Flutter + HarmonyOS 原生（15 个 ArkTS 页面） |
+| 自动化测试 | 23 个测试文件 | 34 个测试文件 |
+| 授权 | 仅个人学习/研究，商业使用需书面授权 | 商业授权与交付条款请联系 **erik@erik.xyz** |
+
+**商业版额外能力：**
+
+- **多厂商 CDN 管理**：Cloudflare / CloudFront / 阿里云 / 腾讯云适配器，后台厂商配置、启停、排序与热更新，配套 `novel_cdn_provider` 表。
+- **行为分析**：`/api/stats/behavior`、行为服务与后台行为分析页，补充仪表盘/DAU/榜单之外的用户行为视图。
+- **AI 个性化推荐**：`strategy=ai` 本地启发式推荐与 `rec:ai:{uid}` 缓存；开源版只保留 `hot` / `new`。
+- **Novi 宠物子系统**：`GET /api/pet.svg` 活体状态图、12 种表情素材、客户端/管理端组件与 PWA 图标。
+- **HarmonyOS 原生客户端**：15 个 ArkTS 页面，覆盖首页、书架、阅读、评论、VIP、支付、我的、登录等流程。
+
+**开源版保留：** 用户/书架/阅读进度、书籍/章节/分类/标签、评论点赞收藏举报、多语言搜索/热词/建议、热门榜单、11 个支付渠道、VIP 订阅、内容审核、用户管理、仪表盘/DAU/榜单、翻译工作流与审计日志，以及 Flutter 客户端和管理端。
+
+商业版升级前请按商业版 `kratos/backend/sql/init.sql` 核对表结构；除新增表外，两版以同一代码基线演进。**商业版授权联系：erik@erik.xyz**（交付范围、部署支持与授权条款请邮件沟通）。
+
 ## 项目授权 / Project License
 
 Copyright (c) 2026 erik <erik@erik.xyz> — https://erik.xyz
