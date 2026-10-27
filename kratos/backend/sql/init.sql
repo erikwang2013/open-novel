@@ -357,21 +357,6 @@ CREATE TABLE IF NOT EXISTS novel_audit_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='审计日志表';
 
 -- ------------------------------------------------------------
--- CDN 厂商表：多厂商 CDN 失效配置（config 列 AES-GCM 加密 JSON）
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS novel_cdn_provider (
-  id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
-  code       VARCHAR(32)    NOT NULL COMMENT 'cloudflare/cloudfront/aliyun/tencent',
-  enabled    TINYINT        NOT NULL DEFAULT 0 COMMENT '0禁用 1启用',
-  sort       INT            NOT NULL DEFAULT 0 COMMENT '广播顺序（升序）',
-  config     TEXT           NULL COMMENT 'AES-GCM 加密 JSON（凭据/批量/限速）',
-  created_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY uk_code (code),
-  KEY idx_enabled_sort (enabled, sort)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='CDN 厂商表';
-
--- ------------------------------------------------------------
 -- 存量库幂等迁移（snowflake 主键化）：移除 id 自增。
 -- 新装库（上面建表已无 AUTO_INCREMENT）执行本段无副作用；
 -- 已上线库执行后 id 由应用层 snowflake 分配——旧数据 1..N 与
@@ -399,4 +384,3 @@ ALTER TABLE novel_vip_order MODIFY id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE novel_payment_provider MODIFY id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE novel_vip_plan MODIFY id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE novel_audit_log MODIFY id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE novel_cdn_provider MODIFY id BIGINT UNSIGNED NOT NULL;

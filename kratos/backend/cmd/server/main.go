@@ -41,16 +41,6 @@ func main() {
 		time.Duration(cfg.Auth.JwtAccessTtl)*time.Second,
 		time.Duration(cfg.Auth.JwtRefreshTtl)*time.Second)
 
-	key := cfg.Payment.EncryptKey
-	if key == "" {
-		key = "dev-encrypt-key-change-me" // 默认开发密钥，与 internal/biz/cdn.go 测试回退一致
-	}
-	cr, err := pkg.NewCrypto(key)
-	if err != nil {
-		panic(err)
-	}
-	biz.InitCdn(d, cr) // 启动加载 novel_cdn_provider → 默认 Manager（管理端热更新 §6）
-
 	// 启动时幂等建搜索索引（best-effort，失败不影响启动）
 	searchUc := biz.NewSearchUsecase(d)
 	if err := searchUc.EnsureIndex(context.Background()); err != nil {
@@ -65,12 +55,11 @@ func main() {
 	recSvc := service.NewRecommendationService(biz.NewRecommendUsecase(d))
 	paySvc := service.NewPaymentService(biz.NewPaymentUsecase(d, cfg.Payment))
 	adminSvc := service.NewAdminService(biz.NewAdminUsecase(d, searchUc))
-	cdnSvc := service.NewCdnService(biz.NewCdnAdminUsecase(d, cr))
 
 	httpSrv := server.NewHTTPServer(cfg.Server, am, logger,
-		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, cdnSvc)
+		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc)
 	grpcSrv := server.NewGRPCServer(cfg.Server, am, logger,
-		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc, cdnSvc)
+		userSvc, bookSvc, chapterSvc, commentSvc, searchSvc, recSvc, paySvc, adminSvc)
 
 	app := kratos.New(
 		kratos.Name("open-novel"),

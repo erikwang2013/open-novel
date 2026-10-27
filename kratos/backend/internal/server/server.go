@@ -16,7 +16,6 @@ import (
 
 	adminv1 "open-novel/backend/api/admin/v1"
 	bookv1 "open-novel/backend/api/book/v1"
-	cdnv1 "open-novel/backend/api/cdn/v1"
 	chapterv1 "open-novel/backend/api/chapter/v1"
 	commentv1 "open-novel/backend/api/comment/v1"
 	paymentv1 "open-novel/backend/api/payment/v1"
@@ -42,7 +41,6 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
 	pay *service.PaymentService, admin *service.AdminService,
-	cdn *service.CdnService,
 ) *khttp.Server {
 	opts := []khttp.ServerOption{
 		khttp.Middleware(
@@ -68,7 +66,6 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	recommendationv1.RegisterRecommendationHTTPServer(srv, rec)
 	paymentv1.RegisterPaymentHTTPServer(srv, pay)
 	adminv1.RegisterAdminHTTPServer(srv, admin)
-	cdnv1.RegisterCdnHTTPServer(srv, cdn)
 
 	return srv
 }
@@ -77,7 +74,6 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	user *service.UserService, book *service.BookService, chapter *service.ChapterService,
 	comment *service.CommentService, search *service.SearchService, rec *service.RecommendationService,
 	pay *service.PaymentService, admin *service.AdminService,
-	cdn *service.CdnService,
 ) *grpc.Server {
 	opts := []grpc.ServerOption{
 		grpc.Middleware(
@@ -98,7 +94,6 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	recommendationv1.RegisterRecommendationServer(srv, rec)
 	paymentv1.RegisterPaymentServer(srv, pay)
 	adminv1.RegisterAdminServer(srv, admin)
-	cdnv1.RegisterCdnServer(srv, cdn)
 	return srv
 }
 

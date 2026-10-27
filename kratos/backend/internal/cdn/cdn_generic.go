@@ -1,8 +1,7 @@
 package cdn
 
-// Generic adapter（§五 5.5）：旧 CDN_PURGE_URL webhook 兼容（灰度期测试通道）。
-// 逐 key 单请求，URL 模板 {key} 替换；1 key/请求保证 SetChapterStatus 旧断言（2 lang → 2 请求）不变。
-// 退役时机：阶段 0 灰度完成（Cloudflare 单厂商稳定 1 周）后删除（§九决议 4）。
+// Generic adapter：唯一的 CDN 失效通道，由 CDN_PURGE_URL 的 {key} 模板驱动。
+// 逐 key 单请求，1 key/请求保证 SetChapterStatus 的 2 lang → 2 请求语义。
 
 import (
 	"context"
