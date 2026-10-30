@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/models.dart';
 
-/// 管理端 API 客户端：dio + JWT + 401 自动刷新（模式同客户端）。
+/// 管理端 API 客户端：dio + JWT + 鉴权失效自动刷新（同客户端；业务错误转 DioException）。
 /// baseUrl 通过 --dart-define=API_BASE_URL=... 注入，默认本地开发地址。
 class ApiClient {
   ApiClient._() {
@@ -21,20 +21,43 @@ class ApiClient {
         }
         h.next(o);
       },
-      onError: (e, h) async {
-        if (e.response?.statusCode == 401 && _refreshToken != null) {
-          try {
-            final ok = await _refresh();
-            if (ok) {
-              final opts = e.requestOptions
-                ..headers['Authorization'] = 'Bearer $_accessToken';
-              h.resolve(await _dio.fetch(opts));
+      onResponse: (r, h) async {
+        final data = r.data;
+        if (data is Map && data['code'] is int) {
+          if (asInt(data['code'], -1) == 140401) {
+            try {
+              final replayed = await _retry(r.requestOptions);
+              if (replayed != null) {
+                h.resolve(replayed);
+                return;
+              }
+            } on DioException catch (e) {
+              h.reject(e, false); // 重放失败：交给调用方
               return;
             }
-          } catch (_) {
-            // 刷新失败走下方统一错误
           }
-          logout();
+          // 业务错误一律让调用方 catch；false 表示不再走 onError（避免重复刷新）。
+          h.reject(DioException(
+              requestOptions: r.requestOptions,
+              response: r,
+              type: DioExceptionType.badResponse,
+              message: data['message']?.toString()), false);
+          return;
+        }
+        h.next(r);
+      },
+      onError: (e, h) async {
+        if (e.response?.statusCode == 401) {
+          try {
+            final replayed = await _retry(e.requestOptions);
+            if (replayed != null) {
+              h.resolve(replayed);
+              return;
+            }
+          } on DioException catch (e2) {
+            h.next(e2); // 重放失败：透出重放请求的错误
+            return;
+          }
         }
         h.next(e);
       },
@@ -207,12 +230,13 @@ class ApiClient {
     return StatsData.fromJson(_data(await _dio.get('/api/stats/overview')));
   }
 
-  /// 运营报表（管理员）。日期 yyyy-MM-dd，空串=不限。
+  /// 运营报表（管理员）。日期 yyyy-MM-dd，空串=不限；currency 空=后端默认币种。
   Future<ReportsData> reportsData(
-      {String startDate = '', String endDate = ''}) async {
+      {String startDate = '', String endDate = '', String currency = ''}) async {
     final d = _data(await _dio.get('/api/admin/reports', queryParameters: {
       if (startDate.isNotEmpty) 'start_date': startDate,
       if (endDate.isNotEmpty) 'end_date': endDate,
+      if (currency.isNotEmpty) 'currency': currency,
     }));
     return ReportsData.fromJson(d);
   }
@@ -316,11 +340,13 @@ class ApiClient {
     return (_listOf(d, PaymentOrder.fromJson), asInt(d['total']));
   }
 
-  Future<OrderStats> orderStats({String startAt = '', String endAt = ''}) async {
+  Future<OrderStats> orderStats(
+      {String startAt = '', String endAt = '', String currency = ''}) async {
     final d = _data(await _dio.get('/api/payments/admin/order-stats',
         queryParameters: {
           if (startAt.isNotEmpty) 'start_at': startAt,
           if (endAt.isNotEmpty) 'end_at': endAt,
+          if (currency.isNotEmpty) 'currency': currency,
         }));
     return OrderStats.fromJson(d);
   }
@@ -386,10 +412,10 @@ class ApiClient {
 
   // ---------- 内部工具 ----------
 
-  /// 解析响应体；业务错误（HTTP 200 + code != null）显式抛出，与 login 一致。
+  /// 解析响应体；业务错误（HTTP 200 + 整数 code）显式抛出，与 login 一致。
   Map<String, dynamic> _data(Response r) {
     final data = r.data;
-    if (data is Map && data['code'] != null) {
+    if (data is Map && data['code'] is int) {
       throw DioException(
           requestOptions: r.requestOptions,
           response: r,
@@ -405,11 +431,34 @@ class ApiClient {
         .toList();
   }
 
-  Future<bool> _refresh() async {
+  /// 单飞刷新：并发多个 140401 只发一次请求（refresh token 轮换，重复必失败）。
+  Future<bool>? _refreshing;
+  Future<bool> _refreshOnce() =>
+      _refreshing ??= _doRefresh().whenComplete(() => _refreshing = null);
+
+  Future<bool> _doRefresh() async {
     final r = await _dio.post('/api/users/refresh',
         data: {'refresh_token': _refreshToken});
-    _saveSession(LoginResult.fromJson(r.data as Map<String, dynamic>));
+    _saveSession(LoginResult.fromJson(_data(r))); // 业务码由 _data 抛出，不存空 token
     return true;
+  }
+
+  /// 鉴权失效：单飞刷新后重放一次原请求。
+  /// 刷新失败（已 logout）返回 null；重放失败抛出 DioException。
+  Future<Response<dynamic>?> _retry(RequestOptions o) async {
+    if (_refreshToken == null ||
+        o.path.contains('/api/users/refresh') ||
+        o.extra['retried'] == true) {
+      return null;
+    }
+    final ok = await _refreshOnce().catchError((_) => false);
+    if (!ok) {
+      logout();
+      return null;
+    }
+    o.extra['retried'] = true;
+    o.headers['Authorization'] = 'Bearer $_accessToken';
+    return _dio.fetch(o);
   }
 
   LoginResult _saveSession(LoginResult r) {

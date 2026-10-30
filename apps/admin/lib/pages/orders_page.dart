@@ -16,6 +16,7 @@ class OrdersPage extends StatefulWidget {
 class _OrdersPageState extends State<OrdersPage> {
   final _userId = TextEditingController();
   final _provider = TextEditingController();
+  final _currency = TextEditingController();
   final _start = TextEditingController();
   final _end = TextEditingController();
 
@@ -36,6 +37,7 @@ class _OrdersPageState extends State<OrdersPage> {
   void dispose() {
     _userId.dispose();
     _provider.dispose();
+    _currency.dispose();
     _start.dispose();
     _end.dispose();
     super.dispose();
@@ -55,6 +57,7 @@ class _OrdersPageState extends State<OrdersPage> {
       final stats = await ApiClient.instance.orderStats(
         startAt: _start.text.trim(),
         endAt: _end.text.trim(),
+        currency: _currency.text.trim(),
       );
       if (!mounted) return;
       setState(() {
@@ -199,6 +202,12 @@ class _OrdersPageState extends State<OrdersPage> {
                   decoration: const InputDecoration(
                       labelText: '支付方式', isDense: true))),
           SizedBox(
+              width: 110,
+              child: TextField(
+                  controller: _currency,
+                  decoration: const InputDecoration(
+                      labelText: '币种', hintText: '默认', isDense: true))),
+          SizedBox(
             width: 130,
             child: DropdownButtonFormField<int>(
               initialValue: _status,
@@ -242,7 +251,8 @@ class _OrdersPageState extends State<OrdersPage> {
           _card('总单数', _stats.total.toString(), Colors.blue),
           _card('已付', _stats.paid.toString(), Colors.green),
           _card('待支付', _stats.pending.toString(), Colors.orange),
-          _card('已付金额', _yuan(_stats.amount), Colors.purple),
+          _card('已付金额',
+              '${_yuan(_stats.amount)} ${_stats.currency}'.trim(), Colors.purple),
         ],
       ),
     );

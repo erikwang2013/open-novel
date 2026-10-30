@@ -71,7 +71,15 @@ class _DashboardPageState extends State<DashboardPage> {
                     Row(
                       children: [
                         _StatCard('订单数', '${s?.orderCount ?? 0}', Icons.receipt_long),
-                        _StatCard('收入', fenToYuan(s?.orderAmount ?? 0), Icons.payments),
+                        _StatCard(
+                            '收入',
+                            (s?.orderAmounts.isEmpty ?? true)
+                                ? '—'
+                                : s!.orderAmounts
+                                    .map((a) =>
+                                        '${a.currency} ${fenToAmount(a.amount)}')
+                                    .join('\n'),
+                            Icons.payments),
                         _StatCard('VIP 订阅', '${s?.vipCount ?? 0}', Icons.workspace_premium),
                         _StatCard('今日新增用户', '${s?.todayNewUsers ?? 0}', Icons.person_add),
                       ],

@@ -15,6 +15,7 @@ class ReportPage extends StatefulWidget {
 class _ReportPageState extends State<ReportPage> {
   late DateTime _start;
   late DateTime _end;
+  final _currency = TextEditingController();
   ReportsData? _data;
   bool _loading = false;
 
@@ -25,6 +26,12 @@ class _ReportPageState extends State<ReportPage> {
     _end = now;
     _start = now.subtract(const Duration(days: 29)); // 默认近 30 天
     _load();
+  }
+
+  @override
+  void dispose() {
+    _currency.dispose();
+    super.dispose();
   }
 
   String _fmt(DateTime d) =>
@@ -53,8 +60,10 @@ class _ReportPageState extends State<ReportPage> {
   Future<void> _load() async {
     setState(() => _loading = true);
     try {
-      final d = await ApiClient.instance
-          .reportsData(startDate: _fmt(_start), endDate: _fmt(_end));
+      final d = await ApiClient.instance.reportsData(
+          startDate: _fmt(_start),
+          endDate: _fmt(_end),
+          currency: _currency.text.trim());
       if (!mounted) return;
       setState(() => _data = d);
     } catch (e) {
@@ -78,6 +87,13 @@ class _ReportPageState extends State<ReportPage> {
                   onPressed: _pickStart, child: Text(_fmt(_start))),
               const Text(' 至 '),
               OutlinedButton(onPressed: _pickEnd, child: Text(_fmt(_end))),
+              const SizedBox(width: 8),
+              SizedBox(
+                  width: 120,
+                  child: TextField(
+                      controller: _currency,
+                      decoration: const InputDecoration(
+                          labelText: '币种', hintText: '默认', isDense: true))),
               const SizedBox(width: 8),
               FilledButton(onPressed: _loading ? null : _load, child: const Text('查询')),
               const Spacer(),
@@ -104,9 +120,11 @@ class _ReportPageState extends State<ReportPage> {
                       Expanded(
                         child: TabBarView(
                           children: [
-                            _OrderTab(r: d?.orderReport),
+                            _OrderTab(
+                                r: d?.orderReport, currency: d?.currency ?? ''),
                             _UserTab(r: d?.userReport),
-                            _VipTab(r: d?.vipReport),
+                            _VipTab(
+                                r: d?.vipReport, currency: d?.currency ?? ''),
                             _ContentTab(r: d?.contentReport),
                           ],
                         ),
@@ -121,28 +139,31 @@ class _ReportPageState extends State<ReportPage> {
 }
 
 class _OrderTab extends StatelessWidget {
-  const _OrderTab({this.r});
+  const _OrderTab({this.r, this.currency = ''});
 
   final OrderReport? r;
+  final String currency;
 
   @override
   Widget build(BuildContext context) {
     final d = r;
+    final cur = currency.isEmpty ? '' : '（$currency）';
+    final amountHeader = '金额$cur';
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Row(children: [
           _SumCard('订单数', '${d?.totalCount ?? 0}', Icons.receipt_long),
-          _SumCard('总金额', fenToYuan(d?.totalAmount ?? 0), Icons.payments),
+          _SumCard('总金额$cur', fenToAmount(d?.totalAmount ?? 0), Icons.payments),
         ]),
         const SizedBox(height: 16),
-        _Section('按日统计', header: const ['日期', '单数', '金额'], rows: [
+        _Section('按日统计', header: ['日期', '单数', amountHeader], rows: [
           for (final x in d?.byDate ?? const <DateAmount>[])
-            [x.date, '${x.count}', fenToYuan(x.amount)],
+            [x.date, '${x.count}', fenToAmount(x.amount)],
         ]),
-        _Section('按渠道统计', header: const ['渠道', '单数', '金额'], rows: [
+        _Section('按渠道统计', header: ['渠道', '单数', amountHeader], rows: [
           for (final x in d?.byChannel ?? const <ChannelAmount>[])
-            [x.channel, '${x.count}', fenToYuan(x.amount)],
+            [x.channel, '${x.count}', fenToAmount(x.amount)],
         ]),
       ],
     );
@@ -179,28 +200,35 @@ class _UserTab extends StatelessWidget {
 }
 
 class _VipTab extends StatelessWidget {
-  const _VipTab({this.r});
+  const _VipTab({this.r, this.currency = ''});
 
   final VipReport? r;
+  final String currency;
 
   @override
   Widget build(BuildContext context) {
     final d = r;
+    final cur = currency.isEmpty ? '' : '（$currency）';
+    final amountHeader = '金额$cur';
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Row(children: [
           _SumCard('订阅数', '${d?.totalCount ?? 0}', Icons.workspace_premium),
-          _SumCard('收入', fenToYuan(d?.totalAmount ?? 0), Icons.payments),
+          _SumCard('收入$cur', fenToAmount(d?.totalAmount ?? 0), Icons.payments),
         ]),
         const SizedBox(height: 16),
-        _Section('按日统计', header: const ['日期', '订阅数', '金额'], rows: [
+        _Section('按日统计', header: ['日期', '订阅数', amountHeader], rows: [
           for (final x in d?.byDate ?? const <DateAmount>[])
-            [x.date, '${x.count}', fenToYuan(x.amount)],
+            [x.date, '${x.count}', fenToAmount(x.amount)],
         ]),
-        _Section('按套餐统计', header: const ['套餐', '订阅数', '金额'], rows: [
+        _Section('按套餐统计', header: ['套餐', '订阅数', amountHeader], rows: [
           for (final x in d?.byPlan ?? const <PlanStat>[])
-            [x.planName.isEmpty ? '套餐#${x.planId}' : x.planName, '${x.count}', fenToYuan(x.amount)],
+            [
+              x.planName.isEmpty ? '套餐#${x.planId}' : x.planName,
+              '${x.count}',
+              fenToAmount(x.amount)
+            ],
         ]),
       ],
     );

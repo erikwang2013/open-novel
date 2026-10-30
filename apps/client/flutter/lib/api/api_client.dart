@@ -8,7 +8,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/models.dart';
 
-/// 后端 API 客户端：dio + JWT + 401 自动刷新。
+/// 后端 API 客户端：dio + JWT + 鉴权失效自动刷新。
+/// 后端业务错误为 HTTP 200 + {code,reason,message}，拦截器统一转成 DioException；
+/// 鉴权失效可能是业务码 140401（HTTP 200）或真正的 HTTP 401，两者都尝试刷新。
 /// baseUrl 通过 --dart-define=API_BASE_URL=... 注入，默认本地开发地址。
 class ApiClient {
   ApiClient._() {
@@ -26,20 +28,49 @@ class ApiClient {
         }
         h.next(o);
       },
+      onResponse: (r, h) async {
+        final data = r.data;
+        if (data is Map && data['code'] is int) {
+          if (asInt(data['code'], -1) == 140401 &&
+              _refreshToken != null &&
+              !_isRefreshPath(r.requestOptions) &&
+              r.requestOptions.extra['retried'] != true) {
+            if (await _refreshOrLogout()) {
+              try {
+                h.resolve(await _replay(r.requestOptions));
+                return;
+              } on DioException catch (e) {
+                h.reject(e, false); // 重放失败：交给调用方
+                return;
+              }
+            }
+          }
+          // 业务错误一律让调用方 catch；false 表示不再走 onError（避免重复刷新）。
+          h.reject(
+              DioException(
+                  requestOptions: r.requestOptions,
+                  response: r,
+                  type: DioExceptionType.badResponse,
+                  message: data['message']?.toString()),
+              false);
+          return;
+        }
+        h.next(r);
+      },
       onError: (e, h) async {
-        if (e.response?.statusCode == 401 && _refreshToken != null) {
-          try {
-            final ok = await _refresh();
-            if (ok) {
-              final opts = e.requestOptions
-                ..headers['Authorization'] = 'Bearer $_accessToken';
-              h.resolve(await _dio.fetch(opts));
+        if (e.response?.statusCode == 401 &&
+            _refreshToken != null &&
+            !_isRefreshPath(e.requestOptions) &&
+            e.requestOptions.extra['retried'] != true) {
+          if (await _refreshOrLogout()) {
+            try {
+              h.resolve(await _replay(e.requestOptions));
+              return;
+            } on DioException catch (e2) {
+              h.next(e2); // 重放失败：透出重放请求的错误
               return;
             }
-          } catch (_) {
-            // 刷新失败走下方统一错误
           }
-          logout();
         }
         h.next(e);
       },
@@ -83,11 +114,41 @@ class ApiClient {
     return _saveSession(LoginResult.fromJson(r.data as Map<String, dynamic>));
   }
 
-  Future<bool> _refresh() async {
+  /// 单飞刷新：并发多个 140401 只发一次请求（refresh token 轮换，重复必失败）。
+  Future<bool>? _refreshing;
+  Future<bool> _refreshOnce() =>
+      _refreshing ??= _doRefresh().whenComplete(() => _refreshing = null);
+
+  Future<bool> _doRefresh() async {
     final r = await _dio.post('/api/users/refresh',
         data: {'refresh_token': _refreshToken});
-    _saveSession(LoginResult.fromJson(r.data as Map<String, dynamic>));
+    final data = r.data;
+    // 刷新接口同样可能返回 200 + 业务码；失败时绝不保存空 token。
+    if (data is! Map || data['code'] != null) return false;
+    _saveSession(LoginResult.fromJson(data.cast<String, dynamic>()));
     return true;
+  }
+
+  /// 刷新失败（含异常）即登出，返回是否成功。
+  Future<bool> _refreshOrLogout() async {
+    bool ok;
+    try {
+      ok = await _refreshOnce();
+    } catch (_) {
+      ok = false;
+    }
+    if (!ok) logout();
+    return ok;
+  }
+
+  bool _isRefreshPath(RequestOptions o) =>
+      o.path.contains('/api/users/refresh');
+
+  /// 用新 token 重放一次；extra['retried'] 防止无限递归。
+  Future<Response<dynamic>> _replay(RequestOptions o) {
+    o.extra['retried'] = true;
+    o.headers['Authorization'] = 'Bearer $_accessToken';
+    return _dio.fetch(o);
   }
 
   LoginResult _saveSession(LoginResult r) {
@@ -335,8 +396,9 @@ class ApiClient {
 
   // ---- VIP / 支付（T-P-14~17）----
 
-  Future<List<Plan>> listPublicPlans() async {
-    final r = await _dio.get('/api/payments/plans');
+  Future<List<Plan>> listPublicPlans({String lang = 'zh'}) async {
+    final r = await _dio
+        .get('/api/payments/plans', queryParameters: {'lang': lang});
     return _parseList<Plan>(r.data, Plan.fromJson);
   }
 

@@ -19,8 +19,8 @@ List<T> jlist<T>(dynamic v, T Function(Map<String, dynamic>) fromJson) =>
         .map((e) => fromJson((e as Map).cast<String, dynamic>()))
         .toList();
 
-/// 金额分转元显示：123456 -> ¥1,234.56。
-String fenToYuan(int fen) {
+/// 金额分转元显示（不带币种符号）：123456 -> 1,234.56。
+String fenToAmount(int fen) {
   final abs = fen.abs();
   final yuan = (abs ~/ 100).toString();
   final cents = (abs % 100).toString().padLeft(2, '0');
@@ -29,7 +29,17 @@ String fenToYuan(int fen) {
     if (i > 0 && (yuan.length - i) % 3 == 0) buf.write(',');
     buf.write(yuan[i]);
   }
-  return '${fen < 0 ? '-' : ''}¥$buf.$cents';
+  return '${fen < 0 ? '-' : ''}$buf.$cents';
+}
+
+/// 单币种金额（GetStatsReply.orderAmounts）。
+class CurrencyAmount {
+  final String currency;
+  final int amount; // 分
+
+  CurrencyAmount.fromJson(Map<String, dynamic> j)
+      : currency = asStr(j['currency']),
+        amount = asInt(j['amount']);
 }
 
 class AdminUser {
@@ -159,7 +169,7 @@ class StatsData {
   final int commentCount;
   final int dau;
   final int orderCount;
-  final int orderAmount; // 分
+  final List<CurrencyAmount> orderAmounts; // 分币种统计
   final int vipCount;
   final int todayNewUsers;
   final int pendingComments;
@@ -173,7 +183,7 @@ class StatsData {
         commentCount = asInt(j['commentCount']),
         dau = asInt(j['dau']),
         orderCount = asInt(j['orderCount']),
-        orderAmount = asInt(j['orderAmount']),
+        orderAmounts = jlist(j['orderAmounts'], CurrencyAmount.fromJson),
         vipCount = asInt(j['vipCount']),
         todayNewUsers = asInt(j['todayNewUsers']),
         pendingComments = asInt(j['pendingComments']),
@@ -246,7 +256,7 @@ class PaymentOrder {
         createdAt = asStr(j['createdAt']);
 }
 
-/// 流水汇总（OrderStatsReply）。amount 已付总金额（分）。
+/// 流水汇总（OrderStatsReply）。amount 为所选币种的已付总金额（分）。
 class OrderStats {
   final int total;
   final int paid;
@@ -254,6 +264,7 @@ class OrderStats {
   final int failed;
   final int closed;
   final int amount;
+  final String currency;
 
   OrderStats.fromJson(Map<String, dynamic> j)
       : total = asInt(j['total']),
@@ -261,7 +272,8 @@ class OrderStats {
         pending = asInt(j['pending']),
         failed = asInt(j['failed']),
         closed = asInt(j['closed']),
-        amount = asInt(j['amount']);
+        amount = asInt(j['amount']),
+        currency = asStr(j['currency']);
 }
 
 /// VIP 套餐（PlanReply）。amount 单位分；status: 1 启用 0 禁用。
@@ -310,15 +322,17 @@ class AuditLog {
         createdAt = asStr(j['createdAt']);
 }
 
-/// 运营报表（GET /api/admin/reports）。金额单位分。
+/// 运营报表（GET /api/admin/reports）。金额单位分，只统计返回的 currency。
 class ReportsData {
+  final String currency;
   final OrderReport orderReport;
   final UserReport userReport;
   final VipReport vipReport;
   final ContentReport contentReport;
 
   ReportsData.fromJson(Map<String, dynamic> j)
-      : orderReport = OrderReport.fromJson(
+      : currency = asStr(j['currency']),
+        orderReport = OrderReport.fromJson(
             (j['orderReport'] ?? {}) as Map<String, dynamic>),
         userReport = UserReport.fromJson(
             (j['userReport'] ?? {}) as Map<String, dynamic>),

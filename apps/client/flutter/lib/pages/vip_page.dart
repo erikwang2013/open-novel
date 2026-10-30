@@ -35,7 +35,7 @@ class _VipPageState extends State<VipPage> {
     });
     try {
       final lang = langCode(localeNotifier.value);
-      final plans = await api.listPublicPlans();
+      final plans = await api.listPublicPlans(lang: lang);
       final methods = await api.listMethods(lang: lang);
       if (!mounted) return;
       setState(() {
@@ -104,6 +104,18 @@ class _VipPageState extends State<VipPage> {
     final methods = _methods;
     if (plans == null || methods == null) {
       return const Center(child: CircularProgressIndicator());
+    }
+    // 后端按当前 lang 渠道币种返回套餐；无匹配渠道时为空，不提供多币种回退。
+    if (plans.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.paymentNoMethod),
+            OutlinedButton(onPressed: _load, child: Text(l10n.retry)),
+          ],
+        ),
+      );
     }
     final methodText = methods.isEmpty
         ? l10n.paymentNoMethod

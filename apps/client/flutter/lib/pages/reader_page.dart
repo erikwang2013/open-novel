@@ -65,7 +65,7 @@ class _ReaderPageState extends State<ReaderPage> {
       _pageIndex = 0;
       _restore = -1;
     });
-    // VIP 章节未订阅 → 引导购买，不拉正文（后端未做 VIP 拦截，客户端自行判断）
+    // VIP 章节未订阅 → 引导购买，不拉正文（后端已做 VIP 鉴权，客户端提前引导购买）
     if (_chapter.isVip == 1 && !await _isVipActive()) {
       if (!mounted) return;
       setState(() => _vipLocked = true);
