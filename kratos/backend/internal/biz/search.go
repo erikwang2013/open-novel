@@ -148,14 +148,3 @@ func (uc *SearchUsecase) SyncIndex(ctx context.Context, doc data.SearchDoc) erro
 	}
 	return nil
 }
-
-func (uc *SearchUsecase) DeleteIndex(ctx context.Context, bookID uint64) error {
-	if bookID == 0 {
-		return pkg.ErrSearchArg
-	}
-	// 幂等：文档已删除（result=not_found）不算错，书籍服务可能重试
-	if err := uc.es.Delete(ctx, bookID); err != nil && !strings.Contains(err.Error(), `"result":"not_found"`) && !strings.Contains(err.Error(), `"status":404`) {
-		return pkg.ErrSearch
-	}
-	return nil
-}

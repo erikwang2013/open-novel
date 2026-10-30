@@ -75,11 +75,13 @@ func RateLimit(limits map[string]int) middleware.Middleware {
 			}
 			// HTTP 用路由模板（"/api/users/login"）匹配；gRPC 用 operation，未列出的放行。
 			key := tr.Operation()
+			ip := pkg.ClientIP(tr.RequestHeader().Get("X-Forwarded-For"), "")
 			if ht, isHTTP := tr.(*khttp.Transport); isHTTP {
 				key = ht.PathTemplate()
+				ip = pkg.ClientIP(ht.RequestHeader().Get("X-Forwarded-For"), ht.Request().RemoteAddr)
 			}
 			if lm, hit := lms[key]; hit {
-				if !lm.allow(tr.RequestHeader().Get("X-Forwarded-For")) {
+				if !lm.allow(ip) {
 					return nil, pkg.ErrTooMany
 				}
 			}

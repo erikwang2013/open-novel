@@ -47,7 +47,7 @@ func TestSearchFlow(t *testing.T) {
 	if err := s.uc.SyncIndex(ctx, doc); err != nil {
 		t.Fatal(err)
 	}
-	t.Cleanup(func() { s.uc.DeleteIndex(ctx, bid) })
+	t.Cleanup(func() { _ = d.ES.Delete(ctx, bid) })
 
 	// ja search (kuromoji); 索引可能含真实书籍，断言 fixture 命中而非总数
 	ja, err := s.SearchBooks(ctx, &searchv1.SearchBooksReq{Q: "仮想世界", Lang: "ja"})
@@ -104,8 +104,8 @@ func TestSearchFlow(t *testing.T) {
 		t.Fatalf("search log missing (n=%d, err=%v)", n, e)
 	}
 
-	// delete → gone; delete again is idempotent
-	if err := s.uc.DeleteIndex(ctx, bid); err != nil {
+	// delete → gone
+	if err := d.ES.Delete(ctx, bid); err != nil {
 		t.Fatal(err)
 	}
 	after, err := s.SearchBooks(ctx, &searchv1.SearchBooksReq{Q: "仮想世界", Lang: "ja"})
@@ -114,8 +114,5 @@ func TestSearchFlow(t *testing.T) {
 	}
 	if after.Total != 0 {
 		t.Fatalf("after delete: want 0 hits, got %d", after.Total)
-	}
-	if err := s.uc.DeleteIndex(ctx, bid); err != nil {
-		t.Fatalf("second delete should be idempotent: %v", err)
 	}
 }

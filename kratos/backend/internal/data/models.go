@@ -1,23 +1,27 @@
 package data
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 // gorm 模型（表结构与 sql/init.sql 一致，从 svc1 移植）。
 
 type User struct {
-	ID           uint64     `gorm:"column:id"`
-	Username     string     `gorm:"column:username"`
-	Email        string     `gorm:"column:email"`
-	PasswordHash string     `gorm:"column:password_hash"`
-	Nickname     string     `gorm:"column:nickname"`
-	NicknameI18n *string    `gorm:"column:nickname_i18n;type:json"`
-	Avatar       string     `gorm:"column:avatar"`
-	Status       int8       `gorm:"column:status"`
-	Role         int8       `gorm:"column:role"`
-	LastLoginAt  *time.Time `gorm:"column:last_login_at"`
-	VipExpiresAt *time.Time `gorm:"column:vip_expires_at"`
-	CreatedAt    time.Time  `gorm:"column:created_at"`
-	UpdatedAt    time.Time  `gorm:"column:updated_at"`
+	ID       uint64 `gorm:"column:id"`
+	Username string `gorm:"column:username"`
+	// Email 可空（未绑定邮箱存 NULL）；唯一键保留，MySQL 允许多行 NULL。
+	Email        sql.NullString `gorm:"column:email"`
+	PasswordHash string         `gorm:"column:password_hash"`
+	Nickname     string         `gorm:"column:nickname"`
+	NicknameI18n *string        `gorm:"column:nickname_i18n;type:json"`
+	Avatar       string         `gorm:"column:avatar"`
+	Status       int8           `gorm:"column:status"`
+	Role         int8           `gorm:"column:role"`
+	LastLoginAt  *time.Time     `gorm:"column:last_login_at"`
+	VipExpiresAt *time.Time     `gorm:"column:vip_expires_at"`
+	CreatedAt    time.Time      `gorm:"column:created_at"`
+	UpdatedAt    time.Time      `gorm:"column:updated_at"`
 }
 
 func (User) TableName() string { return "novel_user" }
@@ -248,6 +252,8 @@ type PaymentOrder struct {
 	Amount    float64    `gorm:"column:amount"` // DECIMAL(10,2)；比较一律转整数分
 	Currency  string     `gorm:"column:currency"`
 	Provider  string     `gorm:"column:provider"`
+	Plan      string     `gorm:"column:plan"`   // 下单时套餐码；老订单为空
+	Days      int        `gorm:"column:days"`   // 下单时套餐天数
 	Status    int8       `gorm:"column:status"` // 0待支付 1已支付 2失败 3已关闭
 	TxID      string     `gorm:"column:tx_id"`
 	PaidAt    *time.Time `gorm:"column:paid_at"`

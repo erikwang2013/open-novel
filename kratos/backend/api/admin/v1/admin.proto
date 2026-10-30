@@ -100,12 +100,19 @@ message GetStatsReply {
   int64 dau = 4; // DAU 近似：当日登录 + 当日搜索的去重用户
   repeated HotBook hot_books = 5; // 热门书籍（复用搜索热门榜）
   repeated HotKeyword hot_keywords = 6; // 热门搜索词（搜索日志聚合）
-  int64 order_count = 7;   // 累计支付订单数（status=1 已支付）
-  int64 order_amount = 8;  // 累计支付金额（分）
+  int64 order_count = 7;   // 累计支付订单数（status=1 已支付，所有币种）
+  reserved 8;              // 原 order_amount 跨币种混加，已废弃
   int64 vip_count = 9;     // VIP 有效订阅数（vip_expires_at > now）
   int64 today_new_users = 10; // 今日新增用户
   int64 pending_comments = 11; // 待审核评论数（status=2 举报待审）
   int64 pending_reports = 12;  // 待处理举报数（status=2 评论的 report_count 累计）
+  repeated CurrencyAmount order_amounts = 13; // 累计支付金额（分，按币种分组）
+}
+
+// 单币种金额（分）。
+message CurrencyAmount {
+  string currency = 1; // ISO 币种码，如 USD/JPY
+  int64 amount = 2;    // 分
 }
 
 message HotBook {
@@ -242,9 +249,11 @@ message ListAuditLogsReply {
 message GetReportsReq {
   string start_date = 1; // YYYY-MM-DD，空=end_date-29 天
   string end_date = 2;   // YYYY-MM-DD，空=start_date+29 天
+  string currency = 3;   // 订单/VIP 金额统计币种，空=最近已付订单币种（无则 USD）
 }
 
 message GetReportsReply {
+  string currency = 5; // 实际统计币种（金额只统计该币种）
   OrderReport order_report = 1;
   UserReport user_report = 2;
   VipReport vip_report = 3;

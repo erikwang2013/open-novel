@@ -49,8 +49,8 @@ type npCreateReq struct {
 }
 
 type npCreateResp struct {
-	PaymentID  int64  `json:"payment_id"`
-	PaymentURL string `json:"payment_url"`
+	PaymentID     int64  `json:"payment_id"`
+	PaymentURL    string `json:"payment_url"`
 	PaymentStatus string `json:"payment_status"`
 }
 
@@ -77,14 +77,14 @@ func (p *NPProvider) CreateCheckout(ctx context.Context, orderNo string, amountC
 
 // npIpn 是 IPN webhook 的 payload 字段（透传 json.RawMessage 防重排）。
 type npIpn struct {
-	PaymentID    int64           `json:"payment_id"`
-	PaymentStatus string         `json:"payment_status"`
-	OrderID      string          `json:"order_id"`
-	PriceAmount  json.RawMessage `json:"price_amount"`   // 计价币种金额（下单时按订单币种设定）
-	PriceCurrency string         `json:"price_currency"` // 如 USD
-	PayAmount    json.RawMessage `json:"pay_amount"`     // 支付币种金额（USDT 8 位小数）
-	ActuallyPaid json.RawMessage `json:"actually_paid"`
-	PayCurrency  string          `json:"pay_currency"`
+	PaymentID     int64           `json:"payment_id"`
+	PaymentStatus string          `json:"payment_status"`
+	OrderID       string          `json:"order_id"`
+	PriceAmount   json.RawMessage `json:"price_amount"`   // 计价币种金额（下单时按订单币种设定）
+	PriceCurrency string          `json:"price_currency"` // 如 USD
+	PayAmount     json.RawMessage `json:"pay_amount"`     // 支付币种金额（USDT 8 位小数）
+	ActuallyPaid  json.RawMessage `json:"actually_paid"`
+	PayCurrency   string          `json:"pay_currency"`
 }
 
 func (p *NPProvider) VerifyWebhook(ctx context.Context, provider string, rawBody []byte, headers map[string]string) (PaymentEvent, error) {
@@ -101,8 +101,14 @@ func (p *NPProvider) VerifyWebhook(ctx context.Context, provider string, rawBody
 	if err := json.Unmarshal(rawBody, &ipn); err != nil {
 		return PaymentEvent{}, errors.New("np: parse ipn failed")
 	}
+	// 币种以 price_currency 为准（与下单计价币种一致），缺失回退 USD；不能用固定 USD，
+	// 否则 EUR/CNY 订单会因回调币种不符被金额校验拒绝、永远不结算。
+	currency := normalizeCurrency(ipn.PriceCurrency)
+	if currency == "" {
+		currency = "USD"
+	}
 	ev := PaymentEvent{OrderNo: ipn.OrderID, TxID: strconv.FormatInt(ipn.PaymentID, 10),
-		Paid: ipn.PaymentStatus == "finished", Currency: "USD"}
+		Paid: ipn.PaymentStatus == "finished", Currency: currency}
 	if ipn.PaymentStatus == "finished" {
 		// 金额以计价币种（price_amount，与订单币种一致）为准；缺失时退回 pay_amount。
 		// 支付侧舍入/折算误差由 biz 的 amountOK（±1 分容差）兜底。

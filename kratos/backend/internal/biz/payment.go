@@ -31,6 +31,41 @@ var (
 	defaultPlans = map[string]int64{"monthly": 300, "quarterly": 800, "yearly": 3000}
 )
 
+// providerCurrency 渠道未配置 currency 时的固定结算币种；
+// stripe/np_usdt/paypal/wechatpay_global 未配置时按 USD（见 providerCurrencyFor）。
+var providerCurrency = map[string]string{
+	"alipay": "CNY", "unionpay": "CNY", "komoju": "JPY", "portone": "KRW",
+	"razorpay": "INR", "mercadopago": "BRL", "xendit": "IDR",
+}
+
+func normalizeCurrency(c string) string { return strings.ToUpper(strings.TrimSpace(c)) }
+
+// providerCurrencyFor 渠道币种：config.currency 优先，未配置按渠道固定映射，其余 USD。
+func providerCurrencyFor(cfg map[string]any, code string) string {
+	if v, _ := cfg["currency"].(string); v != "" {
+		return normalizeCurrency(v)
+	}
+	if c, ok := providerCurrency[code]; ok {
+		return c
+	}
+	return "USD"
+}
+
+// resolvedPaidCurrency 统计币种：入参非空即用；空串取最近一笔已付订单的币种，无订单回退 USD。
+// 报表金额只在同币种内 SUM，避免 USD/JPY 直接相加。
+func resolvedPaidCurrency(ctx context.Context, db *gorm.DB, currency string) string {
+	if c := normalizeCurrency(currency); c != "" {
+		return c
+	}
+	var c string
+	if err := db.WithContext(ctx).Model(&data.PaymentOrder{}).
+		Where("status = 1 AND currency <> ''").
+		Order("created_at DESC").Limit(1).Pluck("currency", &c).Error; err != nil || c == "" {
+		return "USD"
+	}
+	return normalizeCurrency(c)
+}
+
 const pendingCloseAfter = 15 * time.Minute
 
 // PaymentEvent 是渠道回调解析出的统一支付事件。
@@ -130,19 +165,21 @@ func (pc *PaymentUsecase) CreateOrder(ctx context.Context, uid uint64, plan, lan
 	if err != nil {
 		return CreatedOrder{}, pkg.ErrProviderOn
 	}
-	currency := "USD"
-	if v, _ := cfg["currency"].(string); v != "" {
-		currency = v
+	currency := providerCurrencyFor(cfg, row.Code)
+	amounts, days := pc.effectivePlans(ctx, currency)
+	amountCents, ok := amounts[plan] // 金额↔plan 一一对应由 effectivePlans 保证
+	if !ok || amountCents <= 0 {
+		// 非 USD 且没有启用的该币种套餐：不能用 USD 默认金额冒充本地币金额
+		return CreatedOrder{}, pkg.ErrProviderOn
 	}
-	amounts, _ := pc.effectivePlans(ctx, currency)
-	amountCents := amounts[plan] // 金额↔plan 一一对应由 effectivePlans 保证
 
-	// 幂等：同 user+provider+amount 的未支付订单直接复用。
+	// 幂等：同 user+provider+currency+amount 的未支付订单直接复用。
 	// amount↔plan 一一对应（planAmounts 强制金额唯一），等价于 (user_id, plan, status=0)。
 	var o data.PaymentOrder
 	// FORCE_MASTER: 刚创建的订单立即可见
 	err = pc.db.Clauses(gormdb.Write).WithContext(ctx).
-		Where("user_id = ? AND provider = ? AND amount = ? AND status = 0", uid, row.Code, float64(amountCents)/100).
+		Where("user_id = ? AND provider = ? AND currency = ? AND amount = ? AND status = 0 AND plan = ?",
+			uid, row.Code, currency, float64(amountCents)/100, plan).
 		Order("id DESC").First(&o).Error
 	reuse := err == nil
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -152,14 +189,18 @@ func (pc *PaymentUsecase) CreateOrder(ctx context.Context, uid uint64, plan, lan
 		o = data.PaymentOrder{
 			OrderNo: newOrderNo(), UserID: uid,
 			Amount: float64(amountCents) / 100, Currency: currency,
-			Provider: row.Code, Status: 0,
+			Provider: row.Code, Plan: plan, Days: days[plan], Status: 0,
 		}
 		if err := pc.db.WithContext(ctx).Create(&o).Error; err != nil {
 			return CreatedOrder{}, pkg.ErrPayCreate
 		}
 	}
 
-	prov, err := providerFactories[row.Code](cfg, pc.payCfg)
+	factory, ok := providerFactories[row.Code]
+	if !ok { // 老数据里可能存在未注册的渠道码，避免 nil 函数 panic
+		return CreatedOrder{}, pkg.ErrProviderOn
+	}
+	prov, err := factory(cfg, pc.payCfg)
 	if err != nil {
 		return CreatedOrder{}, pkg.ErrPayCreate
 	}
@@ -189,14 +230,44 @@ func (pc *PaymentUsecase) GetOrder(ctx context.Context, uid uint64, orderNo stri
 	return orderInfo(o), nil
 }
 
-// ListPublicPlans 公开套餐列表（T-P-14）：仅启用，sort 升序。
+// ListPublicPlans 公开套餐列表（T-P-14）：按 lang 路由渠道，只返回该渠道币种的启用套餐，sort 升序。
+// 不混列多币种：展示价格必须与 CreateOrder 的实际扣款币种一致；无匹配渠道返回空列表。
 // 公开读走默认连接（只读不敏感，无需 FORCE_MASTER）。
-func (pc *PaymentUsecase) ListPublicPlans(ctx context.Context) ([]data.VipPlan, error) {
+func (pc *PaymentUsecase) ListPublicPlans(ctx context.Context, lang string) ([]data.VipPlan, error) {
+	providers, err := pc.enabledProviders(ctx)
+	if err != nil {
+		return nil, pkg.ErrPayCreate
+	}
+	row := pickProvider(providers, lang)
+	if row == nil {
+		return []data.VipPlan{}, nil
+	}
+	cfg, err := pc.decryptConfig(row.Config)
+	if err != nil {
+		return nil, pkg.ErrProviderOn
+	}
+	currency := providerCurrencyFor(cfg, row.Code)
 	var rows []data.VipPlan
-	if err := pc.db.WithContext(ctx).Where("status = 1").Order("sort ASC, id ASC").Find(&rows).Error; err != nil {
+	if err := pc.db.WithContext(ctx).
+		Where("status = 1 AND currency = ?", currency).
+		Order("sort ASC, id ASC").Find(&rows).Error; err != nil {
 		return nil, pkg.ErrAdminDB
 	}
-	return rows, nil
+	return publicPlansFallback(rows, currency), nil
+}
+
+// publicPlansFallback USD 无套餐行时回退内置三档（与 effectivePlans 一致，新装库也有套餐可展示）；
+// 非 USD 保持空列表，不把 USD 默认金额当本地币金额。
+func publicPlansFallback(rows []data.VipPlan, currency string) []data.VipPlan {
+	if len(rows) > 0 || currency != "USD" {
+		return rows
+	}
+	out := make([]data.VipPlan, 0, len(planOrder))
+	for i, code := range planOrder {
+		out = append(out, data.VipPlan{PlanCode: code, Days: planDays[code],
+			AmountCents: defaultPlans[code], Currency: "USD", Sort: i, Status: 1})
+	}
+	return out
 }
 
 // ListMethods 公开接口：enabled 且 lang/region 匹配，sort 升序。
@@ -271,10 +342,18 @@ func (pc *PaymentUsecase) Webhook(ctx context.Context, providerName string, rawB
 	if o.Status == 1 { // 幂等：已支付直接 ack
 		return nil
 	}
-	// plan 由金额反查：下单与回调必须同一数据源（DB 套餐 + 内置默认）
-	amounts, dayMap := pc.effectivePlans(ctx, o.Currency)
-	plan, days, ok := planForAmounts(amounts, dayMap, ev.AmountCents)
-	if !ok {
+	// 新订单用下单时固化的 plan/days，避免套餐/配置变更后按当前金额反查不到；
+	// 老订单（plan 为空）才回退金额反查。
+	plan, days := o.Plan, o.Days
+	if plan == "" {
+		amounts, dayMap := pc.effectivePlans(ctx, o.Currency)
+		var ok bool
+		plan, days, ok = planForAmounts(amounts, dayMap, ev.AmountCents)
+		if !ok {
+			return pkg.ErrAmountMism
+		}
+	}
+	if days <= 0 {
 		return pkg.ErrAmountMism
 	}
 	if err := pc.settle(ctx, &o, ev, plan, days); err != nil {
@@ -417,38 +496,48 @@ func langRegion(lang string) string {
 // planOrder 固定顺序：金额反查与唯一性校验都按此遍历，保证确定性。
 var planOrder = []string{"monthly", "quarterly", "yearly"}
 
-// effectivePlans 生效套餐金额/天数（T-P-13）：DB novel_vip_plan 按 currency 匹配优先，
-// 表空/无该币种行时回退内置默认；两套餐同价冲突时整体回退默认。
+// effectivePlans 生效套餐金额/天数（T-P-13）：DB novel_vip_plan 按 currency 匹配优先。
+// USD 表空/查询失败回退内置默认；非 USD 没有任何启用套餐行时返回空
+// （绝不把 USD 默认金额当本地币金额），由 CreateOrder 返回业务错误。
 // 下单与 webhook 反查都经此取数，保证两端一致。
 func (pc *PaymentUsecase) effectivePlans(ctx context.Context, currency string) (map[string]int64, map[string]int) {
 	rows, err := pc.dbPlans(ctx, currency)
 	if err != nil {
-		return defaultPlans, planDays // 表不存在/查询失败 → 默认
+		if normalizeCurrency(currency) == "USD" {
+			return defaultPlans, planDays // 表不存在/查询失败 → 默认
+		}
+		return nil, nil
 	}
-	return plansFromRows(rows)
+	return plansFromRows(rows, currency)
 }
 
 // dbPlans 读启用且币种匹配的套餐（FORCE_MASTER：刚改立即生效）。
 func (pc *PaymentUsecase) dbPlans(ctx context.Context, currency string) ([]data.VipPlan, error) {
 	var rows []data.VipPlan
 	err := pc.db.Clauses(gormdb.Write).WithContext(ctx).
-		Where("status = 1 AND currency = ?", currency).Order("sort ASC, id ASC").Find(&rows).Error
+		Where("status = 1 AND currency = ?", normalizeCurrency(currency)).Order("sort ASC, id ASC").Find(&rows).Error
 	return rows, err
 }
 
-// plansFromRows 合并 DB 套餐行与内置默认：plan 缺行回退默认值；同 currency 金额冲突
-// （同价两套餐）整体回退默认，保证 amount↔plan 一一对应（幂等复用键与 webhook 反查的前提）。
-func plansFromRows(rows []data.VipPlan) (amounts map[string]int64, days map[string]int) {
+// plansFromRows 针对已按 currency 过滤的行：USD 缺行用内置默认补齐；非 USD 只用实际行。
+// 同币种内金额冲突（同价两套餐）属配置错误：USD 回退默认，其余返回空，
+// 保证 amount↔plan 一一对应（幂等复用键与 webhook 反查的前提）。
+func plansFromRows(rows []data.VipPlan, currency string) (amounts map[string]int64, days map[string]int) {
+	usd := normalizeCurrency(currency) == "USD"
 	if len(rows) == 0 {
-		return defaultPlans, planDays
+		if usd {
+			return defaultPlans, planDays
+		}
+		return nil, nil
 	}
 	amounts = map[string]int64{}
 	days = map[string]int{}
-	for _, p := range planOrder {
-		amounts[p] = defaultPlans[p]
-		days[p] = planDays[p]
+	if usd {
+		for _, p := range planOrder {
+			amounts[p] = defaultPlans[p]
+			days[p] = planDays[p]
+		}
 	}
-	seen := map[int64]string{}
 	for _, r := range rows {
 		if _, known := planDays[r.PlanCode]; !known {
 			continue // 仅内置三档参与定价
@@ -456,11 +545,17 @@ func plansFromRows(rows []data.VipPlan) (amounts map[string]int64, days map[stri
 		amounts[r.PlanCode] = r.AmountCents
 		days[r.PlanCode] = r.Days
 	}
+	seen := map[int64]string{}
 	for _, p := range planOrder {
-		a := amounts[p]
-		if prev, dup := seen[a]; dup {
-			_ = prev
-			return defaultPlans, planDays // 冲突属配置错误，回退默认
+		a, ok := amounts[p]
+		if !ok {
+			continue
+		}
+		if _, dup := seen[a]; dup {
+			if usd {
+				return defaultPlans, planDays
+			}
+			return nil, nil
 		}
 		seen[a] = p
 	}
@@ -532,12 +627,13 @@ type OrderItem struct {
 
 // OrderStatsInfo 流水汇总。
 type OrderStatsInfo struct {
-	Total   int64
-	Paid    int64
-	Pending int64
-	Failed  int64
-	Closed  int64
-	Amount  int64 // 已付总金额（分）
+	Total    int64
+	Paid     int64
+	Pending  int64
+	Failed   int64
+	Closed   int64
+	Amount   int64  // 所选币种的已付总金额（分）
+	Currency string // 实际统计币种
 }
 
 // ListOrders 流水分页：FORCE_MASTER（支付结果一致性优先），id 倒序。
@@ -560,9 +656,10 @@ func (pc *PaymentUsecase) ListOrders(ctx context.Context, q OrderQuery, page pkg
 	return out, total, nil
 }
 
-// OrderStats 流水汇总：总单数 + 按状态计数 + 已付总金额。
-func (pc *PaymentUsecase) OrderStats(ctx context.Context, q OrderQuery) (OrderStatsInfo, error) {
+// OrderStats 流水汇总：总单数 + 按状态计数（不筛币种）+ 所选币种已付总金额。
+func (pc *PaymentUsecase) OrderStats(ctx context.Context, q OrderQuery, currency string) (OrderStatsInfo, error) {
 	var s OrderStatsInfo
+	s.Currency = resolvedPaidCurrency(ctx, pc.db, currency)
 	base := pc.applyOrderFilter(pc.db.Clauses(gormdb.Write).WithContext(ctx).Model(&data.PaymentOrder{}), q)
 	if err := base.Session(&gorm.Session{}).Count(&s.Total).Error; err != nil {
 		return s, pkg.ErrAdminDB
@@ -570,18 +667,16 @@ func (pc *PaymentUsecase) OrderStats(ctx context.Context, q OrderQuery) (OrderSt
 	type grp struct {
 		Status int8
 		Cnt    int64
-		Amt    float64
 	}
 	var rows []grp
 	if err := base.Session(&gorm.Session{}).
-		Select("status, COUNT(*) AS cnt, SUM(CASE WHEN status = 1 THEN amount ELSE 0 END) AS amt").
-		Group("status").Scan(&rows).Error; err != nil {
+		Select("status, COUNT(*) AS cnt").Group("status").Scan(&rows).Error; err != nil {
 		return s, pkg.ErrAdminDB
 	}
 	for _, r := range rows {
 		switch r.Status {
 		case 1:
-			s.Paid, s.Amount = r.Cnt, centsOf(r.Amt)
+			s.Paid = r.Cnt
 		case 0:
 			s.Pending = r.Cnt
 		case 2:
@@ -590,6 +685,13 @@ func (pc *PaymentUsecase) OrderStats(ctx context.Context, q OrderQuery) (OrderSt
 			s.Closed = r.Cnt
 		}
 	}
+	var amt float64
+	if err := base.Session(&gorm.Session{}).
+		Where("status = 1 AND currency = ?", s.Currency).
+		Select("COALESCE(SUM(amount),0)").Scan(&amt).Error; err != nil {
+		return s, pkg.ErrAdminDB
+	}
+	s.Amount = centsOf(amt)
 	return s, nil
 }
 
@@ -668,6 +770,9 @@ func (pc *PaymentUsecase) CreateProvider(ctx context.Context, adminID int64, req
 	code := strings.TrimSpace(req.Code)
 	if code == "" || len(code) > 32 {
 		return nil, pkg.ErrInvalidArgument
+	}
+	if _, ok := providerFactories[code]; !ok {
+		return nil, pkg.ErrInvalidArgument // 未知渠道码（回调/下单无对应实现）
 	}
 	if req.Lang == "" {
 		req.Lang = "*"
@@ -780,8 +885,22 @@ func (pc *PaymentUsecase) ToggleProvider(ctx context.Context, adminID int64, id 
 	return &r, nil
 }
 
-// DeleteProvider 硬删除支付方式（订单表无外键，仅存渠道码字符串）。
+// DeleteProvider 硬删除支付方式（订单表无外键，仅存渠道码字符串）；
+// 存在该渠道在途订单（status=0）时拒绝，避免回调找不到渠道配置。
 func (pc *PaymentUsecase) DeleteProvider(ctx context.Context, adminID int64, id uint64) error {
+	var r data.PaymentProvider
+	// FORCE_MASTER: 删前校验在途订单，避免主从延迟漏单
+	if err := pc.db.Clauses(gormdb.Write).WithContext(ctx).First(&r, id).Error; err != nil {
+		return pkg.ErrTargetNF
+	}
+	var pending int64
+	if err := pc.db.Clauses(gormdb.Write).WithContext(ctx).Model(&data.PaymentOrder{}).
+		Where("provider = ? AND status = 0", r.Code).Count(&pending).Error; err != nil {
+		return pkg.ErrAdminDB
+	}
+	if pending > 0 {
+		return pkg.ErrBadState
+	}
 	res := pc.db.Clauses(gormdb.Write).WithContext(ctx).Where("id = ?", id).Delete(&data.PaymentProvider{})
 	if res.Error != nil {
 		return pkg.ErrAdminDB
@@ -833,6 +952,15 @@ func (pc *PaymentUsecase) CreatePlan(ctx context.Context, adminID int64, req Pla
 	if currency == "" {
 		currency = "USD"
 	}
+	var cnt int64
+	if err := pc.db.Clauses(gormdb.Write).WithContext(ctx).Model(&data.VipPlan{}).
+		Where("status = 1 AND currency = ? AND amount_cents = ?", currency, req.AmountCents).
+		Count(&cnt).Error; err != nil {
+		return nil, pkg.ErrAdminDB
+	}
+	if cnt > 0 {
+		return nil, pkg.ErrConflict // 同币种同价会让金额反查套餐二义
+	}
 	p := data.VipPlan{PlanCode: code, Days: req.Days, AmountCents: req.AmountCents,
 		Currency: currency, Label: strings.TrimSpace(req.Label), Sort: req.Sort, Status: 1}
 	if err := pc.db.Clauses(gormdb.Write).WithContext(ctx).Create(&p).Error; err != nil {
@@ -882,6 +1010,32 @@ func (pc *PaymentUsecase) UpdatePlan(ctx context.Context, adminID int64, id uint
 	}
 	if len(updates) == 0 {
 		return nil, pkg.ErrInvalidArgument
+	}
+	// FORCE_MASTER: 冲突校验基于最新行
+	var cur data.VipPlan
+	if err := pc.db.Clauses(gormdb.Write).WithContext(ctx).First(&cur, id).Error; err != nil {
+		return nil, pkg.ErrTargetNF
+	}
+	currency, amount, status := cur.Currency, cur.AmountCents, cur.Status
+	if req.Currency != nil {
+		currency = strings.ToUpper(strings.TrimSpace(*req.Currency))
+	}
+	if req.Amount != nil {
+		amount = *req.Amount
+	}
+	if req.Status != nil {
+		status = int8(*req.Status)
+	}
+	if status == 1 {
+		var cnt int64
+		if err := pc.db.Clauses(gormdb.Write).WithContext(ctx).Model(&data.VipPlan{}).
+			Where("id <> ? AND status = 1 AND currency = ? AND amount_cents = ?", id, currency, amount).
+			Count(&cnt).Error; err != nil {
+			return nil, pkg.ErrAdminDB
+		}
+		if cnt > 0 {
+			return nil, pkg.ErrConflict // 同币种同价会让金额反查套餐二义
+		}
 	}
 	res := pc.db.Clauses(gormdb.Write).WithContext(ctx).Model(&data.VipPlan{}).Where("id = ?", id).Updates(updates)
 	if res.Error != nil {

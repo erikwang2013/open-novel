@@ -36,10 +36,14 @@ func (s *AdminService) GetStats(ctx context.Context, req *adminv1.GetStatsReq) (
 	for _, w := range st.HotKeywords {
 		words = append(words, &adminv1.HotKeyword{Keyword: w.Keyword, Count: w.Count})
 	}
+	amounts := make([]*adminv1.CurrencyAmount, 0, len(st.OrderAmounts))
+	for _, a := range st.OrderAmounts {
+		amounts = append(amounts, &adminv1.CurrencyAmount{Currency: a.Currency, Amount: a.Amount})
+	}
 	return &adminv1.GetStatsReply{
 		BookCount: st.BookCount, UserCount: st.UserCount, CommentCount: st.CommentCount, Dau: st.DAU,
 		HotBooks: books, HotKeywords: words,
-		OrderCount: st.OrderCount, OrderAmount: st.OrderAmount, VipCount: st.VipCount,
+		OrderCount: st.OrderCount, OrderAmounts: amounts, VipCount: st.VipCount,
 		TodayNewUsers: st.TodayNewUsers, PendingComments: st.PendingComments, PendingReports: st.PendingReports,
 	}, nil
 }
@@ -49,11 +53,12 @@ func (s *AdminService) GetReports(ctx context.Context, req *adminv1.GetReportsRe
 	if _, err := requireAdmin(ctx); err != nil {
 		return nil, err
 	}
-	r, err := s.uc.Reports(ctx, req.StartDate, req.EndDate)
+	r, err := s.uc.Reports(ctx, req.StartDate, req.EndDate, req.Currency)
 	if err != nil {
 		return nil, err
 	}
 	rep := &adminv1.GetReportsReply{
+		Currency: r.Currency,
 		OrderReport: &adminv1.OrderReport{
 			TotalCount: r.Order.TotalCount, TotalAmount: r.Order.TotalAmount,
 			ByDate:    toDateAmountPoints(r.Order.ByDate),
@@ -69,9 +74,9 @@ func (s *AdminService) GetReports(ctx context.Context, req *adminv1.GetReportsRe
 			ByPlan: make([]*adminv1.PlanAmountPoint, 0, len(r.Vip.ByPlan)),
 		},
 		ContentReport: &adminv1.ContentReport{
-			BooksByDate: toDateCountPoints(r.Content.BooksByDate),
+			BooksByDate:    toDateCountPoints(r.Content.BooksByDate),
 			ChaptersByDate: toDateCountPoints(r.Content.ChaptersByDate),
-			CommentCount: r.Content.CommentCount, ReportCount: r.Content.ReportCount,
+			CommentCount:   r.Content.CommentCount, ReportCount: r.Content.ReportCount,
 		},
 	}
 	for _, c := range r.Order.ByChannel {

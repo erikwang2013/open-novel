@@ -46,8 +46,18 @@ func TestNPVerifyWebhook(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if ev2.AmountCents != 299 {
-		t.Fatalf("fallback pay_amount: got %d want 299", ev2.AmountCents)
+	if ev2.AmountCents != 299 || ev2.Currency != "USD" {
+		t.Fatalf("fallback pay_amount/currency: got %d %s want 299 USD", ev2.AmountCents, ev2.Currency)
+	}
+
+	// 非 USD：回调币种取 price_currency（不是固定 USD），否则结算时订单币种校验必失败。
+	eur := []byte(`{"payment_id":125,"payment_status":"finished","order_id":"2026082903","price_amount":"2.50","price_currency":"eur","pay_amount":"2.60","pay_currency":"usdttrc20"}`)
+	ev3, err := p.VerifyWebhook(ctx, "np_usdt", eur, npSigned(t, "ipn-test-secret", eur))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ev3.Currency != "EUR" || ev3.AmountCents != 250 {
+		t.Fatalf("non-USD price_currency: got %s %d want EUR 250", ev3.Currency, ev3.AmountCents)
 	}
 
 	// 篡改 payload → 验签失败
@@ -109,28 +119,60 @@ func TestStripeVerifyWebhook(t *testing.T) {
 }
 
 func TestPlansFromRows(t *testing.T) {
-	// 表空 → 内置默认
-	a, d := plansFromRows(nil)
+	// 表空 → USD 内置默认
+	a, d := plansFromRows(nil, "USD")
 	if a["monthly"] != 300 || a["quarterly"] != 800 || a["yearly"] != 3000 || d["yearly"] != 365 {
 		t.Fatalf("empty rows must fall back to defaults: %v %v", a, d)
 	}
-	// DB 覆盖金额/天数；缺行回退默认
-	rows := []data.VipPlan{{PlanCode: "monthly", Days: 31, AmountCents: 499}}
-	a, d = plansFromRows(rows)
+	// DB 覆盖金额/天数；USD 缺行回退默认
+	rows := []data.VipPlan{{PlanCode: "monthly", Days: 31, AmountCents: 499, Currency: "USD"}}
+	a, d = plansFromRows(rows, "USD")
 	if a["monthly"] != 499 || d["monthly"] != 31 || a["quarterly"] != 800 || a["yearly"] != 3000 {
 		t.Fatalf("db override: %v %v", a, d)
 	}
-	// 同价冲突 → 整体回退默认（反查确定性）
+	// USD 同价冲突 → 整体回退默认（反查确定性）
 	collide := []data.VipPlan{{PlanCode: "monthly", Days: 30, AmountCents: 500}, {PlanCode: "quarterly", Days: 90, AmountCents: 500}}
-	a, d = plansFromRows(collide)
+	a, d = plansFromRows(collide, "USD")
 	if a["monthly"] != 300 || a["quarterly"] != 800 {
 		t.Fatalf("collision must fall back to defaults: %v", a)
 	}
 	// 未知 plan_code 忽略
 	rows = []data.VipPlan{{PlanCode: "half-yearly", Days: 180, AmountCents: 1500}}
-	a, _ = plansFromRows(rows)
+	a, _ = plansFromRows(rows, "USD")
 	if a["monthly"] != 300 || a["yearly"] != 3000 {
 		t.Fatalf("unknown plan must be ignored: %v", a)
+	}
+
+	// 非 USD：表空不用 USD 默认金额（币种不同不可混用），下单会报渠道未配置
+	if a, d = plansFromRows(nil, "jpy"); len(a) != 0 || len(d) != 0 {
+		t.Fatalf("non-USD empty must not inherit USD defaults: %v %v", a, d)
+	}
+	// 非 USD：只用实际行，不补 USD 缺省档
+	rows = []data.VipPlan{{PlanCode: "monthly", Days: 30, AmountCents: 500, Currency: "JPY"}}
+	a, d = plansFromRows(rows, "JPY")
+	if a["monthly"] != 500 || d["monthly"] != 30 || a["quarterly"] != 0 || a["yearly"] != 0 {
+		t.Fatalf("JPY rows only: %v %v", a, d)
+	}
+	// 非 USD 同价冲突 → 空（不回落 USD 默认）
+	collide = []data.VipPlan{{PlanCode: "monthly", Days: 30, AmountCents: 500}, {PlanCode: "quarterly", Days: 90, AmountCents: 500}}
+	if a, _ = plansFromRows(collide, "JPY"); len(a) != 0 {
+		t.Fatalf("non-USD collision must return empty: %v", a)
+	}
+}
+
+func TestProviderCurrencyFor(t *testing.T) {
+	if got := providerCurrencyFor(nil, "alipay"); got != "CNY" {
+		t.Fatalf("alipay: want CNY, got %q", got)
+	}
+	if got := providerCurrencyFor(nil, "komoju"); got != "JPY" {
+		t.Fatalf("komoju: want JPY, got %q", got)
+	}
+	if got := providerCurrencyFor(nil, "stripe"); got != "USD" {
+		t.Fatalf("stripe default: want USD, got %q", got)
+	}
+	cfg := map[string]any{"currency": " jpy "}
+	if got := providerCurrencyFor(cfg, "stripe"); got != "JPY" {
+		t.Fatalf("config override: want JPY, got %q", got)
 	}
 }
 

@@ -291,6 +291,7 @@ func (x *GetOrderReply) GetPaidAt() string {
 
 type ListPublicPlansReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Lang          string                 `protobuf:"bytes,1,opt,name=lang,proto3" json:"lang,omitempty"` // 渠道路由语言，决定返回哪个币种的套餐；空=默认渠道
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -323,6 +324,13 @@ func (x *ListPublicPlansReq) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ListPublicPlansReq.ProtoReflect.Descriptor instead.
 func (*ListPublicPlansReq) Descriptor() ([]byte, []int) {
 	return file_payment_v1_payment_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ListPublicPlansReq) GetLang() string {
+	if x != nil {
+		return x.Lang
+	}
+	return ""
 }
 
 type PublicPlanItem struct {
@@ -997,6 +1005,7 @@ type OrderStatsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StartAt       string                 `protobuf:"bytes,1,opt,name=start_at,json=startAt,proto3" json:"start_at,omitempty"` // RFC3339 或 2006-01-02（含当天）
 	EndAt         string                 `protobuf:"bytes,2,opt,name=end_at,json=endAt,proto3" json:"end_at,omitempty"`
+	Currency      string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"` // 金额统计币种，空=最近已付订单币种（无则 USD）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1045,14 +1054,22 @@ func (x *OrderStatsReq) GetEndAt() string {
 	return ""
 }
 
+func (x *OrderStatsReq) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
 type OrderStatsReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`     // 总单数
-	Paid          int64                  `protobuf:"varint,2,opt,name=paid,proto3" json:"paid,omitempty"`       // 已付单数
-	Pending       int64                  `protobuf:"varint,3,opt,name=pending,proto3" json:"pending,omitempty"` // 待支付单数
-	Failed        int64                  `protobuf:"varint,4,opt,name=failed,proto3" json:"failed,omitempty"`   // 失败单数
-	Closed        int64                  `protobuf:"varint,5,opt,name=closed,proto3" json:"closed,omitempty"`   // 已关闭单数
-	Amount        int64                  `protobuf:"varint,6,opt,name=amount,proto3" json:"amount,omitempty"`   // 已付总金额（分）
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`      // 总单数（所有币种）
+	Paid          int64                  `protobuf:"varint,2,opt,name=paid,proto3" json:"paid,omitempty"`        // 已付单数（所有币种）
+	Pending       int64                  `protobuf:"varint,3,opt,name=pending,proto3" json:"pending,omitempty"`  // 待支付单数（所有币种）
+	Failed        int64                  `protobuf:"varint,4,opt,name=failed,proto3" json:"failed,omitempty"`    // 失败单数（所有币种）
+	Closed        int64                  `protobuf:"varint,5,opt,name=closed,proto3" json:"closed,omitempty"`    // 已关闭单数（所有币种）
+	Amount        int64                  `protobuf:"varint,6,opt,name=amount,proto3" json:"amount,omitempty"`    // 所选币种的已付总金额（分）
+	Currency      string                 `protobuf:"bytes,7,opt,name=currency,proto3" json:"currency,omitempty"` // 实际统计币种
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1127,6 +1144,13 @@ func (x *OrderStatsReply) GetAmount() int64 {
 		return x.Amount
 	}
 	return 0
+}
+
+func (x *OrderStatsReply) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
 }
 
 type ListProvidersReq struct {
@@ -2041,8 +2065,9 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\bcurrency\x18\x04 \x01(\tR\bcurrency\x12\x1a\n" +
 	"\bprovider\x18\x05 \x01(\tR\bprovider\x12\x13\n" +
 	"\x05tx_id\x18\x06 \x01(\tR\x04txId\x12\x17\n" +
-	"\apaid_at\x18\a \x01(\tR\x06paidAt\"\x14\n" +
-	"\x12ListPublicPlansReq\"\x8b\x01\n" +
+	"\apaid_at\x18\a \x01(\tR\x06paidAt\"(\n" +
+	"\x12ListPublicPlansReq\x12\x12\n" +
+	"\x04lang\x18\x01 \x01(\tR\x04lang\"\x8b\x01\n" +
 	"\x0ePublicPlanItem\x12\x1b\n" +
 	"\tplan_code\x18\x01 \x01(\tR\bplanCode\x12\x12\n" +
 	"\x04days\x18\x02 \x01(\x03R\x04days\x12\x16\n" +
@@ -2090,17 +2115,19 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\x05tx_id\x18\a \x01(\tR\x04txId\x12\x17\n" +
 	"\apaid_at\x18\b \x01(\tR\x06paidAt\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\t \x01(\tR\tcreatedAt\"A\n" +
+	"created_at\x18\t \x01(\tR\tcreatedAt\"]\n" +
 	"\rOrderStatsReq\x12\x19\n" +
 	"\bstart_at\x18\x01 \x01(\tR\astartAt\x12\x15\n" +
-	"\x06end_at\x18\x02 \x01(\tR\x05endAt\"\x9d\x01\n" +
+	"\x06end_at\x18\x02 \x01(\tR\x05endAt\x12\x1a\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency\"\xb9\x01\n" +
 	"\x0fOrderStatsReply\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x03R\x05total\x12\x12\n" +
 	"\x04paid\x18\x02 \x01(\x03R\x04paid\x12\x18\n" +
 	"\apending\x18\x03 \x01(\x03R\apending\x12\x16\n" +
 	"\x06failed\x18\x04 \x01(\x03R\x06failed\x12\x16\n" +
 	"\x06closed\x18\x05 \x01(\x03R\x06closed\x12\x16\n" +
-	"\x06amount\x18\x06 \x01(\x03R\x06amount\"\x12\n" +
+	"\x06amount\x18\x06 \x01(\x03R\x06amount\x12\x1a\n" +
+	"\bcurrency\x18\a \x01(\tR\bcurrency\"\x12\n" +
 	"\x10ListProvidersReq\"\xf8\x01\n" +
 	"\rProviderReply\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +

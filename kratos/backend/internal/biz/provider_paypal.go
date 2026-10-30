@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -33,6 +34,8 @@ type PayPalProvider struct {
 	clientID     string
 	clientSecret string
 	webhookID    string
+	returnURL    string
+	cancelURL    string
 	base         string
 }
 
@@ -43,7 +46,8 @@ func newPayPalProvider(cfg map[string]any, pay *conf.Payment) (PaymentProvider, 
 	}
 	return &PayPalProvider{http: &http.Client{Timeout: 10 * time.Second},
 		clientID: cfgStr(cfg, "client_id"), clientSecret: cfgStr(cfg, "client_secret"),
-		webhookID: cfgStr(cfg, "webhook_id"), base: base}, nil
+		webhookID: cfgStr(cfg, "webhook_id"),
+		returnURL: cfgStr(cfg, "return_url"), cancelURL: cfgStr(cfg, "cancel_url"), base: base}, nil
 }
 
 func (p *PayPalProvider) CreateCheckout(ctx context.Context, orderNo string, amountCents int64, currency, desc string) (string, error) {
@@ -64,6 +68,17 @@ func (p *PayPalProvider) CreateCheckout(ctx context.Context, orderNo string, amo
 				"value":         strconv.FormatFloat(float64(amountCents)/100, 'f', -1, 64), // 最短表示：3 / 2.5 / 2.99
 			},
 		}},
+	}
+	// 审批后回跳地址：PayPal 需要 application_context 才会带用户回商户页
+	if p.returnURL != "" || p.cancelURL != "" {
+		ctxMap := map[string]string{}
+		if p.returnURL != "" {
+			ctxMap["return_url"] = p.returnURL
+		}
+		if p.cancelURL != "" {
+			ctxMap["cancel_url"] = p.cancelURL
+		}
+		body["application_context"] = ctxMap
 	}
 	var resp struct {
 		ID    string `json:"id"`
@@ -162,8 +177,85 @@ func (p *PayPalProvider) VerifyWebhook(ctx context.Context, provider string, raw
 		return PaymentEvent{}, errors.New("paypal: no purchase_units in event")
 	}
 	pu := evt.Resource.PurchaseUnits[0]
-	return PaymentEvent{OrderNo: pu.ReferenceID, TxID: evt.Resource.ID, Paid: true,
-		AmountCents: moneyToCents(pu.Amount.Value), Currency: pu.Amount.CurrencyCode}, nil
+	amount := moneyToCents(pu.Amount.Value)
+	currency := normalizeCurrency(pu.Amount.CurrencyCode)
+	// APPROVED 仅代表用户批准，资金尚未落账：必须再调 capture，COMPLETED 才算支付成功
+	captured, err := p.captureOrder(ctx, evt.Resource.ID)
+	if err != nil {
+		// 重复投递时 PayPal 返回 422 ORDER_ALREADY_CAPTURED；视为已捕获成功
+		if strings.Contains(err.Error(), "ORDER_ALREADY_CAPTURED") {
+			return PaymentEvent{OrderNo: pu.ReferenceID, TxID: evt.Resource.ID, Paid: true,
+				AmountCents: amount, Currency: currency}, nil
+		}
+		return PaymentEvent{}, err
+	}
+	if captured.Status != "COMPLETED" {
+		return PaymentEvent{}, fmt.Errorf("paypal: capture status %s", captured.Status)
+	}
+	captureID, capAmount, capCurrency := captured.completedCapture(pu.ReferenceID)
+	if captureID == "" {
+		return PaymentEvent{}, errors.New("paypal: no completed capture in response")
+	}
+	if capAmount != amount || capCurrency != currency {
+		return PaymentEvent{}, fmt.Errorf("paypal: capture amount mismatch: %d %s != %d %s",
+			capAmount, capCurrency, amount, currency)
+	}
+	return PaymentEvent{OrderNo: pu.ReferenceID, TxID: captureID, Paid: true,
+		AmountCents: capAmount, Currency: capCurrency}, nil
+}
+
+// paypalCapture 是 POST /v2/checkout/orders/{id}/capture 的响应（仅取结算必需字段）。
+type paypalCapture struct {
+	ID            string `json:"id"`
+	Status        string `json:"status"`
+	PurchaseUnits []struct {
+		ReferenceID string `json:"reference_id"`
+		Payments    struct {
+			Captures []struct {
+				ID     string `json:"id"`
+				Status string `json:"status"`
+				Amount struct {
+					CurrencyCode string `json:"currency_code"`
+					Value        string `json:"value"`
+				} `json:"amount"`
+			} `json:"captures"`
+		} `json:"payments"`
+	} `json:"purchase_units"`
+}
+
+// completedCapture 取 COMPLETED 捕获；优先 reference_id 匹配的 purchase_unit。
+func (c paypalCapture) completedCapture(refID string) (id string, cents int64, currency string) {
+	for _, u := range c.PurchaseUnits {
+		if u.ReferenceID != refID {
+			continue
+		}
+		for _, cap := range u.Payments.Captures {
+			if cap.Status == "COMPLETED" && cap.ID != "" {
+				return cap.ID, moneyToCents(cap.Amount.Value), normalizeCurrency(cap.Amount.CurrencyCode)
+			}
+		}
+	}
+	for _, u := range c.PurchaseUnits {
+		for _, cap := range u.Payments.Captures {
+			if cap.Status == "COMPLETED" && cap.ID != "" {
+				return cap.ID, moneyToCents(cap.Amount.Value), normalizeCurrency(cap.Amount.CurrencyCode)
+			}
+		}
+	}
+	return "", 0, ""
+}
+
+// captureOrder 捕获已批准订单的资金。
+func (p *PayPalProvider) captureOrder(ctx context.Context, orderID string) (paypalCapture, error) {
+	token, err := p.accessToken(ctx)
+	if err != nil {
+		return paypalCapture{}, err
+	}
+	var resp paypalCapture
+	err = doJSON(ctx, p.http, http.MethodPost,
+		p.base+"/v2/checkout/orders/"+url.PathEscape(orderID)+"/capture",
+		map[string]string{"Authorization": "Bearer " + token}, map[string]any{}, &resp)
+	return resp, err
 }
 
 // verifyWebhookSignature 调 PayPal 官方验签接口（OAuth access_token 复用，与 CreateCheckout 一致）。

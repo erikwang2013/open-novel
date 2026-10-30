@@ -98,16 +98,16 @@ func (uc *RecommendUsecase) rank(ctx context.Context, strategy string, p pkg.Pag
 	return items, total, rows.Err()
 }
 
-// Log 记录榜单曝光（仅登录用户；best-effort）。
+// Log 记录榜单曝光（仅登录用户；best-effort；单条批量 INSERT）。
 func (uc *RecommendUsecase) Log(ctx context.Context, uid int64, strategy string, items []RecommendItem) {
-	if uid <= 0 {
+	if uid <= 0 || len(items) == 0 {
 		return
 	}
+	recs := make([]data.RecommendLog, 0, len(items))
 	for i, it := range items {
-		rec := data.RecommendLog{UserID: uid, BookID: it.BookID, Strategy: strategy, RankNo: uint32(i + 1)}
-		if err := uc.db.WithContext(ctx).Create(&rec).Error; err != nil {
-			log.Printf("recommend: log: %v", err)
-			return
-		}
+		recs = append(recs, data.RecommendLog{UserID: uid, BookID: it.BookID, Strategy: strategy, RankNo: uint32(i + 1)})
+	}
+	if err := uc.db.WithContext(ctx).Create(&recs).Error; err != nil {
+		log.Printf("recommend: log: %v", err)
 	}
 }

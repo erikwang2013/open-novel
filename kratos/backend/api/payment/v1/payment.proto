@@ -143,7 +143,9 @@ message GetOrderReply {
   string paid_at = 7;
 }
 
-message ListPublicPlansReq {}
+message ListPublicPlansReq {
+  string lang = 1; // 渠道路由语言，决定返回哪个币种的套餐；空=默认渠道
+}
 
 message PublicPlanItem {
   string plan_code = 1; // monthly/quarterly/yearly
@@ -214,15 +216,17 @@ message OrderItem {
 message OrderStatsReq {
   string start_at = 1; // RFC3339 或 2006-01-02（含当天）
   string end_at = 2;
+  string currency = 3; // 金额统计币种，空=最近已付订单币种（无则 USD）
 }
 
 message OrderStatsReply {
-  int64 total = 1;   // 总单数
-  int64 paid = 2;    // 已付单数
-  int64 pending = 3; // 待支付单数
-  int64 failed = 4;  // 失败单数
-  int64 closed = 5;  // 已关闭单数
-  int64 amount = 6;  // 已付总金额（分）
+  int64 total = 1;   // 总单数（所有币种）
+  int64 paid = 2;    // 已付单数（所有币种）
+  int64 pending = 3; // 待支付单数（所有币种）
+  int64 failed = 4;  // 失败单数（所有币种）
+  int64 closed = 5;  // 已关闭单数（所有币种）
+  int64 amount = 6;  // 所选币种的已付总金额（分）
+  string currency = 7; // 实际统计币种
 }
 
 message ListProvidersReq {}

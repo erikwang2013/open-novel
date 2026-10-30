@@ -5,6 +5,7 @@ package data
 // 需本地 MySQL(3307)/Redis(6380) 在线（与 biz 测试同款基建，见 search_test.go）。
 
 import (
+	"database/sql"
 	"testing"
 	"time"
 
@@ -24,14 +25,15 @@ func TestSnowflakeID(t *testing.T) {
 	defer d.DB.Where("username LIKE ?", marker+"%").Delete(&User{})
 
 	// 单条：主键非零 + 单调递增
-	u1 := &User{Username: marker + "a", Email: marker + "a@idtest.local", Nickname: "a"}
+	email := func(s string) sql.NullString { return sql.NullString{String: s, Valid: true} }
+	u1 := &User{Username: marker + "a", Email: email(marker + "a@idtest.local"), Nickname: "a"}
 	if err := d.DB.Create(u1).Error; err != nil {
 		t.Fatal(err)
 	}
 	if u1.ID == 0 {
 		t.Fatal("Create 后主键应为 snowflake 非零值")
 	}
-	u2 := &User{Username: marker + "b", Email: marker + "b@idtest.local", Nickname: "b"}
+	u2 := &User{Username: marker + "b", Email: email(marker + "b@idtest.local"), Nickname: "b"}
 	if err := d.DB.Create(u2).Error; err != nil {
 		t.Fatal(err)
 	}

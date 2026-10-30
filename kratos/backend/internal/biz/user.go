@@ -5,6 +5,7 @@ package biz
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -67,7 +68,7 @@ func (uc *UserUsecase) Register(ctx context.Context, username, password, email, 
 	if err != nil {
 		return UserProfile{}, pkg.ErrUserInternal
 	}
-	u := data.User{Username: username, Email: email, PasswordHash: string(hash),
+	u := data.User{Username: username, Email: sql.NullString{String: email, Valid: email != ""}, PasswordHash: string(hash),
 		Nickname: nickname, Status: 1, Role: 1}
 	if err := uc.db.WithContext(ctx).Create(&u).Error; err != nil {
 		var me *mysql.MySQLError
@@ -175,7 +176,7 @@ func (uc *UserUsecase) UpdateMe(ctx context.Context, uid int64, req UpdateProfil
 		if *req.Email != "" && !strings.Contains(*req.Email, "@") {
 			return UserProfile{}, pkg.ErrUserArg
 		}
-		updates["email"] = *req.Email
+		updates["email"] = sql.NullString{String: *req.Email, Valid: *req.Email != ""} // 空串写 NULL，避免唯一键冲突
 	}
 	if req.Avatar != nil {
 		if len(*req.Avatar) > 512 {
@@ -211,7 +212,7 @@ func (uc *UserUsecase) profile(u *data.User, lang string) UserProfile {
 		nick = v
 	}
 	return UserProfile{
-		ID: u.ID, Username: u.Username, Email: u.Email, Nickname: nick, NicknameI18n: i18n,
+		ID: u.ID, Username: u.Username, Email: u.Email.String, Nickname: nick, NicknameI18n: i18n,
 		Avatar: u.Avatar, Role: u.Role, Status: u.Status,
 		CreatedAt: u.CreatedAt.Format(time.RFC3339),
 	}

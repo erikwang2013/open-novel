@@ -113,7 +113,7 @@ func (p *AlipayProvider) VerifyWebhook(ctx context.Context, provider string, raw
 	}
 	status := params["trade_status"]
 	return PaymentEvent{OrderNo: params["out_trade_no"], TxID: params["trade_no"],
-		Paid: status == "TRADE_SUCCESS" || status == "TRADE_FINISHED",
+		Paid:        status == "TRADE_SUCCESS" || status == "TRADE_FINISHED",
 		AmountCents: moneyToCents(params["total_amount"]), Currency: "CNY"}, nil
 }
 

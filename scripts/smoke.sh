@@ -6,14 +6,16 @@ set -euo pipefail
 BASE="${BASE:-http://127.0.0.1:18080/api}"
 JWT_SECRET="${JWT_SECRET:-smoke-test-secret}"
 BOOK="${BOOK:-$((700000 + RANDOM))}" # random book id: repeat runs stay idempotent
+BACKEND_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../kratos/backend" && pwd)"
 
-# mint an author token (role=2) for user 1001
-token=$(cd /tmp/novel-smoke && JWT_SECRET="$JWT_SECRET" go run token.go 2>/dev/null || \
-  (cd /tmp/novel-smoke && go mod init smoke >/dev/null 2>&1; GOPROXY=https://goproxy.cn,direct GOFLAGS=-mod=mod go mod tidy >/dev/null 2>&1 && JWT_SECRET="$JWT_SECRET" go run token.go))
-# role-1 (reader) token: must be rejected by the author guard
-reader_token=$(cd /tmp/novel-smoke && ROLE=1 JWT_SECRET="$JWT_SECRET" go run token.go 2>/dev/null)
-# role-3 (admin) token: required by admin stats endpoint
-admin_token=$(cd /tmp/novel-smoke && ROLE=3 JWT_SECRET="$JWT_SECRET" go run token.go 2>/dev/null)
+# mint tokens via the backend's own JWT helper (same claims as AuthManager)
+token_bin=$(mktemp)
+trap 'rm -f "$token_bin"' EXIT
+(cd "$BACKEND_DIR" && go build -o "$token_bin" ./cmd/smoketoken)
+mint() { JWT_SECRET="$JWT_SECRET" SMOKE_UID=1001 ROLE="$1" "$token_bin"; }
+token=$(mint 2)        # author
+reader_token=$(mint 1) # reader: must be rejected by the author guard
+admin_token=$(mint 3)  # admin: required by admin stats endpoint
 
 pass=0; fail=0
 # check <desc> <want> <json>: success body has no "code" key (0); error body code == want.
@@ -30,6 +32,11 @@ field() {
 }
 
 hdr=(-H "Authorization: Bearer $token" -H 'Content-Type: application/json' -H 'X-Api-Version: v1')
+
+# 正文接口校验书籍状态：先建一本测试书，章节挂在该书下（随机 BOOK 仅作覆盖前的兜底）
+book_json=$(curl -s -X POST "$BASE/books" "${hdr[@]}" -d '{"title":"smoke book","lang":"zh-CN"}')
+check "create book" 0 "$book_json"
+BOOK=$(echo "$book_json" | python3 -c "import sys,json;print(json.load(sys.stdin)['id'])")
 
 check "reader cannot create chapter" 140403 "$(curl -s -X POST "$BASE/books/$BOOK/chapters" -H "Authorization: Bearer $reader_token" -H 'Content-Type: application/json' -H 'X-Api-Version: v1' -d '{"chapter_no":99,"title":"X"}')"
 ch1_json=$(curl -s -X POST "$BASE/books/$BOOK/chapters" "${hdr[@]}" -d '{"chapter_no":1,"title":"T1","content":"正文内容","lang":"zh-CN"}')

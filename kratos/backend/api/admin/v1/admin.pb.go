@@ -69,12 +69,12 @@ type GetStatsReply struct {
 	Dau             int64                  `protobuf:"varint,4,opt,name=dau,proto3" json:"dau,omitempty"`                                                 // DAU 近似：当日登录 + 当日搜索的去重用户
 	HotBooks        []*HotBook             `protobuf:"bytes,5,rep,name=hot_books,json=hotBooks,proto3" json:"hot_books,omitempty"`                        // 热门书籍（复用搜索热门榜）
 	HotKeywords     []*HotKeyword          `protobuf:"bytes,6,rep,name=hot_keywords,json=hotKeywords,proto3" json:"hot_keywords,omitempty"`               // 热门搜索词（搜索日志聚合）
-	OrderCount      int64                  `protobuf:"varint,7,opt,name=order_count,json=orderCount,proto3" json:"order_count,omitempty"`                 // 累计支付订单数（status=1 已支付）
-	OrderAmount     int64                  `protobuf:"varint,8,opt,name=order_amount,json=orderAmount,proto3" json:"order_amount,omitempty"`              // 累计支付金额（分）
+	OrderCount      int64                  `protobuf:"varint,7,opt,name=order_count,json=orderCount,proto3" json:"order_count,omitempty"`                 // 累计支付订单数（status=1 已支付，所有币种）
 	VipCount        int64                  `protobuf:"varint,9,opt,name=vip_count,json=vipCount,proto3" json:"vip_count,omitempty"`                       // VIP 有效订阅数（vip_expires_at > now）
 	TodayNewUsers   int64                  `protobuf:"varint,10,opt,name=today_new_users,json=todayNewUsers,proto3" json:"today_new_users,omitempty"`     // 今日新增用户
 	PendingComments int64                  `protobuf:"varint,11,opt,name=pending_comments,json=pendingComments,proto3" json:"pending_comments,omitempty"` // 待审核评论数（status=2 举报待审）
 	PendingReports  int64                  `protobuf:"varint,12,opt,name=pending_reports,json=pendingReports,proto3" json:"pending_reports,omitempty"`    // 待处理举报数（status=2 评论的 report_count 累计）
+	OrderAmounts    []*CurrencyAmount      `protobuf:"bytes,13,rep,name=order_amounts,json=orderAmounts,proto3" json:"order_amounts,omitempty"`           // 累计支付金额（分，按币种分组）
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -158,13 +158,6 @@ func (x *GetStatsReply) GetOrderCount() int64 {
 	return 0
 }
 
-func (x *GetStatsReply) GetOrderAmount() int64 {
-	if x != nil {
-		return x.OrderAmount
-	}
-	return 0
-}
-
 func (x *GetStatsReply) GetVipCount() int64 {
 	if x != nil {
 		return x.VipCount
@@ -193,6 +186,66 @@ func (x *GetStatsReply) GetPendingReports() int64 {
 	return 0
 }
 
+func (x *GetStatsReply) GetOrderAmounts() []*CurrencyAmount {
+	if x != nil {
+		return x.OrderAmounts
+	}
+	return nil
+}
+
+// 单币种金额（分）。
+type CurrencyAmount struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Currency      string                 `protobuf:"bytes,1,opt,name=currency,proto3" json:"currency,omitempty"` // ISO 币种码，如 USD/JPY
+	Amount        int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`    // 分
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CurrencyAmount) Reset() {
+	*x = CurrencyAmount{}
+	mi := &file_admin_v1_admin_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CurrencyAmount) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CurrencyAmount) ProtoMessage() {}
+
+func (x *CurrencyAmount) ProtoReflect() protoreflect.Message {
+	mi := &file_admin_v1_admin_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CurrencyAmount.ProtoReflect.Descriptor instead.
+func (*CurrencyAmount) Descriptor() ([]byte, []int) {
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CurrencyAmount) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *CurrencyAmount) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
 type HotBook struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BookId        int64                  `protobuf:"varint,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"`
@@ -204,7 +257,7 @@ type HotBook struct {
 
 func (x *HotBook) Reset() {
 	*x = HotBook{}
-	mi := &file_admin_v1_admin_proto_msgTypes[2]
+	mi := &file_admin_v1_admin_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -216,7 +269,7 @@ func (x *HotBook) String() string {
 func (*HotBook) ProtoMessage() {}
 
 func (x *HotBook) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[2]
+	mi := &file_admin_v1_admin_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -229,7 +282,7 @@ func (x *HotBook) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HotBook.ProtoReflect.Descriptor instead.
 func (*HotBook) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{2}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *HotBook) GetBookId() int64 {
@@ -263,7 +316,7 @@ type HotKeyword struct {
 
 func (x *HotKeyword) Reset() {
 	*x = HotKeyword{}
-	mi := &file_admin_v1_admin_proto_msgTypes[3]
+	mi := &file_admin_v1_admin_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -275,7 +328,7 @@ func (x *HotKeyword) String() string {
 func (*HotKeyword) ProtoMessage() {}
 
 func (x *HotKeyword) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[3]
+	mi := &file_admin_v1_admin_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -288,7 +341,7 @@ func (x *HotKeyword) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HotKeyword.ProtoReflect.Descriptor instead.
 func (*HotKeyword) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{3}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *HotKeyword) GetKeyword() string {
@@ -319,7 +372,7 @@ type CategoryReply struct {
 
 func (x *CategoryReply) Reset() {
 	*x = CategoryReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[4]
+	mi := &file_admin_v1_admin_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -331,7 +384,7 @@ func (x *CategoryReply) String() string {
 func (*CategoryReply) ProtoMessage() {}
 
 func (x *CategoryReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[4]
+	mi := &file_admin_v1_admin_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,7 +397,7 @@ func (x *CategoryReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CategoryReply.ProtoReflect.Descriptor instead.
 func (*CategoryReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{4}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CategoryReply) GetId() int64 {
@@ -397,7 +450,7 @@ type ListCategoriesReq struct {
 
 func (x *ListCategoriesReq) Reset() {
 	*x = ListCategoriesReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[5]
+	mi := &file_admin_v1_admin_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -409,7 +462,7 @@ func (x *ListCategoriesReq) String() string {
 func (*ListCategoriesReq) ProtoMessage() {}
 
 func (x *ListCategoriesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[5]
+	mi := &file_admin_v1_admin_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -422,7 +475,7 @@ func (x *ListCategoriesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesReq.ProtoReflect.Descriptor instead.
 func (*ListCategoriesReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{5}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{6}
 }
 
 type ListCategoriesReply struct {
@@ -435,7 +488,7 @@ type ListCategoriesReply struct {
 
 func (x *ListCategoriesReply) Reset() {
 	*x = ListCategoriesReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[6]
+	mi := &file_admin_v1_admin_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -447,7 +500,7 @@ func (x *ListCategoriesReply) String() string {
 func (*ListCategoriesReply) ProtoMessage() {}
 
 func (x *ListCategoriesReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[6]
+	mi := &file_admin_v1_admin_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -460,7 +513,7 @@ func (x *ListCategoriesReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCategoriesReply.ProtoReflect.Descriptor instead.
 func (*ListCategoriesReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{6}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListCategoriesReply) GetList() []*CategoryReply {
@@ -488,7 +541,7 @@ type CreateCategoryReq struct {
 
 func (x *CreateCategoryReq) Reset() {
 	*x = CreateCategoryReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[7]
+	mi := &file_admin_v1_admin_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -500,7 +553,7 @@ func (x *CreateCategoryReq) String() string {
 func (*CreateCategoryReq) ProtoMessage() {}
 
 func (x *CreateCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[7]
+	mi := &file_admin_v1_admin_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -513,7 +566,7 @@ func (x *CreateCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCategoryReq.ProtoReflect.Descriptor instead.
 func (*CreateCategoryReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{7}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CreateCategoryReq) GetName() string {
@@ -550,7 +603,7 @@ type UpdateCategoryReq struct {
 
 func (x *UpdateCategoryReq) Reset() {
 	*x = UpdateCategoryReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[8]
+	mi := &file_admin_v1_admin_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -562,7 +615,7 @@ func (x *UpdateCategoryReq) String() string {
 func (*UpdateCategoryReq) ProtoMessage() {}
 
 func (x *UpdateCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[8]
+	mi := &file_admin_v1_admin_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -575,7 +628,7 @@ func (x *UpdateCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCategoryReq.ProtoReflect.Descriptor instead.
 func (*UpdateCategoryReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{8}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpdateCategoryReq) GetId() int64 {
@@ -622,7 +675,7 @@ type DeleteCategoryReq struct {
 
 func (x *DeleteCategoryReq) Reset() {
 	*x = DeleteCategoryReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[9]
+	mi := &file_admin_v1_admin_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -634,7 +687,7 @@ func (x *DeleteCategoryReq) String() string {
 func (*DeleteCategoryReq) ProtoMessage() {}
 
 func (x *DeleteCategoryReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[9]
+	mi := &file_admin_v1_admin_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -647,7 +700,7 @@ func (x *DeleteCategoryReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCategoryReq.ProtoReflect.Descriptor instead.
 func (*DeleteCategoryReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{9}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteCategoryReq) GetId() int64 {
@@ -670,7 +723,7 @@ type TagReply struct {
 
 func (x *TagReply) Reset() {
 	*x = TagReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[10]
+	mi := &file_admin_v1_admin_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -682,7 +735,7 @@ func (x *TagReply) String() string {
 func (*TagReply) ProtoMessage() {}
 
 func (x *TagReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[10]
+	mi := &file_admin_v1_admin_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -695,7 +748,7 @@ func (x *TagReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TagReply.ProtoReflect.Descriptor instead.
 func (*TagReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{10}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *TagReply) GetId() int64 {
@@ -741,7 +794,7 @@ type ListTagsReq struct {
 
 func (x *ListTagsReq) Reset() {
 	*x = ListTagsReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[11]
+	mi := &file_admin_v1_admin_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -753,7 +806,7 @@ func (x *ListTagsReq) String() string {
 func (*ListTagsReq) ProtoMessage() {}
 
 func (x *ListTagsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[11]
+	mi := &file_admin_v1_admin_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -766,7 +819,7 @@ func (x *ListTagsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTagsReq.ProtoReflect.Descriptor instead.
 func (*ListTagsReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{11}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{12}
 }
 
 type ListTagsReply struct {
@@ -779,7 +832,7 @@ type ListTagsReply struct {
 
 func (x *ListTagsReply) Reset() {
 	*x = ListTagsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[12]
+	mi := &file_admin_v1_admin_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -791,7 +844,7 @@ func (x *ListTagsReply) String() string {
 func (*ListTagsReply) ProtoMessage() {}
 
 func (x *ListTagsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[12]
+	mi := &file_admin_v1_admin_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -804,7 +857,7 @@ func (x *ListTagsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTagsReply.ProtoReflect.Descriptor instead.
 func (*ListTagsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{12}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListTagsReply) GetList() []*TagReply {
@@ -831,7 +884,7 @@ type CreateTagReq struct {
 
 func (x *CreateTagReq) Reset() {
 	*x = CreateTagReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[13]
+	mi := &file_admin_v1_admin_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -843,7 +896,7 @@ func (x *CreateTagReq) String() string {
 func (*CreateTagReq) ProtoMessage() {}
 
 func (x *CreateTagReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[13]
+	mi := &file_admin_v1_admin_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -856,7 +909,7 @@ func (x *CreateTagReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateTagReq.ProtoReflect.Descriptor instead.
 func (*CreateTagReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{13}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CreateTagReq) GetName() string {
@@ -885,7 +938,7 @@ type UpdateTagReq struct {
 
 func (x *UpdateTagReq) Reset() {
 	*x = UpdateTagReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[14]
+	mi := &file_admin_v1_admin_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -897,7 +950,7 @@ func (x *UpdateTagReq) String() string {
 func (*UpdateTagReq) ProtoMessage() {}
 
 func (x *UpdateTagReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[14]
+	mi := &file_admin_v1_admin_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -910,7 +963,7 @@ func (x *UpdateTagReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateTagReq.ProtoReflect.Descriptor instead.
 func (*UpdateTagReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{14}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *UpdateTagReq) GetId() int64 {
@@ -950,7 +1003,7 @@ type DeleteTagReq struct {
 
 func (x *DeleteTagReq) Reset() {
 	*x = DeleteTagReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[15]
+	mi := &file_admin_v1_admin_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -962,7 +1015,7 @@ func (x *DeleteTagReq) String() string {
 func (*DeleteTagReq) ProtoMessage() {}
 
 func (x *DeleteTagReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[15]
+	mi := &file_admin_v1_admin_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -975,7 +1028,7 @@ func (x *DeleteTagReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTagReq.ProtoReflect.Descriptor instead.
 func (*DeleteTagReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{15}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *DeleteTagReq) GetId() int64 {
@@ -993,7 +1046,7 @@ type EmptyReply struct {
 
 func (x *EmptyReply) Reset() {
 	*x = EmptyReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[16]
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1005,7 +1058,7 @@ func (x *EmptyReply) String() string {
 func (*EmptyReply) ProtoMessage() {}
 
 func (x *EmptyReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[16]
+	mi := &file_admin_v1_admin_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1018,7 +1071,7 @@ func (x *EmptyReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EmptyReply.ProtoReflect.Descriptor instead.
 func (*EmptyReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{16}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{17}
 }
 
 type TranslateBookReq struct {
@@ -1031,7 +1084,7 @@ type TranslateBookReq struct {
 
 func (x *TranslateBookReq) Reset() {
 	*x = TranslateBookReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1043,7 +1096,7 @@ func (x *TranslateBookReq) String() string {
 func (*TranslateBookReq) ProtoMessage() {}
 
 func (x *TranslateBookReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[17]
+	mi := &file_admin_v1_admin_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1056,7 +1109,7 @@ func (x *TranslateBookReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TranslateBookReq.ProtoReflect.Descriptor instead.
 func (*TranslateBookReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{17}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *TranslateBookReq) GetBookId() int64 {
@@ -1085,7 +1138,7 @@ type TranslateBookReply struct {
 
 func (x *TranslateBookReply) Reset() {
 	*x = TranslateBookReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1097,7 +1150,7 @@ func (x *TranslateBookReply) String() string {
 func (*TranslateBookReply) ProtoMessage() {}
 
 func (x *TranslateBookReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[18]
+	mi := &file_admin_v1_admin_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1110,7 +1163,7 @@ func (x *TranslateBookReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TranslateBookReply.ProtoReflect.Descriptor instead.
 func (*TranslateBookReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{18}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *TranslateBookReply) GetBookId() int64 {
@@ -1151,7 +1204,7 @@ type TranslateBookChaptersReq struct {
 
 func (x *TranslateBookChaptersReq) Reset() {
 	*x = TranslateBookChaptersReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	mi := &file_admin_v1_admin_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1163,7 +1216,7 @@ func (x *TranslateBookChaptersReq) String() string {
 func (*TranslateBookChaptersReq) ProtoMessage() {}
 
 func (x *TranslateBookChaptersReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[19]
+	mi := &file_admin_v1_admin_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1176,7 +1229,7 @@ func (x *TranslateBookChaptersReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TranslateBookChaptersReq.ProtoReflect.Descriptor instead.
 func (*TranslateBookChaptersReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{19}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *TranslateBookChaptersReq) GetBookId() int64 {
@@ -1207,7 +1260,7 @@ type TranslateBookChaptersReply struct {
 
 func (x *TranslateBookChaptersReply) Reset() {
 	*x = TranslateBookChaptersReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[20]
+	mi := &file_admin_v1_admin_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1219,7 +1272,7 @@ func (x *TranslateBookChaptersReply) String() string {
 func (*TranslateBookChaptersReply) ProtoMessage() {}
 
 func (x *TranslateBookChaptersReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[20]
+	mi := &file_admin_v1_admin_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1232,7 +1285,7 @@ func (x *TranslateBookChaptersReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TranslateBookChaptersReply.ProtoReflect.Descriptor instead.
 func (*TranslateBookChaptersReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{20}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *TranslateBookChaptersReply) GetBookId() int64 {
@@ -1293,7 +1346,7 @@ type ListAuditLogsReq struct {
 
 func (x *ListAuditLogsReq) Reset() {
 	*x = ListAuditLogsReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[21]
+	mi := &file_admin_v1_admin_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1305,7 +1358,7 @@ func (x *ListAuditLogsReq) String() string {
 func (*ListAuditLogsReq) ProtoMessage() {}
 
 func (x *ListAuditLogsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[21]
+	mi := &file_admin_v1_admin_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1318,7 +1371,7 @@ func (x *ListAuditLogsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditLogsReq.ProtoReflect.Descriptor instead.
 func (*ListAuditLogsReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{21}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ListAuditLogsReq) GetPage() int64 {
@@ -1394,7 +1447,7 @@ type AuditLogReply struct {
 
 func (x *AuditLogReply) Reset() {
 	*x = AuditLogReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[22]
+	mi := &file_admin_v1_admin_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1406,7 +1459,7 @@ func (x *AuditLogReply) String() string {
 func (*AuditLogReply) ProtoMessage() {}
 
 func (x *AuditLogReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[22]
+	mi := &file_admin_v1_admin_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1419,7 +1472,7 @@ func (x *AuditLogReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AuditLogReply.ProtoReflect.Descriptor instead.
 func (*AuditLogReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{22}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *AuditLogReply) GetId() int64 {
@@ -1495,7 +1548,7 @@ type ListAuditLogsReply struct {
 
 func (x *ListAuditLogsReply) Reset() {
 	*x = ListAuditLogsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[23]
+	mi := &file_admin_v1_admin_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1507,7 +1560,7 @@ func (x *ListAuditLogsReply) String() string {
 func (*ListAuditLogsReply) ProtoMessage() {}
 
 func (x *ListAuditLogsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[23]
+	mi := &file_admin_v1_admin_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1520,7 +1573,7 @@ func (x *ListAuditLogsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAuditLogsReply.ProtoReflect.Descriptor instead.
 func (*ListAuditLogsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{23}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ListAuditLogsReply) GetList() []*AuditLogReply {
@@ -1542,13 +1595,14 @@ type GetReportsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	StartDate     string                 `protobuf:"bytes,1,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"` // YYYY-MM-DD，空=end_date-29 天
 	EndDate       string                 `protobuf:"bytes,2,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`       // YYYY-MM-DD，空=start_date+29 天
+	Currency      string                 `protobuf:"bytes,3,opt,name=currency,proto3" json:"currency,omitempty"`                    // 订单/VIP 金额统计币种，空=最近已付订单币种（无则 USD）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetReportsReq) Reset() {
 	*x = GetReportsReq{}
-	mi := &file_admin_v1_admin_proto_msgTypes[24]
+	mi := &file_admin_v1_admin_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1560,7 +1614,7 @@ func (x *GetReportsReq) String() string {
 func (*GetReportsReq) ProtoMessage() {}
 
 func (x *GetReportsReq) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[24]
+	mi := &file_admin_v1_admin_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1573,7 +1627,7 @@ func (x *GetReportsReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReportsReq.ProtoReflect.Descriptor instead.
 func (*GetReportsReq) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{24}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetReportsReq) GetStartDate() string {
@@ -1590,8 +1644,16 @@ func (x *GetReportsReq) GetEndDate() string {
 	return ""
 }
 
+func (x *GetReportsReq) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
 type GetReportsReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Currency      string                 `protobuf:"bytes,5,opt,name=currency,proto3" json:"currency,omitempty"` // 实际统计币种（金额只统计该币种）
 	OrderReport   *OrderReport           `protobuf:"bytes,1,opt,name=order_report,json=orderReport,proto3" json:"order_report,omitempty"`
 	UserReport    *UserReport            `protobuf:"bytes,2,opt,name=user_report,json=userReport,proto3" json:"user_report,omitempty"`
 	VipReport     *VipReport             `protobuf:"bytes,3,opt,name=vip_report,json=vipReport,proto3" json:"vip_report,omitempty"`
@@ -1602,7 +1664,7 @@ type GetReportsReply struct {
 
 func (x *GetReportsReply) Reset() {
 	*x = GetReportsReply{}
-	mi := &file_admin_v1_admin_proto_msgTypes[25]
+	mi := &file_admin_v1_admin_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1614,7 +1676,7 @@ func (x *GetReportsReply) String() string {
 func (*GetReportsReply) ProtoMessage() {}
 
 func (x *GetReportsReply) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[25]
+	mi := &file_admin_v1_admin_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1627,7 +1689,14 @@ func (x *GetReportsReply) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetReportsReply.ProtoReflect.Descriptor instead.
 func (*GetReportsReply) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{25}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *GetReportsReply) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
 }
 
 func (x *GetReportsReply) GetOrderReport() *OrderReport {
@@ -1671,7 +1740,7 @@ type OrderReport struct {
 
 func (x *OrderReport) Reset() {
 	*x = OrderReport{}
-	mi := &file_admin_v1_admin_proto_msgTypes[26]
+	mi := &file_admin_v1_admin_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1683,7 +1752,7 @@ func (x *OrderReport) String() string {
 func (*OrderReport) ProtoMessage() {}
 
 func (x *OrderReport) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[26]
+	mi := &file_admin_v1_admin_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1696,7 +1765,7 @@ func (x *OrderReport) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use OrderReport.ProtoReflect.Descriptor instead.
 func (*OrderReport) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{26}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *OrderReport) GetTotalCount() int64 {
@@ -1737,7 +1806,7 @@ type UserReport struct {
 
 func (x *UserReport) Reset() {
 	*x = UserReport{}
-	mi := &file_admin_v1_admin_proto_msgTypes[27]
+	mi := &file_admin_v1_admin_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1749,7 +1818,7 @@ func (x *UserReport) String() string {
 func (*UserReport) ProtoMessage() {}
 
 func (x *UserReport) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[27]
+	mi := &file_admin_v1_admin_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1762,7 +1831,7 @@ func (x *UserReport) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserReport.ProtoReflect.Descriptor instead.
 func (*UserReport) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{27}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *UserReport) GetTotalUsers() int64 {
@@ -1792,7 +1861,7 @@ type VipReport struct {
 
 func (x *VipReport) Reset() {
 	*x = VipReport{}
-	mi := &file_admin_v1_admin_proto_msgTypes[28]
+	mi := &file_admin_v1_admin_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1804,7 +1873,7 @@ func (x *VipReport) String() string {
 func (*VipReport) ProtoMessage() {}
 
 func (x *VipReport) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[28]
+	mi := &file_admin_v1_admin_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1817,7 +1886,7 @@ func (x *VipReport) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VipReport.ProtoReflect.Descriptor instead.
 func (*VipReport) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{28}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *VipReport) GetTotalCount() int64 {
@@ -1861,7 +1930,7 @@ type ContentReport struct {
 
 func (x *ContentReport) Reset() {
 	*x = ContentReport{}
-	mi := &file_admin_v1_admin_proto_msgTypes[29]
+	mi := &file_admin_v1_admin_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1873,7 +1942,7 @@ func (x *ContentReport) String() string {
 func (*ContentReport) ProtoMessage() {}
 
 func (x *ContentReport) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[29]
+	mi := &file_admin_v1_admin_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1886,7 +1955,7 @@ func (x *ContentReport) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ContentReport.ProtoReflect.Descriptor instead.
 func (*ContentReport) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{29}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ContentReport) GetBooksByDate() []*DateCountPoint {
@@ -1928,7 +1997,7 @@ type DateAmountPoint struct {
 
 func (x *DateAmountPoint) Reset() {
 	*x = DateAmountPoint{}
-	mi := &file_admin_v1_admin_proto_msgTypes[30]
+	mi := &file_admin_v1_admin_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1940,7 +2009,7 @@ func (x *DateAmountPoint) String() string {
 func (*DateAmountPoint) ProtoMessage() {}
 
 func (x *DateAmountPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[30]
+	mi := &file_admin_v1_admin_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1953,7 +2022,7 @@ func (x *DateAmountPoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DateAmountPoint.ProtoReflect.Descriptor instead.
 func (*DateAmountPoint) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{30}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *DateAmountPoint) GetDate() string {
@@ -1987,7 +2056,7 @@ type DateCountPoint struct {
 
 func (x *DateCountPoint) Reset() {
 	*x = DateCountPoint{}
-	mi := &file_admin_v1_admin_proto_msgTypes[31]
+	mi := &file_admin_v1_admin_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1999,7 +2068,7 @@ func (x *DateCountPoint) String() string {
 func (*DateCountPoint) ProtoMessage() {}
 
 func (x *DateCountPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[31]
+	mi := &file_admin_v1_admin_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2012,7 +2081,7 @@ func (x *DateCountPoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DateCountPoint.ProtoReflect.Descriptor instead.
 func (*DateCountPoint) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{31}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *DateCountPoint) GetDate() string {
@@ -2040,7 +2109,7 @@ type ChannelAmountPoint struct {
 
 func (x *ChannelAmountPoint) Reset() {
 	*x = ChannelAmountPoint{}
-	mi := &file_admin_v1_admin_proto_msgTypes[32]
+	mi := &file_admin_v1_admin_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2052,7 +2121,7 @@ func (x *ChannelAmountPoint) String() string {
 func (*ChannelAmountPoint) ProtoMessage() {}
 
 func (x *ChannelAmountPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[32]
+	mi := &file_admin_v1_admin_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2065,7 +2134,7 @@ func (x *ChannelAmountPoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChannelAmountPoint.ProtoReflect.Descriptor instead.
 func (*ChannelAmountPoint) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{32}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *ChannelAmountPoint) GetChannel() string {
@@ -2101,7 +2170,7 @@ type PlanAmountPoint struct {
 
 func (x *PlanAmountPoint) Reset() {
 	*x = PlanAmountPoint{}
-	mi := &file_admin_v1_admin_proto_msgTypes[33]
+	mi := &file_admin_v1_admin_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2113,7 +2182,7 @@ func (x *PlanAmountPoint) String() string {
 func (*PlanAmountPoint) ProtoMessage() {}
 
 func (x *PlanAmountPoint) ProtoReflect() protoreflect.Message {
-	mi := &file_admin_v1_admin_proto_msgTypes[33]
+	mi := &file_admin_v1_admin_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2126,7 +2195,7 @@ func (x *PlanAmountPoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PlanAmountPoint.ProtoReflect.Descriptor instead.
 func (*PlanAmountPoint) Descriptor() ([]byte, []int) {
-	return file_admin_v1_admin_proto_rawDescGZIP(), []int{33}
+	return file_admin_v1_admin_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *PlanAmountPoint) GetPlanId() int64 {
@@ -2162,7 +2231,7 @@ var File_admin_v1_admin_proto protoreflect.FileDescriptor
 const file_admin_v1_admin_proto_rawDesc = "" +
 	"\n" +
 	"\x14admin/v1/admin.proto\x12\badmin.v1\x1a\x1cgoogle/api/annotations.proto\"\r\n" +
-	"\vGetStatsReq\"\xca\x03\n" +
+	"\vGetStatsReq\"\xec\x03\n" +
 	"\rGetStatsReply\x12\x1d\n" +
 	"\n" +
 	"book_count\x18\x01 \x01(\x03R\tbookCount\x12\x1d\n" +
@@ -2173,13 +2242,16 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"\thot_books\x18\x05 \x03(\v2\x11.admin.v1.HotBookR\bhotBooks\x127\n" +
 	"\fhot_keywords\x18\x06 \x03(\v2\x14.admin.v1.HotKeywordR\vhotKeywords\x12\x1f\n" +
 	"\vorder_count\x18\a \x01(\x03R\n" +
-	"orderCount\x12!\n" +
-	"\forder_amount\x18\b \x01(\x03R\vorderAmount\x12\x1b\n" +
+	"orderCount\x12\x1b\n" +
 	"\tvip_count\x18\t \x01(\x03R\bvipCount\x12&\n" +
 	"\x0ftoday_new_users\x18\n" +
 	" \x01(\x03R\rtodayNewUsers\x12)\n" +
 	"\x10pending_comments\x18\v \x01(\x03R\x0fpendingComments\x12'\n" +
-	"\x0fpending_reports\x18\f \x01(\x03R\x0ependingReports\"J\n" +
+	"\x0fpending_reports\x18\f \x01(\x03R\x0ependingReports\x12=\n" +
+	"\rorder_amounts\x18\r \x03(\v2\x18.admin.v1.CurrencyAmountR\forderAmountsJ\x04\b\b\x10\t\"D\n" +
+	"\x0eCurrencyAmount\x12\x1a\n" +
+	"\bcurrency\x18\x01 \x01(\tR\bcurrency\x12\x16\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\"J\n" +
 	"\aHotBook\x12\x17\n" +
 	"\abook_id\x18\x01 \x01(\x03R\x06bookId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x10\n" +
@@ -2290,12 +2362,14 @@ const file_admin_v1_admin_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\tR\tcreatedAt\"W\n" +
 	"\x12ListAuditLogsReply\x12+\n" +
 	"\x04list\x18\x01 \x03(\v2\x17.admin.v1.AuditLogReplyR\x04list\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\"I\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"e\n" +
 	"\rGetReportsReq\x12\x1d\n" +
 	"\n" +
 	"start_date\x18\x01 \x01(\tR\tstartDate\x12\x19\n" +
-	"\bend_date\x18\x02 \x01(\tR\aendDate\"\xf6\x01\n" +
-	"\x0fGetReportsReply\x128\n" +
+	"\bend_date\x18\x02 \x01(\tR\aendDate\x12\x1a\n" +
+	"\bcurrency\x18\x03 \x01(\tR\bcurrency\"\x92\x02\n" +
+	"\x0fGetReportsReply\x12\x1a\n" +
+	"\bcurrency\x18\x05 \x01(\tR\bcurrency\x128\n" +
 	"\forder_report\x18\x01 \x01(\v2\x15.admin.v1.OrderReportR\vorderReport\x125\n" +
 	"\vuser_report\x18\x02 \x01(\v2\x14.admin.v1.UserReportR\n" +
 	"userReport\x122\n" +
@@ -2370,91 +2444,93 @@ func file_admin_v1_admin_proto_rawDescGZIP() []byte {
 	return file_admin_v1_admin_proto_rawDescData
 }
 
-var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
+var file_admin_v1_admin_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
 var file_admin_v1_admin_proto_goTypes = []any{
 	(*GetStatsReq)(nil),                // 0: admin.v1.GetStatsReq
 	(*GetStatsReply)(nil),              // 1: admin.v1.GetStatsReply
-	(*HotBook)(nil),                    // 2: admin.v1.HotBook
-	(*HotKeyword)(nil),                 // 3: admin.v1.HotKeyword
-	(*CategoryReply)(nil),              // 4: admin.v1.CategoryReply
-	(*ListCategoriesReq)(nil),          // 5: admin.v1.ListCategoriesReq
-	(*ListCategoriesReply)(nil),        // 6: admin.v1.ListCategoriesReply
-	(*CreateCategoryReq)(nil),          // 7: admin.v1.CreateCategoryReq
-	(*UpdateCategoryReq)(nil),          // 8: admin.v1.UpdateCategoryReq
-	(*DeleteCategoryReq)(nil),          // 9: admin.v1.DeleteCategoryReq
-	(*TagReply)(nil),                   // 10: admin.v1.TagReply
-	(*ListTagsReq)(nil),                // 11: admin.v1.ListTagsReq
-	(*ListTagsReply)(nil),              // 12: admin.v1.ListTagsReply
-	(*CreateTagReq)(nil),               // 13: admin.v1.CreateTagReq
-	(*UpdateTagReq)(nil),               // 14: admin.v1.UpdateTagReq
-	(*DeleteTagReq)(nil),               // 15: admin.v1.DeleteTagReq
-	(*EmptyReply)(nil),                 // 16: admin.v1.EmptyReply
-	(*TranslateBookReq)(nil),           // 17: admin.v1.TranslateBookReq
-	(*TranslateBookReply)(nil),         // 18: admin.v1.TranslateBookReply
-	(*TranslateBookChaptersReq)(nil),   // 19: admin.v1.TranslateBookChaptersReq
-	(*TranslateBookChaptersReply)(nil), // 20: admin.v1.TranslateBookChaptersReply
-	(*ListAuditLogsReq)(nil),           // 21: admin.v1.ListAuditLogsReq
-	(*AuditLogReply)(nil),              // 22: admin.v1.AuditLogReply
-	(*ListAuditLogsReply)(nil),         // 23: admin.v1.ListAuditLogsReply
-	(*GetReportsReq)(nil),              // 24: admin.v1.GetReportsReq
-	(*GetReportsReply)(nil),            // 25: admin.v1.GetReportsReply
-	(*OrderReport)(nil),                // 26: admin.v1.OrderReport
-	(*UserReport)(nil),                 // 27: admin.v1.UserReport
-	(*VipReport)(nil),                  // 28: admin.v1.VipReport
-	(*ContentReport)(nil),              // 29: admin.v1.ContentReport
-	(*DateAmountPoint)(nil),            // 30: admin.v1.DateAmountPoint
-	(*DateCountPoint)(nil),             // 31: admin.v1.DateCountPoint
-	(*ChannelAmountPoint)(nil),         // 32: admin.v1.ChannelAmountPoint
-	(*PlanAmountPoint)(nil),            // 33: admin.v1.PlanAmountPoint
+	(*CurrencyAmount)(nil),             // 2: admin.v1.CurrencyAmount
+	(*HotBook)(nil),                    // 3: admin.v1.HotBook
+	(*HotKeyword)(nil),                 // 4: admin.v1.HotKeyword
+	(*CategoryReply)(nil),              // 5: admin.v1.CategoryReply
+	(*ListCategoriesReq)(nil),          // 6: admin.v1.ListCategoriesReq
+	(*ListCategoriesReply)(nil),        // 7: admin.v1.ListCategoriesReply
+	(*CreateCategoryReq)(nil),          // 8: admin.v1.CreateCategoryReq
+	(*UpdateCategoryReq)(nil),          // 9: admin.v1.UpdateCategoryReq
+	(*DeleteCategoryReq)(nil),          // 10: admin.v1.DeleteCategoryReq
+	(*TagReply)(nil),                   // 11: admin.v1.TagReply
+	(*ListTagsReq)(nil),                // 12: admin.v1.ListTagsReq
+	(*ListTagsReply)(nil),              // 13: admin.v1.ListTagsReply
+	(*CreateTagReq)(nil),               // 14: admin.v1.CreateTagReq
+	(*UpdateTagReq)(nil),               // 15: admin.v1.UpdateTagReq
+	(*DeleteTagReq)(nil),               // 16: admin.v1.DeleteTagReq
+	(*EmptyReply)(nil),                 // 17: admin.v1.EmptyReply
+	(*TranslateBookReq)(nil),           // 18: admin.v1.TranslateBookReq
+	(*TranslateBookReply)(nil),         // 19: admin.v1.TranslateBookReply
+	(*TranslateBookChaptersReq)(nil),   // 20: admin.v1.TranslateBookChaptersReq
+	(*TranslateBookChaptersReply)(nil), // 21: admin.v1.TranslateBookChaptersReply
+	(*ListAuditLogsReq)(nil),           // 22: admin.v1.ListAuditLogsReq
+	(*AuditLogReply)(nil),              // 23: admin.v1.AuditLogReply
+	(*ListAuditLogsReply)(nil),         // 24: admin.v1.ListAuditLogsReply
+	(*GetReportsReq)(nil),              // 25: admin.v1.GetReportsReq
+	(*GetReportsReply)(nil),            // 26: admin.v1.GetReportsReply
+	(*OrderReport)(nil),                // 27: admin.v1.OrderReport
+	(*UserReport)(nil),                 // 28: admin.v1.UserReport
+	(*VipReport)(nil),                  // 29: admin.v1.VipReport
+	(*ContentReport)(nil),              // 30: admin.v1.ContentReport
+	(*DateAmountPoint)(nil),            // 31: admin.v1.DateAmountPoint
+	(*DateCountPoint)(nil),             // 32: admin.v1.DateCountPoint
+	(*ChannelAmountPoint)(nil),         // 33: admin.v1.ChannelAmountPoint
+	(*PlanAmountPoint)(nil),            // 34: admin.v1.PlanAmountPoint
 }
 var file_admin_v1_admin_proto_depIdxs = []int32{
-	2,  // 0: admin.v1.GetStatsReply.hot_books:type_name -> admin.v1.HotBook
-	3,  // 1: admin.v1.GetStatsReply.hot_keywords:type_name -> admin.v1.HotKeyword
-	4,  // 2: admin.v1.ListCategoriesReply.list:type_name -> admin.v1.CategoryReply
-	10, // 3: admin.v1.ListTagsReply.list:type_name -> admin.v1.TagReply
-	22, // 4: admin.v1.ListAuditLogsReply.list:type_name -> admin.v1.AuditLogReply
-	26, // 5: admin.v1.GetReportsReply.order_report:type_name -> admin.v1.OrderReport
-	27, // 6: admin.v1.GetReportsReply.user_report:type_name -> admin.v1.UserReport
-	28, // 7: admin.v1.GetReportsReply.vip_report:type_name -> admin.v1.VipReport
-	29, // 8: admin.v1.GetReportsReply.content_report:type_name -> admin.v1.ContentReport
-	30, // 9: admin.v1.OrderReport.by_date:type_name -> admin.v1.DateAmountPoint
-	32, // 10: admin.v1.OrderReport.by_channel:type_name -> admin.v1.ChannelAmountPoint
-	31, // 11: admin.v1.UserReport.by_date:type_name -> admin.v1.DateCountPoint
-	30, // 12: admin.v1.VipReport.by_date:type_name -> admin.v1.DateAmountPoint
-	33, // 13: admin.v1.VipReport.by_plan:type_name -> admin.v1.PlanAmountPoint
-	31, // 14: admin.v1.ContentReport.books_by_date:type_name -> admin.v1.DateCountPoint
-	31, // 15: admin.v1.ContentReport.chapters_by_date:type_name -> admin.v1.DateCountPoint
-	0,  // 16: admin.v1.Admin.GetStats:input_type -> admin.v1.GetStatsReq
-	21, // 17: admin.v1.Admin.ListAuditLogs:input_type -> admin.v1.ListAuditLogsReq
-	5,  // 18: admin.v1.Admin.ListCategories:input_type -> admin.v1.ListCategoriesReq
-	7,  // 19: admin.v1.Admin.CreateCategory:input_type -> admin.v1.CreateCategoryReq
-	8,  // 20: admin.v1.Admin.UpdateCategory:input_type -> admin.v1.UpdateCategoryReq
-	9,  // 21: admin.v1.Admin.DeleteCategory:input_type -> admin.v1.DeleteCategoryReq
-	11, // 22: admin.v1.Admin.ListTags:input_type -> admin.v1.ListTagsReq
-	13, // 23: admin.v1.Admin.CreateTag:input_type -> admin.v1.CreateTagReq
-	14, // 24: admin.v1.Admin.UpdateTag:input_type -> admin.v1.UpdateTagReq
-	15, // 25: admin.v1.Admin.DeleteTag:input_type -> admin.v1.DeleteTagReq
-	17, // 26: admin.v1.Admin.TranslateBook:input_type -> admin.v1.TranslateBookReq
-	19, // 27: admin.v1.Admin.TranslateBookChapters:input_type -> admin.v1.TranslateBookChaptersReq
-	24, // 28: admin.v1.Admin.GetReports:input_type -> admin.v1.GetReportsReq
-	1,  // 29: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
-	23, // 30: admin.v1.Admin.ListAuditLogs:output_type -> admin.v1.ListAuditLogsReply
-	6,  // 31: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
-	4,  // 32: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
-	4,  // 33: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
-	16, // 34: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
-	12, // 35: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
-	10, // 36: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
-	10, // 37: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
-	16, // 38: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
-	18, // 39: admin.v1.Admin.TranslateBook:output_type -> admin.v1.TranslateBookReply
-	20, // 40: admin.v1.Admin.TranslateBookChapters:output_type -> admin.v1.TranslateBookChaptersReply
-	25, // 41: admin.v1.Admin.GetReports:output_type -> admin.v1.GetReportsReply
-	29, // [29:42] is the sub-list for method output_type
-	16, // [16:29] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	3,  // 0: admin.v1.GetStatsReply.hot_books:type_name -> admin.v1.HotBook
+	4,  // 1: admin.v1.GetStatsReply.hot_keywords:type_name -> admin.v1.HotKeyword
+	2,  // 2: admin.v1.GetStatsReply.order_amounts:type_name -> admin.v1.CurrencyAmount
+	5,  // 3: admin.v1.ListCategoriesReply.list:type_name -> admin.v1.CategoryReply
+	11, // 4: admin.v1.ListTagsReply.list:type_name -> admin.v1.TagReply
+	23, // 5: admin.v1.ListAuditLogsReply.list:type_name -> admin.v1.AuditLogReply
+	27, // 6: admin.v1.GetReportsReply.order_report:type_name -> admin.v1.OrderReport
+	28, // 7: admin.v1.GetReportsReply.user_report:type_name -> admin.v1.UserReport
+	29, // 8: admin.v1.GetReportsReply.vip_report:type_name -> admin.v1.VipReport
+	30, // 9: admin.v1.GetReportsReply.content_report:type_name -> admin.v1.ContentReport
+	31, // 10: admin.v1.OrderReport.by_date:type_name -> admin.v1.DateAmountPoint
+	33, // 11: admin.v1.OrderReport.by_channel:type_name -> admin.v1.ChannelAmountPoint
+	32, // 12: admin.v1.UserReport.by_date:type_name -> admin.v1.DateCountPoint
+	31, // 13: admin.v1.VipReport.by_date:type_name -> admin.v1.DateAmountPoint
+	34, // 14: admin.v1.VipReport.by_plan:type_name -> admin.v1.PlanAmountPoint
+	32, // 15: admin.v1.ContentReport.books_by_date:type_name -> admin.v1.DateCountPoint
+	32, // 16: admin.v1.ContentReport.chapters_by_date:type_name -> admin.v1.DateCountPoint
+	0,  // 17: admin.v1.Admin.GetStats:input_type -> admin.v1.GetStatsReq
+	22, // 18: admin.v1.Admin.ListAuditLogs:input_type -> admin.v1.ListAuditLogsReq
+	6,  // 19: admin.v1.Admin.ListCategories:input_type -> admin.v1.ListCategoriesReq
+	8,  // 20: admin.v1.Admin.CreateCategory:input_type -> admin.v1.CreateCategoryReq
+	9,  // 21: admin.v1.Admin.UpdateCategory:input_type -> admin.v1.UpdateCategoryReq
+	10, // 22: admin.v1.Admin.DeleteCategory:input_type -> admin.v1.DeleteCategoryReq
+	12, // 23: admin.v1.Admin.ListTags:input_type -> admin.v1.ListTagsReq
+	14, // 24: admin.v1.Admin.CreateTag:input_type -> admin.v1.CreateTagReq
+	15, // 25: admin.v1.Admin.UpdateTag:input_type -> admin.v1.UpdateTagReq
+	16, // 26: admin.v1.Admin.DeleteTag:input_type -> admin.v1.DeleteTagReq
+	18, // 27: admin.v1.Admin.TranslateBook:input_type -> admin.v1.TranslateBookReq
+	20, // 28: admin.v1.Admin.TranslateBookChapters:input_type -> admin.v1.TranslateBookChaptersReq
+	25, // 29: admin.v1.Admin.GetReports:input_type -> admin.v1.GetReportsReq
+	1,  // 30: admin.v1.Admin.GetStats:output_type -> admin.v1.GetStatsReply
+	24, // 31: admin.v1.Admin.ListAuditLogs:output_type -> admin.v1.ListAuditLogsReply
+	7,  // 32: admin.v1.Admin.ListCategories:output_type -> admin.v1.ListCategoriesReply
+	5,  // 33: admin.v1.Admin.CreateCategory:output_type -> admin.v1.CategoryReply
+	5,  // 34: admin.v1.Admin.UpdateCategory:output_type -> admin.v1.CategoryReply
+	17, // 35: admin.v1.Admin.DeleteCategory:output_type -> admin.v1.EmptyReply
+	13, // 36: admin.v1.Admin.ListTags:output_type -> admin.v1.ListTagsReply
+	11, // 37: admin.v1.Admin.CreateTag:output_type -> admin.v1.TagReply
+	11, // 38: admin.v1.Admin.UpdateTag:output_type -> admin.v1.TagReply
+	17, // 39: admin.v1.Admin.DeleteTag:output_type -> admin.v1.EmptyReply
+	19, // 40: admin.v1.Admin.TranslateBook:output_type -> admin.v1.TranslateBookReply
+	21, // 41: admin.v1.Admin.TranslateBookChapters:output_type -> admin.v1.TranslateBookChaptersReply
+	26, // 42: admin.v1.Admin.GetReports:output_type -> admin.v1.GetReportsReply
+	30, // [30:43] is the sub-list for method output_type
+	17, // [17:30] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_admin_v1_admin_proto_init() }
@@ -2462,15 +2538,15 @@ func file_admin_v1_admin_proto_init() {
 	if File_admin_v1_admin_proto != nil {
 		return
 	}
-	file_admin_v1_admin_proto_msgTypes[8].OneofWrappers = []any{}
-	file_admin_v1_admin_proto_msgTypes[14].OneofWrappers = []any{}
+	file_admin_v1_admin_proto_msgTypes[9].OneofWrappers = []any{}
+	file_admin_v1_admin_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_admin_v1_admin_proto_rawDesc), len(file_admin_v1_admin_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   34,
+			NumMessages:   35,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

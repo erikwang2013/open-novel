@@ -54,9 +54,9 @@ func (s *PaymentService) GetOrder(ctx context.Context, req *paymentv1.GetOrderRe
 	return r, nil
 }
 
-// ListPublicPlans 公开套餐列表（无鉴权）：仅 status=1，sort 升序。
+// ListPublicPlans 公开套餐列表（无鉴权）：按 lang 路由渠道币种，仅 status=1，sort 升序。
 func (s *PaymentService) ListPublicPlans(ctx context.Context, req *paymentv1.ListPublicPlansReq) (*paymentv1.ListPublicPlansReply, error) {
-	items, err := s.uc.ListPublicPlans(ctx)
+	items, err := s.uc.ListPublicPlans(ctx, pickLang(ctx, req.Lang))
 	if err != nil {
 		return nil, err
 	}
@@ -177,12 +177,12 @@ func (s *PaymentService) OrderStats(ctx context.Context, req *paymentv1.OrderSta
 	if err != nil {
 		return nil, err
 	}
-	st, err := s.uc.OrderStats(ctx, biz.OrderQuery{StartAt: start, EndAt: end})
+	st, err := s.uc.OrderStats(ctx, biz.OrderQuery{StartAt: start, EndAt: end}, req.Currency)
 	if err != nil {
 		return nil, err
 	}
 	return &paymentv1.OrderStatsReply{Total: st.Total, Paid: st.Paid, Pending: st.Pending,
-		Failed: st.Failed, Closed: st.Closed, Amount: st.Amount}, nil
+		Failed: st.Failed, Closed: st.Closed, Amount: st.Amount, Currency: st.Currency}, nil
 }
 
 func (s *PaymentService) ListProviders(ctx context.Context, req *paymentv1.ListProvidersReq) (*paymentv1.ListProvidersReply, error) {
@@ -356,8 +356,8 @@ func toProviderReply(p biz.ProviderInfo) *paymentv1.ProviderReply {
 	return &paymentv1.ProviderReply{Id: i64(p.ID), Code: p.Code, Lang: p.Lang,
 		Region: p.Region, Enabled: int32(p.Enabled), Sort: int32(p.Sort),
 		ConfigConfigured: p.Configured,
-		CreatedAt: p.CreatedAt.Format(time.RFC3339),
-		UpdatedAt: p.UpdatedAt.Format(time.RFC3339)}
+		CreatedAt:        p.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:        p.UpdatedAt.Format(time.RFC3339)}
 }
 
 func toPlanReply(p *data.VipPlan) *paymentv1.PlanReply {

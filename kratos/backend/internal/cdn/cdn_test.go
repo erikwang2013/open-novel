@@ -1,6 +1,6 @@
 package cdn
 
-// 核心编排测试：去重 / 批量切分 / 并发广播 / 429 重试一次 / 非重试错误不重试 / 令牌桶 / 每日计数。
+// 核心编排测试：去重 / 并发广播 / 429 重试一次 / 非重试错误不重试。
 
 import (
 	"context"
@@ -26,16 +26,6 @@ func TestDedupe(t *testing.T) {
 	got := dedupe([]string{"a", "b", "a", "c", "b"})
 	if !reflect.DeepEqual(got, []string{"a", "b", "c"}) {
 		t.Fatalf("want [a b c], got %v", got)
-	}
-}
-
-func TestSplit(t *testing.T) {
-	got := Split([]string{"1", "2", "3", "4", "5"}, 2)
-	if len(got) != 3 || len(got[0]) != 2 || len(got[2]) != 1 {
-		t.Fatalf("split mismatch: %v", got)
-	}
-	if got := Split(nil, 0); got != nil {
-		t.Fatalf("max<=0 must not panic, got %v", got)
 	}
 }
 
@@ -83,35 +73,5 @@ func TestManagerNonRetriableNoRetry(t *testing.T) {
 	}
 	if atomic.LoadInt32(p.hits) != 1 {
 		t.Fatalf("want 1 call, got %d", atomic.LoadInt32(p.hits))
-	}
-}
-
-func TestTokenBucketWait(t *testing.T) {
-	b := newTokenBucket(100) // 100 qps
-	start := time.Now()
-	for i := 0; i < 10; i++ {
-		if err := b.Wait(t.Context()); err != nil {
-			t.Fatal(err)
-		}
-	}
-	if time.Since(start) > 500*time.Millisecond {
-		t.Fatalf("10 tokens at 100qps must be fast, took %v", time.Since(start))
-	}
-}
-
-func TestDailyCounterWarnOnce(t *testing.T) {
-	var warns int
-	c := newDailyCounter(8000, func(string) { warns++ })
-	c.Add(7999)
-	if warns != 0 {
-		t.Fatal("must not warn below threshold")
-	}
-	c.Add(1)
-	if warns != 1 {
-		t.Fatal("must warn at threshold")
-	}
-	c.Add(100)
-	if warns != 1 {
-		t.Fatal("must warn only once per day")
 	}
 }

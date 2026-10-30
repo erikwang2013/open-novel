@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/transport"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 
 	"open-novel/backend/internal/biz"
 	"open-novel/backend/internal/pkg"
@@ -33,12 +34,14 @@ func userAgent(ctx context.Context) string {
 	return ""
 }
 
-// clientIP 从 X-Forwarded-For 取首个 IP（日志 best-effort，缺省空串）。
+// clientIP 取可信客户端 IP（XFF 末跳，缺省回落 remote；日志 best-effort）。
 func clientIP(ctx context.Context) string {
 	if tr, ok := transport.FromServerContext(ctx); ok {
-		if xff := tr.RequestHeader().Get("X-Forwarded-For"); xff != "" {
-			return strings.TrimSpace(strings.Split(xff, ",")[0])
+		remote := ""
+		if ht, isHTTP := tr.(*khttp.Transport); isHTTP {
+			remote = ht.Request().RemoteAddr
 		}
+		return pkg.ClientIP(tr.RequestHeader().Get("X-Forwarded-For"), remote)
 	}
 	return ""
 }
@@ -68,8 +71,8 @@ func requireAdmin(ctx context.Context) (pkg.Claims, error) {
 }
 
 // proto int64 ↔ 模型 uint64 转换（列均为无符号）。
-func u64(v int64) uint64     { return uint64(v) }
-func i64(v uint64) int64     { return int64(v) }
+func u64(v int64) uint64 { return uint64(v) }
+func i64(v uint64) int64 { return int64(v) }
 
 func u64s(v []int64) []uint64 {
 	out := make([]uint64, len(v))

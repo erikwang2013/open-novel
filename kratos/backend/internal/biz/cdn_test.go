@@ -112,7 +112,7 @@ func TestSetChapterStatusPurgesChapter(t *testing.T) {
 	t.Setenv("CDN_BASE_URL", "https://cdn.example.com")
 	t.Setenv("CDN_PURGE_URL", ts.URL+"/purge/{key}")
 
-	uc := NewChapterUsecase(d)
+	uc := NewChapterUsecase(d, nil)
 	if err := uc.SetChapterStatus(context.Background(), 100, ch.ID, 0); err != nil {
 		t.Fatal(err)
 	}

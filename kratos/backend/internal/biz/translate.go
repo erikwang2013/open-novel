@@ -120,6 +120,7 @@ func (uc *AdminUsecase) TranslateBook(ctx context.Context, bookID uint64, lang s
 		return nil, pkg.ErrAdminDB
 	}
 	uc.cache.Del(ctx, fmt.Sprintf("book:%d:%s", bookID, lang))
+	syncBookIndexBestEffort(ctx, uc.db, uc.search, bookID) // 翻译结果同步搜索索引
 	return &data.BookTranslation{BookID: bookID, Lang: lang, Title: out[0], Summary: out[1]}, nil
 }
 

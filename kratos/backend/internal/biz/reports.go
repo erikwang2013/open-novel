@@ -15,11 +15,13 @@ import (
 var cst = time.FixedZone("CST", 8*3600)
 
 // Report 聚合报表。ByDate 缺日补零，按日期升序。
+// Currency 为订单/VIP 金额的统计币种；用户/内容计数与币种无关。
 type Report struct {
-	Order   OrderReport
-	User    UserReport
-	Vip     VipReport
-	Content ContentReport
+	Currency string
+	Order    OrderReport
+	User     UserReport
+	Vip      VipReport
+	Content  ContentReport
 }
 
 type OrderReport struct {
@@ -72,21 +74,23 @@ type PlanAmountPoint struct {
 	Amount   int64
 }
 
-// Reports 聚合区间 [start, end]（YYYY-MM-DD，含首尾）。start/end 空串由本函数兜底。
-func (uc *AdminUsecase) Reports(ctx context.Context, start, end string) (Report, error) {
+// Reports 聚合区间 [start, end]（YYYY-MM-DD，含首尾）。start/end 空串由本函数兜底；
+// currency 空串取最近已付订单币种（无订单 USD），金额只统计该币种。
+func (uc *AdminUsecase) Reports(ctx context.Context, start, end, currency string) (Report, error) {
 	start, end, err := normalizeRange(start, end)
 	if err != nil {
 		return Report{}, err
 	}
 	endExcl := end + " 23:59:59" // DATETIME 含当天 23:59:59
 	var r Report
-	if err := uc.orderReport(ctx, start, endExcl, &r.Order); err != nil {
+	r.Currency = resolvedPaidCurrency(ctx, uc.db, currency)
+	if err := uc.orderReport(ctx, start, endExcl, r.Currency, &r.Order); err != nil {
 		return r, err
 	}
 	if err := uc.userReport(ctx, start, endExcl, &r.User); err != nil {
 		return r, err
 	}
-	if err := uc.vipReport(ctx, start, endExcl, &r.Vip); err != nil {
+	if err := uc.vipReport(ctx, start, endExcl, r.Currency, &r.Vip); err != nil {
 		return r, err
 	}
 	if err := uc.contentReport(ctx, start, endExcl, &r.Content); err != nil {
@@ -170,15 +174,15 @@ func fillCountDates(start, end string, rows []DateCountPoint) []DateCountPoint {
 // toCents DECIMAL(10,2) 元 → 整数分（与 models.go“比较一律转整数分”口径一致）。
 func toCents(amount float64) int64 { return int64(math.Round(amount * 100)) }
 
-func (uc *AdminUsecase) orderReport(ctx context.Context, start, endExcl string, r *OrderReport) error {
+func (uc *AdminUsecase) orderReport(ctx context.Context, start, endExcl, currency string, r *OrderReport) error {
 	var total struct {
 		Cnt    int64
 		Amount float64
 	}
 	if err := uc.db.WithContext(ctx).Raw(
 		`SELECT COUNT(*) AS cnt, COALESCE(SUM(amount),0) AS amount
-		 FROM novel_payment_order WHERE status = 1 AND created_at >= ? AND created_at <= ?`,
-		start, endExcl).Scan(&total).Error; err != nil {
+		 FROM novel_payment_order WHERE status = 1 AND currency = ? AND created_at >= ? AND created_at <= ?`,
+		currency, start, endExcl).Scan(&total).Error; err != nil {
 		return pkg.ErrAdminDB
 	}
 	r.TotalCount, r.TotalAmount = total.Cnt, toCents(total.Amount)
@@ -189,8 +193,8 @@ func (uc *AdminUsecase) orderReport(ctx context.Context, start, endExcl string, 
 	}
 	if err := uc.db.WithContext(ctx).Raw(
 		`SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS date, COUNT(*) AS count, SUM(amount) AS amount
-		 FROM novel_payment_order WHERE status = 1 AND created_at >= ? AND created_at <= ?
-		 GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')`, start, endExcl).Scan(&byDate).Error; err != nil {
+		 FROM novel_payment_order WHERE status = 1 AND currency = ? AND created_at >= ? AND created_at <= ?
+		 GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')`, currency, start, endExcl).Scan(&byDate).Error; err != nil {
 		return pkg.ErrAdminDB
 	}
 	rows := make([]DateAmountPoint, 0, len(byDate))
@@ -205,8 +209,8 @@ func (uc *AdminUsecase) orderReport(ctx context.Context, start, endExcl string, 
 	}
 	if err := uc.db.WithContext(ctx).Raw(
 		`SELECT provider AS channel, COUNT(*) AS count, SUM(amount) AS amount
-		 FROM novel_payment_order WHERE status = 1 AND created_at >= ? AND created_at <= ?
-		 GROUP BY provider ORDER BY count DESC, channel`, start, endExcl).Scan(&byChannel).Error; err != nil {
+		 FROM novel_payment_order WHERE status = 1 AND currency = ? AND created_at >= ? AND created_at <= ?
+		 GROUP BY provider ORDER BY count DESC, channel`, currency, start, endExcl).Scan(&byChannel).Error; err != nil {
 		return pkg.ErrAdminDB
 	}
 	for _, x := range byChannel {
@@ -230,15 +234,15 @@ func (uc *AdminUsecase) userReport(ctx context.Context, start, endExcl string, r
 	return nil
 }
 
-func (uc *AdminUsecase) vipReport(ctx context.Context, start, endExcl string, r *VipReport) error {
+func (uc *AdminUsecase) vipReport(ctx context.Context, start, endExcl, currency string, r *VipReport) error {
 	var total struct {
 		Cnt    int64
 		Amount float64
 	}
 	if err := uc.db.WithContext(ctx).Raw(
 		`SELECT COUNT(*) AS cnt, COALESCE(SUM(amount),0) AS amount
-		 FROM novel_vip_order WHERE status = 1 AND created_at >= ? AND created_at <= ?`,
-		start, endExcl).Scan(&total).Error; err != nil {
+		 FROM novel_vip_order WHERE status = 1 AND currency = ? AND created_at >= ? AND created_at <= ?`,
+		currency, start, endExcl).Scan(&total).Error; err != nil {
 		return pkg.ErrAdminDB
 	}
 	r.TotalCount, r.TotalAmount = total.Cnt, toCents(total.Amount)
@@ -249,8 +253,8 @@ func (uc *AdminUsecase) vipReport(ctx context.Context, start, endExcl string, r 
 	}
 	if err := uc.db.WithContext(ctx).Raw(
 		`SELECT DATE_FORMAT(created_at, '%Y-%m-%d') AS date, COUNT(*) AS count, SUM(amount) AS amount
-		 FROM novel_vip_order WHERE status = 1 AND created_at >= ? AND created_at <= ?
-		 GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')`, start, endExcl).Scan(&byDate).Error; err != nil {
+		 FROM novel_vip_order WHERE status = 1 AND currency = ? AND created_at >= ? AND created_at <= ?
+		 GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')`, currency, start, endExcl).Scan(&byDate).Error; err != nil {
 		return pkg.ErrAdminDB
 	}
 	rows := make([]DateAmountPoint, 0, len(byDate))
@@ -269,10 +273,10 @@ func (uc *AdminUsecase) vipReport(ctx context.Context, start, endExcl string, r 
 		`SELECT COALESCE(p.id,0) AS plan_id, COALESCE(p.label, v.plan) AS plan_name,
 		        COUNT(*) AS count, SUM(v.amount) AS amount
 		 FROM novel_vip_order v
-		 LEFT JOIN novel_vip_plan p ON p.plan_code = v.plan
-		 WHERE v.status = 1 AND v.created_at >= ? AND v.created_at <= ?
+		 LEFT JOIN novel_vip_plan p ON p.plan_code = v.plan AND p.currency = v.currency
+		 WHERE v.status = 1 AND v.currency = ? AND v.created_at >= ? AND v.created_at <= ?
 		 GROUP BY v.plan, p.id, p.label ORDER BY count DESC, v.plan`,
-		start, endExcl).Scan(&byPlan).Error; err != nil {
+		currency, start, endExcl).Scan(&byPlan).Error; err != nil {
 		return pkg.ErrAdminDB
 	}
 	for _, x := range byPlan {

@@ -6,6 +6,7 @@ package biz
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -44,20 +45,26 @@ func TestReportsAggregation(t *testing.T) {
 		{OrderNo: marker + "_o4", UserID: 1, Amount: 9.99, Currency: "USD", Provider: marker + "_a", Status: 0, CreatedAt: dt(2)},
 		{OrderNo: marker + "_o5", UserID: 1, Amount: 1.00, Currency: "USD", Provider: marker + "_a", Status: 1, CreatedAt: dt(6)},
 		{OrderNo: marker + "_o6", UserID: 1, Amount: 2.00, Currency: "USD", Provider: marker + "_a", Status: 1, CreatedAt: time.Date(2014, 12, 31, 12, 0, 0, 0, cst)},
+		// 同窗口日元订单：验证币种过滤，不参与 USD 汇总（100 日元 = 10000 分不可与 USD 相加）
+		{OrderNo: marker + "_o7", UserID: 1, Amount: 100.00, Currency: "JPY", Provider: marker + "_a", Status: 1, CreatedAt: dt(3)},
 	}
 	// VIP 订单：01-02 marker+_noplan 9.99（无套餐行→回退 plan 码），01-04 marker 套餐 19.99（join 到套餐行）
+	// 另加一笔同套餐码的 JPY 订单，验证 join 按币种匹配、不把 USD 统计翻倍
 	vipOrders := []data.VipOrder{
 		{OrderNo: marker + "_v1", UserID: 1, Plan: marker + "_noplan", Amount: 9.99, Currency: "USD", Status: 1, CreatedAt: dt(2)},
 		{OrderNo: marker + "_v2", UserID: 1, Plan: marker + "_plan", Amount: 19.99, Currency: "USD", Status: 1, CreatedAt: dt(4)},
 		{OrderNo: marker + "_v3", UserID: 1, Plan: marker + "_plan", Amount: 1.00, Currency: "USD", Status: 0, CreatedAt: dt(4)},
+		{OrderNo: marker + "_v4", UserID: 1, Plan: marker + "_plan", Amount: 500.00, Currency: "JPY", Status: 1, CreatedAt: dt(4)},
 	}
 	plans := []data.VipPlan{
 		{PlanCode: marker + "_plan", Days: 30, AmountCents: 1999, Currency: "USD", Label: marker + "_label", Status: 1},
+		{PlanCode: marker + "_plan", Days: 90, AmountCents: 50000, Currency: "JPY", Label: marker + "_jpy_label", Status: 1},
 	}
+	email := func(s string) sql.NullString { return sql.NullString{String: s, Valid: true} }
 	users := []data.User{
-		{Username: marker + "_u1", Email: marker + "_u1@t.co", PasswordHash: "x", Status: 1, CreatedAt: dt(2)},
-		{Username: marker + "_u2", Email: marker + "_u2@t.co", PasswordHash: "x", Status: 1, CreatedAt: dt(3)},
-		{Username: marker + "_u3", Email: marker + "_u3@t.co", PasswordHash: "x", Status: 1, CreatedAt: time.Date(2014, 12, 31, 12, 0, 0, 0, cst)},
+		{Username: marker + "_u1", Email: email(marker + "_u1@t.co"), PasswordHash: "x", Status: 1, CreatedAt: dt(2)},
+		{Username: marker + "_u2", Email: email(marker + "_u2@t.co"), PasswordHash: "x", Status: 1, CreatedAt: dt(3)},
+		{Username: marker + "_u3", Email: email(marker + "_u3@t.co"), PasswordHash: "x", Status: 1, CreatedAt: time.Date(2014, 12, 31, 12, 0, 0, 0, cst)},
 	}
 	books := []data.Book{
 		{Title: marker + "_b1", Author: marker, Lang: "zh-CN", Status: 1, CreatedAt: dt(2)},
@@ -130,12 +137,15 @@ func TestReportsAggregation(t *testing.T) {
 		d.DB.Delete(&data.Comment{}, ids.comments)
 	})
 
-	r, err := uc.Reports(ctx, start, end)
+	r, err := uc.Reports(ctx, start, end, "usd")
 	if err != nil {
 		t.Fatal(err)
 	}
+	if r.Currency != "USD" {
+		t.Fatalf("currency: want USD (normalized), got %q", r.Currency)
+	}
 
-	// 订单：total_count=3（未支付/窗口外排除），total_amount=2084 分（12.34+5.00+3.50）
+	// 订单：total_count=3（未支付/窗口外/JPY 排除），total_amount=2084 分（12.34+5.00+3.50）
 	if r.Order.TotalCount != 3 || r.Order.TotalAmount != 2084 {
 		t.Fatalf("order total: want (3,2084), got (%d,%d)", r.Order.TotalCount, r.Order.TotalAmount)
 	}
@@ -166,6 +176,23 @@ func TestReportsAggregation(t *testing.T) {
 	}
 	if ch[marker+"_a"] != [2]int64{2, 1734} || ch[marker+"_b"] != [2]int64{1, 350} {
 		t.Fatalf("order by_channel: got %v", ch)
+	}
+
+	// JPY 视图：只含 o7 一笔，金额 10000 分；币种大小写归一
+	jpy, err := uc.Reports(ctx, start, end, "jpy")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if jpy.Currency != "JPY" || jpy.Order.TotalCount != 1 || jpy.Order.TotalAmount != 10000 {
+		t.Fatalf("jpy report: want (JPY,1,10000), got (%s,%d,%d)",
+			jpy.Currency, jpy.Order.TotalCount, jpy.Order.TotalAmount)
+	}
+	// 同 plan_code 多币种行：JPY 订单只 join JPY 套餐行，且 USD 统计不翻倍
+	if jpy.Vip.TotalCount != 1 || jpy.Vip.TotalAmount != 50000 {
+		t.Fatalf("jpy vip total: want (1,50000), got (%d,%d)", jpy.Vip.TotalCount, jpy.Vip.TotalAmount)
+	}
+	if len(jpy.Vip.ByPlan) != 1 || jpy.Vip.ByPlan[0].PlanName != marker+"_jpy_label" || jpy.Vip.ByPlan[0].Count != 1 {
+		t.Fatalf("jpy vip by_plan: got %+v", jpy.Vip.ByPlan)
 	}
 
 	// 用户：窗口内 01-02/01-03 各 1 人，其余 0；total_users 全局 >= 2

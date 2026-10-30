@@ -49,11 +49,11 @@ func assignSnowflakeID(db *gorm.DB) {
 			return // 非指针 Create 的不可寻址值：跳过，防 reflect panic
 		}
 		switch pk.Kind() {
-		case reflect.Uint:
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 			if pk.Uint() == 0 {
 				pk.SetUint(uint64(sfNode.Generate().Int64()))
 			}
-		case reflect.Int:
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			if pk.Int() == 0 {
 				pk.SetInt(sfNode.Generate().Int64())
 			}

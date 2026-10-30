@@ -44,12 +44,18 @@ type Stats struct {
 	HotBooks     []HotBook
 	HotKeywords  []HotKeyword
 	// 报表字段：金额一律整数分（库中 DECIMAL(10,2) 元×100，与 models.go 注释口径一致）
-	OrderCount      int64 // 累计支付订单数（status=1）
-	OrderAmount     int64 // 累计支付金额（分）
-	VipCount        int64 // VIP 有效订阅数（vip_expires_at > now）
-	TodayNewUsers   int64 // 今日新增用户
-	PendingComments int64 // 待审核评论数（status=2 举报待审）
-	PendingReports  int64 // 待处理举报数（status=2 评论 report_count 累计）
+	OrderCount      int64            // 累计支付订单数（status=1，所有币种）
+	OrderAmounts    []CurrencyAmount // 累计支付金额（分，按币种分组；不同币种不可相加）
+	VipCount        int64            // VIP 有效订阅数（vip_expires_at > now）
+	TodayNewUsers   int64            // 今日新增用户
+	PendingComments int64            // 待审核评论数（status=2 举报待审）
+	PendingReports  int64            // 待处理举报数（status=2 评论 report_count 累计）
+}
+
+// CurrencyAmount 单币种金额（分）。
+type CurrencyAmount struct {
+	Currency string
+	Amount   int64
 }
 
 type HotBook struct {
@@ -114,17 +120,24 @@ func (uc *AdminUsecase) Stats(ctx context.Context) (Stats, error) {
 		Group("keyword").Order("count DESC").Limit(10).Scan(&s.HotKeywords).Error; err != nil {
 		return s, pkg.ErrAdminDB
 	}
-	// 报表字段：金额聚合 SUM(amount) 元 → 分（DECIMAL 需按 float64 扫描再换算）
-	var pay struct {
-		Cnt    int64
-		Amount float64
-	}
+	// 报表字段：订单数不分币种；金额按币种分组（SUM 元 → 分），避免跨币种相加
 	if err := uc.db.WithContext(ctx).Raw(
-		`SELECT COUNT(*) AS cnt, COALESCE(SUM(amount),0) AS amount
-		 FROM novel_payment_order WHERE status = 1`).Scan(&pay).Error; err != nil {
+		`SELECT COUNT(*) FROM novel_payment_order WHERE status = 1`).Scan(&s.OrderCount).Error; err != nil {
 		return s, pkg.ErrAdminDB
 	}
-	s.OrderCount, s.OrderAmount = pay.Cnt, toCents(pay.Amount)
+	var amounts []struct {
+		Currency string
+		Amount   float64
+	}
+	if err := uc.db.WithContext(ctx).Raw(
+		`SELECT currency, COALESCE(SUM(amount),0) AS amount
+		 FROM novel_payment_order WHERE status = 1 GROUP BY currency ORDER BY currency`).Scan(&amounts).Error; err != nil {
+		return s, pkg.ErrAdminDB
+	}
+	s.OrderAmounts = make([]CurrencyAmount, 0, len(amounts))
+	for _, a := range amounts {
+		s.OrderAmounts = append(s.OrderAmounts, CurrencyAmount{Currency: a.Currency, Amount: toCents(a.Amount)})
+	}
 	if err := uc.db.WithContext(ctx).Raw(
 		`SELECT COUNT(*) FROM novel_user WHERE vip_expires_at > NOW()`).Scan(&s.VipCount).Error; err != nil {
 		return s, pkg.ErrAdminDB

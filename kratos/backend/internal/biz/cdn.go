@@ -7,7 +7,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -42,14 +41,6 @@ func ChapterCacheControl(isVip bool) string {
 		return "no-store"
 	}
 	return "public, s-maxage=3600"
-}
-
-// PathCachePolicy 路径级缓存策略：章节 content 可共享缓存 1h，其余不设头。
-func PathCachePolicy(path string) string {
-	if strings.HasSuffix(path, "/content") && strings.Contains(path, "/chapters/") {
-		return "public, s-maxage=3600"
-	}
-	return ""
 }
 
 // ChapterKey CDN 对象 key 约定：chapter/{id}?lang={lang}。

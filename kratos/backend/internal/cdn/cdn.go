@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"sync"
 	"time"
 )
@@ -18,11 +17,6 @@ import (
 type Provider interface {
 	Name() string
 	Purge(ctx context.Context, keys []string) error // keys 为全量对象 key（如 chapter/123?lang=zh-CN）
-}
-
-// URLSigner 签名 URL 扩展位：本轮不实现（设计 §3.2 预留，VIP 边缘缓存时再落地）。
-type URLSigner interface {
-	SignURL(url string, expire time.Duration) (string, error)
 }
 
 // Manager 编排：由启用厂商列表构造，Purge 时并发广播全部。
@@ -92,121 +86,13 @@ func dedupe(keys []string) []string {
 	return out
 }
 
-// Split 按 max 切批；max<=0 时按 1000。
-func Split(keys []string, max int) [][]string {
-	if max <= 0 {
-		max = 1000
-	}
-	var out [][]string
-	for i := 0; i < len(keys); i += max {
-		end := min(i+max, len(keys))
-		out = append(out, keys[i:end])
-	}
-	return out
-}
-
 // httpClient 厂商 API 共用客户端：5s 超时（沿用现状）。
 var httpClient = &http.Client{Timeout: 5 * time.Second}
 
-// cfgString / cfgInt / cfgFloat 配置读取：兼容字符串与 JSON 数值两种形态（§全局约定）。
+// cfgString 配置读取（JSON 序列化后均为字符串）。
 func cfgString(cfg map[string]any, key string) string {
 	s, _ := cfg[key].(string)
 	return s
-}
-
-func cfgInt(cfg map[string]any, key string, def int) int {
-	switch v := cfg[key].(type) {
-	case float64:
-		return int(v)
-	case string:
-		if n, err := strconv.Atoi(v); err == nil {
-			return n
-		}
-	}
-	return def
-}
-
-func cfgFloat(cfg map[string]any, key string, def float64) float64 {
-	switch v := cfg[key].(type) {
-	case float64:
-		return v
-	case string:
-		if f, err := strconv.ParseFloat(v, 64); err == nil {
-			return f
-		}
-	}
-	return def
-}
-
-// tokenBucket 简单令牌桶限速（构造时给定 qps）。
-type tokenBucket struct {
-	mu     sync.Mutex
-	qps    float64
-	tokens float64
-	last   time.Time
-}
-
-func newTokenBucket(qps float64) *tokenBucket {
-	return &tokenBucket{qps: qps, tokens: qps, last: time.Now()}
-}
-
-func (b *tokenBucket) Take() bool {
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	now := time.Now()
-	b.tokens = min(b.qps, b.tokens+now.Sub(b.last).Seconds()*b.qps)
-	b.last = now
-	if b.tokens < 1 {
-		return false
-	}
-	b.tokens--
-	return true
-}
-
-// Wait 阻塞直到取得令牌或 ctx 结束。
-func (b *tokenBucket) Wait(ctx context.Context) error {
-	for {
-		if b.Take() {
-			return nil
-		}
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case <-time.After(50 * time.Millisecond):
-		}
-	}
-}
-
-// dailyCounter 每日计数：达 warnAt 记一次 warn（按天重置，§5.3 阿里/腾讯 10000 限额预警）。
-type dailyCounter struct {
-	mu     sync.Mutex
-	day    string
-	count  int
-	warned bool
-	warnAt int
-	warn   func(string)
-}
-
-func newDailyCounter(warnAt int, warn func(string)) *dailyCounter {
-	return &dailyCounter{warnAt: warnAt, warn: warn}
-}
-
-// Add 累计 n；返回当天累计值；首次越过 warnAt 触发一次 warn。
-func (c *dailyCounter) Add(n int) int {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-	today := time.Now().Format("2006-01-02")
-	if today != c.day {
-		c.day, c.count, c.warned = today, 0, false
-	}
-	c.count += n
-	if !c.warned && c.count >= c.warnAt {
-		c.warned = true
-		if c.warn != nil {
-			c.warn(fmt.Sprintf("cdn daily purge count %d >= %d, check manually", c.count, c.warnAt))
-		}
-	}
-	return c.count
 }
 
 // non2xx 统一判定：429/5xx → retriableError（manager 重试一次）；其余 → 普通错误（仅记日志）。
@@ -216,6 +102,3 @@ func non2xx(status int) error {
 	}
 	return fmt.Errorf("http %d", status)
 }
-
-// warnLog 包装 log.Printf 适配 dailyCounter 回调。
-func warnLog(s string) { log.Printf("[cdn] %s", s) }

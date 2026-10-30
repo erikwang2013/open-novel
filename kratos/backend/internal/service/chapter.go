@@ -49,14 +49,15 @@ func (s *ChapterService) ListChapters(ctx context.Context, req *v1.ListChaptersR
 }
 
 func (s *ChapterService) GetChapterContent(ctx context.Context, req *v1.GetChapterContentReq) (*v1.ChapterContentReply, error) {
-	it, err := s.uc.GetChapterContent(ctx, u64(req.Id), langOrDefault(ctx, req.Lang))
+	isStaff := claims(ctx).Role >= pkg.RoleAdmin
+	it, err := s.uc.GetChapterContent(ctx, claims(ctx).UID, u64(req.Id), langOrDefault(ctx, req.Lang), isStaff)
 	if err != nil {
 		return nil, err
 	}
-	// CDN 静态化：免费章节回源缓存 1h；VIP 章节 no-store。CDN_BASE_URL 为空时不设头（行为与现状一致）。
+	// CDN 静态化：免费章节回源缓存 1h；VIP 章节、管理端/下架内容 no-store。CDN_BASE_URL 为空时不设头。
 	if biz.CdnEnabled() {
 		if tr, ok := transport.FromServerContext(ctx); ok {
-			tr.ReplyHeader().Set("Cache-Control", biz.ChapterCacheControl(it.IsVip > 0))
+			tr.ReplyHeader().Set("Cache-Control", biz.ChapterCacheControl(it.IsVip > 0 || it.NoStore))
 		}
 	}
 	return &v1.ChapterContentReply{Id: i64(it.ID), ChapterId: i64(it.ChapterID), Lang: it.Lang, Content: it.Content}, nil

@@ -11,6 +11,7 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/hex"
+	"encoding/json"
 	"encoding/pem"
 	"io"
 	"net/http"
@@ -161,20 +162,48 @@ func TestPayPalVerifyWebhook(t *testing.T) {
 		"PayPal-Transmission-Sig": "sig-1", "PayPal-Webhook-Id": "WH-1",
 	}
 	rt := routeRoundTripper{routes: map[string]fakeRoundTripper{
-		"/v1/oauth2/token": {status: 200, body: `{"access_token":"tok-1"}`},
+		"/v1/oauth2/token":                           {status: 200, body: `{"access_token":"tok-1"}`},
 		"/v1/notifications/verify-webhook-signature": {status: 200, body: `{"verification_status":"SUCCESS"}`},
+		"/v2/checkout/orders/ORDER-1/capture":        {status: 201, body: `{"id":"ORDER-1","status":"COMPLETED","purchase_units":[{"reference_id":"2026082992","payments":{"captures":[{"id":"CAP-1","status":"COMPLETED","amount":{"currency_code":"USD","value":"3.00"}}]}}]}`},
 	}}
 	p := &PayPalProvider{webhookID: "WH-1", clientID: "cid", clientSecret: "cs",
 		http: &http.Client{Transport: rt}}
 
-	// 官方验签 SUCCESS → 通过，金额/订单解析保留
+	// 验签 SUCCESS → APPROVED 后必须 capture，事件取捕获交易号/金额
 	ev, err := p.VerifyWebhook(ctx, "paypal", body, hdrs)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !ev.Paid || ev.OrderNo != "2026082992" || ev.AmountCents != 300 || ev.Currency != "USD" || ev.TxID != "ORDER-1" {
+	if !ev.Paid || ev.OrderNo != "2026082992" || ev.AmountCents != 300 || ev.Currency != "USD" || ev.TxID != "CAP-1" {
 		t.Fatalf("unexpected event: %+v", ev)
 	}
+
+	// 捕获金额与事件不一致 → 拒绝
+	rt.routes["/v2/checkout/orders/ORDER-1/capture"] = fakeRoundTripper{status: 201,
+		body: `{"id":"ORDER-1","status":"COMPLETED","purchase_units":[{"reference_id":"2026082992","payments":{"captures":[{"id":"CAP-1","status":"COMPLETED","amount":{"currency_code":"USD","value":"2.00"}}]}}]}`}
+	if _, err := p.VerifyWebhook(ctx, "paypal", body, hdrs); err == nil {
+		t.Fatal("capture amount mismatch must be rejected")
+	}
+	// 捕获状态非 COMPLETED → 拒绝
+	rt.routes["/v2/checkout/orders/ORDER-1/capture"] = fakeRoundTripper{status: 201,
+		body: `{"id":"ORDER-1","status":"PENDING","purchase_units":[]}`}
+	if _, err := p.VerifyWebhook(ctx, "paypal", body, hdrs); err == nil {
+		t.Fatal("non-COMPLETED capture must be rejected")
+	}
+	// 重复投递 → PayPal 422 ORDER_ALREADY_CAPTURED，视为已捕获成功
+	rt.routes["/v2/checkout/orders/ORDER-1/capture"] = fakeRoundTripper{status: 422,
+		body: `{"name":"ORDER_ALREADY_CAPTURED"}`}
+	ev, err = p.VerifyWebhook(ctx, "paypal", body, hdrs)
+	if err != nil || !ev.Paid || ev.TxID != "ORDER-1" || ev.AmountCents != 300 {
+		t.Fatalf("already captured: err=%v ev=%+v", err, ev)
+	}
+	// 捕获端点其他错误 → 透传失败，不结算
+	rt.routes["/v2/checkout/orders/ORDER-1/capture"] = fakeRoundTripper{status: 500, body: `internal error`}
+	if _, err := p.VerifyWebhook(ctx, "paypal", body, hdrs); err == nil {
+		t.Fatal("capture http error must propagate")
+	}
+	rt.routes["/v2/checkout/orders/ORDER-1/capture"] = fakeRoundTripper{status: 201,
+		body: `{"id":"ORDER-1","status":"COMPLETED","purchase_units":[{"reference_id":"2026082992","payments":{"captures":[{"id":"CAP-1","status":"COMPLETED","amount":{"currency_code":"USD","value":"3.00"}}]}}]}`}
 
 	// 验签返回 FAILURE → 拒绝
 	rt.routes["/v1/notifications/verify-webhook-signature"] =
@@ -202,6 +231,47 @@ func TestPayPalVerifyWebhook(t *testing.T) {
 	// transmission 头缺失 → 拒绝
 	if _, err := p.VerifyWebhook(ctx, "paypal", body, map[string]string{"PayPal-Webhook-Id": "WH-1"}); err == nil {
 		t.Fatal("missing transmission headers must fail")
+	}
+}
+
+// paypalCheckoutRT 记录 create order 请求体（OAuth + 下单两个端点）。
+type paypalCheckoutRT struct{ body []byte }
+
+func (r *paypalCheckoutRT) RoundTrip(req *http.Request) (*http.Response, error) {
+	switch req.URL.Path {
+	case "/v1/oauth2/token":
+		return fakeRoundTripper{status: 200, body: `{"access_token":"tok-1"}`}.RoundTrip(req)
+	case "/v2/checkout/orders":
+		r.body, _ = io.ReadAll(req.Body)
+		return fakeRoundTripper{status: 201,
+			body: `{"id":"O-1","links":[{"rel":"approve","href":"https://paypal.test/approve"}]}`}.RoundTrip(req)
+	}
+	return fakeRoundTripper{status: 404, body: `{}`}.RoundTrip(req)
+}
+
+func TestPayPalCreateCheckoutApplicationContext(t *testing.T) {
+	rt := &paypalCheckoutRT{}
+	p := &PayPalProvider{http: &http.Client{Transport: rt}, clientID: "cid", clientSecret: "cs",
+		base: "https://api.paypal.test", returnURL: "https://shop.test/ok", cancelURL: "https://shop.test/cancel"}
+	link, err := p.CreateCheckout(context.Background(), "2026082991", 500, "USD", "VIP")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if link != "https://paypal.test/approve" {
+		t.Fatalf("approve link: %q", link)
+	}
+	var reqBody struct {
+		ApplicationContext struct {
+			ReturnURL string `json:"return_url"`
+			CancelURL string `json:"cancel_url"`
+		} `json:"application_context"`
+	}
+	if err := json.Unmarshal(rt.body, &reqBody); err != nil {
+		t.Fatal(err)
+	}
+	if reqBody.ApplicationContext.ReturnURL != "https://shop.test/ok" ||
+		reqBody.ApplicationContext.CancelURL != "https://shop.test/cancel" {
+		t.Fatalf("application_context missing: %s", rt.body)
 	}
 }
 
@@ -250,7 +320,7 @@ func TestAlipaySignVerify(t *testing.T) {
 	params := map[string]string{
 		"app_id": "2021000000000001", "method": "alipay.trade.wap.pay", "charset": "utf-8",
 		"sign_type": "RSA2", "timestamp": "2026-08-29 12:00:00", "version": "1.0",
-		"notify_url": "https://example.com/webhook/alipay",
+		"notify_url":  "https://example.com/webhook/alipay",
 		"biz_content": `{"out_trade_no":"2026082999","total_amount":"3.00","product_code":"QUICK_WAP_WAY","subject":"Open Novel VIP monthly"}`,
 	}
 	// 签名 → 验签通过

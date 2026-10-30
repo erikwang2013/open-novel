@@ -5,8 +5,11 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/go-kratos/kratos/v2/log"
 	"net/http"
+	"os"
+	"strings"
+
+	"github.com/go-kratos/kratos/v2/log"
 
 	kerrors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -43,6 +46,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	pay *service.PaymentService, admin *service.AdminService,
 ) *khttp.Server {
 	opts := []khttp.ServerOption{
+		khttp.Filter(corsFilter()),
 		khttp.Middleware(
 			recovery.Recovery(),
 			logging.Server(logger),
@@ -52,6 +56,7 @@ func NewHTTPServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 			middleware.RawBody(),
 			middleware.OptionalAuth(am),
 		),
+		khttp.ResponseEncoder(respEncoder),
 		khttp.ErrorEncoder(errEncoder),
 	}
 	if c.HttpAddr != "" {
@@ -97,15 +102,66 @@ func NewGRPCServer(c *conf.Server, am *pkg.AuthManager, logger log.Logger,
 	return srv
 }
 
-// errEncoder 业务码（≥100000）→ HTTP 200 + 业务码；标准码（100-599）→ 原样状态。
+// corsFilter CORS：来源读 CORS_ORIGINS（逗号分隔，默认 *）；具体来源回显 + Vary。
+// Bearer token 鉴权不需要 cookie，故不设 Allow-Credentials。
+func corsFilter() khttp.FilterFunc {
+	var origins []string
+	for _, o := range strings.Split(os.Getenv("CORS_ORIGINS"), ",") {
+		if o = strings.TrimSpace(o); o != "" && o != "*" {
+			origins = append(origins, o)
+		}
+	}
+	allowAll := len(origins) == 0
+	allowed := make(map[string]struct{}, len(origins))
+	for _, o := range origins {
+		allowed[o] = struct{}{}
+	}
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			h := w.Header()
+			h.Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
+			h.Set("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Api-Version")
+			h.Set("Access-Control-Max-Age", "600")
+			origin := r.Header.Get("Origin")
+			if allowAll {
+				h.Set("Access-Control-Allow-Origin", "*")
+			} else if _, ok := allowed[origin]; ok && origin != "" {
+				h.Set("Access-Control-Allow-Origin", origin)
+				h.Add("Vary", "Origin")
+			}
+			if r.Method == http.MethodOptions { // 预检不进路由
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
+// respEncoder 渠道回调应答：第三方要求 HTTP 200 纯文本 success；其余走默认 JSON。
+// 错误仍由 ErrorEncoder 输出，不会变成 success。
+func respEncoder(w http.ResponseWriter, r *http.Request, v any) error {
+	if strings.HasPrefix(r.URL.Path, "/api/payments/webhook/") {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write([]byte("success"))
+		return err
+	}
+	return khttp.DefaultResponseEncoder(w, r, v)
+}
+
+// errEncoder webhook 失败必须非 2xx（渠道据此重试，避免付款未开通）；
+// 其余业务码（≥100000）→ HTTP 200 + 业务码；标准码（100-599）→ 原样状态。
 func errEncoder(w http.ResponseWriter, r *http.Request, err error) {
 	se := kerrors.FromError(err)
 	status := http.StatusInternalServerError
-	switch {
-	case se.Code >= 100000:
-		status = http.StatusOK // §四：HTTP 状态与业务码分离
-	case se.Code >= 100 && se.Code < 600:
-		status = int(se.Code)
+	if !strings.HasPrefix(r.URL.Path, "/api/payments/webhook/") {
+		switch {
+		case se.Code >= 100000:
+			status = http.StatusOK // §四：HTTP 状态与业务码分离
+		case se.Code >= 100 && se.Code < 600:
+			status = int(se.Code)
+		}
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)

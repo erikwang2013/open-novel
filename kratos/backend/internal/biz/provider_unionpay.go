@@ -116,7 +116,7 @@ func (p *UnionPayProvider) VerifyWebhook(ctx context.Context, provider string, r
 	}
 	amt, _ := strconv.ParseInt(params["txnAmt"], 10, 64)
 	return PaymentEvent{OrderNo: params["orderId"], TxID: params["queryId"],
-		Paid: params["respCode"] == "00",
+		Paid:        params["respCode"] == "00",
 		AmountCents: amt, Currency: unionpayCurrencyName(params["currencyCode"])}, nil
 }
 

@@ -26,7 +26,7 @@ var (
 		all.RegisterAll(e)
 		return e
 	}()
-	// IP 黑名单走 X-Forwarded-For（与 RateLimit 同源），内存后端。
+	// IP 黑名单取 ClientIP（XFF 末跳，与 RateLimit 同源），内存后端。
 	ipBlacklist = httpval.NewIPBlacklist(storage.NewMemory())
 )
 
@@ -51,12 +51,16 @@ func Security() middleware.Middleware {
 
 // checkAttack 返回 nil 放行；高危/已封禁返回 403。高危命中按攻击源计数。
 func checkAttack(r *http.Request) error {
-	ip := r.Header.Get("X-Forwarded-For")
+	ip := pkg.ClientIP(r.Header.Get("X-Forwarded-For"), r.RemoteAddr)
 	if res := ipBlacklist.Detect(ip); res.Detected {
 		log.Warnf("security: %s", res.Message)
 		return pkg.ErrPermission
 	}
-	for _, res := range securityEngine.DetectRequest(r) {
+	// Authorization: Bearer <JWT> 是预期凭证，security-go 的 data_leak 正则会把它判为 High；
+	// 只对扫描副本去掉该头，JWT 合法性交给 AuthManager，URL/query/其它头/Cookie 照常扫描。
+	scan := r.Clone(r.Context())
+	scan.Header.Del("Authorization")
+	for _, res := range securityEngine.DetectRequest(scan) {
 		if !res.Detected {
 			continue
 		}

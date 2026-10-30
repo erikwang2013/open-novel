@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"open-novel/backend/internal/pkg"
@@ -198,9 +197,9 @@ func (c *ES) Search(ctx context.Context, q, lang string, from, size int) ([]Sear
 // Hot 按 hot 分倒序取榜。
 func (c *ES) Hot(ctx context.Context, size int) ([]SearchDoc, error) {
 	body := map[string]any{
-		"size": size,
+		"size":  size,
 		"query": map[string]any{"match_all": map[string]any{}},
-		"sort": []any{map[string]any{"hot": map[string]any{"order": "desc"}}},
+		"sort":  []any{map[string]any{"hot": map[string]any{"order": "desc"}}},
 	}
 	var resp esSearchResp
 	if err := c.do(ctx, http.MethodPost, "/"+indexName+"/_search", body, &resp); err != nil {
@@ -222,11 +221,4 @@ func (c *ES) Upsert(ctx context.Context, doc SearchDoc) error {
 func (c *ES) Delete(ctx context.Context, bookID uint64) error {
 	path := fmt.Sprintf("/%s/_doc/%d?refresh=wait_for", indexName, bookID)
 	return c.do(ctx, http.MethodDelete, path, nil, nil)
-}
-
-func clientIPFrom(xff, remoteAddr string) string {
-	if xff != "" {
-		return strings.Split(xff, ",")[0]
-	}
-	return remoteAddr
 }

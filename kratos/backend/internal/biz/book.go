@@ -180,8 +180,8 @@ func (uc *BookUsecase) CreateBook(ctx context.Context, req CreateBookParams) (id
 	if err != nil {
 		return 0, pkg.ErrBookInternal
 	}
-	uc.cache.DelPattern(ctx, "recommend:*") // 新书入榜：失效热门/最新榜单缓存
-	uc.syncIndexBestEffort(ctx, b.ID)      // 建书自动入搜索索引（#23）
+	uc.cache.DelPattern(ctx, "recommend:*")              // 新书入榜：失效热门/最新榜单缓存
+	syncBookIndexBestEffort(ctx, uc.db, uc.search, b.ID) // 建书自动入搜索索引（#23）
 	return b.ID, nil
 }
 
@@ -200,7 +200,7 @@ func (uc *BookUsecase) UpsertTranslation(ctx context.Context, id uint64, lang, t
 	}
 	// 翻译更新后立即失效缓存键，避免旧值残留
 	uc.cache.Del(ctx, fmt.Sprintf("book:%d:%s", id, lang))
-	uc.syncIndexBestEffort(ctx, id) // 翻译变更同步搜索索引（#23）
+	syncBookIndexBestEffort(ctx, uc.db, uc.search, id) // 翻译变更同步搜索索引（#23）
 	return nil
 }
 
@@ -218,38 +218,59 @@ func (uc *BookUsecase) SetBookStatus(ctx context.Context, adminID int64, id uint
 	}
 	uc.cache.DelPattern(ctx, "recommend:*")
 	uc.cache.DelPattern(ctx, fmt.Sprintf("book:%d:*", id))
-	uc.syncIndexBestEffort(ctx, id)
+	syncBookIndexBestEffort(ctx, uc.db, uc.search, id)
 	data.WriteAudit(uc.db, ctx, adminID, "book_status", "book", strconv.FormatUint(id, 10), fmt.Sprintf("status=%d", status))
 	return nil
 }
 
-// syncIndexBestEffort 将书籍同步到搜索索引；索引失败只记日志，不阻塞建书/翻译。
-func (uc *BookUsecase) syncIndexBestEffort(ctx context.Context, bookID uint64) {
-	if err := uc.syncIndex(ctx, bookID); err != nil {
+// syncBookIndexBestEffort 将书籍同步到搜索索引；索引失败只记日志，不阻塞建书/翻译/上下架。
+func syncBookIndexBestEffort(ctx context.Context, db *gorm.DB, search *SearchUsecase, bookID uint64) {
+	if err := syncBookIndex(ctx, db, search, bookID); err != nil {
 		log.Printf("book: sync index failed id=%d: %v", bookID, err)
 	}
 }
 
-// syncIndex 从 DB 组装多语言文档并写入搜索索引。
-func (uc *BookUsecase) syncIndex(ctx context.Context, bookID uint64) error {
+// syncBookIndex 从 DB 组装多语言文档并写入搜索索引（建书/翻译/上下架共用）。
+// 读主库：刚写入的翻译/状态必须立刻可见；未注入搜索（测试/未配置）时跳过。
+func syncBookIndex(ctx context.Context, db *gorm.DB, search *SearchUsecase, bookID uint64) error {
+	if search == nil {
+		return nil
+	}
+	db = db.Clauses(gormdb.Write)
 	var b data.Book
-	if err := uc.db.WithContext(ctx).First(&b, bookID).Error; err != nil {
+	if err := db.WithContext(ctx).First(&b, bookID).Error; err != nil {
 		return err
 	}
 	var trs []data.BookTranslation
-	uc.db.WithContext(ctx).Where("book_id = ?", bookID).Find(&trs)
-	doc := data.SearchDoc{BookID: b.ID, Lang: b.Lang, Status: int(b.Status),
+	if err := db.WithContext(ctx).Where("book_id = ?", bookID).Find(&trs).Error; err != nil {
+		return err
+	}
+	// 热度 = 有效评论数（status=1）；下架/待审评论不计数
+	var comments int64
+	if err := db.WithContext(ctx).Model(&data.Comment{}).
+		Where("book_id = ? AND status = 1", bookID).Count(&comments).Error; err != nil {
+		return err
+	}
+	doc := data.SearchDoc{BookID: b.ID, Lang: b.Lang, Status: int(b.Status), Hot: comments,
 		CreatedAt: b.CreatedAt.Format("2006-01-02")}
-	setLang(&doc, b.Lang, b.Title, b.Summary) // 先落基础语言，再被翻译覆盖
+	setLangBase(&doc, b.Title, b.Summary) // 基础语言先填满四语，翻译再逐语覆盖
 	for _, tr := range trs {
-		setLang(&doc, tr.Lang, tr.Title, tr.Summary)
+		setLangTranslation(&doc, tr.Lang, tr.Title, tr.Summary)
 	}
 	doc.AuthorZh, doc.AuthorEn, doc.AuthorJa, doc.AuthorKo = b.Author, b.Author, b.Author, b.Author
-	return uc.search.SyncIndex(ctx, doc)
+	return search.SyncIndex(ctx, doc)
 }
 
-// setLang 按语言填入标题/简介字段（zh-CN 及未列语言归 zh 位）。
-func setLang(doc *data.SearchDoc, lang, title, summary string) {
+// setLangBase 基础语言内容填入全部语种字段，保证任意语言搜索都能命中该书。
+func setLangBase(doc *data.SearchDoc, title, summary string) {
+	doc.TitleZh, doc.SummaryZh = title, summary
+	doc.TitleEn, doc.SummaryEn = title, summary
+	doc.TitleJa, doc.SummaryJa = title, summary
+	doc.TitleKo, doc.SummaryKo = title, summary
+}
+
+// setLangTranslation 仅覆盖对应语种位；索引只支持 zh/en/ja/ko，其他语言忽略。
+func setLangTranslation(doc *data.SearchDoc, lang, title, summary string) {
 	switch pkg.NormalizeLang(lang) {
 	case "en":
 		doc.TitleEn, doc.SummaryEn = title, summary
@@ -257,7 +278,7 @@ func setLang(doc *data.SearchDoc, lang, title, summary string) {
 		doc.TitleJa, doc.SummaryJa = title, summary
 	case "ko":
 		doc.TitleKo, doc.SummaryKo = title, summary
-	default:
+	case "zh-CN":
 		doc.TitleZh, doc.SummaryZh = title, summary
 	}
 }

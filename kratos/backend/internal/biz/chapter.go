@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"gorm.io/gorm"
@@ -18,13 +19,19 @@ import (
 	"open-novel/backend/internal/pkg"
 )
 
+// VIPChecker 提供会员有效性判定（*PaymentUsecase 实现）。
+type VIPChecker interface {
+	IsVipActive(ctx context.Context, uid uint64) (bool, time.Time)
+}
+
 type ChapterUsecase struct {
 	db    *gorm.DB
 	cache *data.Cache
+	vip   VIPChecker
 }
 
-func NewChapterUsecase(d *data.Data) *ChapterUsecase {
-	return &ChapterUsecase{db: d.DB, cache: d.Cache}
+func NewChapterUsecase(d *data.Data, vip VIPChecker) *ChapterUsecase {
+	return &ChapterUsecase{db: d.DB, cache: d.Cache, vip: vip}
 }
 
 type ChapterItem struct {
@@ -62,6 +69,8 @@ func (uc *ChapterUsecase) CreateChapter(ctx context.Context, bookID uint64, chap
 	if err != nil {
 		return nil, pkg.ErrChapterCflt
 	}
+	// 目录缓存失效：新建章节后列表必须立即包含本章
+	uc.cache.DelPattern(ctx, fmt.Sprintf("chapter:list:%d:*", bookID))
 	// CDN 失效：新建章节清掉同名旧 key（若存在）；未启用或未配 purge 端点时为空操作
 	PurgeChapterAsync(ch.ID, lang)
 	return &ChapterItem{ID: ch.ID, BookID: ch.BookID, ChapterNo: ch.ChapterNo, Title: ch.Title,
@@ -92,10 +101,10 @@ func (uc *ChapterUsecase) ListChapters(ctx context.Context, bookID uint64, p pkg
 				CreatedAt: c.CreatedAt.Format("2006-01-02T15:04:05Z07:00")})
 		}
 		b, err := json.Marshal(struct {
-			List []ChapterItem `json:"list"`
-			Total int64        `json:"total"`
-			Page  int          `json:"page"`
-			PageSize int       `json:"page_size"`
+			List     []ChapterItem `json:"list"`
+			Total    int64         `json:"total"`
+			Page     int           `json:"page"`
+			PageSize int           `json:"page_size"`
 		}{items, total, p.Page, p.PageSize})
 		return string(b), err
 	})
@@ -120,10 +129,30 @@ type ChapterContentItem struct {
 	Lang      string
 	Content   string
 	IsVip     uint8 // CDN 缓存头判定（VIP 章节禁止静态化）
+	NoStore   bool  // 管理端/下架内容禁止 CDN 缓存
+}
+
+// chapterAccess 正文访问判定：书籍下架→NOT_FOUND；章节禁用→CHAPTER_DISABLED；
+// VIP 章节要求登录且会员有效；管理端直接放行（含下架/禁用/VIP）。纯函数便于单测。
+func chapterAccess(bookStatus int8, chStatus, chVip uint8, uid int64, vipActive, isStaff bool) error {
+	if isStaff {
+		return nil
+	}
+	if bookStatus == 0 {
+		return pkg.ErrChapterNF
+	}
+	if chStatus == 0 {
+		return pkg.ErrChapterDisabled
+	}
+	if chVip == 1 && (uid == 0 || !vipActive) {
+		return pkg.ErrVIPRequired
+	}
+	return nil
 }
 
 // GetChapterContent 正文；缓存 key 含 book_id+chapter_id+lang；无内容缓存空值 60s。
-func (uc *ChapterUsecase) GetChapterContent(ctx context.Context, chapterID uint64, lang string) (*ChapterContentItem, error) {
+// uid=0 表示匿名；VIP 章节在读取缓存/正文前做会员校验。isStaff 跳过下架/VIP/禁用门槛。
+func (uc *ChapterUsecase) GetChapterContent(ctx context.Context, uid int64, chapterID uint64, lang string, isStaff bool) (*ChapterContentItem, error) {
 	if chapterID == 0 {
 		return nil, pkg.ErrInvalidArgument
 	}
@@ -131,8 +160,20 @@ func (uc *ChapterUsecase) GetChapterContent(ctx context.Context, chapterID uint6
 	if err := uc.db.WithContext(ctx).First(&ch, chapterID).Error; err != nil {
 		return nil, pkg.ErrChapterNF
 	}
-	if ch.Status == 0 {
-		return nil, pkg.ErrChapterDisabled // 禁用章节正文不可读
+	var bookStatus int8
+	if !isStaff { // staff 不看书籍状态，省一次查询
+		var b data.Book
+		if err := uc.db.WithContext(ctx).Select("status").First(&b, ch.BookID).Error; err != nil {
+			return nil, pkg.ErrChapterNF
+		}
+		bookStatus = b.Status
+	}
+	vipActive := false
+	if !isStaff && ch.IsVip == 1 && uid != 0 && uc.vip != nil {
+		vipActive, _ = uc.vip.IsVipActive(ctx, uint64(uid))
+	}
+	if err := chapterAccess(bookStatus, ch.Status, ch.IsVip, uid, vipActive, isStaff); err != nil {
+		return nil, err
 	}
 	key := fmt.Sprintf("chapter:content:%d:%d:%s", ch.BookID, chapterID, lang)
 	payload, err := uc.cache.GetOrLoad(ctx, key, func() (string, error) {
@@ -154,7 +195,8 @@ func (uc *ChapterUsecase) GetChapterContent(ctx context.Context, chapterID uint6
 	if err := json.Unmarshal([]byte(payload), &ct); err != nil {
 		return nil, pkg.ErrChapterDB
 	}
-	return &ChapterContentItem{ID: ct.ID, ChapterID: ct.ChapterID, Lang: ct.Lang, Content: ct.Content, IsVip: ch.IsVip}, nil
+	return &ChapterContentItem{ID: ct.ID, ChapterID: ct.ChapterID, Lang: ct.Lang, Content: ct.Content,
+		IsVip: ch.IsVip, NoStore: isStaff || bookStatus == 0}, nil
 }
 
 func (uc *ChapterUsecase) GetProgress(ctx context.Context, uid int64, bookID uint64) (*data.ReadingProgress, error) {

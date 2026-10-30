@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -150,6 +151,9 @@ func TestGetReports(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if rep.Currency == "" {
+		t.Fatal("currency: empty currency must resolve to a default")
+	}
 	today := time.Now().Format("2006-01-02")
 	checkDates := func(name string, pts []string) {
 		t.Helper()
@@ -168,6 +172,15 @@ func TestGetReports(t *testing.T) {
 	if rep.OrderReport.ByDate[0].Amount < 0 || rep.VipReport.TotalAmount < 0 {
 		t.Fatal("amount fields must be >= 0")
 	}
+}
+
+func orderAmountOf(rows []*adminv1.CurrencyAmount, currency string) int64 {
+	for _, r := range rows {
+		if r.Currency == currency {
+			return r.Amount
+		}
+	}
+	return 0
 }
 
 func datesOfAmount(pts []*adminv1.DateAmountPoint) []string {
@@ -197,15 +210,22 @@ func TestGetStatsExt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if base.OrderCount < 0 || base.OrderAmount < 0 || base.VipCount < 0 {
+	if base.OrderCount < 0 || base.VipCount < 0 {
 		t.Fatal("stats ext fields must be >= 0")
 	}
+	for _, a := range base.OrderAmounts {
+		if a.Amount < 0 {
+			t.Fatal("order amount must be >= 0")
+		}
+	}
+	baseUSD := orderAmountOf(base.OrderAmounts, "USD")
 
 	now := time.Now()
 	exp := now.AddDate(0, 0, 30)
+	email := func(s string) sql.NullString { return sql.NullString{String: s, Valid: true} }
 	var u1, u2 data.User
-	u1 = data.User{Username: marker + "_u1", Email: marker + "_u1@t.co", PasswordHash: "x", Status: 1, CreatedAt: now}
-	u2 = data.User{Username: marker + "_u2", Email: marker + "_u2@t.co", PasswordHash: "x", Status: 1, VipExpiresAt: &exp, CreatedAt: now.Add(-24 * time.Hour)}
+	u1 = data.User{Username: marker + "_u1", Email: email(marker + "_u1@t.co"), PasswordHash: "x", Status: 1, CreatedAt: now}
+	u2 = data.User{Username: marker + "_u2", Email: email(marker + "_u2@t.co"), PasswordHash: "x", Status: 1, VipExpiresAt: &exp, CreatedAt: now.Add(-24 * time.Hour)}
 	if err := d.DB.WithContext(ctx).Create(&u1).Error; err != nil {
 		t.Fatal(err)
 	}
@@ -239,8 +259,8 @@ func TestGetStatsExt(t *testing.T) {
 	if after.OrderCount < base.OrderCount+1 {
 		t.Fatalf("order_count: want >= %d, got %d", base.OrderCount+1, after.OrderCount)
 	}
-	if after.OrderAmount < base.OrderAmount+666 {
-		t.Fatalf("order_amount: want >= %d, got %d", base.OrderAmount+666, after.OrderAmount)
+	if got := orderAmountOf(after.OrderAmounts, "USD"); got < baseUSD+666 {
+		t.Fatalf("order_amount USD: want >= %d, got %d", baseUSD+666, got)
 	}
 	if after.PendingComments < base.PendingComments+1 {
 		t.Fatalf("pending_comments: want >= %d, got %d", base.PendingComments+1, after.PendingComments)

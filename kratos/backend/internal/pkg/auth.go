@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
-	"os"
 	"strconv"
 	"time"
 
@@ -13,14 +12,10 @@ import (
 )
 
 // 鉴权核心（从 svc1 移植）：access JWT（HS256）+ refresh 随机串 Redis 轮换（7d）。
-// JWT_SECRET 环境变量为唯一签名密钥来源，未设置用开发默认值，生产必须注入。
+// 签名密钥来自配置（JWT_SECRET 环境变量可覆盖），生产必须注入非默认值。
 
-func jwtSecret() string {
-	if s := os.Getenv("JWT_SECRET"); s != "" {
-		return s
-	}
-	return "dev-secret-change-me"
-}
+// DefaultJWTSecret 开发默认密钥；生产环境使用会被 main 拒绝启动。
+const DefaultJWTSecret = "dev-secret-change-me"
 
 // Claims 是 access_token 中的业务声明。
 type Claims struct {
@@ -72,18 +67,22 @@ func RequireAdmin(c Claims) error {
 // AuthManager 签发 access/refresh 双令牌；refresh 存 Redis（轮换制，GETDEL 防重放）。
 type AuthManager struct {
 	rdb        *redis.Client
+	secret     string
 	accessTTL  time.Duration
 	refreshTTL time.Duration
 }
 
-func NewAuthManager(rdb *redis.Client, accessTTL, refreshTTL time.Duration) *AuthManager {
+func NewAuthManager(rdb *redis.Client, secret string, accessTTL, refreshTTL time.Duration) *AuthManager {
 	if accessTTL <= 0 {
 		accessTTL = 30 * time.Minute
 	}
 	if refreshTTL <= 0 {
 		refreshTTL = 7 * 24 * time.Hour
 	}
-	return &AuthManager{rdb: rdb, accessTTL: accessTTL, refreshTTL: refreshTTL}
+	if secret == "" {
+		secret = DefaultJWTSecret
+	}
+	return &AuthManager{rdb: rdb, secret: secret, accessTTL: accessTTL, refreshTTL: refreshTTL}
 }
 
 func (m *AuthManager) AccessTTL() time.Duration { return m.accessTTL }
@@ -97,7 +96,7 @@ func (m *AuthManager) Issue(ctx context.Context, uid int64, username string, rol
 		"role":     role,
 		"iat":      now.Unix(),
 		"exp":      now.Add(m.accessTTL).Unix(),
-	}).SignedString([]byte(jwtSecret()))
+	}).SignedString([]byte(m.secret))
 	if err != nil {
 		return "", "", err
 	}
@@ -116,7 +115,7 @@ func (m *AuthManager) Parse(token string) (Claims, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, ErrUnauth
 		}
-		return []byte(jwtSecret()), nil
+		return []byte(m.secret), nil
 	})
 	if err != nil || !tok.Valid {
 		return Claims{}, ErrUnauth

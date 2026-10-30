@@ -5,6 +5,7 @@ package middleware
 
 import (
 	"context"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
@@ -18,6 +19,11 @@ const (
 	supportedVersion = "v1"
 )
 
+// isWebhookPath 渠道回调路径：第三方不会携带 X-Api-Version，跳过版本校验。
+func isWebhookPath(path string) bool {
+	return strings.HasPrefix(path, "/api/payments/webhook/")
+}
+
 // ApiVersion 校验 HTTP 请求头 X-Api-Version；缺失或值不支持时拒绝。
 func ApiVersion() middleware.Middleware {
 	return func(next middleware.Handler) middleware.Handler {
@@ -26,7 +32,11 @@ func ApiVersion() middleware.Middleware {
 			if !ok {
 				return next(ctx, req)
 			}
-			if _, isHTTP := tr.(*khttp.Transport); !isHTTP {
+			ht, isHTTP := tr.(*khttp.Transport)
+			if !isHTTP {
+				return next(ctx, req)
+			}
+			if isWebhookPath(ht.PathTemplate()) || isWebhookPath(ht.Request().URL.Path) {
 				return next(ctx, req)
 			}
 			if v := tr.RequestHeader().Get(apiVersionHeader); v != supportedVersion {

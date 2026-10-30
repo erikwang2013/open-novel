@@ -13,7 +13,7 @@ USE novel;
 CREATE TABLE IF NOT EXISTS novel_user (
   id            BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   username      VARCHAR(64)  NOT NULL COMMENT '登录账号',
-  email         VARCHAR(128) NOT NULL DEFAULT '' COMMENT '邮箱',
+  email         VARCHAR(128) NULL DEFAULT NULL COMMENT '邮箱（未绑定为 NULL，唯一键允许多行 NULL）',
   password_hash VARCHAR(255) NOT NULL COMMENT 'bcrypt 密码哈希',
   nickname      VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '默认昵称',
   nickname_i18n JSON         NULL COMMENT '多语言昵称覆盖 {"en":"..","ja":".."}',
@@ -302,7 +302,7 @@ CREATE TABLE IF NOT EXISTS novel_payment_provider (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='支付方式表';
 
 -- ------------------------------------------------------------
--- 支付订单表：一次支付对应一行（VIP 套餐无 plan 列，plan 由金额反查）
+-- 支付订单表：一次支付对应一行（下单时固化 plan/days，回调按订单结算）
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS novel_payment_order (
   id         BIGINT UNSIGNED NOT NULL PRIMARY KEY,
@@ -311,6 +311,8 @@ CREATE TABLE IF NOT EXISTS novel_payment_order (
   amount     DECIMAL(10,2)  NOT NULL COMMENT '金额（分转元存储）',
   currency   CHAR(3)        NOT NULL DEFAULT 'USD' COMMENT '币种',
   provider   VARCHAR(32)    NOT NULL DEFAULT '' COMMENT '渠道码：stripe/np_usdt',
+  plan       VARCHAR(32)    NOT NULL DEFAULT '' COMMENT '下单套餐码：monthly/quarterly/yearly（老订单为空）',
+  days       INT            NOT NULL DEFAULT 0 COMMENT '下单套餐天数',
   status     TINYINT        NOT NULL DEFAULT 0 COMMENT '0待支付 1已支付 2失败 3已关闭',
   tx_id      VARCHAR(128)   NOT NULL DEFAULT '' COMMENT '支付渠道交易号',
   paid_at    DATETIME       NULL COMMENT '支付时间',
@@ -335,7 +337,7 @@ CREATE TABLE IF NOT EXISTS novel_vip_plan (
   status      TINYINT        NOT NULL DEFAULT 1 COMMENT '0禁用 1启用',
   created_at  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at  DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  UNIQUE KEY uk_plan_code (plan_code)
+  UNIQUE KEY uk_plan_currency (plan_code, currency)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='VIP 套餐表';
 
 -- ------------------------------------------------------------
@@ -357,11 +359,26 @@ CREATE TABLE IF NOT EXISTS novel_audit_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='审计日志表';
 
 -- ------------------------------------------------------------
+-- 存量库迁移段（付款订单套餐字段 / 套餐唯一键 / 邮箱可空）。
+-- 注意：MySQL 8 的 ADD COLUMN 不幂等，以下三条只对旧库手动执行一次，
+-- 不放进下方自动执行段：
+-- ALTER TABLE novel_payment_order ADD COLUMN plan VARCHAR(32) NOT NULL DEFAULT '' AFTER provider;
+-- ALTER TABLE novel_payment_order ADD COLUMN days INT NOT NULL DEFAULT 0 AFTER plan;
+-- ALTER TABLE novel_vip_plan DROP INDEX uk_plan_code, ADD UNIQUE KEY uk_plan_currency (plan_code, currency);
+-- 上线前检查同币种同价（结果应为空；否则列表展示价与实际下单回退价不一致）：
+-- SELECT currency, amount_cents, COUNT(*) FROM novel_vip_plan WHERE status=1
+--  GROUP BY currency, amount_cents HAVING COUNT(*) > 1;
+-- ------------------------------------------------------------
+
+-- ------------------------------------------------------------
 -- 存量库幂等迁移（snowflake 主键化）：移除 id 自增。
 -- 新装库（上面建表已无 AUTO_INCREMENT）执行本段无副作用；
 -- 已上线库执行后 id 由应用层 snowflake 分配——旧数据 1..N 与
 -- snowflake ≥2^41 数值域不重叠，无需改写存量 id。每行可重复执行。
+-- 邮箱可空迁移：空串改为 NULL（唯一键允许多行 NULL，每行可重复执行）。
 -- ------------------------------------------------------------
+ALTER TABLE novel_user MODIFY email VARCHAR(128) NULL DEFAULT NULL;
+UPDATE novel_user SET email = NULL WHERE email = '';
 ALTER TABLE novel_user MODIFY id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE novel_book MODIFY id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE novel_book_translation MODIFY id BIGINT UNSIGNED NOT NULL;
