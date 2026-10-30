@@ -55,7 +55,7 @@
 | :--- | :--- | :--- | :--- |
 | GET | `/api/books/{book_id}/chapters` | 章节列表（分页 + `lang`） | 无 |
 | POST | `/api/books/{book_id}/chapters` | 创建章节 | Bearer（管理） |
-| GET | `/api/chapters/{id}/content` | 章节正文（`lang`） | VIP 章节需 Bearer |
+| GET | `/api/chapters/{id}/content` | 章节正文（`lang`）；VIP 章节需登录且 VIP 有效（否则 `140403 VIP_REQUIRED`）；下架书的章节返回 404；管理端（role≥3）可查看任意状态且响应 `no-store` | VIP 章节需 Bearer |
 | GET | `/api/progress` | 阅读进度 | Bearer |
 | PUT | `/api/progress` | 保存阅读进度（`position` 支持段落/滚动位置粒度） | Bearer |
 | GET | `/api/bookshelf` | 书架 | Bearer |
@@ -93,7 +93,8 @@
 
 | 方法 | 路径 | 说明 | 鉴权 |
 | :--- | :--- | :--- | :--- |
-| GET | `/api/stats/overview` | 仪表盘统计：书籍/用户/评论数、DAU 近似（当日登录 ∪ 当日搜索的去重用户）、热门书籍（复用 `/api/search/hot`）、热门搜索词（搜索日志聚合） | Bearer（管理） |
+| GET | `/api/stats/overview` | 仪表盘统计：书籍/用户/评论数、DAU 近似（当日登录 ∪ 当日搜索的去重用户）、热门书籍（复用 `/api/search/hot`）、热门搜索词（搜索日志聚合）；收入按币种分组返回 `order_amounts` | Bearer（管理） |
+| GET | `/api/admin/reports` | 报表：订单/VIP/用户/内容聚合；`currency` 可选（空=最近已付订单币种，无则 USD），响应回显实际统计币种，金额只统计该币种 | Bearer（管理） |
 | GET | `/api/admin/categories` | 分类列表（全量，含 status/sort_order） | Bearer（管理） |
 | GET | `/api/admin/tags` | 标签列表（全量，含 status） | Bearer（管理） |
 | GET | `/api/admin/audit-logs` | 审计日志分页查询（筛选 user_id/action/target_type/target_id/start_time/end_time，按时间倒序） | Bearer（管理） |
@@ -133,14 +134,16 @@
 | :--- | :--- | :--- | :--- |
 | POST | `/api/payments/order` | 创建 VIP 订单 `{plan, lang}` → `{order_no, amount, currency, checkout_url, provider}`；同 user+套餐未支付订单幂等复用 | Bearer |
 | GET | `/api/payments/order/{order_no}` | 查订单状态（仅本人；未支付超 15 分钟自动关闭为 3） | Bearer |
-| GET | `/api/payments/plans` | 公开 VIP 套餐列表（仅 status=1，sort 升序；DB 套餐表优先，回退内置默认） | 无 |
+| GET | `/api/payments/plans?lang=` | 公开 VIP 套餐列表（按 lang 路由渠道的结算币种过滤；仅 status=1，sort 升序；USD 无套餐行时回退内置默认，无匹配渠道返回空列表） | 无 |
 | GET | `/api/payments/vip-status` | 当前用户 VIP 状态 → `{active, vip_expires_at?}` | Bearer |
 | GET | `/api/payments/methods?lang=` | 支付方式列表（enabled 且 lang/region 匹配，sort 升序） | 无 |
-| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe / nowpayments / razorpay / komoju / portone / mercadopago / xendit / paypal / alipay / wechatpay_global / unionpay，验签在内部；回调金额=订单金额强校验，幂等 settle） | 无 |
+| POST | `/api/payments/webhook/{provider}` | 渠道回调（stripe / nowpayments / razorpay / komoju / portone / mercadopago / xendit / paypal / alipay / wechatpay_global / unionpay，验签在内部；回调金额=订单金额强校验，幂等 settle；无需 `X-Api-Version`，成功应答纯文本 `success`，失败返回 5xx 供渠道重试） | 无 |
 
 ### 渠道与 config 键（T-P-19~20）
 
 provider 行由 admin「支付方式」页创建，config 键 AES-GCM 加密存储；语言路由由行的 lang/region 决定。
+
+> 多币种：非 USD 结算渠道需在 config 设置 `currency`（未设置时默认 alipay/unionpay→CNY、komoju→JPY、portone→KRW、razorpay→INR、mercadopago→BRL、xendit→IDR），并在 `novel_vip_plan` 为同一币种建三档套餐。缺少该币种套餐时下单会返回错误，不会把 USD 默认金额当本地币收取。回调统一按订单上固化的 plan/days 结算。
 
 | 渠道码 | 语言路由 | config 键 | 验签方式 |
 | :--- | :--- | :--- | :--- |
@@ -151,7 +154,7 @@ provider 行由 admin「支付方式」页创建，config 键 AES-GCM 加密存�
 | portone | ko | `api_secret` `webhook_token` | X-IAMPORT-TOKEN 比对 |
 | mercadopago | pt-BR | `access_token` | IPN 无签名，access_token 回查 GET /v1/payments/{id} |
 | xendit | id / th / vn | `api_key` `callback_token` | X-CALLBACK-TOKEN 比对 |
-| paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | 官方 verify-webhook-signature API 验签（复用 OAuth access_token） |
+| paypal | * | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱、`return_url` / `cancel_url` 跳回） | 官方 verify-webhook-signature API 验签（复用 OAuth access_token）；APPROVED 后服务端 capture 成功才结算 |
 | alipay | zh-CN | `app_id` `merchant_private_key` `alipay_public_key` `notify_url`（可选 `base_url` 沙箱） | 表单 notify RSA2 验签（沙箱可测） |
 | wechatpay_global | *（国际版） | `app_id` `mch_id` `merchant_serial_no` `merchant_private_key` `platform_public_key` `apiv3_key` `notify_url`（可选 `base_url` 区域/沙箱覆盖） | 平台公钥 RSA-SHA256 验签 + apiv3_key AES-GCM 解密 resource |
 | unionpay | zh-CN | `mer_id` `sign_cert_id` `merchant_private_key` `unionpay_public_key` `notify_url`（可选 `front_url` `base_url` 沙箱覆盖） | 字典序 RSA-SHA256 签名验签（notify 表单，应答 `success`） |
@@ -163,7 +166,7 @@ zh-CN 支付宝已实现（沙箱可配置）；微信支付国际版（wechatpa
 | 方法 | 路径 | 说明 | 鉴权 |
 | :--- | :--- | :--- | :--- |
 | GET | `/api/payments/admin/orders` | 订单分页/按用户/方式/状态/时间筛选 | Bearer（管理） |
-| GET | `/api/payments/admin/order-stats` | 流水汇总统计 | Bearer（管理） |
+| GET | `/api/payments/admin/order-stats` | 流水汇总统计；`currency` 可选（空=最近已付订单币种，无则 USD），响应回显实际币种 | Bearer（管理） |
 | GET | `/api/payments/admin/providers` | 支付方式列表（含密钥配置） | Bearer（管理） |
 | POST | `/api/payments/admin/providers` | 创建支付方式（config 密钥 AES-GCM 加密存储） | Bearer（管理） |
 | PUT | `/api/payments/admin/providers/{id}` | 更新支付方式 | Bearer（管理） |
@@ -174,11 +177,11 @@ zh-CN 支付宝已实现（沙箱可配置）；微信支付国际版（wechatpa
 | PUT | `/api/payments/admin/plans/{id}` | 更新 VIP 套餐 | Bearer（管理） |
 | DELETE | `/api/payments/admin/plans/{id}` | 删除 VIP 套餐 | Bearer（管理） |
 
-错误码：`190401 PAYMENT_CREATE_FAILED`、`190402 ORDER_NOT_FOUND`、`190403 AMOUNT_MISMATCH`、`190404 PAYMENT_PENDING`、`190405 PROVIDER_DISABLED`。
+错误码：`190401 PAYMENT_CREATE_FAILED`、`190402 ORDER_NOT_FOUND`、`190403 AMOUNT_MISMATCH`、`190405 PROVIDER_DISABLED`。
 
 ## 限流
 
-按 IP 固定窗口（`X-Forwarded-For`）：
+按 IP 固定窗口（取 `X-Forwarded-For` 最后一跳，缺省用连接地址；仅在可信反向代理后有效，禁止直接暴露 8000）：
 
 | 路径 | 限额 |
 | :--- | :--- |

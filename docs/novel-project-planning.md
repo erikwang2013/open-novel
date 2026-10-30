@@ -147,12 +147,12 @@ index_settings:
 
 ### 4. 支付与 VIP 模块（2026-08 已实现，T-P-01~20）
 
-- **Provider 抽象**：`CreateCheckout / Verify / VerifyWebhook` 接口 + 注册表；已接入 10 个渠道——Stripe（stripe-go v81 Checkout Session + ConstructEvent 验签）、PayPal、NOWPayments（USDT，HMAC-SHA512 IPN 验签）、Razorpay(hi)、KOMOJU(ja)、PortOne(ko)、Mercado Pago(pt-BR)、Xendit(id/th/vn)、Alipay（zh-CN，RSA2 验签，2026-08-29 接入，沙箱可用）、WeChat Pay Global（国际版，HK API v3 H5，WECHATPAY2 请求签名 + 平台公钥 RSA-SHA256 验签 + apiv3_key AES-GCM 解密 resource，2026-08-29 接入）；国内微信支付未接入（需中国大陆商户资质）。
-- **下单 / 查单**：幂等（同 user+套餐未支付订单复用）、15 分钟超时自动关闭、回调金额=订单金额强校验、webhook 幂等 settle；金额一律整数分。
-- **VIP 激活**：支付成功 → `novel_user.vip_expires_at` 续期（可叠加）；客户端按 `chapter.isVip` + `/api/payments/vip-status` 判断展示 VIP 引导，后端不拦截正文。
-- **语言路由**：`GET /api/payments/methods?lang=` 按 enabled / lang / region / sort 返回支付方式；DB 套餐表优先于内置默认。
-- **管理端**：流水查询与统计、支付方式 CRUD + 启停（密钥 AES-GCM 加密存储）、VIP 套餐 CRUD，全部 requireAdmin。
-- **安全**：回调验签、金额防篡改、幂等 settle、审计日志、日志脱敏。
+- **Provider 抽象**：`CreateCheckout / Verify / VerifyWebhook` 接口 + 注册表；已接入 11 个渠道——Stripe（stripe-go v81 Checkout Session + ConstructEvent 验签）、PayPal（APPROVED 后服务端 capture）、NOWPayments（USDT，HMAC-SHA512 IPN 验签）、Razorpay(hi)、KOMOJU(ja)、PortOne(ko)、Mercado Pago(pt-BR)、Xendit(id/th/vn)、Alipay（zh-CN，RSA2 验签，2026-08-29 接入，沙箱可用）、WeChat Pay Global（国际版，HK API v3 H5，WECHATPAY2 请求签名 + 平台公钥 RSA-SHA256 验签 + apiv3_key AES-GCM 解密 resource，2026-08-29 接入）、UnionPay（zh-CN，网关表单 RSA2 验签）；国内微信支付未接入（需中国大陆商户资质）。
+- **下单 / 查单**：幂等复用键 (user, provider, currency, amount, plan, status=0)；订单快照 plan/days/currency；15 分钟超时自动关闭；回调金额/币种强校验，按订单快照幂等 settle；金额一律整数分。
+- **VIP 激活**：支付成功 → `novel_user.vip_expires_at` 续期（可叠加）；客户端按 `chapter.isVip` + `/api/payments/vip-status` 展示引导；后端对 VIP 正文做服务端鉴权（匿名/非会员 140403，管理端 staff 可预览且 no-store）。
+- **语言路由**：`GET /api/payments/methods?lang=` 按 enabled / lang / region / sort 返回支付方式；公开套餐按 lang 路由渠道币种过滤，USD 无套餐行回退内置默认，非 USD 必须有同币种套餐。
+- **管理端**：流水查询与统计（按币种）、支付方式 CRUD + 启停（密钥 AES-GCM 加密存储）、VIP 套餐 CRUD，全部 requireAdmin。
+- **安全**：回调验签、金额防篡改、幂等 settle、JWT 密钥配置化、CORS 来源白名单、限流/封禁按可信代理 IP、webhook 成功 `success` / 失败 5xx、审计日志、日志脱敏。
 
 ### 5. Flutter 多语言与多端适配（要点）
 
@@ -214,12 +214,13 @@ message GetBookRequest {
 
 | 中间件 | 职责 |
 | :--- | :--- |
-| `middleware/jwt` | JWT 认证 + RefreshToken 续期 |
-| `middleware/ratelimit` | 令牌桶限流，防刷接口（登录/搜索/评论） |
-| `middleware/recovery` | 全局 panic 恢复，防止单点故障拖垮进程 |
-| `middleware/validate` | protovalidate 入参校验（信任边界） |
-| `middleware/tracing` | OpenTelemetry 链路追踪 |
-| `internal/middleware/security` | security-go 攻击检测（27 检测器：注入/协议/数据/文件），High/Critical 拦截，IP 黑名单自动封禁 |
+| `middleware.OptionalAuth` | JWT 解析（Bearer），写操作在 service 层强制校验；RefreshToken 轮换（`pkg.AuthManager`） |
+| `middleware.RateLimit` | 固定窗口限流（按路径/IP，登录/搜索/评论/回调） |
+| `middleware.ApiVersion` | `X-Api-Version` 协商；支付回调路径豁免 |
+| `middleware.Security` | security-go 攻击检测（27 检测器：注入/协议/数据/文件），High/Critical 拦截 + IP 黑名单；排除 `Authorization` JWT 误报 |
+| `server CORS filter` | CORS 来源白名单 / 预检（`CORS_ORIGINS`） |
+| `recovery.Recovery` | 全局 panic 恢复，防止单点故障拖垮进程 |
+| `logging.Server` | 请求日志 |
 
 ```go
 import (
@@ -240,9 +241,9 @@ httpSrv := http.NewServer(
 
 **防护目标与手段**：
 
-- **认证授权**：JWT（短时 access + RefreshToken 轮换）；RBAC 角色权限（普通用户 / 作者 / 管理员，service 层 `requireAdmin` 校验 role=3）。
-- **Web 攻击面**：所有 HTTP 请求经 `security-go` 实时扫描（URL/Query/Headers/Cookies），命中高危载荷（SQL/XSS/命令注入等 27 检测器）直接拦截；SQL 注入 → 全部参数化查询 / ORM；XSS → 输出转义 + CSP 响应头；CSRF → 网关校验 `Origin/Referer` + SameSite Cookie，写操作走 Authorization Header。
-- **支付安全**：渠道回调验签（Stripe `ConstructEvent` 签名 / NOWPayments HMAC-SHA512 / Alipay RSA2）、回调金额=订单金额强校验、webhook 幂等 settle、支付回调限流 30/min。
+- **认证授权**：JWT（短时 access + RefreshToken 轮换，密钥来自配置/`JWT_SECRET`，`APP_ENV=production` 拒绝默认密钥）；RBAC 角色权限（普通用户 / 作者 / 管理员，service 层 `requireAdmin` 校验 role=3）。
+- **Web 攻击面**：所有 HTTP 请求经 `security-go` 实时扫描（URL/Query/Headers/Cookies），命中高危载荷（SQL/XSS/命令注入等 27 检测器）直接拦截；SQL 注入 → 全部参数化查询 / ORM；XSS → 输出转义 + CSP 响应头；CORS → 来源白名单（`CORS_ORIGINS`）+ 预检；`Authorization: Bearer <JWT>` 不参与 data_leak 正则扫描（合法凭证）。限流/封禁按 `X-Forwarded-For` 最后一跳（需可信反向代理）。
+- **支付安全**：渠道回调验签（Stripe `ConstructEvent` 签名 / NOWPayments HMAC-SHA512 / Alipay RSA2）、订单快照 plan/days/currency、回调金额/币种强校验、PayPal capture、webhook 幂等 settle、成功 `success` / 失败 5xx、支付回调限流 30/min。
 - **敏感数据**：密码 bcrypt/argon2 哈希存储；支付渠道密钥（config）AES-GCM 加密存储，不入库明文。
 - **传输安全**：全链路 HTTPS/TLS（Nginx 终结）。
 - **审计日志**：管理操作、登录、支付写审计表（`novel_audit_log`），留存可追溯。
@@ -291,8 +292,8 @@ services:
 ### CI/CD（GitHub Actions）
 
 1. Flutter Web 构建 → 静态产物。
-2. Go-Kratos 单测 + golangci-lint + 镜像构建。
-3. 部署至 Kubernetes / 阿里云 ACK，镜像滚动更新。
+2. Go 构建 / `go vet` / `go test`（本地与 CI）。
+3. 推送 `main` → GitHub Actions 递增 `v*` tag 并创建 Release；生产部署按实际环境（Nginx + docker compose / K8s）执行。
 
 ---
 
@@ -310,7 +311,7 @@ services:
 
 ### 关键资源清单
 
-- **开发环境**：Go 1.22+、Flutter SDK、MySQL 8.0、Redis 7.x、OpenSearch 2.x。
+- **开发环境**：Go 1.21+（go.mod 要求 1.25，首次构建自动下载工具链）、Flutter SDK、MySQL 8.0、Redis 7.x、OpenSearch 2.x。
 - **云服务建议**：AWS EC2 (t3.large) + RDS + ElastiCache；或阿里云 ECS + RDS + Redis。
 - **成本估算（首年）**：约 $5000–$10000，初期可先使用云免费额度。
 

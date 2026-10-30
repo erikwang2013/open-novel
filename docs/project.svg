@@ -28,7 +28,7 @@
     <text x="293" y="210" font-size="11" fill="#546e7a">Flutter 全平台</text>
     <text x="293" y="232" font-size="11" fill="#546e7a">Web / Desktop / Mobile</text>
     <text x="293" y="254" font-size="11" fill="#546e7a">Flutter</text>
-    <text x="293" y="276" font-size="11" fill="#546e7a">ArkTS / ArkUI</text>
+    <text x="293" y="276" font-size="11" fill="#546e7a">多端共用 API</text>
   </g>
   <g>
     <rect x="506" y="160" width="218" height="140" rx="12" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
@@ -95,6 +95,6 @@
   <text x="706" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 已完成</text>
   <text x="899" y="478" font-size="11" font-weight="600" fill="#00897b" text-anchor="middle">✓ 已完成</text>
 
-  <text x="500" y="560" font-size="12" fill="#78909c" text-anchor="middle">里程碑：基础 · 多端 · 安全已交付，商业化（VIP / 支付 / 管理后台）已完成 · 推荐与统计已上线 · CDN 缓存加速已上线 · 技术栈 Go-Kratos / Flutter / MySQL / Redis / OpenSearch</text>
+  <text x="500" y="560" font-size="11" fill="#78909c" text-anchor="middle">里程碑：基础 · 多端 · 安全加固 · 商业化（VIP / 多币种支付 / 管理后台）· 推荐/统计 · CDN 加速 · Go-Kratos / Flutter / MySQL / Redis / OpenSearch</text>
   <text x="988" y="628" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>

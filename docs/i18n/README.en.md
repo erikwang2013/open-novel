@@ -30,13 +30,14 @@ Open Novel is a cloud-native, microservice-architecture global multilingual nove
 - **Interactive Community**: Comments and reviews, likes, favorites, reporting and moderation
 - **Search & Discovery**: Multilingual tokenized search, hot keyword rankings, search suggestions (client-side local history of 20 entries + 200 ms debounced suggestions), category browsing
 - **Admin Console**: Content moderation, user management, data statistics (dashboard / DAU / rankings), configuration management (category tags), machine translation workflow (DeepL, /api/admin/translate/*, admin "Translation" page + manual editing), audit log query (/api/admin/audit-logs)
-- **Payments & VIP**: Multi-channel payments via 11 providers (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), VIP plan subscription and renewal, language-based payment method routing (WeChat Pay Global integrated; domestic WeChat Pay not integrated, requires CN merchant qualification)
+- **Payments & VIP**: Multi-channel payments via 11 providers (Stripe, NOWPayments (USDT), Razorpay, KOMOJU, PortOne, Mercado Pago, Xendit, PayPal, Alipay, WeChat Pay Global, UnionPay), multi-currency plans with per-channel currency routing, order snapshots (plan/days/currency), PayPal capture, VIP plan subscription and renewal, language-based payment method routing; server-side VIP chapter authorization (staff can preview with `no-store`) (WeChat Pay Global integrated; domestic WeChat Pay not integrated, requires CN merchant qualification)
+- **Security & Compliance**: configurable JWT secret (production refuses the default), CORS allow-list, rate limiting/banning by trusted-proxy client IP, webhook `success`/5xx contract, nullable unique emails, audit logs
 
 ## System Architecture
 
 ![System architecture diagram](images/en/architecture.svg)
 
-Overall Go-Kratos microservice architecture: Flutter clients interact with the API gateway via CDN cache + Nginx (TLS / static assets / reverse proxy); the gateway routes by domain to backend services such as users, books, chapters, comments, search and recommendations; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api` prefix.
+Overall Go-Kratos microservice architecture: Flutter clients interact with the API gateway via CDN cache + Nginx (TLS / static assets / reverse proxy); the gateway routes by domain to backend services such as users, books, chapters, comments, search, recommendations, payments and admin; the data layer is MySQL master-slave (read/write separation) + Redis cache + OpenSearch search index. Services communicate via gRPC, and external HTTP APIs uniformly use the `/api` prefix.
 
 Other diagrams: project panorama [docs/project.svg](../../docs/project.svg) · request cycle [docs/request-cycle.svg](../../docs/request-cycle.svg) · security architecture [docs/security.svg](../../docs/security.svg) · project structure [docs/structure.svg](../../docs/structure.svg). · project lifecycle [docs/lifecycle.svg](../../docs/lifecycle.svg)
 
@@ -83,7 +84,7 @@ open-novel/
 | :--- | :--- |
 | Client | Flutter (Web / Desktop / Mobile) |
 | Gateway | Nginx + CDN cache (generic purge), Go-Kratos API Gateway (gRPC / HTTP dual protocol) |
-| Server | Go 1.22+, Kratos v2, protobuf / gRPC |
+| Server | Go 1.21+ (go.mod requires 1.25; toolchain auto-downloads on first build), Kratos v2, protobuf / gRPC |
 | Storage | MySQL 8.0 (master-slave), Redis 7.x (Cluster), OpenSearch 2.x, ristretto in-process L1 cache on top of Redis (30 s TTL) |
 | Observability | Prometheus, Grafana, ELK, OpenTelemetry tracing |
 | Operations | Docker Compose, GitHub Actions CI/CD |
@@ -139,11 +140,11 @@ See [apps/README.md](../../apps/README.md) and [apps/client/flutter/README.md](.
 bash scripts/install.sh
 ```
 
-A single command completes the environment check, dependency stack startup and launch hints: it checks whether Docker / Go ≥ 1.22 / Flutter are installed (printing installation hints if anything is missing), runs `docker compose up -d` to start the dependency stack, waits for MySQL to become ready (up to 60 seconds), then prints the startup commands and access addresses for the backend and all three frontends. The script is idempotent and safe to re-run; `bash scripts/install.sh --skip-deps` skips the dependency stack step.
+A single command completes the environment check, dependency stack startup and launch hints: it checks whether Docker / Go (go.mod requires 1.25; Go 1.21+ auto-downloads the toolchain) / Flutter are installed (printing installation hints if anything is missing), runs `docker compose up -d` to start the dependency stack, waits for MySQL to become ready (up to 60 seconds), then prints the startup commands and access addresses for the backend and all three frontends. The script is idempotent and safe to re-run; `bash scripts/install.sh --skip-deps` skips the dependency stack step.
 
 ## Installation
 
-- **Prerequisites**: Docker (with the Compose plugin), Go 1.22+, Flutter 3.x
+- **Prerequisites**: Docker (with the Compose plugin), Go 1.21+ (go.mod requires 1.25; the toolchain is auto-downloaded on first build), Flutter 3.x
 - **One-click**: run `bash scripts/install.sh` and follow the printed hints for the environment check and dependency stack startup
 - **Manual** (equivalent to the script steps):
 
@@ -205,13 +206,13 @@ This repository is the open-source edition for personal study and research. The 
 | Dimension | Open source (this repo) | Commercial edition |
 | :--- | :--- | :--- |
 | Positioning | Personal study, research, secondary development | Complete edition for commercial operations |
-| Go code (non-test) | ~25.5k lines | ~29.1k lines |
+| Go code (non-test) | ~26.0k lines | ~29.1k lines |
 | Backend proto services | 8 | 10 (adds Behavior, Cdn) |
 | RPCs | 70 | 78 |
 | Database tables | 22 | 23 (adds `novel_cdn_provider`) |
 | Admin pages | 16 | 18 (adds behavior analytics, CDN providers) |
 | Clients | Flutter (9 pages) | Flutter + native HarmonyOS (15 ArkTS pages) |
-| Automated tests | 23 test files | 34 test files |
+| Automated tests | 30 test files | 34 test files |
 | License | Personal study/research only; commercial use requires written authorization | Commercial licensing and delivery: **erik@erik.xyz** |
 
 ### Multi-dimensional comparison
@@ -219,10 +220,10 @@ This repository is the open-source edition for personal study and research. The 
 | Dimension | Open source (this repo) | Commercial edition |
 | :--- | :--- | :--- |
 | Feature coverage | 8 proto services, 70 RPCs, 22 tables, 16 admin pages; Flutter client with 9 pages | 10 proto services, 78 RPCs, 23 tables, 18 admin pages; Flutter + HarmonyOS (15 pages); adds multi-CDN, behavior analytics, AI recommendations, Novi pet |
-| Security | JWT/OptionalAuth, rate limiting, security, raw-body and API-version middleware; RBAC, audit and encryption logic | Same middleware chain and security logic (identical `internal/middleware` files); new Behavior/Cdn endpoints use the same JWT, rate-limit and security middleware; no separate security layer |
+| Security | JWT/OptionalAuth (configurable secret), rate limiting (trusted-proxy IP), security (Bearer JWT false-positive excluded), CORS, raw-body and API-version middleware; RBAC, audit, encryption, VIP content authorization | Same middleware chain and security logic (identical `internal/middleware` files); new Behavior/Cdn endpoints use the same JWT, rate-limit and security middleware; no separate security layer |
 | Performance and scale | Go-Kratos + MySQL + Redis + OpenSearch; one server process hosting multiple modules | Same stack and deployment shape; adds AI recommendation cache and multi-CDN purge/preload, with no architectural difference |
 | Data and search | 22 tables; OpenSearch full-text search + MySQL primary data | 23 tables (adds `novel_cdn_provider`); same OpenSearch + MySQL, plus multi-vendor CDN management |
-| Testing and quality | 23 Go test files / 70 test functions across biz/service/data/middleware/cdn/pkg | 34 test files / 107 test functions; new modules include tests. Both editions only have a release workflow, with no automated test gate |
+| Testing and quality | 30 Go test files / 86 test functions across biz/service/data/middleware/cdn/pkg | 34 test files / 107 test functions; new modules include tests. Both editions only have a release workflow, with no automated test gate |
 | Deployment and ops | Docker Compose: MySQL, Redis, OpenSearch; Kratos server + Flutter build scripts | Same Compose and Kratos server; Behavior/Cdn ship with the main service; additionally provides HarmonyOS packaging |
 | Clients and i18n | Flutter client 9 pages + 16 admin pages; 13 ARB locales | Flutter client 9 pages + 18 admin pages; 13 ARB locales; plus HarmonyOS 15 pages and matching locale resources |
 | Extensibility | Kratos layers (api/biz/data/service/middleware), 8 proto services; new modules follow the same proto + service pattern | Same layering and extension pattern, 10 proto services / 78 RPCs; Behavior and Cdn serve as reference implementations for new modules |
@@ -237,7 +238,7 @@ This repository is the open-source edition for personal study and research. The 
 - **Novi pet subsystem** — live `GET /api/pet.svg` status, 12 expression assets, client/admin widgets and PWA icons.
 - **Native HarmonyOS client** — 15 ArkTS pages covering home, bookshelf, reader, comments, VIP, payment, profile and login.
 
-**Retained in the open-source edition:** users/bookshelf/reading progress, books/chapters/categories/tags, comments/likes/favorites/reports, multilingual search/hot keywords/suggestions, hot rankings, 11 payment channels, VIP subscriptions, content moderation, user management, dashboard/DAU/rankings, translation workflow and audit logs, plus the Flutter client and admin console.
+**Retained in the open-source edition:** users/bookshelf/reading progress, books/chapters/categories/tags, comments/likes/favorites/reports, multilingual search/hot keywords/suggestions, hot rankings, 11 payment channels, multi-currency plans/order snapshots, VIP subscriptions and server-side content authorization, content moderation, user management, dashboard/DAU/rankings, translation workflow and audit logs, plus the Flutter client and admin console.
 
 Before upgrading to the commercial edition, reconcile the schema against its `kratos/backend/sql/init.sql`. Both editions evolve from the same codebase apart from the added modules. **Commercial licensing: erik@erik.xyz** (delivery scope, deployment support and license terms by email).
 

@@ -21,10 +21,12 @@
 | portone | `api_secret` `webhook_token` | 韩国商户：按需开启 KakaoPay / Naver Pay / Toss（PortOne 收银台选项） |
 | mercadopago | `access_token` | 拉美商户：按需开启 **Pix** / Boleto / OXXO（Mercado Pago 收银台选项） |
 | xendit | `api_key` `callback_token` | 东南亚商户：按需开启 **GCash / GrabPay** / 银行转账（Xendit 收银台选项） |
-| paypal | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱） | PayPal 后台创建 Webhook 到 `/api/payments/webhook/paypal`，取 Webhook ID |
+| paypal | `client_id` `client_secret` `webhook_id`（可选 `base_url` 沙箱、`return_url` / `cancel_url` 跳回） | PayPal 后台创建 Webhook 到 `/api/payments/webhook/paypal`，取 Webhook ID；服务端在 APPROVED 后调用 capture，capture 成功才开通 VIP |
 | alipay | `app_id` `merchant_private_key` `alipay_public_key` `notify_url`（可选 `base_url` 沙箱） | CN 商户资质；沙箱用 openapi.alipaydev.com；**替换 notify_url 占位符** |
 | wechatpay_global | `app_id` `mch_id` `merchant_serial_no` `merchant_private_key` `platform_public_key` `apiv3_key` `notify_url`（可选 `base_url` 区域覆盖） | 国际商户（HK API v3 H5）；配置 4 个密钥 + apiv3_key；**替换 notify_url 占位符** |
 | unionpay | `mer_id` `sign_cert_id` `merchant_private_key` `unionpay_public_key` `notify_url`（可选 `front_url` `base_url` 沙箱） | CN 商户资质；签名证书 + 银联验签公钥；开发联调环境 `http://58.246.226.99/UpopWeb/api/Pay.action` |
+
+> 多币种：非 USD 结算渠道必须在 config 配 `currency`（默认 alipay/unionpay→CNY、komoju→JPY、portone→KRW、razorpay→INR、mercadopago→BRL、xendit→IDR），并在管理端「套餐」为同一币种建三档 VIP 套餐。缺少该币种套餐时下单会返回错误，不会把 USD 默认金额当本地币收取；回调按订单上固化的 plan/days 结算。
 
 ## 三、上线联调验证点（代码已知不确定项）
 

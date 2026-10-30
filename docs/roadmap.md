@@ -169,6 +169,8 @@
 
 **里程碑**：M2+C1+支付链完成后平台形态完整（管理端可用 + 多语言达标 + 商业化闭环）；当前全部任务链（T-A-01~17 / T-C-01~23 / T-P-01~20）已完成，可选方向 7.4 已移除；7.5 仅保留 generic CDN purge，仅剩 T-C-23 人工回归按需执行。
 
+**2026-10-30 安全与一致性加固**：完成支付回调/订单快照/多币种套餐、PayPal capture、VIP 正文服务端鉴权（管理端 staff no-store）、JWT 密钥配置化、CORS、XFF 末跳限流、空邮箱唯一化、snowflake uint64 主键等审计修复；`go test -p 1 ./...`、smoke 34/34、两端 `flutter analyze`/`flutter test` 通过，随 release 工作流发布 v1.0.55。
+
 ---
 
 ## 八、风险与技术债

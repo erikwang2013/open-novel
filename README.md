@@ -29,13 +29,14 @@ Open Novel 是一个云原生微服务架构的全球多语言小说平台：
 - **互动社区**：评论书评、点赞、收藏、举报审核
 - **搜索发现**：多语言分词搜索、热搜词榜（/api/search/hot-keywords）、搜索建议（/api/search/suggest，本地历史 20 条可清空 + 200ms 防抖）、热门榜单、分类浏览
 - **管理后台**：内容审核、用户管理、数据统计（仪表盘 / DAU / 榜单）、配置管理（分类标签）、机器翻译工作流（DeepL，/api/admin/translate/*，管理端「翻译」页 + 人工编辑）、审计日志查询（/api/admin/audit-logs）
-- **支付与会员**：11 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN) / WeChat Pay Global(国际版) / UnionPay(zh-CN)）、VIP 套餐订阅与续期、支付方式多语言路由
+- **支付与会员**：11 个支付渠道（国际卡 Stripe / PayPal + USDT NOWPayments + 本地 Razorpay(hi) / KOMOJU(ja) / PortOne(ko) / Mercado Pago(pt-BR) / Xendit(id/th/vn) / Alipay(zh-CN) / WeChat Pay Global(国际版) / UnionPay(zh-CN)）、多币种套餐与渠道币种路由、订单快照（plan/days/currency）结算、PayPal capture、VIP 套餐订阅与续期、支付方式多语言路由；VIP 正文服务端鉴权（管理端 staff 可预览且 `no-store`）
+- **安全与合规**：JWT 密钥配置化（生产默认密钥拒绝启动）、CORS 来源白名单、限流/封禁按可信代理 IP、webhook 成功 `success` / 失败 5xx、空邮箱唯一化、审计日志
 
 ## 系统架构
 
 ![系统架构图](docs/architecture.svg)
 
-整体为 Go-Kratos 微服务架构：Flutter 客户端经 CDN 缓存 + Nginx（TLS / 静态资源 / 反向代理）与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
+整体为 Go-Kratos 微服务架构：Flutter 客户端经 CDN 缓存 + Nginx（TLS / 静态资源 / 反向代理）与 API 网关交互，网关按领域路由到用户、书籍、章节、评论、搜索、推荐、支付、管理等后端服务；数据层为 MySQL 主从（读写分离）+ Redis 缓存（其上叠加 ristretto 进程内 L1 二级缓存）+ OpenSearch 搜索索引。服务间 gRPC 通信，对外 HTTP 接口统一前缀 `/api`。
 
 其余设计图：项目全景 [docs/project.svg](docs/project.svg) · 请求周期 [docs/request-cycle.svg](docs/request-cycle.svg) · 安全架构 [docs/security.svg](docs/security.svg) · 项目结构 [docs/structure.svg](docs/structure.svg) · 项目生命周期 [docs/lifecycle.svg](docs/lifecycle.svg)。
 
@@ -88,7 +89,7 @@ open-novel/
 | 客户端 | Flutter（Web / Desktop / Mobile，url_launcher / flutter_cache_manager） |
 | 管理端 | Flutter Web（`apps/admin/`，B 端后台） |
 | 网关 | Nginx + CDN 缓存（generic purge）、Go-Kratos API 网关（gRPC / HTTP 双协议） |
-| 服务端 | Go 1.22+、Kratos v2、protobuf / gRPC、stripe-go（Stripe 支付 SDK） |
+| 服务端 | Go 1.21+（go.mod 要求 1.25，首次构建自动下载工具链）、Kratos v2、protobuf / gRPC、stripe-go（Stripe 支付 SDK） |
 | 存储 | MySQL 8.0（主从）、Redis 7.x（Cluster）、ristretto（进程内 L1 二级缓存，128MB / 30s TTL）、OpenSearch 2.x |
 | 可观测 | Prometheus、Grafana、ELK、OpenTelemetry 链路追踪 |
 | 运维 | Docker Compose、GitHub Actions CI/CD |
@@ -136,6 +137,9 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 
 - 依赖栈端口映射：MySQL `3307`、Redis `6380`、OpenSearch `9200`（宿主机 3306/6379 被本机服务占用，见 docker-compose.yml 注释）。
 - 后端地址与密钥在 `kratos/backend/config/` 配置，支持环境变量覆盖（如 `PORT`、`OPENSEARCH_ADDR`）。
+- 生产配置：`JWT_SECRET` 必须改为非默认值；`APP_ENV=production` 时默认/空密钥会拒绝启动。Web 跨域来源用 `CORS_ORIGINS`（逗号分隔，默认 `*`；Bearer 鉴权不依赖 Cookie）。
+- 部署：后端只监听内网/回环并置于可信反向代理后；限流与安全封禁按 `X-Forwarded-For` 最后一跳识别客户端，代理必须覆盖/追加该头，禁止把 8000 直接暴露公网。
+- 存量库升级：`init.sql` 只在 MySQL 数据卷首次初始化时执行；已有库请按 `kratos/backend/sql/init.sql` 末尾「存量库迁移段」手动执行新增列/唯一键。
 - Flutter 连其他后端：`flutter run -d chrome --dart-define=API_BASE_URL=http://host:8000`。
 
 详见 [apps/README.md](apps/README.md) 与 [apps/client/flutter/README.md](apps/client/flutter/README.md)。
@@ -146,11 +150,11 @@ cd apps/client/flutter && flutter pub get && flutter run -d chrome
 bash scripts/install.sh
 ```
 
-一条命令完成环境检查 + 依赖栈启动 + 启动提示：检查 Docker / Go ≥ 1.22 / Flutter 是否安装（缺失时给出安装提示）、`docker compose up -d` 启动依赖栈、等待 MySQL 就绪（最多 60 秒）、最后打印后端与三个前端的启动命令和访问地址。可重复执行（幂等）；`bash scripts/install.sh --skip-deps` 跳过依赖栈步骤。
+一条命令完成环境检查 + 依赖栈启动 + 启动提示：检查 Docker / Go / Flutter 是否安装（缺失时给出安装提示；go.mod 要求 Go 1.25，Go 1.21+ 首次构建会自动下载 1.25 工具链，需联网）、`docker compose up -d` 启动依赖栈、等待 MySQL 就绪（最多 60 秒）、最后打印后端与三个前端的启动命令和访问地址。可重复执行（幂等）；`bash scripts/install.sh --skip-deps` 跳过依赖栈步骤。
 
 ## 安装说明
 
-- **前置依赖**：Docker（含 Compose 插件）、Go 1.22+、Flutter 3.x
+- **前置依赖**：Docker（含 Compose 插件）、Go 1.21+（go.mod 要求 1.25，低于 1.25 时首次构建会自动下载工具链，需联网）、Flutter 3.x
 - **一键方式**：运行 `bash scripts/install.sh`，按脚本提示完成环境检查与依赖栈启动
 - **手动方式**（与脚本步骤等价，亦见上文「[快速开始](#快速开始)」）：
 
@@ -211,13 +215,13 @@ bash scripts/install.sh
 | 维度 | 开源版（本仓库） | 商业版 |
 | :--- | :--- | :--- |
 | 定位 | 个人学习、研究、二次开发 | 面向商业运营的完整交付版 |
-| Go 代码（非测试） | 约 2.55 万行 | 约 2.91 万行 |
+| Go 代码（非测试） | 约 2.6 万行 | 约 2.91 万行 |
 | 后端服务（proto service） | 8 个 | 10 个（新增 Behavior、Cdn） |
 | RPC 接口 | 70 个 | 78 个 |
 | 数据表 | 22 张 | 23 张（新增 `novel_cdn_provider`） |
 | 管理端页面 | 16 个 | 18 个（新增行为分析、CDN 厂商管理） |
 | 客户端 | Flutter（9 个页面） | Flutter + HarmonyOS 原生（15 个 ArkTS 页面） |
-| 自动化测试 | 23 个测试文件 | 34 个测试文件 |
+| 自动化测试 | 30 个测试文件 | 34 个测试文件 |
 | 授权 | 仅个人学习/研究，商业使用需书面授权 | 商业授权与交付条款请联系 **erik@erik.xyz** |
 
 ### 多维度对比
@@ -225,10 +229,10 @@ bash scripts/install.sh
 | 维度 | 开源版（本仓库） | 商业版 |
 | :--- | :--- | :--- |
 | 功能覆盖 | 8 个 proto service、70 个 RPC、22 张表、16 个管理端页面；Flutter 客户端 9 页 | 10 个 proto service、78 个 RPC、23 张表、18 个管理端页面；Flutter + HarmonyOS 15 页；新增多 CDN、行为分析、AI 推荐、Novi 宠物 |
-| 安全防护 | JWT/OptionalAuth、限流、Security、RawBody、API 版本中间件；RBAC、审计、加密逻辑 | 同一套中间件链与安全逻辑（`internal/middleware` 文件一致）；新增 Behavior/Cdn 接口沿用相同 JWT、限流与安全中间件，未新增独立安全层 |
+| 安全防护 | JWT/OptionalAuth（密钥配置化）、限流（XFF 末跳）、Security（排除 Bearer JWT 误报）、CORS、RawBody、API 版本中间件；RBAC、审计、加密、VIP 正文鉴权 | 同一套中间件链与安全逻辑（`internal/middleware` 文件一致）；新增 Behavior/Cdn 接口沿用相同 JWT、限流与安全中间件，未新增独立安全层 |
 | 性能与规模 | Go-Kratos + MySQL + Redis + OpenSearch；单服务端多模块 | 同一技术栈与部署形态；增加 AI 推荐缓存与多 CDN 缓存失效/预热能力，无架构级差异 |
 | 数据与检索 | 22 张表；OpenSearch 全文检索 + MySQL 主数据 | 23 张表（新增 `novel_cdn_provider`）；同样使用 OpenSearch + MySQL，另有多厂商 CDN 管理 |
-| 测试与质量 | 23 个 Go 测试文件 / 70 个测试函数；覆盖 biz/service/data/middleware/cdn/pkg | 34 个测试文件 / 107 个测试函数；新增模块带对应测试。两版均只有 release 工作流，没有自动测试门禁 |
+| 测试与质量 | 30 个 Go 测试文件 / 86 个测试函数；覆盖 biz/service/data/middleware/cdn/pkg | 34 个测试文件 / 107 个测试函数；新增模块带对应测试。两版均只有 release 工作流，没有自动测试门禁 |
 | 部署与运维 | Docker Compose：MySQL、Redis、OpenSearch；Kratos 服务端 + Flutter 构建脚本 | 同一套 Compose 与 Kratos 服务端；新增 Behavior/Cdn 模块随主服务部署；额外提供 HarmonyOS 打包 |
 | 多端与国际化 | Flutter 客户端 9 页 + 管理端 16 页；13 个 ARB 语言包 | Flutter 客户端 9 页 + 管理端 18 页；13 个 ARB 语言包；另有 HarmonyOS 15 页及对应多语言资源 |
 | 扩展性与二次开发 | Kratos 分层（api/biz/data/service/middleware），8 个 proto service；新增模块按同一 proto + service 模式扩展 | 同一套分层与扩展方式，10 个 proto service / 78 RPC；Behavior、Cdn 可直接作为新增模块的参考实现 |
@@ -243,7 +247,7 @@ bash scripts/install.sh
 - **Novi 宠物子系统**：`GET /api/pet.svg` 活体状态图、12 种表情素材、客户端/管理端组件与 PWA 图标。
 - **HarmonyOS 原生客户端**：15 个 ArkTS 页面，覆盖首页、书架、阅读、评论、VIP、支付、我的、登录等流程。
 
-**开源版保留：** 用户/书架/阅读进度、书籍/章节/分类/标签、评论点赞收藏举报、多语言搜索/热词/建议、热门榜单、11 个支付渠道、VIP 订阅、内容审核、用户管理、仪表盘/DAU/榜单、翻译工作流与审计日志，以及 Flutter 客户端和管理端。
+**开源版保留：** 用户/书架/阅读进度、书籍/章节/分类/标签、评论点赞收藏举报、多语言搜索/热词/建议、热门榜单、11 个支付渠道、多币种套餐/订单快照、VIP 订阅与服务端正文鉴权、内容审核、用户管理、仪表盘/DAU/榜单、翻译工作流与审计日志，以及 Flutter 客户端和管理端。
 
 商业版升级前请按商业版 `kratos/backend/sql/init.sql` 核对表结构；除新增表外，两版以同一代码基线演进。**商业版授权联系：erik@erik.xyz**（交付范围、部署支持与授权条款请邮件沟通）。
 

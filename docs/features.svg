@@ -102,8 +102,8 @@
     <text x="169" y="656" font-size="13" font-weight="700" fill="#e53935" text-anchor="middle">支付中心</text>
     <text x="169" y="678" font-size="11" fill="#546e7a" text-anchor="middle">Stripe / PayPal / Alipay / UnionPay · 11 渠道</text>
     <text x="169" y="695" font-size="11" fill="#546e7a" text-anchor="middle">NOWPayments · USDT · 本地 5 渠道</text>
-    <text x="169" y="712" font-size="11" fill="#546e7a" text-anchor="middle">Webhook 验签回调</text>
-    <text x="169" y="729" font-size="11" fill="#546e7a" text-anchor="middle">金额强校验 · 幂等</text>
+    <text x="169" y="712" font-size="11" fill="#546e7a" text-anchor="middle">Webhook 验签 · 5xx 重试</text>
+    <text x="169" y="729" font-size="11" fill="#546e7a" text-anchor="middle">订单快照 · 多币种 · 幂等</text>
   </g>
 
   <!-- VIP 会员 -->
@@ -111,9 +111,9 @@
     <rect x="375" y="628" width="250" height="132" rx="8" fill="#ffffff" stroke="#3949ab" stroke-width="2"/>
     <rect x="480" y="642" width="40" height="4" rx="2" fill="#3949ab"/>
     <text x="500" y="656" font-size="13" font-weight="700" fill="#3949ab" text-anchor="middle">VIP 会员</text>
-    <text x="500" y="678" font-size="11" fill="#546e7a" text-anchor="middle">VIP 套餐订阅</text>
+    <text x="500" y="678" font-size="11" fill="#546e7a" text-anchor="middle">VIP 套餐订阅 · 多币种</text>
     <text x="500" y="695" font-size="11" fill="#546e7a" text-anchor="middle">到期续期 · 可叠加</text>
-    <text x="500" y="712" font-size="11" fill="#546e7a" text-anchor="middle">阅读器 VIP 引导</text>
+    <text x="500" y="712" font-size="11" fill="#546e7a" text-anchor="middle">阅读器引导 · 正文鉴权</text>
     <text x="500" y="729" font-size="11" fill="#546e7a" text-anchor="middle">我的-VIP 卡片</text>
   </g>
 

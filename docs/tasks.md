@@ -167,7 +167,7 @@
 | 编号 | 任务 | 说明 | 依赖 |
 | :--- | :--- | :--- | :--- |
 | T-P-01 | 支付表结构 | `novel_payment_provider`（code/lang/region/enabled/sort/config 密钥加密）、`novel_payment_order`（order_no/user_id/amount/currency/provider/status/tx_id/paid_at）、`novel_vip_order`（套餐/时长/到期）；`novel_user` 加 `vip_expires_at`；init.sql | 无 |
-| T-P-02 | 支付错误码 | 19xxxx 段：190401 下单失败 / 190402 订单不存在 / 190403 金额不匹配 / 190404 支付未完成 / 190405 方式未启用 | T-P-01 |
+| T-P-02 | 支付错误码 | 19xxxx 段：190401 下单失败 / 190402 订单不存在 / 190403 金额/币种不匹配 / 190405 方式未启用 | T-P-01 |
 | T-P-03 | Provider 抽象 + payment.v1 | proto（下单 / 查单 / 方式列表 / 回调）+ Provider 接口 + 注册表 | T-P-01/02 |
 | T-P-04 | Stripe 实现 | 官方 stripe-go SDK，Checkout Session + webhook 签名验签，沙箱先行 | T-P-03 |
 | T-P-05 | NOWPayments 实现 | USDT（TRON/ERC20/BSC）支付 + IPN webhook 验签 | T-P-03 |
@@ -271,4 +271,12 @@
 
 **状态**：❌ 已移除（2026-10-27，宠物端点、Flutter 组件与素材删除）。
 
-**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已移除或仅保留 generic CDN；7.6 人工回归按需执行；7.7 已实现；7.8/7.9 已移除。
+### 7.10 安全与一致性加固（2026-10-30，v1.0.55）
+
+**状态**：✅ 已实现并随 release 工作流发布。
+
+覆盖：webhook 版本豁免与成功/失败应答；订单快照 plan/days/currency 与多币种套餐；PayPal capture；VIP 正文服务端鉴权（管理端 staff 可预览且 no-store）；空邮箱唯一化；限流/封禁按 XFF 末跳；JWT 密钥配置化；CORS；security-go 对 Bearer JWT 的误报；章节目录缓存、翻译索引、hot、搜索语言；snowflake uint64 主键；死代码/依赖清理；smoke 改用仓库内 token 工具。
+
+**验证**：`go test -p 1 ./...`、`scripts/smoke.sh` 34/34、管理端 VIP/下架正文 200 + no-store、两端 `flutter analyze` / `flutter test`。
+
+**调度建议**：7.1 + 7.2 可并行（后端两个独立 proto 文件）；7.3 独立、等压测信号；7.4/7.5 已移除或仅保留 generic CDN；7.6 人工回归按需执行；7.7 已实现；7.8/7.9 已移除；7.10 已发布。

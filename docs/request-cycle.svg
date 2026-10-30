@@ -31,7 +31,7 @@
   <g>
     <rect x="220" y="228" width="560" height="44" rx="8" fill="#ffffff" stroke="#1e88e5" stroke-width="2"/>
     <text x="500" y="247" font-size="13" font-weight="600" fill="#37474f" text-anchor="middle">Go-Kratos API 网关</text>
-    <text x="500" y="263" font-size="10" fill="#78909c" text-anchor="middle">JWT 认证 → 限流 → 参数校验</text>
+    <text x="500" y="263" font-size="10" fill="#78909c" text-anchor="middle">JWT 认证 → 限流/CORS → 参数校验</text>
   </g>
   <text x="800" y="256" font-size="13" font-weight="600" fill="#90a4ae">③</text>
   <line x1="500" y1="272" x2="500" y2="300" stroke="#90a4ae" stroke-width="1.5" marker-end="url(#arrow)"/>

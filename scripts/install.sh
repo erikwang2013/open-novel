@@ -33,17 +33,17 @@ if command -v docker >/dev/null 2>&1 && ! docker compose version >/dev/null 2>&1
   note_missing "docker compose" "Docker 需要 Compose 插件（docker compose 子命令），请更新 Docker 或安装 docker-compose-plugin"
 fi
 if ! command -v go >/dev/null 2>&1; then
-  note_missing go "安装 Go >= 1.22: https://go.dev/dl/"
+  note_missing go "安装 Go >= 1.21（go.mod 要求 1.25，首次构建会自动下载 1.25 工具链，需联网）: https://go.dev/dl/"
 else
   gover=$(go version | sed -nE 's/.*go([0-9]+\.[0-9]+).*/\1/p')
   go_ok() { # go_ok <主版本.次版本>：纯 bash 比较，避免依赖 sort -V
     local major minor
     IFS=. read -r major minor _ <<< "$1"
     [[ -n "$major" && -n "$minor" ]] || return 1
-    (( major > 1 )) || (( major == 1 && minor >= 22 ))
+    (( major > 1 )) || (( major == 1 && minor >= 21 ))
   }
   if ! go_ok "${gover:-}"; then
-    printf '[install] go 版本过低（当前 %s，需要 >= 1.22）: https://go.dev/dl/\n' "${gover:-未知}"
+    printf '[install] go 版本过低（当前 %s，需要 >= 1.21；go.mod 要求 1.25，首次构建会自动下载工具链）: https://go.dev/dl/\n' "${gover:-未知}"
     missing+=("go")
   fi
 fi

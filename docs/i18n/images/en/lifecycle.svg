@@ -156,7 +156,7 @@
 
     <rect x="794" y="522" width="146" height="36" rx="8" fill="#ffffff" stroke="#00897b" stroke-width="1.5"/>
     <text x="867" y="538">VIP &amp; Payments</text>
-    <text x="867" y="551" font-size="9.5" font-weight="400" fill="#78909c">11 payment channels</text>
+    <text x="867" y="551" font-size="9.5" font-weight="400" fill="#78909c">11 channels · multi-currency</text>
   </g>
 
   <!-- ================= footer ================= -->

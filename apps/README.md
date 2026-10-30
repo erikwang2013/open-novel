@@ -26,11 +26,11 @@ apps/
 bash scripts/install.sh
 ```
 
-在项目根目录运行上述命令，即可完成环境检查（Docker / Go 1.22+ / Flutter，缺失时给出安装提示）、依赖栈启动（MySQL / Redis / OpenSearch，等待 MySQL 就绪）与后端 / 前端启动提示。
+在项目根目录运行上述命令，即可完成环境检查（Docker / Go 1.21+（go.mod 要求 1.25，首次构建自动下载） / Flutter，缺失时给出安装提示）、依赖栈启动（MySQL / Redis / OpenSearch，等待 MySQL 就绪）与后端 / 前端启动提示。
 
 ### 安装说明
 
-前置依赖：Docker（含 Compose 插件）、Go 1.22+、Flutter 3.x。
+前置依赖：Docker（含 Compose 插件）、Go 1.21+（go.mod 要求 1.25，首次构建自动下载工具链）、Flutter 3.x。
 
 - 一键方式：`bash scripts/install.sh`
 - 手动方式：

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="756" viewBox="0 0 1000 756" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="780" viewBox="0 0 1000 780" font-family="'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#90a4ae"/>
@@ -13,7 +13,7 @@
   <g>
     <rect x="44" y="80" width="912" height="112" rx="12" fill="#e3f2fd" stroke="#1e88e5" stroke-width="1.5"/>
     <rect x="60" y="92" width="86" height="24" rx="6" fill="#1e88e5"/>
-    <text x="103" y="108" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Transport Security</text>
+    <text x="103" y="108" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Transport</text>
     <text x="154" y="108" font-size="11" fill="#1565c0">TRANSPORT</text>
 
     <g>
@@ -44,28 +44,28 @@
   <g>
     <rect x="44" y="212" width="912" height="168" rx="12" fill="#ede7f6" stroke="#5e35b1" stroke-width="1.5"/>
     <rect x="60" y="224" width="86" height="24" rx="6" fill="#5e35b1"/>
-    <text x="103" y="240" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Access Security</text>
+    <text x="103" y="240" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Access</text>
     <text x="154" y="240" font-size="11" fill="#4527a0">ACCESS</text>
 
     <g>
       <rect x="60" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
       <text x="164" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">JWT Auth + RefreshToken</text>
-      <text x="164" y="295" font-size="10" fill="#78909c" text-anchor="middle">Dual-token mechanism</text>
+      <text x="164" y="295" font-size="10" fill="#78909c" text-anchor="middle">Dual-token · configurable secret</text>
     </g>
     <g>
       <rect x="288" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="392" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">OAuth2 third-party login</text>
-      <text x="392" y="295" font-size="10" fill="#78909c" text-anchor="middle">WeChat / Google, etc.</text>
+      <text x="392" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">RefreshToken rotation</text>
+      <text x="392" y="295" font-size="10" fill="#78909c" text-anchor="middle">GETDEL replay-safe</text>
     </g>
     <g>
       <rect x="516" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="620" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">API rate limiting (token bucket)</text>
-      <text x="620" y="295" font-size="10" fill="#78909c" text-anchor="middle">Anti-abuse / anti-burst</text>
+      <text x="620" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">API rate limiting (fixed window)</text>
+      <text x="620" y="295" font-size="10" fill="#78909c" text-anchor="middle">Trusted-proxy IP · anti-abuse</text>
     </g>
     <g>
       <rect x="744" y="260" width="208" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
-      <text x="848" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Param validation (protovalidate)</text>
-      <text x="848" y="295" font-size="10" fill="#78909c" text-anchor="middle">Protocol-level validation</text>
+      <text x="848" y="279" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">CORS allow-list</text>
+      <text x="848" y="295" font-size="10" fill="#78909c" text-anchor="middle">Preflight · allowed headers</text>
     </g>
     <g>
       <rect x="60" y="328" width="440" height="44" rx="8" fill="#ffffff" stroke="#5e35b1" stroke-width="2"/>
@@ -87,7 +87,7 @@
   <g>
     <rect x="44" y="400" width="912" height="112" rx="12" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
     <rect x="60" y="412" width="86" height="24" rx="6" fill="#fb8c00"/>
-    <text x="103" y="428" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Business Security</text>
+    <text x="103" y="428" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Business</text>
     <text x="154" y="428" font-size="11" fill="#e65100">BUSINESS</text>
 
     <g>
@@ -99,12 +99,12 @@
       <rect x="240" y="448" width="168" height="58" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
       <text x="324" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Payment callback verification</text>
       <text x="324" y="483" font-size="10" fill="#78909c" text-anchor="middle">HMAC / token · IPN callback</text>
-    <text x="324" y="499" font-size="10" fill="#78909c" text-anchor="middle">PayPal verify-webhook · Alipay / WeChat RSA</text>
+    <text x="324" y="499" font-size="10" fill="#78909c" text-anchor="middle">PayPal capture · Alipay/WeChat</text>
     </g>
     <g>
       <rect x="420" y="448" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
-      <text x="504" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Amount check · Idempotency</text>
-      <text x="504" y="483" font-size="10" fill="#78909c" text-anchor="middle">Callback amount = order amount</text>
+      <text x="504" y="467" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Snapshot · idempotent</text>
+      <text x="504" y="483" font-size="10" fill="#78909c" text-anchor="middle">Amount / currency validation</text>
     </g>
     <g>
       <rect x="600" y="448" width="168" height="44" rx="8" fill="#ffffff" stroke="#fb8c00" stroke-width="2"/>
@@ -124,7 +124,7 @@
   <g>
     <rect x="44" y="532" width="912" height="112" rx="12" fill="#fce4ec" stroke="#d81b60" stroke-width="1.5"/>
     <rect x="60" y="544" width="86" height="24" rx="6" fill="#d81b60"/>
-    <text x="103" y="560" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Data Security</text>
+    <text x="103" y="560" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Data</text>
     <text x="154" y="560" font-size="11" fill="#880e4f">DATA</text>
 
     <g>
@@ -160,7 +160,7 @@
   <g>
     <rect x="44" y="664" width="912" height="76" rx="12" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>
     <rect x="60" y="676" width="86" height="24" rx="6" fill="#37474f"/>
-    <text x="103" y="692" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Operations Security</text>
+    <text x="103" y="692" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Operations</text>
     <text x="154" y="692" font-size="11" fill="#455a64">OPS</text>
 
     <g>
@@ -169,15 +169,15 @@
     </g>
     <g>
       <rect x="482" y="676" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
-      <text x="582" y="698" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Canary release</text>
+      <text x="582" y="698" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Automated release</text>
     </g>
     <g>
       <rect x="706" y="676" width="200" height="36" rx="8" fill="#ffffff" stroke="#37474f" stroke-width="2"/>
-      <text x="806" y="698" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Vulnerability scanning</text>
+      <text x="806" y="698" font-size="12" font-weight="600" fill="#37474f" text-anchor="middle">Static and dependency checks</text>
     </g>
-    <text x="806" y="720" font-size="10" fill="#78909c" text-anchor="middle">golangci-lint / govulncheck</text>
+    <text x="806" y="720" font-size="10" fill="#78909c" text-anchor="middle">go vet · go mod tidy</text>
   </g>
 
-  <text x="500" y="744" font-size="12" fill="#78909c" text-anchor="middle">Defense in depth: Transport → Access → Business → Data → Operations · Layered protection end-to-end</text>
-  <text x="988" y="744" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
+  <text x="500" y="764" font-size="12" fill="#78909c" text-anchor="middle">Defense in depth: Transport → Access → Business → Data → Operations · Layered protection end-to-end</text>
+  <text x="988" y="764" font-size="11" fill="#90a4ae" opacity="0.55" text-anchor="end">https://erik.xyz</text>
 </svg>
